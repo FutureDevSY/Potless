@@ -8,6 +8,9 @@ import PortholeDetail from "../views/porthole/PortholeDetail.vue";
 import PathLine from "../views/path/PathLine.vue";
 import Statistics from "../views/statistics/Statistics.vue";
 
+import TaskInfo from "../views/task/TaskInfo.vue";
+import TaskInfoDetail from "../views/task/TaskInfoDetail.vue";
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -28,10 +31,9 @@ const router = createRouter({
       name: "PortholeList",
       component: PortholeList,
       props: true,
-      redirect: { name: "PortholeList" },
       children: [
         {
-          path: "detail",
+          path: "detail/:id",
           name: "PortholeDetail",
           component: PortholeDetail,
           props: true,
@@ -55,6 +57,20 @@ const router = createRouter({
       name: "Statistics",
       component: Statistics,
       props: true,
+    },
+    {
+      path: "/taskinfo",
+      name: "TaskInfo",
+      component: TaskInfo,
+      props: true,
+      children: [
+        {
+          path: "detail/:id",
+          name: "TaskInfoDetail",
+          component: TaskInfoDetail,
+          props: true,
+        },
+      ],
     },
   ],
 });

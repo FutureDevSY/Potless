@@ -9,15 +9,21 @@
       <strong>로그인</strong>
       <input type="text" v-model="auth_id" placeholder="아이디" />
       <input type="password" v-model="auth_password" placeholder="비밀번호" />
-      <button>로그인</button>
+      <button @click="moveHome">로그인</button>
     </div>
   </div>
 </template>
 
 <script setup>
 import { ref } from "vue";
+import { useRouter } from "vue-router";
+
+const router = useRouter();
 const auth_id = ref("");
 const auth_password = ref("");
+const moveHome = () => {
+  router.push("/");
+};
 </script>
 
 <style scoped>
