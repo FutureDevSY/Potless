@@ -2,33 +2,19 @@
   <div class="navbar-container">
     <div class="logo">서비스 로고</div>
     <div class="move-page">
-      <div class="porthole" @click="movePorthole">포트홀 조회</div>
-      <div class="path" @click="movePath">공사 추천 경로</div>
-      <div class="task" @click="moveTask">작업 정보</div>
-      <button class="logout" @click="moveLogin">로그아웃</button>
+      <div class="porthole" @click="store.movePorthole">포트홀 조회</div>
+      <div class="path" @click="store.movePath">공사 추천 경로</div>
+      <div class="task" @click="store.moveTask">작업 정보</div>
+      <div class="statistics" @click="store.moveStatistics">통계 자료</div>
+      <button class="logout" @click="store.moveLogin">로그아웃</button>
     </div>
   </div>
 </template>
 
 <script setup>
-import { useRouter } from "vue-router";
-const router = useRouter();
+import { useMoveStore } from "../../stores/move.js";
 
-const movePorthole = () => {
-  router.push("/porthole");
-};
-
-const movePath = () => {
-  router.push("/path");
-};
-
-const moveTask = () => {
-  router.push("/taskinfo");
-};
-
-const moveLogin = () => {
-  router.push("/auth/login");
-};
+const store = useMoveStore();
 </script>
 
 <style scoped>
