@@ -18,8 +18,7 @@ import java.util.List;
 public class PotholeEntity extends DamageEntity {
 
     @Builder
-    public PotholeEntity(Long id, Integer severity, Double dirX, Double dirY, String address, String roadName, Status status, Double width, AreaEntity areaEntity, LocationEntity locationEntity, List<ImageEntity> imageEntities) {
-        super(id, severity, dirX, dirY, address, roadName, status, width, areaEntity, locationEntity, imageEntities);
+    public PotholeEntity(Long id, Integer severity, Double dirX, Double dirY, String address, String roadName, Double width, AreaEntity areaEntity, LocationEntity locationEntity, List<ImageEntity> imageEntities) {
+        super(id, severity, dirX, dirY, address, roadName, width, areaEntity, locationEntity, imageEntities);
     }
-
 }

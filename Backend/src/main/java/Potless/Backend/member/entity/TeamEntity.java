@@ -18,7 +18,7 @@ import java.util.List;
 public class TeamEntity extends BaseEntity {
 
     @Id
-    @Column(name = "team_id")
+    @Column(name = "team_id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 

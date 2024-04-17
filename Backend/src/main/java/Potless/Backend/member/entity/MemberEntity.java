@@ -15,22 +15,25 @@ public class MemberEntity extends MemberBaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "member_id")
+    @Column(name = "member_id", nullable = false)
     private Long Id;
 
-    @Column(name = "member_role")
+    @Column(name = "member_name", nullable = false)
+    private String memberName;
+
+    @Column(name = "member_role", nullable = false)
     private Integer role;
 
-    @Column(name = "member_email")
+    @Column(name = "member_email", nullable = false)
     private String email;
 
-    @Column(name = "member_phone")
+    @Column(name = "member_phone", nullable = false)
     private String phone;
 
-    @Column(name = "member_password")
+    @Column(name = "member_password", nullable = false)
     private String password;
 
-    @Column(name = "member_region")
+    @Column(name = "member_region", nullable = false)
     private Integer region;
 
     @OneToOne(mappedBy = "memberEntity", fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE, CascadeType.PERSIST}, orphanRemoval = true)
@@ -40,8 +43,9 @@ public class MemberEntity extends MemberBaseEntity {
     private WorkerEntity workerEntity;
 
     @Builder
-    public MemberEntity(Long id, Integer role, String email, String phone, String password, Integer region, ManagerEntity managerEntity, WorkerEntity workerEntity) {
+    public MemberEntity(Long id, String memberName, Integer role, String email, String phone, String password, Integer region, ManagerEntity managerEntity, WorkerEntity workerEntity) {
         Id = id;
+        this.memberName = memberName;
         this.role = role;
         this.email = email;
         this.phone = phone;

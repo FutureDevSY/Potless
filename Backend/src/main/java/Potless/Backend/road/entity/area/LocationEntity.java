@@ -18,11 +18,11 @@ import java.util.List;
 public class LocationEntity extends BaseEntity {
 
     @Id
-    @Column(name = "location_id")
+    @Column(name = "location_id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "location_name")
+    @Column(name = "location_name", nullable = false)
     private String locationName;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
