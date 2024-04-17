@@ -1,5 +1,6 @@
 package HarryPort.Backend.global.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
 import lombok.Getter;
@@ -20,6 +21,15 @@ public abstract class BaseEntity {
     @LastModifiedDate
     private LocalDateTime modifiedDateTime;
 
-    //삭제 시간도 만들어야됨
+    @Column(name = "is_deleted")
+    private boolean deleted = false;
+
+    @Column(name = "deleted_date_time")
+    private LocalDateTime deletedDateTime;
+
+    public void softDelete() {
+        this.deleted = true;
+        this.deletedDateTime = LocalDateTime.now();
+    }
 }
 
