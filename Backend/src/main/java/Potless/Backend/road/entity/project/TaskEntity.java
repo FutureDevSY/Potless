@@ -15,16 +15,16 @@ import lombok.NoArgsConstructor;
 public class TaskEntity extends BaseEntity {
 
     @Id
-    @Column(name = "task_id")
+    @Column(name = "task_id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
-    @JoinColumn(name = "project_id")
+    @JoinColumn(name = "project_id", nullable = false)
     private ProjectEntity projectEntity;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
-    @JoinColumn(name = "damage_id")
+    @JoinColumn(name = "damage_id", nullable = false)
     private DamageEntity damageEntity;
 
     @Builder

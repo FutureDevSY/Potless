@@ -19,7 +19,7 @@ import java.util.List;
 public class ManagerEntity extends BaseEntity {
 
     @Id
-    @Column(name = "manager_id")
+    @Column(name = "manager_id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 

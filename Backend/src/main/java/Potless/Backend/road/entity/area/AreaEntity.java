@@ -19,14 +19,14 @@ import java.util.List;
 public class AreaEntity extends BaseEntity {
 
     @Id
-    @Column(name = "area_id")
+    @Column(name = "area_id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "area_gu")
+    @Column(name = "area_gu", nullable = false)
     private String areaGu;
 
-    @Column(name = "area_pothole_cnt")
+    @Column(name = "area_pothole_cnt", nullable = false)
     private Long potholeCnt;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, mappedBy = "areaEntity")

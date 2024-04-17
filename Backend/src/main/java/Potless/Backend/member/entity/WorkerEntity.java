@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 public class WorkerEntity extends BaseEntity {
 
     @Id
-    @Column(name = "worker_id")
+    @Column(name = "worker_id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 

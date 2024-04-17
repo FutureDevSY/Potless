@@ -14,18 +14,18 @@ import lombok.NoArgsConstructor;
 public class ImageEntity extends BaseEntity {
 
     @Id
-    @Column(name = "image_id")
+    @Column(name = "image_id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
-    @JoinColumn
+    @JoinColumn(name = "damage_id")
     private DamageEntity damageEntity;
 
-    @Column(name = "image_url")
+    @Column(name = "image_url", nullable = false)
     private String url;
 
-    @Column(name = "image_order")
+    @Column(name = "image_order", nullable = false)
     private Integer order;
 
     @Builder
