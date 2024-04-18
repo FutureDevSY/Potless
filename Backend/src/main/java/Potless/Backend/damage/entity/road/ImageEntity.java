@@ -1,4 +1,4 @@
-package Potless.Backend.road.entity.road;
+package Potless.Backend.damage.entity.road;
 
 import Potless.Backend.global.entity.BaseEntity;
 import jakarta.persistence.*;

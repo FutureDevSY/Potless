@@ -1,8 +1,8 @@
-package Potless.Backend.road.entity.area;
+package Potless.Backend.damage.entity.area;
 
+import Potless.Backend.damage.entity.road.DamageEntity;
 import Potless.Backend.global.entity.BaseEntity;
 import Potless.Backend.member.entity.ManagerEntity;
-import Potless.Backend.road.entity.road.DamageEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;

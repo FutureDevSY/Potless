@@ -1,7 +1,7 @@
-package Potless.Backend.road.entity.road;
+package Potless.Backend.damage.entity.road;
 
-import Potless.Backend.road.entity.area.AreaEntity;
-import Potless.Backend.road.entity.area.LocationEntity;
+import Potless.Backend.damage.entity.area.AreaEntity;
+import Potless.Backend.damage.entity.area.LocationEntity;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import lombok.AccessLevel;

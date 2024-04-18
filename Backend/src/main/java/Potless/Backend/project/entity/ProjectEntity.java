@@ -1,4 +1,4 @@
-package Potless.Backend.road.entity.project;
+package Potless.Backend.project.entity;
 
 import Potless.Backend.global.entity.BaseEntity;
 import Potless.Backend.member.entity.ManagerEntity;
