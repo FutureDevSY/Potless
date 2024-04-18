@@ -1,7 +1,7 @@
 package Potless.Backend.member.entity;
 
 import Potless.Backend.global.entity.BaseEntity;
-import Potless.Backend.road.entity.project.ProjectEntity;
+import Potless.Backend.project.entity.ProjectEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -18,7 +18,7 @@ import java.util.List;
 public class TeamEntity extends BaseEntity {
 
     @Id
-    @Column(name = "team_id")
+    @Column(name = "team_id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
