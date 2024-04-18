@@ -1,7 +1,7 @@
-package Potless.Backend.road.entity.area;
+package Potless.Backend.damage.entity.area;
 
+import Potless.Backend.damage.entity.road.DamageEntity;
 import Potless.Backend.global.entity.BaseEntity;
-import Potless.Backend.road.entity.road.DamageEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -18,11 +18,11 @@ import java.util.List;
 public class LocationEntity extends BaseEntity {
 
     @Id
-    @Column(name = "location_id")
+    @Column(name = "location_id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "location_name")
+    @Column(name = "location_name", nullable = false)
     private String locationName;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
