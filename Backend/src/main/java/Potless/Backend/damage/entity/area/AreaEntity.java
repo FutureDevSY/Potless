@@ -3,6 +3,7 @@ package Potless.Backend.damage.entity.area;
 import Potless.Backend.damage.entity.road.DamageEntity;
 import Potless.Backend.global.entity.BaseEntity;
 import Potless.Backend.member.entity.ManagerEntity;
+import com.querydsl.core.annotations.QueryProjection;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -27,7 +28,7 @@ public class AreaEntity extends BaseEntity {
     private String areaGu;
 
     @Column(name = "area_pothole_cnt", nullable = false)
-    private Long potholeCnt;
+    private final Long potholeCnt = 0L;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, mappedBy = "areaEntity")
     private List<ManagerEntity> managerEntities = new ArrayList<>();
@@ -39,10 +40,10 @@ public class AreaEntity extends BaseEntity {
     private List<DamageEntity> damageEntities = new ArrayList<>();
 
     @Builder
-    public AreaEntity(Long id, String areaGu, Long potholeCnt, List<ManagerEntity> managerEntities, List<LocationEntity> locationEntities, List<DamageEntity> damageEntities) {
+    @QueryProjection
+    public AreaEntity(Long id, String areaGu, List<ManagerEntity> managerEntities, List<LocationEntity> locationEntities, List<DamageEntity> damageEntities) {
         this.id = id;
         this.areaGu = areaGu;
-        this.potholeCnt = potholeCnt;
         this.managerEntities = managerEntities;
         this.locationEntities = locationEntities;
         this.damageEntities = damageEntities;

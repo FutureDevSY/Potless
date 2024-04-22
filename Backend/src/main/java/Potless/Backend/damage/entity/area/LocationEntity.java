@@ -2,6 +2,7 @@ package Potless.Backend.damage.entity.area;
 
 import Potless.Backend.damage.entity.road.DamageEntity;
 import Potless.Backend.global.entity.BaseEntity;
+import com.querydsl.core.annotations.QueryProjection;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -33,10 +34,15 @@ public class LocationEntity extends BaseEntity {
     private List<DamageEntity> damageEntities = new ArrayList<>();
 
     @Builder
+    @QueryProjection
     public LocationEntity(Long id, String locationName, AreaEntity areaEntity, List<DamageEntity> damageEntities) {
         this.id = id;
         this.locationName = locationName;
         this.areaEntity = areaEntity;
         this.damageEntities = damageEntities;
+    }
+
+    public void changeArea(AreaEntity areaEntity) {
+        this.areaEntity = areaEntity;
     }
 }
