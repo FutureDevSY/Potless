@@ -1,6 +1,7 @@
 package Potless.Backend.damage.entity.road;
 
 import Potless.Backend.global.entity.BaseEntity;
+import com.querydsl.core.annotations.QueryProjection;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -29,6 +30,7 @@ public class ImageEntity extends BaseEntity {
     private Integer order;
 
     @Builder
+    @QueryProjection
     public ImageEntity(Long id, DamageEntity damageEntity, String url, Integer order) {
         this.id = id;
         this.damageEntity = damageEntity;
