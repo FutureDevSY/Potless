@@ -30,7 +30,7 @@ public abstract class DamageEntity extends BaseEntity {
     @Column(name = "damage_id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "damage_severity", nullable = false)
+    @Column(name = "damage_severity")
     private Integer severity;
     @Column(name = "damage_dir_x", nullable = false)
     private Double dirX;

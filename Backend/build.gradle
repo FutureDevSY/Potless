@@ -68,6 +68,13 @@ dependencies {
     // Email
     implementation 'org.springframework.boot:spring-boot-starter-mail'
 
+    // AWS JAVA SDK
+    implementation(platform("software.amazon.awssdk:bom:2.21.1"))
+    implementation 'software.amazon.awssdk:s3'
+
+    // AWS Cognito
+    implementation 'com.amazonaws:aws-java-sdk-cognitoidp:1.12.705'
+
 }
 
 tasks.named('test') {
