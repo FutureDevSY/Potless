@@ -2,7 +2,8 @@ package Potless.Backend.project.service;
 
 import Potless.Backend.damage.entity.road.DamageEntity;
 import Potless.Backend.damage.repository.DamageRepository;
-import Potless.Backend.global.api.ApiResponse;
+import Potless.Backend.global.exception.project.ProjectNotFoundException;
+import Potless.Backend.global.format.code.ApiResponse;
 import Potless.Backend.member.entity.ManagerEntity;
 import Potless.Backend.member.entity.TeamEntity;
 import Potless.Backend.member.repository.manager.ManagerRepository;
@@ -32,15 +33,11 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     @Transactional
     public Long createProject(ProjectSaveRequestDto projectSaveRequestDto) {
-        ManagerEntity managerEntity = managerRepository.findById(projectSaveRequestDto.getManagerId()).orElseThrow(() -> {
-            ApiResponse<Object> response = ApiResponse.of(HttpStatus.NOT_FOUND, "존재하지 않은 매니저: " + projectSaveRequestDto.getManagerId(), null);
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, response.getMessage());
-        });
+        ManagerEntity managerEntity = managerRepository.findById(projectSaveRequestDto.getManagerId())
+                .orElseThrow(ProjectNotFoundException::new);
 
-        TeamEntity teamEntity = teamRepository.findById(projectSaveRequestDto.getTeamId()).orElseThrow(() -> {
-            ApiResponse<Object> response = ApiResponse.of(HttpStatus.NOT_FOUND, "존재하지 않은 팀 : " + projectSaveRequestDto.getTeamId(), null);
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, response.getMessage());
-        });
+        TeamEntity teamEntity = teamRepository.findById(projectSaveRequestDto.getTeamId())
+                .orElseThrow(ProjectNotFoundException::new);
 
         ProjectEntity projectEntity = ProjectEntity.builder()
                 .projectName(projectSaveRequestDto.getTitle())
@@ -53,10 +50,8 @@ public class ProjectServiceImpl implements ProjectService {
         ProjectEntity saveProjectEntity = projectRepository.save(projectEntity);
 
         projectSaveRequestDto.getDamageNums().forEach(damageId -> {
-            DamageEntity damageEntity = damageRepository.findById(damageId).orElseThrow(() -> {
-                ApiResponse<Object> response = ApiResponse.of(HttpStatus.NOT_FOUND, "존재하지 않은 포트홀(군열) : " + damageId, null);
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND, response.getMessage());
-            });
+            DamageEntity damageEntity = damageRepository.findById(damageId)
+                    .orElseThrow(ProjectNotFoundException::new);
 
             TaskEntity taskEntity = TaskEntity.builder().
             projectEntity(saveProjectEntity)
