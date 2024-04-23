@@ -52,7 +52,7 @@ public class MemberService {
     }
 
     @Transactional
-    public LoginResponseDto login(LoginRequestDto requestDto, HttpServletResponse response) {
+    public LoginResponseDto login(LoginRequestDto requestDto, HttpServletResponse response, int identify) {
         log.info("event=LoginAttempt, email={}", requestDto.getEmail());
 
         MemberEntity member = memberRepository.searchByEmail(requestDto.getEmail())
@@ -61,9 +61,12 @@ public class MemberService {
         isPasswordMatchingWithEncoded(requestDto.getPassword(), member.getPassword());
         removeOldRefreshToken(requestDto, member);
 
-        TokenInfo tokenInfo = tokenProvider.generateTokenInfo(member.getEmail());
+        // 웹/앱 요청 구별, refresh token web : 24시간 / app : 일주일
+        TokenInfo tokenInfo = tokenProvider.generateTokenInfo(member.getEmail(), identify);
+        int refreshTokenTime = (identify == 0) ? tokenProvider.getREFRESH_TOKEN_TIME_WEB() : tokenProvider.getREFRESH_TOKEN_TIME_APP();
+
         tokenService.saveToken(tokenInfo);
-        cookieUtil.addCookie("RefreshToken", tokenInfo.getRefreshToken(), tokenProvider.getREFRESH_TOKEN_TIME(), response);
+        cookieUtil.addCookie("RefreshToken", tokenInfo.getRefreshToken(), refreshTokenTime, response);
 
         return LoginResponseDto.builder()
                                .token(tokenInfo.getAccessToken())
