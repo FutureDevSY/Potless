@@ -1,7 +1,6 @@
-package Potless.Backend.member.repository.custom;
+package Potless.Backend.member.repository.member.custom;
 
 import Potless.Backend.member.entity.MemberEntity;
-import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 
