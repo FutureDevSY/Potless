@@ -1,5 +1,6 @@
 package Potless.Backend.project.entity;
 
+import Potless.Backend.damage.entity.enums.Status;
 import Potless.Backend.global.entity.BaseEntity;
 import Potless.Backend.member.entity.ManagerEntity;
 import Potless.Backend.member.entity.TeamEntity;
@@ -39,14 +40,20 @@ public class ProjectEntity extends BaseEntity {
     @Column(name = "project_size", nullable = false)
     private Integer projectSize;
 
+    @Column(name = "project_status", nullable = false)
+    private Status status = Status.작업전;
+
     @Builder
-    public ProjectEntity(Long id, String projectName, ManagerEntity managerEntity, TeamEntity teamEntity, LocalDate projectDate, Integer projectSize) {
+    public ProjectEntity(Long id, String projectName, ManagerEntity managerEntity, TeamEntity teamEntity, LocalDate projectDate, Integer projectSize, Status status) {
         this.id = id;
         this.projectName = projectName;
         this.managerEntity = managerEntity;
         this.teamEntity = teamEntity;
         this.projectDate = projectDate;
         this.projectSize = projectSize;
+        this.status = status;
     }
+
+    public void changeStatus(Status status) {this.status = status;}
 }
 

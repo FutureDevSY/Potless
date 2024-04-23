@@ -3,6 +3,7 @@ package Potless.Backend.project.repository.project.custom;
 import Potless.Backend.damage.entity.enums.Status;
 import Potless.Backend.project.dto.request.ProjectListRequestDto;
 import Potless.Backend.project.dto.response.ProjectListResponseDto;
+import Potless.Backend.project.entity.QProjectEntity;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -29,16 +30,17 @@ public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
         BooleanBuilder builder = new BooleanBuilder();
 
         builder.and(betweenDates(project, projectListRequestDto.getStart(), projectListRequestDto.getEnd()))
-                .and(equalToStatus(project, projectListRequestDto.getStatus()))
+//                .and(equalToStatus(project, projectListRequestDto.getStatus()))
                 .and(containsSearchWord(project, projectListRequestDto.getWord()));
 
         List<ProjectListResponseDto> results = queryFactory
                 .select(Projections.constructor(ProjectListResponseDto.class,
                         project.id,
                         project.projectName,
-                        project.managerName,
+                        project.managerEntity,
                         project.projectDate,
-                        project.projectSize
+                        project.projectSize,
+                        project.status
                 ))
                 .from(project)
                 .where(builder)
@@ -54,15 +56,12 @@ public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
 
         long total = (countResult != null) ? countResult : 0;
         return new PageImpl<>(results, pageable, total);
-
-
-        return null;
     }
 
     //날짜
     private BooleanExpression betweenDates(QProjectEntity project, LocalDate start, LocalDate end) {
         if (start != null && end != null) {
-            return project.projectDate.between(start.atStartOfDay(), end.atTime(23, 59, 59));
+            return project.createdDateTime.between(start.atStartOfDay(), end.atTime(23,59,59));
         }
         return null;
     }
@@ -75,13 +74,13 @@ public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
         return null;
     }
 
-    //지역
-    private BooleanExpression containsArea(QProjectEntity project, String area) {
-        if (area != null) {
-            return project.areaEntity.areaGu.contains(area);
-        }
-        return null;
-    }
+//    //지역
+//    private BooleanExpression containsArea(QProjectEntity project, String area) {
+//        if (area != null) {
+//            return project.areaEntity.areaGu.contains(area);
+//        }
+//        return null;
+//    }
 
     //검색어
     private BooleanExpression containsSearchWord(QProjectEntity project, String word) {

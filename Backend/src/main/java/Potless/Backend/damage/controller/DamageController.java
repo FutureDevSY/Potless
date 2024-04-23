@@ -77,7 +77,6 @@ public class DamageController {
                     iDamageService.setDamage();
                 });
 
-
         return ApiResponse.ok("Request is being processed.");
     }
 }
