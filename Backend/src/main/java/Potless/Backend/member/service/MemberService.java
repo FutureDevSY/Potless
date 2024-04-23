@@ -14,14 +14,13 @@ import Potless.Backend.member.dto.LoginResponseDto;
 import Potless.Backend.member.dto.MemberInfo;
 import Potless.Backend.member.dto.SignupRequestDto;
 import Potless.Backend.member.entity.MemberEntity;
-import Potless.Backend.member.repository.MemberRepository;
+import Potless.Backend.member.repository.member.MemberRepository;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestBody;
 
 @Log4j2
 @Service

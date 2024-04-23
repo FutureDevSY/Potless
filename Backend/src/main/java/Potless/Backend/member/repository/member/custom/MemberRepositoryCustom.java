@@ -1,4 +1,4 @@
-package Potless.Backend.member.repository.custom;
+package Potless.Backend.member.repository.member.custom;
 
 import Potless.Backend.member.entity.MemberEntity;
 
