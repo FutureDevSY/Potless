@@ -19,11 +19,11 @@ import java.io.IOException;
 public class TokenRefreshRequestFilter extends OncePerRequestFilter {
 
     private final FilterResponse filterResponse;
-    final String TOKEN_URL = "/api/v1/member";
+    final String TOKEN_URL = "/api/member";
     final String PUT_METHOD = "PUT";
 
     /**
-     * Refresh 토큰 요청을 처리하기 위한 필터. 특정 URL (/api/v1/member)에 PUT 요청이 들어온 경우, Refresh 토큰의 존재 여부를 확인한다. Refresh 토큰이 존재하지 않으면, 적절한 응답을 반환한다.
+     * Refresh 토큰 요청을 처리하기 위한 필터. 특정 URL (/api/member)에 PUT 요청이 들어온 경우, Refresh 토큰의 존재 여부를 확인한다. Refresh 토큰이 존재하지 않으면, 적절한 응답을 반환한다.
      *
      * @param request     HttpServletRequest 객체
      * @param response    HttpServletResponse 객체
