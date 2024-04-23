@@ -1,6 +1,7 @@
 package Potless.Backend.member.entity;
 
 import Potless.Backend.global.entity.MemberBaseEntity;
+import Potless.Backend.member.dto.SignupRequestDto;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -21,6 +22,7 @@ public class MemberEntity extends MemberBaseEntity {
     @Column(name = "member_name", nullable = false)
     private String memberName;
 
+    /* 0은 관리자, 1은 일반 회원 */
     @Column(name = "member_role", nullable = false)
     private Integer role;
 
@@ -54,4 +56,16 @@ public class MemberEntity extends MemberBaseEntity {
         this.managerEntity = managerEntity;
         this.workerEntity = workerEntity;
     }
+
+    public static MemberEntity of(SignupRequestDto requestDto, String encodedPassword) {
+        return MemberEntity.builder()
+                .email(requestDto.getEmail())
+                .password(encodedPassword)
+                .memberName(requestDto.getMemberName())
+                .role(0)
+                .phone(requestDto.getPhone())
+                .region(requestDto.getRegion())
+                .build();
+    }
+
 }

@@ -2,6 +2,7 @@ package Potless.Backend.damage.entity.road;
 
 import Potless.Backend.damage.entity.area.AreaEntity;
 import Potless.Backend.damage.entity.area.LocationEntity;
+import Potless.Backend.damage.entity.enums.Status;
 import Potless.Backend.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -25,7 +26,6 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class DamageEntity extends BaseEntity {
 
-
     @Id
     @Column(name = "damage_id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,7 +44,7 @@ public abstract class DamageEntity extends BaseEntity {
     private Double width;
     @Enumerated(EnumType.STRING)
     @Column(name = "damage_status", nullable = false)
-    private Status status = Status.대기중;
+    private Status status = Status.작업전;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     @JoinColumn(name = "area_id")
@@ -57,7 +57,10 @@ public abstract class DamageEntity extends BaseEntity {
     @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, mappedBy = "damageEntity")
     private List<ImageEntity> imageEntities = new ArrayList<>();
 
-    public DamageEntity(Long id, Integer severity, Double dirX, Double dirY, String address, String roadName, Double width, AreaEntity areaEntity, LocationEntity locationEntity, List<ImageEntity> imageEntities) {
+    @Column(name = "dtype", insertable = false, updatable = false)
+    private String dtype;
+
+    public DamageEntity(Long id, Integer severity, Double dirX, Double dirY, String address, String roadName, Double width, Status status, AreaEntity areaEntity, LocationEntity locationEntity, List<ImageEntity> imageEntities, String dtype) {
         this.id = id;
         this.severity = severity;
         this.dirX = dirX;
@@ -65,9 +68,11 @@ public abstract class DamageEntity extends BaseEntity {
         this.address = address;
         this.roadName = roadName;
         this.width = width;
+        this.status = status;
         this.areaEntity = areaEntity;
         this.locationEntity = locationEntity;
         this.imageEntities = imageEntities;
+        this.dtype = dtype;
     }
 
     public void changeStatus(Status status) {
