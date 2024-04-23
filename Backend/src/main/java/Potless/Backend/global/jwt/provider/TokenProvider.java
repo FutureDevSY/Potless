@@ -21,26 +21,31 @@ public class TokenProvider {
     private final int ACCESS_TOKEN_TIME;
 
     @Getter
-    private final int REFRESH_TOKEN_TIME;
+    private final int REFRESH_TOKEN_TIME_WEB;
+
+    @Getter
+    private final int REFRESH_TOKEN_TIME_APP;
 
     private final String SECRET_KEY;
 
     private Key key;
 
     public TokenProvider(@Value("${jwt.ACCESS_TIME}") final int ACCESS_TOKEN_TIME,
-                         @Value("${jwt.REFRESH_TIME}") final int REFRESH_TOKEN_TIME,
+                         @Value("${jwt.REFRESH_TIME_WEB}") final int REFRESH_TOKEN_TIME_WEB,
+                         @Value("${jwt.REFRESH_TIME_APP}") final int REFRESH_TOKEN_TIME_APP,
                          @Value("${jwt.SECRET_KEY}") final String SECRET_KEY) {
         this.ACCESS_TOKEN_TIME = ACCESS_TOKEN_TIME;
-        this.REFRESH_TOKEN_TIME = REFRESH_TOKEN_TIME;
+        this.REFRESH_TOKEN_TIME_WEB = REFRESH_TOKEN_TIME_WEB;
+        this.REFRESH_TOKEN_TIME_APP = REFRESH_TOKEN_TIME_APP;
         this.SECRET_KEY = SECRET_KEY;
         this.key = Keys.hmacShaKeyFor(Base64.getDecoder().decode(this.SECRET_KEY));
     }
 
-    public TokenInfo generateTokenInfo(String email) {
+    public TokenInfo generateTokenInfo(String email, int identify) {
         return TokenInfo.builder()
                         .email(email)
                         .accessToken(createAccessToken(email))
-                        .refreshToken(createRefreshToken())
+                        .refreshToken(createRefreshToken(identify))
                         .build();
     }
 
@@ -53,10 +58,11 @@ public class TokenProvider {
                    .compact();
     }
 
-    private String createRefreshToken() {
+    private String createRefreshToken(int identify) {
+        long date = (identify == 0) ? TimeUnit.SECONDS.toMillis(REFRESH_TOKEN_TIME_WEB) : TimeUnit.SECONDS.toMillis(REFRESH_TOKEN_TIME_APP);
         return Jwts.builder()
                    .setExpiration(new Date(
-                       System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(REFRESH_TOKEN_TIME)))
+                       System.currentTimeMillis() + date))
                    .signWith(key)
                    .compact();
     }

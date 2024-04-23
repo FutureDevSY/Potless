@@ -70,9 +70,9 @@ public class MemberController {
                 mailService.confirmAuthCode(requestDto.getEmail(), requestDto.getAuthNum(), servletResponse));
     }
 
-   /* 로그인 */
-    @PostMapping("/login")
-    public ResponseEntity<?> login(@Valid @RequestBody LoginRequestDto requestDto,
+   /* 로그인 요청 web/app 구별, refresh token 만료기간 차이*/
+    @PostMapping("/login-web")
+    public ResponseEntity<?> loginWeb(@Valid @RequestBody LoginRequestDto requestDto,
                                    BindingResult bindingResult,
                                    HttpServletResponse httpServletResponse) {
 
@@ -80,12 +80,28 @@ public class MemberController {
             return response.fail(bindingResult);
         }
 
-        return response.success(ResponseCode.LOGIN_SUCCESS, memberService.login(requestDto, httpServletResponse));
+        return response.success(ResponseCode.LOGIN_SUCCESS_WEB, memberService.login(requestDto, httpServletResponse, 0));
+    }
+
+    @PostMapping("/login-app")
+    public ResponseEntity<?> loginApp(@Valid @RequestBody LoginRequestDto requestDto,
+                                   BindingResult bindingResult,
+                                   HttpServletResponse httpServletResponse) {
+
+        if (bindingResult.hasErrors()) {
+            return response.fail(bindingResult);
+        }
+
+        return response.success(ResponseCode.LOGIN_SUCCESS_APP, memberService.login(requestDto, httpServletResponse, 1));
     }
 
     @PostMapping("/logout")
     public ResponseEntity<?> logout(Authentication authentication, HttpServletResponse servletResponse) {
         return response.success(ResponseCode.LOGOUT_SUCCESS, memberService.logout(authentication.getName(), servletResponse));
+    }
+    @PutMapping
+    public ResponseEntity<?> token(@RequestBody String accessToken, int identify) {
+        return response.success(tokenService.reIssueAccessToken(accessToken, identify));
     }
 
 }
