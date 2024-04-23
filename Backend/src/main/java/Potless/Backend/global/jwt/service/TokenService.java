@@ -39,12 +39,12 @@ public class TokenService {
     }
 
 
-    public String reIssueAccessToken(String accessToken) {
+    public String reIssueAccessToken(String accessToken, int identify) {
         String email = tokenProvider.extractEmail(accessToken);
         RefreshToken refreshToken = refreshTokenRepository.findById(email)
                                                           .orElseThrow(RefreshTokenNotFoundException::new);
 
-        String updatedAccessToken = tokenProvider.generateTokenInfo(email).getAccessToken();
+        String updatedAccessToken = tokenProvider.generateTokenInfo(email, identify).getAccessToken();
         refreshToken.updateAccessToken(updatedAccessToken);
         refreshTokenRepository.save(refreshToken);
         return updatedAccessToken;
