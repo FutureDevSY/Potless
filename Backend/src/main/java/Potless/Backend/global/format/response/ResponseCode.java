@@ -11,7 +11,8 @@ public enum ResponseCode {
     /* 회원(Member) */
     MEMBER_SIGNUP_SUCCESS(HttpStatus.CREATED, "회원가입이 정상적으로 완료되었습니다."),
     NICKNAME_CHECK_SUCCESS(HttpStatus.OK, "닉네임 검사가 성공적으로 이루어졌습니다."),
-    LOGIN_SUCCESS(HttpStatus.OK, "로그인이 성공적으로 이루어졌습니다."),
+    LOGIN_SUCCESS_WEB(HttpStatus.OK, "웹 로그인이 성공적으로 이루어졌습니다."),
+    LOGIN_SUCCESS_APP(HttpStatus.OK, "앱 로그인이 성공적으로 이루어졌습니다."),
     SOCIAL_LOGIN_SUCCESS(HttpStatus.OK, "소셜 로그인이 성공적으로 이루어졌습니다."),
     LOGOUT_SUCCESS(HttpStatus.OK, "로그아웃이 성공적으로 이루어졌습니다."),
     PASSWORD_RESET_SUCCESS(HttpStatus.OK, "비밀번호 재설정이 성공적으로 이루어졌습니다."),
