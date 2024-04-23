@@ -9,6 +9,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @Entity
 @Getter
 @Table(name = "project")
@@ -31,12 +33,20 @@ public class ProjectEntity extends BaseEntity {
     @JoinColumn(name = "team_id")
     private TeamEntity teamEntity;
 
+    @Column(name = "project_date", nullable = false)
+    private LocalDate projectDate;
+
+    @Column(name = "project_size", nullable = false)
+    private Integer projectSize;
+
     @Builder
-    public ProjectEntity(Long id, String projectName, ManagerEntity managerEntity, TeamEntity teamEntity) {
+    public ProjectEntity(Long id, String projectName, ManagerEntity managerEntity, TeamEntity teamEntity, LocalDate projectDate, Integer projectSize) {
         this.id = id;
         this.projectName = projectName;
         this.managerEntity = managerEntity;
         this.teamEntity = teamEntity;
+        this.projectDate = projectDate;
+        this.projectSize = projectSize;
     }
 }
 
