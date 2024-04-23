@@ -27,8 +27,10 @@ public enum ResponseCode {
 
     /* 포트홀(Pothole) */
     POTHOLE_LIST_FETCHED(HttpStatus.OK, "포트홀 관련 정보가 성공적으로 조회되었습니다."),
-    POTHOLE_DETECTED(HttpStatus.CREATED, "포트홀 감지 정보가 성공적으로 저장되었습니다.");
+    POTHOLE_DETECTED(HttpStatus.CREATED, "포트홀 감지 정보가 성공적으로 저장되었습니다."),
 
+    /* 경로(Path) */
+    OPTIMAL_PATH_FOUND(HttpStatus.OK, "최적 경로 조회가 성공적으로 이루어졌습니다.");
 
     private final HttpStatus status;
     private final String message;
