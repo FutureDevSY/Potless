@@ -5,16 +5,15 @@ import Potless.Backend.damage.dto.controller.request.DamageSetRequestDTO;
 import Potless.Backend.damage.dto.controller.response.DamageResponseDTO;
 import Potless.Backend.damage.service.IDamageService;
 import Potless.Backend.damage.service.KakaoService;
-import Potless.Backend.global.api.ApiResponse;
+import Potless.Backend.global.format.code.ApiResponse;
+import Potless.Backend.global.format.response.ResponseCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
-import org.springframework.validation.ObjectError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,56 +26,41 @@ public class DamageController {
 
     private final IDamageService iDamageService;
     private final KakaoService kakaoService;
-
+    private final ApiResponse response;
     // 유효성 검사 오류 메시지를 처리해서 ApiResponse 객체를 반환하는 메서드
-    private ApiResponse<Object> getValidationErrorResponse(BindingResult result) {
-        if (result.hasErrors()) {
-            StringBuilder errorMessage = new StringBuilder();
-            for (ObjectError error : result.getAllErrors()) {
-                if (error instanceof FieldError fieldError) {
-                    errorMessage.append(fieldError.getField()).append(": ").append(fieldError.getDefaultMessage()).append("; ");
-                } else {
-                    errorMessage.append(error.getDefaultMessage()).append("; ");
-                }
-            }
-            log.info("Validation errors: {}", errorMessage);
-            return ApiResponse.of(HttpStatus.BAD_REQUEST, errorMessage.toString(), null);
-        }
-        return null;
-    }
+
 
     @GetMapping
-    public ApiResponse<Object> getDamages(
+    public ResponseEntity<?> getDamages(
             @ModelAttribute DamageSearchRequestDTO damageSearchRequestDTO,
             @PageableDefault(size = 10) Pageable pageable
     ) {
         Page<DamageResponseDTO> damages = iDamageService.getDamages(damageSearchRequestDTO, pageable);
-        return ApiResponse.ok(damages);
+        return response.success(ResponseCode.POTHOLE_LIST_FETCHED, damages);
     }
 
     @GetMapping({"{damageId}"})
-    public ApiResponse<Object> getDamage(@PathVariable Long damageId) {
+    public ResponseEntity<?> getDamage(@PathVariable Long damageId) {
         log.info("damageId = {}", damageId);
         DamageResponseDTO damageResponseDTO = iDamageService.getDamage(damageId);
-        return ApiResponse.ok(damageResponseDTO);
+        return response.success(ResponseCode.POTHOLE_FETCHED, damageResponseDTO);
     }
 
     @PostMapping("set")
-    public ApiResponse<Object> setDamage(@RequestBody @Validated DamageSetRequestDTO damageSetRequestDTO, BindingResult result) {
-        ApiResponse<Object> validationResponse = getValidationErrorResponse(result);
-        if (validationResponse != null)
-            return validationResponse;
+    public ResponseEntity<?> setDamage(@RequestBody @Validated DamageSetRequestDTO damageSetRequestDTO, BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors()) {
+            return response.fail(bindingResult);
+        }
+        // 위험도 파악 비동기
 
         // 비동기로 처리하고 바로 응답 반환
         kakaoService.fetchKakaoData(damageSetRequestDTO.getX(), damageSetRequestDTO.getY())
                 .thenAcceptAsync(data -> {
-                    // 로그로 데이터를 출력
-                    log.info("Kakao API Response: {}", data);
-
-                    // 데이터를 처리하고 DB에 저장하는 로직을 여기에 추가
-                    iDamageService.setDamage();
+                    iDamageService.setDamage(data);
                 });
 
-        return ApiResponse.ok("Request is being processed.");
+
+        return response.success(ResponseCode.POTHOLE_DETECTED);
     }
 }
