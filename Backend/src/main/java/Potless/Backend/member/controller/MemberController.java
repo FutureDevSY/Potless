@@ -57,7 +57,7 @@ public class MemberController {
 
 
     /* 이메일 인증코드 인증처리 */
-    @PostMapping("/email/verify")
+    @PostMapping("/email/validation")
     public ResponseEntity<?> emailVerify(@Valid @RequestBody EmailCheckRequestDto requestDto,
                                          BindingResult bindingResult,
                                          HttpServletResponse servletResponse) {
@@ -95,9 +95,14 @@ public class MemberController {
         return response.success(ResponseCode.LOGIN_SUCCESS_APP, memberService.login(requestDto, httpServletResponse, 1));
     }
 
-    @PostMapping("/logout")
-    public ResponseEntity<?> logout(Authentication authentication, HttpServletResponse servletResponse) {
-        return response.success(ResponseCode.LOGOUT_SUCCESS, memberService.logout(authentication.getName(), servletResponse));
+    @PostMapping("/logout-web")
+    public ResponseEntity<?> logoutWEB(Authentication authentication, HttpServletResponse servletResponse) {
+        return response.success(ResponseCode.LOGOUT_SUCCESS, memberService.logout(authentication.getName(), servletResponse, 0));
+    }
+
+    @PostMapping("/logout-app")
+    public ResponseEntity<?> logoutApp(Authentication authentication, HttpServletResponse servletResponse) {
+        return response.success(ResponseCode.LOGOUT_SUCCESS, memberService.logout(authentication.getName(), servletResponse, 1));
     }
     @PutMapping
     public ResponseEntity<?> token(@RequestBody String accessToken, int identify) {
