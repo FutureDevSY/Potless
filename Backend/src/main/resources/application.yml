@@ -5,6 +5,8 @@ spring:
       - jwt
       - filter
       - mail
+      - db
+      - kakao
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -45,4 +47,3 @@ aws:
 #    clientId: abcd1234abcd1234abcd1234
 #    clientSecret: abcd1234abcd1234abcd1234abcd1234abcd1234abcd1234abcd1234abcd1234
 #    region: ap-northeast-2
-
