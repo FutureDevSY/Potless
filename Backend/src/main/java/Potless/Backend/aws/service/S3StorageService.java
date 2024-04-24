@@ -4,6 +4,7 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -14,9 +15,10 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class S3StorageService {
 
-    private static final String bucketName = System.getenv("AWS_S3_BUCKET_NAME");  // 사용할 S3 버킷 이름
-
     private final AmazonS3 s3Client;
+
+    @Value("${aws.s3-bucket-name}")
+    private String bucketName;
 
     public void downloadFile(String keyName) throws IOException {
         S3Object s3object = s3Client.getObject(bucketName, keyName);
