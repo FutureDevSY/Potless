@@ -20,7 +20,7 @@ import java.util.List;
 public class PathService {
 
 
-    @Value("${KAKAO_API_SERVICE_KEY}")
+    @Value("${kakao.api-service-key}")      
     private String KAKAO_API_KEY;
     private final String DISTANCE_URL = "https://apis-navi.kakaomobility.com/v1/directions?priority=DISTANCE&avoid=uturn";
     private final String WAYPOINT_URL = "https://apis-navi.kakaomobility.com/v1/waypoints/directions";
