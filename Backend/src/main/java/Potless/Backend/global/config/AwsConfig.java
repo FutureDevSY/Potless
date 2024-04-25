@@ -1,30 +1,29 @@
 package Potless.Backend.global.config;
 
-import com.amazonaws.regions.Regions;
-import com.amazonaws.services.cognitoidp.AWSCognitoIdentityProvider;
-import com.amazonaws.services.cognitoidp.AWSCognitoIdentityProviderClientBuilder;
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
+import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
-import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.services.s3.S3Client;
 
 @Configuration
 public class AwsConfig {
 
-    @Bean
-    public AWSCognitoIdentityProvider cognitoIdentityProvider() {
-        return AWSCognitoIdentityProviderClientBuilder.standard()
-                .withRegion(Regions.AP_NORTHEAST_2) // 사용자 풀이 위치한 리전
-                .build();
-    }
+    @Value("${aws.secret-access-key}")
+    private String awsKey;
+    @Value("${aws.region}")
+    private String region;
+    @Value("${aws.access-key-id}")
+    private String awsId;
 
     @Bean
-    public S3Client s3Client() {
-        Region region = Region.of("ap-northeast-2"); // 여기에 사용하고 있는 AWS 리전을 넣으세요.
-        return S3Client.builder()
-                .region(region)
-                .credentialsProvider(DefaultCredentialsProvider.create())
+    public AmazonS3 s3client() {
+        BasicAWSCredentials basicAWSCredentials = new BasicAWSCredentials(awsId, awsKey);
+        return AmazonS3ClientBuilder.standard()
+                .withRegion(region)
+                .withCredentials(new AWSStaticCredentialsProvider(basicAWSCredentials))
                 .build();
     }
 }
