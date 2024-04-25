@@ -1,7 +1,25 @@
 <template>
-  <div>chart</div>
+  <div class="chart">
+    <p class="section-title">{{ props.section }}</p>
+    <apexchart type="pie" :options="props.options" :series="props.series" />
+  </div>
 </template>
 
-<script setup></script>
+<script setup>
+const props = defineProps({
+  options: Object,
+  series: Array,
+  section: String,
+});
+</script>
 
-<style scoped></style>
+<style scoped>
+.chart {
+  width: 418px;
+}
+p {
+  text-align: center;
+  font-size: 20px;
+  font-weight: 700;
+}
+</style>

@@ -1,7 +1,12 @@
 <template>
-  <div>Carusel</div>
+  <img class="image" src="../../../assets/image/test_image.png" alt="#" />
 </template>
 
 <script setup></script>
 
-<style scoped></style>
+<style scoped>
+.image {
+  width: 600px;
+  height: 530px;
+}
+</style>

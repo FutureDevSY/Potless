@@ -31,14 +31,12 @@ const router = createRouter({
       name: "PortholeList",
       component: PortholeList,
       props: true,
-      children: [
-        {
-          path: "detail/:id",
-          name: "PortholeDetail",
-          component: PortholeDetail,
-          props: true,
-        },
-      ],
+    },
+    {
+      path: "/porthole/:id",
+      name: "PortholeDetail",
+      component: PortholeDetail,
+      props: true,
     },
     {
       path: "/path",
@@ -63,14 +61,12 @@ const router = createRouter({
       name: "TaskInfo",
       component: TaskInfo,
       props: true,
-      children: [
-        {
-          path: "detail/:id",
-          name: "TaskInfoDetail",
-          component: TaskInfoDetail,
-          props: true,
-        },
-      ],
+    },
+    {
+      path: "/taskinfo/:id",
+      name: "TaskInfoDetail",
+      component: TaskInfoDetail,
+      props: true,
     },
   ],
 });

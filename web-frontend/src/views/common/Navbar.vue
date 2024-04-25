@@ -1,6 +1,6 @@
 <template>
   <div class="navbar-container">
-    <div class="logo">서비스 로고</div>
+    <div class="logo" @click="store.moveHome">서비스 로고</div>
     <div class="move-page">
       <div class="porthole" @click="store.movePorthole">포트홀 조회</div>
       <div class="path" @click="store.movePath">공사 추천 경로</div>

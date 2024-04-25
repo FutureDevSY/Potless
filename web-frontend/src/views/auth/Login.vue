@@ -1,15 +1,42 @@
 <template>
   <div class="container">
     <div class="left-box">
-      <div>서비스 명</div>
-      <div>서비스 로고</div>
-      <div>서비스 설명/ 슬로건</div>
+      <div class="logo">서비스 로고</div>
+      <div class="servicename">POT-LESS</div>
+      <img class="image" src="@/assets/image/road.png" alt="서비스 이미지" />
+      <div class="slogan1">포트홀 없는 길,</div>
+      <div class="slogan2">우리가 만들어 갑니다.</div>
     </div>
     <div class="right-box">
-      <strong>로그인</strong>
-      <input type="text" v-model="auth_id" placeholder="아이디" />
-      <input type="password" v-model="auth_password" placeholder="비밀번호" />
-      <button @click="moveHome">로그인</button>
+      <div
+        class="login-title"
+        :style="{ 'padding-bottom': showIdError || showPasswordError ? '6.5vh' : '9vh' }"
+      >
+        관리자 로그인
+      </div>
+      <div v-if="showIdError" class="error-message">아이디를 입력해주세요.</div>
+      <div v-if="showPasswordError" class="error-message">비밀번호를 입력해주세요.</div>
+      <form class="login-form" @submit.prevent="moveHome">
+        <input
+          class="form-control"
+          :class="{ 'input-error': showIdError }"
+          type="text"
+          v-model="auth_id"
+          placeholder="아이디"
+          @input="showIdError = false"
+        />
+        <input
+          class="form-control"
+          :class="{ 'input-error': showPasswordError }"
+          type="password"
+          v-model="auth_password"
+          placeholder="비밀번호"
+          @input="showPasswordError = false"
+        />
+        <button class="login-button" type="submit">
+          <span class="button-text">로그인</span>
+        </button>
+      </form>
     </div>
   </div>
 </template>
@@ -21,41 +48,189 @@ import { useRouter } from "vue-router";
 const router = useRouter();
 const auth_id = ref("");
 const auth_password = ref("");
+const showIdError = ref(false);
+const showPasswordError = ref(false);
+
 const moveHome = () => {
-  router.push("/");
+  if (!auth_id.value) {
+    showIdError.value = true;
+  }
+  if (!auth_password.value) {
+    showPasswordError.value = true;
+  }
+  if (auth_id.value && auth_password.value) {
+    router.push("/");
+  }
 };
 </script>
 
 <style scoped>
 .container {
   display: flex;
-  margin: 10%;
-  padding: 5px;
-  grid-row: 1fr 1fr;
-  gap: 10px;
-  height: 500px;
-}
-input {
-  text-align: center;
-  margin: 10px;
-}
-.left-box {
-  border: 1px solid black;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
+  padding: 0 15vw 0 15vw;
+  height: 100vh;
+  background-color: rgb(113, 120, 116);
 }
-.left-box > div {
-  margin: 10px;
-}
+
+.left-box,
 .right-box {
-  border: 1px solid black;
-  width: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
+  background-color: #faf9f2;
+  height: 75vh;
+}
+
+.left-box {
+  flex: 4;
+  background-color: rgb(165, 197, 183);
+  color: white;
+}
+
+.right-box {
+  flex: 3;
+}
+
+.logo {
+  padding-top: 12vh;
+}
+
+.servicename {
+  font-size: 6vh;
+  font-weight: bold;
+  padding-top: 0.3vh;
+}
+
+.image {
+  max-width: 100%;
+  height: 45%;
+  width: auto;
+  padding-top: 1vh;
+}
+
+.slogan1,
+.slogan2 {
+  font-size: 3vh;
+}
+
+.slogan1 {
+  padding-top: 1vh;
+}
+
+.slogan2 {
+  margin-top: 1.5vh;
+}
+
+.login-title {
+  font-size: 3.6vh;
+  font-weight: bold;
+  padding-bottom: 9vh;
+  padding-top: 16.5vh;
+  color: rgb(85, 85, 85);
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+input {
+  margin: 1.3vh;
+}
+
+.form-control {
+  width: 18vw;
+  height: 48px;
+  position: relative;
+  overflow: hidden;
+  border-radius: 20px;
+  background: none;
+  border: 0;
+  border: 2px solid rgb(129, 129, 129);
+  transition: border 0.4s ease;
+  padding-left: 15px;
+  font-size: 18px;
+  color: rgb(85, 85, 85);
+}
+
+.form-control:focus {
+  outline: 0;
+  border-color: #009b70;
+}
+
+.form-control::placeholder {
+  color: gray;
+  font-size: 16px;
+  transition: all 0.4s ease;
+}
+
+.form-control:focus::placeholder {
+  opacity: 0;
+}
+
+.login-button {
+  border: 2px solid rgb(129, 129, 129);
+  background: none;
+  margin-top: 5vh;
+  width: 13vw;
+  height: 50px;
+  cursor: pointer;
+  border-radius: 40px;
+  font-size: 20px;
+  position: relative;
+  overflow: hidden;
+  color: rgb(255, 255, 255);
+  font-weight: bold;
+  transition: border 0.5s, color 0.5s;
+}
+
+.login-button:hover {
+  border: 2px solid #009b70;
+}
+
+.login-button:hover .button-text {
+  color: #009b70;
+}
+
+.button-text {
+  position: relative;
+  z-index: 2;
+  transition: color 0.5s;
+  font-weight: bold;
+}
+
+.login-button:hover {
+  border: 2px solid #009b70;
+  transition: 0.5s;
+}
+
+.login-button::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 0%;
+  background-color: rgb(129, 129, 129);
+  z-index: 1;
+  transition: 0.5s;
+  top: -1px;
+  border-radius: 0 0 50% 50%;
+  height: 180%;
+}
+
+.login-button:hover::before {
+  height: 0%;
+}
+
+.input-error {
+  border: 2px solid #ff4343;
+}
+
+.error-message {
+  color: #ff4343;
 }
 </style>
