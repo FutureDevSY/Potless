@@ -1,7 +1,5 @@
 package Potless.Backend.damage.dto.controller.response;
 
-import Potless.Backend.damage.entity.area.AreaEntity;
-import Potless.Backend.damage.entity.area.LocationEntity;
 import Potless.Backend.damage.entity.enums.Status;
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.*;
@@ -21,14 +19,14 @@ public class DamageResponseDTO {
     private String roadName;
     private Double width;
     private Status status;
-    private AreaEntity areaEntity;
-    private LocationEntity locationEntity;
+    private String area;
+    private String location;
     private List<ImagesResponseDTO> imagesResponseDTOS;
     private String dtype;
 
     @Builder
     @QueryProjection
-    public DamageResponseDTO(Long id, Integer severity, Double dirX, Double dirY, String address, String roadName, Double width, Status status, AreaEntity areaEntity, LocationEntity locationEntity, List<ImagesResponseDTO> imagesResponseDTOS, String dtype) {
+    public DamageResponseDTO(Long id, Integer severity, Double dirX, Double dirY, String address, String roadName, Double width, Status status, String area, String location, List<ImagesResponseDTO> imagesResponseDTOS, String dtype) {
         this.id = id;
         this.severity = severity;
         this.dirX = dirX;
@@ -37,8 +35,8 @@ public class DamageResponseDTO {
         this.roadName = roadName;
         this.width = width;
         this.status = status;
-        this.areaEntity = areaEntity;
-        this.locationEntity = locationEntity;
+        this.area = area;
+        this.location = location;
         this.imagesResponseDTOS = imagesResponseDTOS;
         this.dtype = dtype;
     }

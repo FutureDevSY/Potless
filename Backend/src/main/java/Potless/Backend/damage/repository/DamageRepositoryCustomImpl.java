@@ -54,8 +54,8 @@ public class DamageRepositoryCustomImpl implements DamageRepositoryCustom {
                             damage.roadName,
                             damage.width,
                             damage.status,
-                            damage.areaEntity,
-                            damage.locationEntity,
+                            damage.areaEntity.areaGu,
+                            damage.locationEntity.locationName,
                             damage.imageEntities,
                             damage.dtype
                     ))
@@ -88,8 +88,8 @@ public class DamageRepositoryCustomImpl implements DamageRepositoryCustom {
                             damage.roadName,
                             damage.width,
                             damage.status,
-                            damage.areaEntity,
-                            damage.locationEntity,
+                            damage.areaEntity.areaGu,
+                            damage.locationEntity.locationName,
                             damage.imageEntities,
                             damage.dtype
                     ))
@@ -120,8 +120,8 @@ public class DamageRepositoryCustomImpl implements DamageRepositoryCustom {
                             damage.roadName,
                             damage.width,
                             damage.status,
-                            damage.areaEntity,
-                            damage.locationEntity,
+                            damage.areaEntity.areaGu,
+                            damage.locationEntity.locationName,
                             damage.imageEntities,
                             damage.dtype
                     ))

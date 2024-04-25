@@ -1,10 +1,7 @@
 package Potless.Backend.damage.dto.controller.request;
 
 import Potless.Backend.damage.entity.enums.Status;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
 import java.time.LocalDate;
 
@@ -21,6 +18,7 @@ public class DamageSearchRequestDTO {
     private String area;
     private String searchWord;
 
+    @Builder
     public DamageSearchRequestDTO(LocalDate start, LocalDate end, String type, Status status, Integer severity, String area, String searchWord) {
         if (start == null && end == null) {
             start = LocalDate.now().minusWeeks(1);
