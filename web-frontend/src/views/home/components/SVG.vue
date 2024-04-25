@@ -1,6 +1,12 @@
 <template>
   <div class="map-container">
-    <div v-html="svgContent" @click="handleClick" class="map"></div>
+    <div
+      v-html="svgContent"
+      @mouseover="handleMouseOver"
+      @mouseout="handleMouseOut"
+      @click="handleClick"
+      class="map"
+    ></div>
   </div>
 </template>
 
