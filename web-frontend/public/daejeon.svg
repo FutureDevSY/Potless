@@ -24,11 +24,6 @@
         isolation: isolate;
       }
 
-      .cls-8 {
-        mix-blend-mode: screen;
-        opacity: .25;
-      }
-
     </style>
   </defs>
   <g class="cls-7">
