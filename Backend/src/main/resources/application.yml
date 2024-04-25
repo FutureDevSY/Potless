@@ -32,19 +32,3 @@ spring:
       hibernate:
         format_sql=true:
         use_sql_comments=true:
-
----
-aws:
-  cognito:
-    identityPoolId: ap-northeast-2:5dd87e0b-7f60-47b4-98a0-a86ef8894b8d
-    userPoolId: ap-northeast-2_ZbpScKPHM
-    clientId: 7cpqmao3crugm8dhioe9uqtsfn
-    region: ap-northeast-2
-
----
-#aws:
-#  cognito:
-#    userPoolId: ap-northeast-2_ZbpScKPHM
-#    clientId: abcd1234abcd1234abcd1234
-#    clientSecret: abcd1234abcd1234abcd1234abcd1234abcd1234abcd1234abcd1234abcd1234
-#    region: ap-northeast-2
