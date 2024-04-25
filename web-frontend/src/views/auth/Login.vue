@@ -2,7 +2,7 @@
   <div class="container">
     <div class="left-box">
       <div class="logo">서비스 로고</div>
-      <div class="servicename">POT-LESS</div>
+      <div class="servicename">POTLESS</div>
       <img class="image" src="@/assets/image/road.png" alt="서비스 이미지" />
       <div class="slogan1">포트홀 없는 길,</div>
       <div class="slogan2">우리가 만들어 갑니다.</div>
@@ -71,7 +71,7 @@ const moveHome = () => {
   align-items: center;
   padding: 0 15vw 0 15vw;
   height: 100vh;
-  background-color: rgb(113, 120, 116);
+  background-color: rgb(243, 243, 243);
 }
 
 .left-box,
@@ -79,13 +79,13 @@ const moveHome = () => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: #faf9f2;
+  background-color: #ffffff;
   height: 75vh;
 }
 
 .left-box {
   flex: 4;
-  background-color: rgb(165, 197, 183);
+  background-color: #cbcaca;
   color: white;
 }
 
@@ -128,7 +128,7 @@ const moveHome = () => {
   font-weight: bold;
   padding-bottom: 9vh;
   padding-top: 16.5vh;
-  color: rgb(85, 85, 85);
+  color: #373737;
 }
 
 .login-form {
@@ -150,16 +150,16 @@ input {
   border-radius: 20px;
   background: none;
   border: 0;
-  border: 2px solid rgb(129, 129, 129);
+  border: 2px solid #7a7979;
   transition: border 0.4s ease;
   padding-left: 15px;
   font-size: 18px;
-  color: rgb(85, 85, 85);
+  color: #373737;
 }
 
 .form-control:focus {
   outline: 0;
-  border-color: #009b70;
+  border-color: #a9a9a9;
 }
 
 .form-control::placeholder {
@@ -173,8 +173,7 @@ input {
 }
 
 .login-button {
-  border: 2px solid rgb(129, 129, 129);
-  background: none;
+  background-color: #474747;
   margin-top: 5vh;
   width: 13vw;
   height: 50px;
@@ -186,44 +185,6 @@ input {
   color: rgb(255, 255, 255);
   font-weight: bold;
   transition: border 0.5s, color 0.5s;
-}
-
-.login-button:hover {
-  border: 2px solid #009b70;
-}
-
-.login-button:hover .button-text {
-  color: #009b70;
-}
-
-.button-text {
-  position: relative;
-  z-index: 2;
-  transition: color 0.5s;
-  font-weight: bold;
-}
-
-.login-button:hover {
-  border: 2px solid #009b70;
-  transition: 0.5s;
-}
-
-.login-button::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  width: 100%;
-  height: 0%;
-  background-color: rgb(129, 129, 129);
-  z-index: 1;
-  transition: 0.5s;
-  top: -1px;
-  border-radius: 0 0 50% 50%;
-  height: 180%;
-}
-
-.login-button:hover::before {
-  height: 0%;
 }
 
 .input-error {
