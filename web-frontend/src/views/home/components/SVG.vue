@@ -12,6 +12,7 @@ import { useDistrictStore } from "../../../stores/district";
 const svgContent = ref("");
 const router = useRouter();
 const districtStore = useDistrictStore();
+const hoveredClass = ref(null);
 
 const handleClick = (event) => {
   const target = event.target;
