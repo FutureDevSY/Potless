@@ -85,7 +85,7 @@ const moveHome = () => {
 
 .left-box {
   flex: 4;
-  background-color: #cbcaca;
+  background-color: #d7d7d7;
   color: white;
 }
 
