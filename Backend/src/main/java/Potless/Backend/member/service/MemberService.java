@@ -66,7 +66,7 @@ public class MemberService {
         int refreshTokenTime = (identify == 0) ? tokenProvider.getREFRESH_TOKEN_TIME_WEB() : tokenProvider.getREFRESH_TOKEN_TIME_APP();
 
         tokenService.saveToken(tokenInfo);
-        cookieUtil.addCookie("RefreshToken", tokenInfo.getRefreshToken(), refreshTokenTime, response);
+        if(identify == 0) cookieUtil.addCookie("RefreshToken", tokenInfo.getRefreshToken(), refreshTokenTime, response);
 
         return LoginResponseDto.builder()
                                .token(tokenInfo.getAccessToken())
@@ -82,8 +82,8 @@ public class MemberService {
     }
 
     @Transactional
-    public String logout(String email, HttpServletResponse servletResponse) {
-        cookieUtil.removeCookie("RefreshToken", servletResponse);
+    public String logout(String email, HttpServletResponse servletResponse, int identify) {
+        if(identify == 0) cookieUtil.removeCookie("RefreshToken", servletResponse);
         refreshTokenRepository.findById(email)
                 .ifPresent(refreshTokenRepository::delete);
         return email;
