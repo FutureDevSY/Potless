@@ -14,6 +14,21 @@ const router = useRouter();
 const districtStore = useDistrictStore();
 const hoveredClass = ref(null);
 
+const handleMouseOver = (event) => {
+  if (
+    event.target.classList.contains("cls-2") ||
+    event.target.classList.contains("cls-3") ||
+    event.target.classList.contains("cls-4") ||
+    event.target.classList.contains("cls-5") ||
+    event.target.classList.contains("cls-6")
+  ) {
+    hoveredClass.value = event.target.classList[0];
+    document.querySelectorAll(".map g:not(." + hoveredClass.value + ")").forEach((el) => {
+      el.classList.add("darken");
+    });
+  }
+};
+
 const handleClick = (event) => {
   const target = event.target;
   if (target.classList.contains("cls-5")) {
