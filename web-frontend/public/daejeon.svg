@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1920 1080">
+<?xml version="1.0" encoding="UTF-8"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1920 1080">
   <defs>
     <style>
       .cls-1 {
@@ -8,17 +8,17 @@
         pointer-events: none;
       }
 
-      .cls-2, .cls-3, .cls-4, .cls-5, .cls-6 {
+      <!-- .cls-2, .cls-3, .cls-4, .cls-5, .cls-6 {
         transition: fill 0.5s ease, transform 0.5s ease;
         transform-origin: center;
         cursor: pointer;
         fill: #faf9f2;
-      }
+      } -->
 
-      .cls-2:hover, .cls-3:hover, .cls-4:hover, .cls-5:hover, .cls-6:hover {
+      <!-- .cls-2:hover, .cls-3:hover, .cls-4:hover, .cls-5:hover, .cls-6:hover {
       fill: #a5c5b7;
       transform: scale(1.09);
-      }
+      } -->
 
       .cls-7 {
         isolation: isolate;
