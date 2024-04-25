@@ -10,14 +10,12 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Builder
 public class ProjectListResponseDto {
-    private Long id;
     private String projectName;
     private String managerName;
     private LocalDate projectDate;
     private Integer projectSize;
 
-    public ProjectListResponseDto(Long id, String projectName, String managerName, LocalDate projectDate, Integer projectSize) {
-        this.id = id;
+    public ProjectListResponseDto(String projectName, String managerName, LocalDate projectDate, Integer projectSize) {
         this.projectName = projectName;
         this.managerName = managerName;
         this.projectDate = projectDate;

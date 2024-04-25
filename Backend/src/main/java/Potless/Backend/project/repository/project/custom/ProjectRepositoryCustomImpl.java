@@ -29,18 +29,17 @@ public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
         QProjectEntity project = QProjectEntity.projectEntity;
         BooleanBuilder builder = new BooleanBuilder();
 
-        builder.and(betweenDates(project, projectListRequestDto.getStart(), projectListRequestDto.getEnd()))
-//                .and(equalToStatus(project, projectListRequestDto.getStatus()))
+        builder.and(managerIdEquals(project, projectListRequestDto.getManagerId()))
+                .and(betweenDates(project, projectListRequestDto.getStart(), projectListRequestDto.getEnd()))
                 .and(containsSearchWord(project, projectListRequestDto.getWord()));
 
         List<ProjectListResponseDto> results = queryFactory
                 .select(Projections.constructor(ProjectListResponseDto.class,
                         project.id,
                         project.projectName,
-                        project.managerEntity,
+                        project.managerEntity.memberEntity.memberName.as("managerName"),
                         project.projectDate,
-                        project.projectSize,
-                        project.status
+                        project.projectSize
                 ))
                 .from(project)
                 .where(builder)
@@ -58,6 +57,14 @@ public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
         return new PageImpl<>(results, pageable, total);
     }
 
+    //매니저
+    private BooleanExpression managerIdEquals(QProjectEntity project, Long managerId) {
+        if (managerId != null) {
+            return project.managerEntity.id.eq(managerId);
+        }
+        return null;
+    }
+
     //날짜
     private BooleanExpression betweenDates(QProjectEntity project, LocalDate start, LocalDate end) {
         if (start != null && end != null) {
@@ -73,14 +80,6 @@ public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
         }
         return null;
     }
-
-//    //지역
-//    private BooleanExpression containsArea(QProjectEntity project, String area) {
-//        if (area != null) {
-//            return project.areaEntity.areaGu.contains(area);
-//        }
-//        return null;
-//    }
 
     //검색어
     private BooleanExpression containsSearchWord(QProjectEntity project, String word) {
