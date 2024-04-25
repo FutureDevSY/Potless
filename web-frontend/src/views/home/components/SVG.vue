@@ -1,12 +1,6 @@
 <template>
   <div class="map-container">
-    <div
-      v-html="svgContent"
-      @mouseover="handleMouseOver"
-      @mouseout="handleMouseOut"
-      @click="handleClick"
-      class="map"
-    ></div>
+    <div v-html="svgContent" @click="handleClick" class="map"></div>
   </div>
 </template>
 
@@ -18,28 +12,6 @@ import { useDistrictStore } from "../../../stores/district";
 const svgContent = ref("");
 const router = useRouter();
 const districtStore = useDistrictStore();
-const hoveredClass = ref(null);
-
-const handleMouseOver = (event) => {
-  if (
-    event.target.classList.contains("cls-2") ||
-    event.target.classList.contains("cls-3") ||
-    event.target.classList.contains("cls-4") ||
-    event.target.classList.contains("cls-5") ||
-    event.target.classList.contains("cls-6")
-  ) {
-    hoveredClass.value = event.target.classList[0];
-    document.querySelectorAll(".map g:not(." + hoveredClass.value + ")").forEach((el) => {
-      el.classList.add("darken");
-    });
-  }
-};
-
-const handleMouseOut = (event) => {
-  document.querySelectorAll(".darken").forEach((el) => {
-    el.classList.remove("darken");
-  });
-};
 
 const handleClick = (event) => {
   const target = event.target;
@@ -88,18 +60,17 @@ onMounted(async () => {
   height: auto;
 }
 
-.darken {
-  filter: brightness(70%);
-}
-
 .map svg g g g {
-  /* transition: transform 0.5s ease; */
+  transition: transform 0.5s ease;
   cursor: pointer;
-  /* transform-origin: center; */
+  transform-origin: center;
+  fill: #faf9f2;
   /* filter: drop-shadow(5px 5px 10px gray); */
 }
 
 .map svg g g g:hover {
-  /* transform: scale(1.09); */
+  fill: #a5c5b7;
+  transform: scale(1.04) translateZ(30px);
+  color: white;
 }
 </style>
