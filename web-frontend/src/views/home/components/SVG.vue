@@ -65,12 +65,12 @@ onMounted(async () => {
   cursor: pointer;
   transform-origin: center;
   fill: #faf9f2;
-  /* filter: drop-shadow(5px 5px 10px gray); */
 }
 
 .map svg g g g:hover {
   fill: #a5c5b7;
   transform: scale(1.04) translateZ(30px);
+  filter: drop-shadow(5px 10px rgb(55, 55, 55));
   color: white;
 }
 </style>
