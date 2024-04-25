@@ -71,7 +71,7 @@ const moveHome = () => {
   align-items: center;
   padding: 0 15vw 0 15vw;
   height: 100vh;
-  background-color: rgb(243, 243, 243);
+  background-color: #f3f3f3;
 }
 
 .left-box,
