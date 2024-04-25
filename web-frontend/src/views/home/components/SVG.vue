@@ -29,6 +29,12 @@ const handleMouseOver = (event) => {
   }
 };
 
+const handleMouseOut = (event) => {
+  document.querySelectorAll(".darken").forEach((el) => {
+    el.classList.remove("darken");
+  });
+};
+
 const handleClick = (event) => {
   const target = event.target;
   if (target.classList.contains("cls-5")) {
