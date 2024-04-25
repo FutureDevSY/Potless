@@ -88,6 +88,10 @@ onMounted(async () => {
   height: auto;
 }
 
+.darken {
+  filter: brightness(70%);
+}
+
 .map svg g g g {
   /* transition: transform 0.5s ease; */
   cursor: pointer;
