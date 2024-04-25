@@ -45,6 +45,8 @@ public enum ErrorCode {
     AUTH_CODE_INVALID(HttpStatus.BAD_REQUEST, "인증 코드가 유효하지 않습니다."),
 
     PROFILE_UPDATE_FAILED(HttpStatus.BAD_REQUEST, "회원정보를 수정할 수 없습니다."),
+    MEMBER_NOT_FOUND(HttpStatus.UNAUTHORIZED,"관련 회원 정보를 찾을 수 없습니다."),
+    MANAGER_NOT_FOUND(HttpStatus.UNAUTHORIZED,"관련 매니저 정보를 찾을 수 없습니다."),
 
     // 포트홀 관련 예외 처리
     POTHOLE_NOT_FOUND(HttpStatus.UNAUTHORIZED, "관련 포트홀 정보를 찾을 수 없습니다."),
