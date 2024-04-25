@@ -56,21 +56,22 @@ onMounted(async () => {
 }
 
 .map {
-  width: 190vh;
+  width: 180vh;
   height: auto;
+  /* margin-top: 15vh; */
 }
 
 .map svg g g g {
-  transition: transform 0.5s ease;
+  /* transition: transform 0.5s ease; */
   cursor: pointer;
-  transform-origin: center;
-  fill: #faf9f2;
+  /* transform-origin: center; */
+  fill: #f3f3f3;
 }
 
 .map svg g g g:hover {
-  fill: #a5c5b7;
+  /* fill: #a5c5b7;
   transform: scale(1.04) translateZ(30px);
-  filter: drop-shadow(5px 10px rgb(55, 55, 55));
-  color: white;
+  filter: drop-shadow(3px 7px rgb(71, 71, 71));
+  color: white; */
 }
 </style>
