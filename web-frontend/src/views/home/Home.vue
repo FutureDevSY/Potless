@@ -1,8 +1,8 @@
 <template>
   <div class="map-container">
-    <!-- <p>서비스 로고</p> -->
+    <p class="logo">POTLESS</p>
     <SVG />
-    <!-- <Chart
+    <Chart
       class="chart chart1"
       :options="chartOptions"
       :series="chart1Series"
@@ -31,7 +31,7 @@
       :options="chartOptions"
       :series="chart5Series"
       :section="section[4]"
-    /> -->
+    />
   </div>
 </template>
 
@@ -49,6 +49,9 @@ const chartOptions = {
   labels: ["완료", "미완료"],
   legend: {
     position: "bottom",
+    labels: {
+      colors: ["#373737", "#373737"],
+    },
   },
   responsive: [
     {
@@ -63,7 +66,7 @@ const chartOptions = {
       },
     },
   ],
-  colors: ["#BC7FCD", "#FB9AD1", "#FFCDEA"],
+  colors: ["#273a86", "#4f5e9d6f"],
   tooltip: {
     y: {
       formatter: (value) => `${value}%`,
@@ -80,39 +83,56 @@ const section = ["유성구", "대덕구", "중구", "서구", "동구"];
 </script>
 
 <style scoped>
+.et {
+  color: #4f5e9d6f;
+}
 .map-container {
   position: relative;
   display: flex;
   flex-direction: column;
-  background-color: #555555;
+  background-color: #f3f3f3;
+}
+
+.logo {
+  font-size: 55px;
+  color: #373737;
+  font-weight: bold;
+  margin: 4.5vh 0px 0px 0px;
 }
 
 .chart {
   position: absolute;
-  width: 150px;
-  height: 150px;
-  width: 20%;
+  width: 34vh;
   margin: auto;
 }
 
+/* 유성구 */
 .chart1 {
-  top: 100px;
-  left: 200px;
+  top: 33vh;
+  left: 8vw;
 }
+
+/* 대덕구 */
 .chart2 {
-  top: 50px;
-  right: 300px;
+  top: 15vh;
+  right: 10vw;
 }
+
+/* 중구 */
 .chart3 {
-  top: 550px;
-  right: 350px;
+  top: 70vh;
+  right: 15vw;
 }
+
+/* 서구 */
 .chart4 {
-  top: 550px;
-  left: 250px;
+  top: 70vh;
+  left: 8vw;
 }
+
+/* 동구 */
 .chart5 {
-  top: 310px;
-  right: 100px;
+  top: 47vh;
+  right: 1vw;
 }
 </style>
