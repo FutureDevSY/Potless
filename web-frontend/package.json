@@ -9,13 +9,17 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@popperjs/core": "^2.11.8",
     "apexcharts": "^3.48.0",
+    "leaflet": "^1.9.4",
     "pinia": "^2.1.7",
+    "v-calendar": "^3.1.2",
     "vue": "^3.4.21",
     "vue-router": "^4.3.0",
     "vue3-apexcharts": "^1.5.2"
   },
   "devDependencies": {
+    "@mdi/font": "^7.4.47",
     "@vitejs/plugin-vue": "^5.0.4",
     "vite": "^5.2.8"
   }

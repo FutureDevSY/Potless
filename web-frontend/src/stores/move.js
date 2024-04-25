@@ -8,6 +8,10 @@ export const useMoveStore = defineStore("moveStore", () => {
     router.push("/porthole");
   };
 
+  const movePortholeDetail = (id) => {
+    router.push(`/porthole/${id}`);
+  };
+
   const movePath = () => {
     router.push("/path");
   };
@@ -24,11 +28,27 @@ export const useMoveStore = defineStore("moveStore", () => {
     router.push("/statistics");
   };
 
+  const moveTaskDetail = (id) => {
+    router.push(`/taskinfo/${id}`);
+  };
+
+  const moveHome = () => {
+    router.push("/");
+  };
+
+  const moveBack = () => {
+    router.back();
+  };
+
   return {
     movePorthole,
+    movePortholeDetail,
     movePath,
     moveTask,
     moveLogin,
     moveStatistics,
+    moveTaskDetail,
+    moveHome,
+    moveBack,
   };
 });
