@@ -56,7 +56,10 @@ public enum ErrorCode {
 
     // 프로젝트 관련 예외 처리
     PROJECT_NOT_FOUND(HttpStatus.UNAUTHORIZED,"관련 프로젝트 정보를 찾을 수 없습니다."),
-    TEAM_NOT_FOUND(HttpStatus.UNAUTHORIZED,"관련 팀 정보를 찾을 수 없습니다.");
+    TEAM_NOT_FOUND(HttpStatus.UNAUTHORIZED,"관련 팀 정보를 찾을 수 없습니다."),
+
+    // AWS ERROR
+    FAILED_TO_UPLOAD(HttpStatus.INTERNAL_SERVER_ERROR,"S3 이미지 저장에 실패했습니다.");
 
     private final HttpStatus status;
     private final String message;
