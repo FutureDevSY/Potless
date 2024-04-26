@@ -62,6 +62,7 @@ const store = useMoveStore();
   border-radius: 8px;
   display: flex;
   align-items: center;
+  cursor: pointer;
 }
 
 .logout:hover {
