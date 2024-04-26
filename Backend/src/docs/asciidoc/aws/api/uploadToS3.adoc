@@ -1,0 +1,10 @@
+[[upload_to_s3]]
+==== HTTP Request
+
+include::{snippets}/upload_to_s3/http-request.adoc[]
+include::{snippets}/upload_to_s3/request-parts.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/upload_to_s3/http-response.adoc[]
+include::{snippets}/upload_to_s3/response-fields.adoc[]
