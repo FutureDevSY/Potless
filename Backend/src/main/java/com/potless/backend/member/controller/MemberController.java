@@ -8,7 +8,7 @@ import com.potless.backend.member.dto.EmailValidationRequestDto;
 import com.potless.backend.member.dto.LoginRequestDto;
 import com.potless.backend.member.dto.SignupRequestDto;
 import com.potless.backend.member.service.MailService;
-import com.potless.backend.member.service.MemberService;
+import com.potless.backend.member.service.MemberServiceImpl;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.*;
 public class MemberController {
 
     private final TokenService tokenService;
-    private final MemberService memberService;
+    private final MemberServiceImpl memberService;
     private final ApiResponse response;
     private final MailService mailService;
 
