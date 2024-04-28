@@ -2,11 +2,13 @@ package com.potless.backend.path.dto;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import lombok.Builder;
 import lombok.Getter;
 
 import java.util.List;
 
 @Getter
+@Builder
 @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class KakaoWaypointResponse {
 
@@ -14,6 +16,7 @@ public class KakaoWaypointResponse {
     private List<Route> routes;
 
     @Getter
+    @Builder
     @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
     public static class Route {
         private Integer resultCode;
@@ -23,6 +26,7 @@ public class KakaoWaypointResponse {
     }
 
     @Getter
+    @Builder
     @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
     public static class Summary {
         private Location origin;
@@ -35,6 +39,7 @@ public class KakaoWaypointResponse {
         private Integer duration;
 
         @Getter
+        @Builder
         public static class Fare {
             private Integer taxi;
             private Integer toll;
@@ -42,6 +47,7 @@ public class KakaoWaypointResponse {
     }
 
     @Getter
+    @Builder
     public static class Section {
         private Integer distance;
         private Integer duration;
@@ -50,6 +56,7 @@ public class KakaoWaypointResponse {
         private List<Guide> guides;
 
         @Getter
+        @Builder
         @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
         public static class Road {
             private String name;
@@ -61,6 +68,7 @@ public class KakaoWaypointResponse {
         }
 
         @Getter
+        @Builder
         @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
         public static class Guide {
             private String name;
@@ -75,6 +83,7 @@ public class KakaoWaypointResponse {
     }
 
     @Getter
+    @Builder
     @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
     public static class Bound {
         private Double minX;
