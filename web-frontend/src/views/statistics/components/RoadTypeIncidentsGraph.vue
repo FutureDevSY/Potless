@@ -16,8 +16,8 @@ onMounted(() => {
 function initMap() {
   window.kakao.maps.load(() => {
     const mapContainer = document.getElementById("map");
-    mapContainer.style.width = "600px";
-    mapContainer.style.height = "500px";
+    mapContainer.style.width = "780px";
+    mapContainer.style.height = "600px";
     const mapOption = {
       center: new window.kakao.maps.LatLng(36.3549777, 127.2983403),
       level: 3,
@@ -32,6 +32,6 @@ function initMap() {
 <style scoped>
 .map {
   width: 100%;
-  height: 100%;
+  height: auto;
 }
 </style>
