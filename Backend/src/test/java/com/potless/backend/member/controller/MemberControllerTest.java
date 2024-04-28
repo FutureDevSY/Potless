@@ -96,7 +96,7 @@ public class MemberControllerTest extends RestDocsSupport {
 
                     .andDo(print())
                     .andExpect(status().isOk())
-//                    .andExpect(jsonPath("$.data.token").exists())
+                    .andExpect(jsonPath("$.data.token").exists())
                     .andDo(document("login-web-valid",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
