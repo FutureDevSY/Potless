@@ -22,7 +22,7 @@ const props = defineProps({
   justify-content: space-between;
   border: 1px solid #e0e0e0;
   border-radius: 10px;
-  padding: 20px;
+  padding: 10px;
   margin: 5px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
   background-color: #fff;
