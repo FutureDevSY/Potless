@@ -1,38 +1,34 @@
 <template>
   <div class="container">
-    <div class="left-box">
-      <div class="logo">서비스 로고</div>
-      <div class="servicename">POTLESS</div>
-      <img class="image" src="@/assets/image/road.png" alt="서비스 이미지" />
-      <div class="slogan1">포트홀 없는 길,</div>
-      <div class="slogan2">우리가 만들어 갑니다.</div>
-    </div>
-    <div class="right-box">
-      <div
-        class="login-title"
-        :style="{ 'padding-bottom': showIdError || showPasswordError ? '6.5vh' : '9vh' }"
-      >
-        관리자 로그인
-      </div>
-      <div v-if="showIdError" class="error-message">아이디를 입력해주세요.</div>
-      <div v-if="showPasswordError" class="error-message">비밀번호를 입력해주세요.</div>
+    <div class="login-box">
+      <div class="login-title">관리자 로그인</div>
       <form class="login-form" @submit.prevent="moveHome">
-        <input
-          class="form-control"
-          :class="{ 'input-error': showIdError }"
-          type="text"
-          v-model="auth_id"
-          placeholder="아이디"
-          @input="showIdError = false"
-        />
-        <input
-          class="form-control"
-          :class="{ 'input-error': showPasswordError }"
-          type="password"
-          v-model="auth_password"
-          placeholder="비밀번호"
-          @input="showPasswordError = false"
-        />
+        <div class="input-group">
+          <!-- 새로운 div 추가 -->
+          <div class="input-title">아이디</div>
+          <input
+            class="form-control"
+            :class="{ 'input-error': showIdError }"
+            type="text"
+            v-model="auth_id"
+            placeholder="아이디를 입력해 주세요."
+            @input="showIdError = false"
+          />
+          <div v-if="showIdError" class="error-message">아이디를 입력해주세요.</div>
+        </div>
+        <div class="input-group">
+          <!-- 새로운 div 추가 -->
+          <div class="input-title">비밀번호</div>
+          <input
+            class="form-control"
+            :class="{ 'input-error': showPasswordError }"
+            type="password"
+            v-model="auth_password"
+            placeholder="비밀번호를 입력해 주세요."
+            @input="showPasswordError = false"
+          />
+          <div v-if="showPasswordError" class="error-message">비밀번호를 입력해주세요.</div>
+        </div>
         <button class="login-button" type="submit">
           <span class="button-text">로그인</span>
         </button>
@@ -67,67 +63,30 @@ const moveHome = () => {
 <style scoped>
 .container {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 0 15vw 0 15vw;
-  height: 100vh;
-  background-color: #f3f3f3;
+  flex-direction: column;
+  height: calc(100vh - 125px);
+  background-color: #f8f8f8;
 }
 
-.left-box,
-.right-box {
+.login-box {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  justify-content: center;
   background-color: #ffffff;
-  height: 75vh;
-}
-
-.left-box {
-  flex: 4;
-  background-color: #e0e0e0;
+  height: 57vh;
+  width: 480px;
+  margin-top: 10vh;
   color: #373737;
-}
-
-.right-box {
-  flex: 3;
-}
-
-.logo {
-  padding-top: 12vh;
-}
-
-.servicename {
-  font-size: 6vh;
-  font-weight: bold;
-  padding-top: 0.3vh;
-}
-
-.image {
-  max-width: 100%;
-  height: 45%;
-  width: auto;
-  padding-top: 1vh;
-}
-
-.slogan1,
-.slogan2 {
-  font-size: 3vh;
-}
-
-.slogan1 {
-  padding-top: 1vh;
-}
-
-.slogan2 {
-  margin-top: 1.5vh;
+  box-shadow: 0 4px 9px rgba(0, 0, 0, 0.4);
 }
 
 .login-title {
+  margin-left: 3.6vw;
+  padding-bottom: 3vh;
   font-size: 3.6vh;
+  margin-bottom: 4vh;
   font-weight: bold;
-  padding-bottom: 9vh;
-  padding-top: 16.5vh;
   color: #373737;
 }
 
@@ -138,28 +97,33 @@ const moveHome = () => {
   width: 100%;
 }
 
+.input-title {
+  margin-left: 0.7vw;
+  font-size: 14px;
+}
+
 input {
   margin: 1.3vh;
 }
 
 .form-control {
-  width: 18vw;
-  height: 48px;
+  width: 350px;
+  height: 40px;
   position: relative;
   overflow: hidden;
-  border-radius: 20px;
+  border-radius: 8px;
   background: none;
-  border: 0;
-  border: 2px solid #7a7979;
+  border: 2px solid #717171;
   transition: border 0.4s ease;
   padding-left: 15px;
   font-size: 18px;
   color: #373737;
+  margin-bottom: 3vh;
 }
 
 .form-control:focus {
   outline: 0;
-  border-color: #a9a9a9;
+  border-color: #151c62;
 }
 
 .form-control::placeholder {
@@ -173,18 +137,22 @@ input {
 }
 
 .login-button {
-  background-color: #474747;
-  margin-top: 5vh;
-  width: 13vw;
-  height: 50px;
+  background-color: #151c62;
+  width: 370px;
+  height: 45px;
   cursor: pointer;
-  border-radius: 40px;
+  border-radius: 8px;
   font-size: 20px;
   position: relative;
   overflow: hidden;
   color: rgb(255, 255, 255);
   font-weight: bold;
-  transition: border 0.5s, color 0.5s;
+  transition: all 0.3s;
+  margin-top: 3vh;
+}
+
+.login-button:hover {
+  background-color: #0e1241;
 }
 
 .input-error {
