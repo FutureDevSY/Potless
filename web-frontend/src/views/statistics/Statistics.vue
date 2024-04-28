@@ -1,7 +1,7 @@
 <template>
   <div class="statics-container">
     <div class="left-box">
-      <p>위험물 발생 현황</p>
+      <p class="incident-title">위험물 발생 현황</p>
       <div class="incident-report">
         <IncidentReport
           v-for="(item, index) in dataItems"
@@ -12,7 +12,10 @@
           :percent="item.percent"
         />
       </div>
-      <IncidentGraph class="incident-graph" />
+      <p class="totalincident-title">위험물 누적 탐지 건수</p>
+      <div class="incident-graph">
+        <IncidentGraph />
+      </div>
     </div>
     <div class="right-box">
       <p>보수 공사 현황</p>
@@ -54,17 +57,26 @@ const dataItems = [
 }
 .incident-report {
   display: grid;
+  margin-bottom: 30px;
   grid-template-columns: 1fr 1fr 1fr;
 }
-p {
+
+.incident-title {
   font-size: 16px;
   font-weight: 600;
-  margin-bottom: 10px;
+  margin: 10px 0px 10px 10px;
   color: #373737;
 }
+
+.totalincident-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 10px 0px 0px 10px;
+  color: #373737;
+}
+
 .incident-graph {
-  margin: 60px 0;
-  width: 40vw;
+  width: 100%;
 }
 .work-chart {
   width: 100%;
