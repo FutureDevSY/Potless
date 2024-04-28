@@ -27,8 +27,6 @@ onMounted(() => {
 
 function initMap() {
   const mapContainer = document.getElementById("map");
-  mapContainer.style.width = "600px";
-  mapContainer.style.height = "500px";
   console.log("Coordinates: ", potholeDirx.value, potholeDiry.value);
   if (
     !mapContainer ||
@@ -59,6 +57,6 @@ function initMap() {
 <style scoped>
 .map {
   width: 100%;
-  height: 77vh;
+  height: 100%;
 }
 </style>
