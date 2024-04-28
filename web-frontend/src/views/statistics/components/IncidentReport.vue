@@ -128,7 +128,7 @@ const tooltipText = computed(() => {
   border-radius: 6px;
   padding: 5px 10px;
   position: absolute;
-  z-index: 1;
+  z-index: 4;
   top: 120%; 
   left: 50%; 
   transform: translateX(-50%);
