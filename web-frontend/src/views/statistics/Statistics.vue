@@ -18,10 +18,10 @@
       </div>
     </div>
     <div class="right-box">
-      <p>보수 공사 현황</p>
-      <WorkChart class="work-chart" />
-      <p>지역별 발생 현황</p>
+      <p class="road-title">지역별 발생 현황</p>
       <RoadTypeIncidentsGraph />
+      <p class="work-title">보수 공사 현황</p>
+      <WorkChart class="work-chart" />
     </div>
   </div>
 </template>
@@ -42,18 +42,16 @@ const dataItems = [
 <style scoped>
 .statics-container {
   max-width: 1920px;
-  max-height: 1080px;
-  margin: 0 auto;
+  max-height: 100vh;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  overflow: auto;
 }
 
 .left-box,
 .right-box {
   display: flex;
   flex-direction: column;
-  padding: 5px 20px;
+  padding: 5px 15px;
 }
 .incident-report {
   display: grid;
@@ -61,18 +59,26 @@ const dataItems = [
   grid-template-columns: 1fr 1fr 1fr;
 }
 
-.incident-title {
-  font-size: 16px;
+.totalincident-title, .incident-title, .road-title, .work-title {
+  font-size: 18px;
   font-weight: 600;
-  margin: 10px 0px 10px 10px;
   color: #373737;
 }
 
+.incident-title {
+  margin: 10px 0px 10px 10px;
+}
+
 .totalincident-title {
-  font-size: 16px;
-  font-weight: 600;
   margin: 10px 0px 0px 10px;
-  color: #373737;
+}
+
+.road-title {
+  margin: 10px 0px 15px 0px;
+}
+
+.work-title {
+  margin: 30px 0px 15px 0px;
 }
 
 .incident-graph {
