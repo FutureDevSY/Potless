@@ -32,7 +32,7 @@ import WorkChart from "./components/WorkChart.vue";
 const dataItems = [
   { title: "오늘", number: "250", subtitle: "전날 대비", percent: "+30%" },
   { title: "1주일", number: "1,500", subtitle: "전주 대비", percent: "-3%" },
-  { title: "1달", number: "7,420", subtitle: "전달 대비", percent: "+10%" },
+  { title: "1개월", number: "7,420", subtitle: "전달 대비", percent: "+10%" },
 ];
 </script>
 
@@ -50,20 +50,21 @@ const dataItems = [
 .right-box {
   display: flex;
   flex-direction: column;
-  padding: 20px;
+  padding: 5px 20px;
 }
 .incident-report {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
 }
 p {
-  font-size: 20px;
+  font-size: 16px;
   font-weight: 600;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
+  color: #373737;
 }
 .incident-graph {
   margin: 60px 0;
-  width: 720px;
+  width: 40vw;
 }
 .work-chart {
   width: 100%;
