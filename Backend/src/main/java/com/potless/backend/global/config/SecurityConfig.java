@@ -50,11 +50,11 @@ public class SecurityConfig {
                             "/webjars/**",
                             "/favicon.ico",
                             "/api/member/signup",
-                            "/api/member/login/**",
+                            "/api/member/login-web/**",
+                            "/api/member/login-app/**",
                             "/api/member/email/**",
                             "/actuator/**",
-                            // 임시
-                            "/**"
+                            "/B106-DOCS/**"
                     ).permitAll();
                     authorize.requestMatchers(HttpMethod.OPTIONS, "/api/**").permitAll();
                     authorize.anyRequest().authenticated();

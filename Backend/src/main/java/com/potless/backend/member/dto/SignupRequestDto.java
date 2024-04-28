@@ -18,8 +18,8 @@ public class SignupRequestDto {
     @NotEmpty(message = "이메일 필드는 필수 정보입니다. 공란으로 두실 수 없습니다.")
     private String email;
 
-    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*])(?=.*\\d).{8,20}$",
-            message = "비밀번호는 영문 대소문자, 숫자, 특수문자(!, @, #, $, %, ^, &, *)를 조합하여 3~20자 이내여야 합니다.")
+    @Pattern(regexp = "^(?=.*[a-z])(?=.*\\d)[a-z\\d]{4,20}$",
+            message = "비밀번호는 영문 소문자, 숫자를 조합하여 4~20자 이내여야 합니다.")
     private String password;
 
     @NotEmpty(message = "비밀번호 확인란을 반드시 입력해 주셔야 합니다.")
