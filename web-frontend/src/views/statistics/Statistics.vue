@@ -51,11 +51,11 @@ const dataItems = [
 .right-box {
   display: flex;
   flex-direction: column;
-  padding: 5px 15px;
+  padding: 0px 15px;
 }
 .incident-report {
   display: grid;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
   grid-template-columns: 1fr 1fr 1fr;
 }
 

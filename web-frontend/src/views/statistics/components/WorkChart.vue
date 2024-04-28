@@ -75,7 +75,7 @@ const dataItems = [
 
 <style scoped>
 .data-display {
-  width: 100%;
+  width: 80%;
   border-left: 1px solid #ccc;
 }
 .chart {
