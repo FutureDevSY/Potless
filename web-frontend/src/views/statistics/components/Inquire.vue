@@ -22,15 +22,12 @@ const props = defineProps({
   justify-content: space-between;
   border: 1px solid #e0e0e0;
   border-radius: 10px;
-  padding: 10px;
-  margin: 5px;
+  padding: 30px;
+  margin: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
   background-color: #fff;
   width: 300px;
   transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
-}
-.data-container:hover {
-  cursor: pointer;
 }
 
 .data-container:hover {
@@ -46,14 +43,14 @@ const props = defineProps({
 }
 
 .data-title {
-  font-size: 16px;
-  color: #333;
+  font-size: 18px;
+  color: #717171;
   font-weight: 600;
 }
 
 .data-number {
   font-size: 22px;
   font-weight: bold;
-  color: #1b5e20;
+  color: #373737;
 }
 </style>

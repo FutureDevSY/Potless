@@ -6,7 +6,12 @@
     </div>
     <div class="data-footer">
       <div class="data-percent .text-light-title">
-        <img class="updown-icon up-icon" v-if="isPositive" src="../../../assets/icon/up.png" alt="#" />
+        <img
+          class="updown-icon up-icon"
+          v-if="isPositive"
+          src="../../../assets/icon/up.png"
+          alt="#"
+        />
         <img class="updown-icon" v-if="!isPositive" src="../../../assets/icon/down.png" alt="#" />
         {{ formattedPercent }}
         <span class="tooltip">{{ tooltipText }}</span>
@@ -25,21 +30,21 @@ const props = defineProps({
   subtitle: String,
 });
 
-const isPositive = computed(() => props.percent.charAt(0) === '+');
+const isPositive = computed(() => props.percent.charAt(0) === "+");
 
 const formattedPercent = computed(() => props.percent.substring(1));
 
 const tooltipText = computed(() => {
   let comparisonText;
   switch (props.title) {
-    case '오늘':
-      comparisonText = '어제와 비교했을 때';
+    case "오늘":
+      comparisonText = "어제와 비교했을 때";
       break;
-    case '1주일':
-      comparisonText = '지난 1주일과 비교했을 때';
+    case "1주일":
+      comparisonText = "지난 1주일과 비교했을 때";
       break;
-    case '1개월':
-      comparisonText = '지난 1달과 비교했을 때';
+    case "1개월":
+      comparisonText = "지난 1달과 비교했을 때";
       break;
   }
 
@@ -99,20 +104,19 @@ const tooltipText = computed(() => {
 
 .data-percent {
   font-size: 16px;
-  position: relative; 
+  position: relative;
   padding-bottom: 1px;
   cursor: help;
-
 }
 
 .data-percent::after {
-  content: '';
+  content: "";
   position: absolute;
   left: 0;
   bottom: 0;
   width: 100%;
   height: 1px;
-  background-color: #D8D8D8;
+  background-color: #d8d8d8;
   transition: background-color 0.3s ease;
 }
 
@@ -121,7 +125,7 @@ const tooltipText = computed(() => {
 }
 
 .tooltip {
-  visibility: hidden; 
+  visibility: hidden;
   background-color: #8e8e8e;
   color: white;
   text-align: center;
@@ -129,8 +133,8 @@ const tooltipText = computed(() => {
   padding: 5px 10px;
   position: absolute;
   z-index: 4;
-  top: 120%; 
-  left: 50%; 
+  top: 120%;
+  left: 50%;
   transform: translateX(-50%);
   white-space: nowrap;
   opacity: 0;
