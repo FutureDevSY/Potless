@@ -23,8 +23,8 @@ class MainLargeState extends State<MainLarge> {
     final ButtonStyle style = ElevatedButton.styleFrom(
       elevation: 5,
       padding: const EdgeInsets.all(20),
-      backgroundColor: Colors.white,
-      foregroundColor: Colors.black,
+      backgroundColor: const Color(0xff151C62),
+      foregroundColor: const Color(0xffffffff),
       textStyle: const TextStyle(fontSize: 24, fontWeight: FontWeight.w900),
       fixedSize: Size(
         UIhelper.deviceWidth(context) * .8,
