@@ -7,24 +7,21 @@
           <div class="input-title">아이디</div>
           <input
             class="form-control"
-            :class="{ 'input-error': showIdError }"
             type="text"
             v-model="auth_id"
             placeholder="아이디를 입력해 주세요."
-            @input="showIdError = false"
           />
         </div>
         <div class="input-group">
           <div class="input-title">비밀번호</div>
           <input
             class="form-control"
-            :class="{ 'input-error': showPasswordError }"
             type="password"
             v-model="auth_password"
             placeholder="비밀번호를 입력해 주세요."
             @input="showError = false"
           />
-          <div v-if="showPasswordError" class="error-message">
+          <div v-if="showError" class="error-message">
             {{ errorMsg }}
           </div>
         </div>
@@ -50,19 +47,21 @@ const showError = ref(false);
 const errorMsg = ref("");
 
 const doLogin = () => {
-  const loginData = ref({});
-
-  loginData.append("email", auth_id.value);
-  loginData.append("password", auth_password.value);
+  const loginData = ref({
+    email: auth_id.value,
+    password: auth_password.value,
+  });
 
   login(
     loginData,
-    ({ data }) => {
+    (data) => {
       if (data.status == "success") {
-        store.login();
+        console.log(data.message);
+        store.login(data);
       }
     },
-    ({ error }) => {
+    (error) => {
+      console.log(error);
       showError.value = true;
       errorMsg.value = error.message;
     }
@@ -70,12 +69,12 @@ const doLogin = () => {
 };
 
 const moveHome = () => {
-  if (!auth_password.value) {
+  if (!showError.value) {
     showError.value = true;
   }
-  if (auth_id.value && auth_password.value) {
-    router.push("/");
-  }
+  // if (auth_id.value && auth_password.value) {
+  //   router.push("/");
+  // }
 };
 </script>
 

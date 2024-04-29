@@ -1,7 +1,7 @@
 <template>
   <div class="map-container">
     <p class="logo">POTLESS</p>
-    <SVG />
+    <SVG></SVG>
     <Chart
       class="chart chart1"
       :options="chartOptions"
