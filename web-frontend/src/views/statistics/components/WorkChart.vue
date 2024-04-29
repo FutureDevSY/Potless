@@ -47,7 +47,7 @@ const chartOptions = ref({
       },
     },
   },
-  colors: ["#BC7FCD", "#FB9AD1", "#FFCDEA"],
+  colors: ["#7B82C8", "#232EA3", "#151c62"],
   states: {
     active: {
       filter: {
@@ -79,7 +79,7 @@ const dataItems = [
   border-left: 1px solid #ccc;
 }
 .chart {
-  width: 418px;
+  width: 100%;
 }
 .chart-container {
   display: grid;
