@@ -42,24 +42,23 @@ class _VideoPageState extends State<VideoPage> with WidgetsBindingObserver {
 
   int? resultIndex;
 
-  // Future<void> createTodayFolder() async {
-  //   String formattedDate =
-  //       DateFormat('yyyy-MM-dd').format(DateTime.now()); // Format today's date
-
-  //   final Directory? baseDir = await getExternalStorageDirectory();
-  //   final Directory todayDir =
-  //       Directory('${baseDir!.path}/DCIM/$formattedDate');
-  //   debugPrint(todayDir.path);
-
-  //   // Check if the directory exists, if not, create it
-  //   if (!await todayDir.exists()) {
-  //     await todayDir.create(
-  //         recursive: true); // Create the directory if it doesn't exist
-  //     debugPrint("폴더 생성함 55: ${todayDir.path}");
-  //   } else {
-  //     debugPrint("폴더 이미 있음 57: ${todayDir.path}");
-  //   }
-  // }
+  // 앱 생명주기 상태 변경 시 호출
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) async {
+    switch (state) {
+      case AppLifecycleState.inactive:
+        // 앱이 비활성 상태가 되면 리소스 해제
+        _cameraController?.stopImageStream();
+        _detector?.stop();
+        _subscription?.cancel();
+        break;
+      case AppLifecycleState.resumed:
+        // 앱이 다시 활성화되면 초기화
+        _initStateAsync();
+        break;
+      default:
+    }
+  }
 
   Future<void> createTodayFolder() async {
     String formattedDate =
@@ -130,46 +129,47 @@ class _VideoPageState extends State<VideoPage> with WidgetsBindingObserver {
       });
   }
 
-  // 앱 생명주기 상태 변경 시 호출
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) async {
-    switch (state) {
-      case AppLifecycleState.inactive:
-        // 앱이 비활성 상태가 되면 리소스 해제
-        _cameraController?.stopImageStream();
-        _detector?.stop();
-        _subscription?.cancel();
-        break;
-      case AppLifecycleState.resumed:
-        // 앱이 다시 활성화되면 초기화
-        _initStateAsync();
-        break;
-      default:
-    }
-  }
-
   // 새 카메라 이미지가 사용 가능할 때 호출되는 메서드
   void onLatestImageAvailable(CameraImage cameraImage) async {
     _detector?.processFrame(cameraImage); // 이미지를 객체 감지기로 전달하여 처리
   }
 
+  // Future<void> capturePhoto() async {
+  //   if (_cameraController != null &&
+  //       _cameraController!.value.isInitialized &&
+  //       !_cameraController!.value.isTakingPicture) {
+  //     try {
+  //       XFile picture = await _cameraController!.takePicture();
+  //       savePhoto(picture); // Handle saving asynchronously
+  //     } catch (e) {
+  //       debugPrint("Error capturing image: $e");
+  //     }
+  //   }
+  // }
+
   Future<void> capturePhoto() async {
-    if (_cameraController != null &&
-        _cameraController!.value.isInitialized &&
-        !_cameraController!.value.isTakingPicture) {
-      try {
-        XFile picture = await _cameraController!.takePicture();
-        savePhoto(picture); // Handle saving asynchronously
-      } catch (e) {
-        debugPrint("Error capturing image: $e");
+    // Continuously attempt to capture without checking the save queue
+    while (true) {
+      if (_cameraController != null && _cameraController!.value.isInitialized) {
+        if (!_cameraController!.value.isTakingPicture) {
+          try {
+            XFile picture = await _cameraController!.takePicture();
+            savePhoto(
+                picture); // Offload to queue and immediately ready for next capture
+          } catch (e) {
+            debugPrint("Error capturing image: $e");
+          }
+        }
       }
+      await Future.delayed(const Duration(
+          milliseconds: 100)); // Small delay to prevent hogging the main thread
     }
   }
 
   Future<void> savePhoto(XFile picture) async {
     imageSaveQueue.add(picture);
     if (!_isSaving) {
-      await _processImageQueue();
+      _processImageQueue();
     }
   }
 

@@ -59,7 +59,6 @@ class HomeScreen extends StatelessWidget {
               ),
               MainLarge(
                 label: '작업목록',
-                buttonImage: Image.asset('assets/icons/roller.png'),
                 onPressed: () {
                   Navigator.push(
                     context,
