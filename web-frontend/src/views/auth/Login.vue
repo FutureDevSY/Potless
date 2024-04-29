@@ -4,7 +4,6 @@
       <div class="login-title">관리자 로그인</div>
       <form class="login-form" @submit.prevent="moveHome">
         <div class="input-group">
-          <!-- 새로운 div 추가 -->
           <div class="input-title">아이디</div>
           <input
             class="form-control"
@@ -14,9 +13,6 @@
             placeholder="아이디를 입력해 주세요."
             @input="showIdError = false"
           />
-          <div v-if="showIdError" class="error-message">
-            아이디를 입력해주세요.
-          </div>
         </div>
         <div class="input-group">
           <div class="input-title">비밀번호</div>
@@ -26,13 +22,13 @@
             type="password"
             v-model="auth_password"
             placeholder="비밀번호를 입력해 주세요."
-            @input="showPasswordError = false"
+            @input="showError = false"
           />
           <div v-if="showPasswordError" class="error-message">
-            비밀번호를 입력해주세요.
+            {{ errorMsg }}
           </div>
         </div>
-        <button class="login-button" type="submit">
+        <button class="login-button" type="submit" @click="doLogin">
           <span class="button-text">로그인</span>
         </button>
       </form>
@@ -44,20 +40,38 @@
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { useAuthStore } from "../../stores/user.js";
+import { login } from "../../api/auth/auth";
 
 const store = useAuthStore();
 const router = useRouter();
 const auth_id = ref("");
 const auth_password = ref("");
-const showIdError = ref(false);
-const showPasswordError = ref(false);
+const showError = ref(false);
+const errorMsg = ref("");
+
+const doLogin = () => {
+  const loginData = ref({});
+
+  loginData.append("email", auth_id.value);
+  loginData.append("password", auth_password.value);
+
+  login(
+    loginData,
+    ({ data }) => {
+      if (data.status == "success") {
+        store.login();
+      }
+    },
+    ({ error }) => {
+      showError.value = true;
+      errorMsg.value = error.message;
+    }
+  );
+};
 
 const moveHome = () => {
-  if (!auth_id.value) {
-    showIdError.value = true;
-  }
   if (!auth_password.value) {
-    showPasswordError.value = true;
+    showError.value = true;
   }
   if (auth_id.value && auth_password.value) {
     router.push("/");
