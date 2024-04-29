@@ -13,7 +13,7 @@
 </template>
 
 <script setup>
-import { ref, defineEmits } from "vue";
+import { ref } from "vue";
 
 const newTeam = ref({
   name: "",
