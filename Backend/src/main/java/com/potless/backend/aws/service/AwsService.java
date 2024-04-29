@@ -11,12 +11,14 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class S3StorageService {
+public class AwsService {
 
     private final AmazonS3 s3Client;
 
@@ -36,27 +38,33 @@ public class S3StorageService {
         inputStream.close();
     }
 
-    public String uploadFileToS3(MultipartFile file) throws IOException {
-        String fileName = "검증전" + "/" + System.currentTimeMillis() + "_" + file.getOriginalFilename();
+    public Map<String, String> uploadFileToS3(MultipartFile file) throws IOException {
+        String fileName = "검증전/" + System.currentTimeMillis() + "_" + file.getOriginalFilename();
         File localFile = convertMultiPartToFile(file);
         s3Client.putObject(new PutObjectRequest(bucketName, fileName, localFile));
         if (!localFile.delete()) {
             log.error("Failed to delete temporary file: {}", localFile.getPath());
-            // 여기서 추가적인 오류 처리를 수행할 수 있습니다. 예를 들어, 다시 시도하거나, 관리자에게 알림 등
         } else {
             log.info("Temporary file deleted successfully: {}", localFile.getPath());
         }
-        return s3Client.getUrl(bucketName, fileName).toString();
+        String fileUrl = s3Client.getUrl(bucketName, fileName).toString();
+        Map<String, String> fileData = new HashMap<>();
+        fileData.put(fileName, fileUrl);
+        return fileData;
     }
 
-    public void moveFileToVerified(String sourceKey, String destinationKey) {
-        // Copy the file
+
+    public String moveFileToVerified(String sourceKey, String destinationKey) {
+        // 파일을 새 위치로 복사
         CopyObjectRequest copyObjRequest = new CopyObjectRequest(bucketName, sourceKey, bucketName, destinationKey);
         s3Client.copyObject(copyObjRequest);
 
-        // Delete the original file
+        // 원본 파일 삭제
         DeleteObjectRequest deleteObjRequest = new DeleteObjectRequest(bucketName, sourceKey);
         s3Client.deleteObject(deleteObjRequest);
+
+        // 새 위치의 파일 URL 반환
+        return s3Client.getUrl(bucketName, destinationKey).toString();
     }
 
     private File convertMultiPartToFile(MultipartFile file) throws IOException {

@@ -30,6 +30,7 @@ public enum ResponseCode {
     POTHOLE_LIST_FETCHED(HttpStatus.OK, "포트홀 리스트 정보가 성공적으로 조회되었습니다."),
     POTHOLE_FETCHED(HttpStatus.OK, "포트홀 관련 정보가 성공적으로 조회되었습니다."),
     POTHOLE_DETECTED(HttpStatus.CREATED, "포트홀 감지 정보가 성공적으로 저장되었습니다."),
+    POTHOLE_DELETED(HttpStatus.OK, "포트홀 감지 정보가 성공적으로 삭제되었습니다."),
 
     /* 프로젝트(Project) */
     PROJECT_LIST_FETCHED(HttpStatus.OK, "프로젝트 리스트 정보가 성공적으로 조회되었습니다."),
