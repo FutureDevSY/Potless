@@ -47,6 +47,7 @@ public class SecurityConfig {
                 {
                     authorize.requestMatchers(
                             "/api-docs/**",
+                            "/v3/api-docs/**",
                             "/webjars/**",
                             "/favicon.ico",
                             "/api/member/signup",
@@ -54,7 +55,11 @@ public class SecurityConfig {
                             "/api/member/login-app/**",
                             "/api/member/email/**",
                             "/actuator/**",
-                            "/B106-DOCS/**"
+                            "/B106-DOCS/**",
+                            "/swagger/**",
+                            "/swagger-ui/**",
+                            "/swagger-config/**",
+                            "/swagger-resources/**"
                     ).permitAll();
                     authorize.requestMatchers(HttpMethod.OPTIONS, "/api/**").permitAll();
                     authorize.anyRequest().authenticated();
