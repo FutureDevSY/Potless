@@ -1,12 +1,10 @@
 package com.potless.backend.damage.dto.controller.response;
 
 import com.potless.backend.damage.entity.enums.Status;
-import com.potless.backend.damage.entity.road.ImageEntity;
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Getter
 @ToString
@@ -23,8 +21,10 @@ public class DamageResponseDTO {
     private Status status;
     private String area;
     private String location;
-    private List<ImagesResponseDTO> imagesResponseDTOS;
     private String dtype;
+
+    @Setter
+    private List<ImagesResponseDTO> imagesResponseDTOS;
 
     @Builder
     @QueryProjection
@@ -58,9 +58,4 @@ public class DamageResponseDTO {
         this.dtype = dtype;
     }
 
-    public void setImagesResponseDTOS(List<ImageEntity> imageEntities) {
-        this.imagesResponseDTOS = imageEntities.stream()
-                .map(image -> new ImagesResponseDTO(image.getId(), image.getUrl(), image.getOrder()))
-                .collect(Collectors.toList());
-    }
 }

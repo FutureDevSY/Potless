@@ -6,6 +6,7 @@ import com.potless.backend.damage.dto.controller.response.DamageResponseDTO;
 import com.potless.backend.damage.dto.controller.response.ImagesResponseDTO;
 import com.potless.backend.damage.entity.enums.Status;
 import com.potless.backend.damage.service.IDamageService;
+import com.potless.backend.damage.service.IVerificationService;
 import com.potless.backend.damage.service.KakaoService;
 import com.potless.backend.global.format.code.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -39,11 +40,12 @@ class DamageControllerTest extends RestDocsSupport {
 
     private final IDamageService iDamageService = mock(IDamageService.class);
     private final KakaoService kakaoService = mock(KakaoService.class);
+    private final IVerificationService iVerificationService = mock(IVerificationService.class);
     private final ApiResponse response = new ApiResponse();
 
     @Override
     protected Object initController() {
-        return new DamageController(iDamageService, kakaoService, response);
+        return new DamageController(iDamageService, kakaoService, response, iVerificationService);
     }
 
     @DisplayName("도로 파손 리스트 가져오기")
