@@ -99,31 +99,23 @@ function preloadImage(url) {
 }
 
 onMounted(() => {
-  const map = L.map(mapContainer.value, {
-    zoomControl: false,
-  }).setView([props.pothole.dir_x, props.pothole.dir_y], 16);
+  const map = L.map(mapContainer.value).setView([51.505, -0.09], 13);
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
     attribution: "© OpenStreetMap contributors",
-    maxZoom: 19,
   }).addTo(map);
 
-  const icon = L.icon({
-    iconUrl: marker,
-    iconSize: [32, 32],
-    iconAnchor: [16, 16],
-  });
-
-  L.marker([props.pothole.dir_x, props.pothole.dir_y], { icon }).addTo(map);
-
   map.whenReady(() => {
-    leafletImage(map, function (err, canvas) {
-      if (err) {
-        console.error("Failed to generate image from map:", err);
-        return;
-      }
-      imageUrl.value = canvas.toDataURL();
-      preloadImage(imageUrl.value);
-    });
+    setTimeout(() => {
+      // 지도가 화면에 완전히 렌더링된 후 이미지 생성
+      leafletImage(map, function (err, canvas) {
+        if (err) {
+          console.error("Failed to generate image from map:", err);
+          return;
+        }
+        const imageUrl = canvas.toDataURL();
+        console.log("Map image URL:", imageUrl);
+      });
+    }, 500);
   });
 });
 </script>
