@@ -4,6 +4,7 @@ import com.potless.backend.global.format.code.ApiResponse;
 import com.potless.backend.global.format.response.ResponseCode;
 import com.potless.backend.member.dto.TeamAddRequestDto;
 import com.potless.backend.member.service.TeamService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +21,7 @@ public class TeamController {
     private final TeamService teamService;
     private final ApiResponse response;
 
+    @Operation(summary = "Project에 Team 입력")
     @PostMapping
     public ResponseEntity<?> addTeamToProject(@RequestBody TeamAddRequestDto teamAddRequestDto) {
         Long result = teamService.addTeamToProject(teamAddRequestDto);
