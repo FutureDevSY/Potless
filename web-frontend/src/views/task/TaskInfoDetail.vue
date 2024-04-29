@@ -81,6 +81,7 @@ function generatePdf() {
 
 .report-pdf {
   margin: 0%;
+  display: block;
   padding: 0%;
 }
 </style>
