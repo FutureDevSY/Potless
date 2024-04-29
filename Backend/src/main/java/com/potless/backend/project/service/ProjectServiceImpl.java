@@ -97,33 +97,30 @@ public class ProjectServiceImpl implements ProjectService {
         return saveProjectEntity.getId();
     }
 
-//    @Override
-//    public ProjectDetailResponseDto getProjectDetail(Long projectId) {
-//        //프로젝트 정보
-//        ProjectEntity projectEntity = projectRepository.findById(projectId)
-//                .orElseThrow(ProjectNotFoundException::new);
-//
-//        //매니저 정보
-//        String managerName = projectEntity.getManagerEntity().getMemberEntity().getMemberName();
-//
-//        //작업 정보
-//        List<TaskEntity> taskEntities = taskRepository.findTasksByProjectId(projectId);
-//
-//        //damageId 정보
-//        List<Long> damageIds = taskEntities.stream()
-//                .map(task -> task.getDamageEntity().getId())
-//                .collect(Collectors.toList());
-//
-//        //damage 정보
-//        List<DamageResponseDTO> damageResponseDTOS = damageRepository.findDetailsByProjectId(projectId);
-//
-//        return ProjectDetailResponseDto.builder()
-//                .projectName(projectEntity.getProjectName())
-//                .managerName(managerName)
-//                .projectSize(projectEntity.getProjectSize())
-//                .damageResponseDTOS(damageResponseDTOS)
-//                .build();
-//    }
+    @Override
+    public ProjectDetailResponseDto getProjectDetail(Long projectId) {
+        //프로젝트 정보
+        ProjectEntity projectEntity = projectRepository.findById(projectId)
+                .orElseThrow(ProjectNotFoundException::new);
+
+        //매니저 정보
+        String managerName = projectEntity.getManagerEntity().getMemberEntity().getMemberName();
+
+        //damageId 정보추출
+        List<Long> damageIds = taskRepository.findTasksByProjectId(projectId).stream()
+                .map(task -> task.getDamageEntity().getId())
+                .collect(Collectors.toList());
+
+        //damage 정보
+        List<DamageResponseDTO> damageResponseDTOS = damageRepository.findDamageDetailsByIds(damageIds);
+
+        return ProjectDetailResponseDto.builder()
+                .projectName(projectEntity.getProjectName())
+                .managerName(managerName)
+                .projectSize(projectEntity.getProjectSize())
+                .damageResponseDTOS(damageResponseDTOS)
+                .build();
+    }
 
     @Override
     public void deleteProject(Long projectId) {
