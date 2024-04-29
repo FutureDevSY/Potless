@@ -18,6 +18,7 @@ public enum ResponseCode {
     PASSWORD_RESET_SUCCESS(HttpStatus.OK, "비밀번호 재설정이 성공적으로 이루어졌습니다."),
     PASSWORD_UPDATE_SUCCESS(HttpStatus.OK, "비밀번호 업데이트가 성공적으로 이루어졌습니다."),
     MEMBER_INFO_UPDATE_SUCCESS(HttpStatus.OK, "회원 정보가 성공적으로 업데이트되었습니다."),
+    TEAM_CONNECT_TO_PROJECT(HttpStatus.OK,"팀정보가 프로젝트에 연결이 되었습니다."),
 
     EMAIL_VERIFICATION_SENT(HttpStatus.OK, "이메일 인증코드가 성공적으로 발송되었습니다."),
     EMAIL_VERIFIED_SUCCESS(HttpStatus.OK, "이메일이 성공적으로 인증되었습니다."),
@@ -33,7 +34,8 @@ public enum ResponseCode {
     /* 프로젝트(Project) */
     PROJECT_LIST_FETCHED(HttpStatus.OK, "프로젝트 리스트 정보가 성공적으로 조회되었습니다."),
     PROJECT_FETCHED(HttpStatus.OK, "프로젝트 정보가 성공적으로 조회되었습니다."),
-    PROJECT_DETECTED(HttpStatus.CREATED, "프로젝트 정보가 성공적으로 저장되었습니다."),
+    PROJECT_DETECTED(HttpStatus.CREATED, "프로젝트 정보가 성공적으로 생성되었습니다."),
+    PROJECT_DELETED(HttpStatus.OK, "프로젝트 정보가 성공적으로 삭제되었습니다."),
 
     /* 경로(Path) */
     OPTIMAL_PATH_FOUND(HttpStatus.OK, "최적 경로 조회가 성공적으로 이루어졌습니다."),

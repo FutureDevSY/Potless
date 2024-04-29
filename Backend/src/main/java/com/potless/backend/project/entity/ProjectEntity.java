@@ -1,9 +1,11 @@
 package com.potless.backend.project.entity;
 
+import com.potless.backend.damage.entity.area.AreaEntity;
 import com.potless.backend.damage.entity.enums.Status;
 import com.potless.backend.global.entity.BaseEntity;
 import com.potless.backend.member.entity.ManagerEntity;
 import com.potless.backend.member.entity.TeamEntity;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -16,10 +18,11 @@ import java.time.LocalDate;
 @Getter
 @Table(name = "project")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Tag(name = "Project 컨트롤러", description = "Project Controller API")
 public class ProjectEntity extends BaseEntity {
 
     @Id
-    @Column(name = "location_id", nullable = false)
+    @Column(name = "project_id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -34,6 +37,10 @@ public class ProjectEntity extends BaseEntity {
     @JoinColumn(name = "team_id")
     private TeamEntity teamEntity;
 
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @JoinColumn(name = "area_id")
+    private AreaEntity areaEntity;
+
     @Column(name = "project_date", nullable = false)
     private LocalDate projectDate;
 
@@ -44,7 +51,7 @@ public class ProjectEntity extends BaseEntity {
     private Status status = Status.작업전;
 
     @Builder
-    public ProjectEntity(Long id, String projectName, ManagerEntity managerEntity, TeamEntity teamEntity, LocalDate projectDate, Integer projectSize, Status status) {
+    public ProjectEntity(Long id, String projectName, ManagerEntity managerEntity, TeamEntity teamEntity, LocalDate projectDate, Integer projectSize, Status status, AreaEntity areaEntity) {
         this.id = id;
         this.projectName = projectName;
         this.managerEntity = managerEntity;
@@ -52,6 +59,7 @@ public class ProjectEntity extends BaseEntity {
         this.projectDate = projectDate;
         this.projectSize = projectSize;
         this.status = status;
+        this.areaEntity = areaEntity;
     }
 
     public void changeStatus(Status status) {

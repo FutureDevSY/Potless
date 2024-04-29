@@ -25,17 +25,20 @@ public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
     }
 
     @Override
-    public Page<ProjectListResponseDto> findProjectAllByManagerId(ProjectListRequestDto projectListRequestDto, Pageable pageable) {
+    public Page<ProjectListResponseDto> findProjectAll(ProjectListRequestDto projectListRequestDto, Pageable pageable) {
         QProjectEntity project = QProjectEntity.projectEntity;
         BooleanBuilder builder = new BooleanBuilder();
 
         builder.and(managerIdEquals(project, projectListRequestDto.getManagerId()))
                 .and(betweenDates(project, projectListRequestDto.getStart(), projectListRequestDto.getEnd()))
-                .and(containsSearchWord(project, projectListRequestDto.getWord()));
+                .and(equalToStatus(project,projectListRequestDto.getStatus()))
+                .and(containsSearchWord(project, projectListRequestDto.getWord()))
+                .and(areaGuEquals(project, projectListRequestDto.getAreaId()))
+                .and(project.deleted.eq(false));
+
 
         List<ProjectListResponseDto> results = queryFactory
                 .select(Projections.constructor(ProjectListResponseDto.class,
-                        project.id,
                         project.projectName,
                         project.managerEntity.memberEntity.memberName.as("managerName"),
                         project.projectDate,
@@ -90,5 +93,12 @@ public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
         }
         return null;
     }
+    private BooleanExpression areaGuEquals(QProjectEntity project, Long areaId) {
+        if (areaId != null) {
+            return project.areaEntity.id.eq(areaId);
+        }
+        return null;
+    }
+
 
 }

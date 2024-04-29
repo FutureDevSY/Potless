@@ -22,7 +22,6 @@ import static org.mockito.Mockito.mock;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
@@ -131,7 +130,6 @@ class PathControllerTest extends RestDocsSupport {
                         .contentType(MediaType.APPLICATION_JSON)
                         .characterEncoding("utf-8")
                         .content(requestJson))
-                .andDo(print())
                 .andExpect(status().isOk())
                 .andDo(document("get-optimal-path",
                         preprocessRequest(prettyPrint()),

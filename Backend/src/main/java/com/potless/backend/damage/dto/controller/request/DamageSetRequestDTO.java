@@ -12,9 +12,6 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class DamageSetRequestDTO {
 
-    @NotEmpty(message = "타입 값이 비어있습니다")
-    private String dtype;
-
     @NotNull(message = "x 값을 입력 해 주세요")
     private Double x;
 
@@ -25,9 +22,7 @@ public class DamageSetRequestDTO {
     private List<String> images = new ArrayList<>();
 
     @Builder
-
-    public DamageSetRequestDTO(String dtype, Double x, Double y, List<String> images) {
-        this.dtype = dtype;
+    public DamageSetRequestDTO(Double x, Double y, List<String> images) {
         this.x = x;
         this.y = y;
         this.images = images;

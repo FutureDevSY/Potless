@@ -3,6 +3,7 @@ package com.potless.backend.damage.entity.area;
 import com.potless.backend.damage.entity.road.DamageEntity;
 import com.potless.backend.global.entity.BaseEntity;
 import com.potless.backend.member.entity.ManagerEntity;
+import com.potless.backend.project.entity.ProjectEntity;
 import com.querydsl.core.annotations.QueryProjection;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -36,13 +37,17 @@ public class AreaEntity extends BaseEntity {
     @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, mappedBy = "areaEntity")
     private List<DamageEntity> damageEntities = new ArrayList<>();
 
+    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, mappedBy = "areaEntity")
+    private List<ProjectEntity> projectEntities = new ArrayList<>();
+
     @Builder
     @QueryProjection
-    public AreaEntity(Long id, String areaGu, List<ManagerEntity> managerEntities, List<LocationEntity> locationEntities, List<DamageEntity> damageEntities) {
+    public AreaEntity(Long id, String areaGu, List<ManagerEntity> managerEntities, List<LocationEntity> locationEntities, List<DamageEntity> damageEntities, List<ProjectEntity> projectEntities) {
         this.id = id;
         this.areaGu = areaGu;
         this.managerEntities = managerEntities;
         this.locationEntities = locationEntities;
         this.damageEntities = damageEntities;
+        this.projectEntities = projectEntities;
     }
 }
