@@ -23,17 +23,6 @@ public interface DamageRepository extends JpaRepository<DamageEntity, Long>, Dam
             "WHERE d.id = :damageId")
     DamageResponseDTO findDamageDetailsByIdSimple(@Param("damageId") Long damageId);
 
-//    @Query("SELECT new com.potless.backend.damage.dto.controller.response.DamageResponseDTO(" +
-//            "d.id, d.severity, d.dirX, d.dirY, d.address, d.roadName, d.width, d.status, " +
-//            "a.areaGu, l.locationName, d.dtype) " +
-//            "FROM TaskEntity t " +
-//            "JOIN t.damage d " +
-//            "JOIN d.areaEntity a " +
-//            "JOIN d.locationEntity l " +
-//            "WHERE t.project.id = :projectId")
-//    List<DamageResponseDTO> findDetailsByProjectId(@Param("projectId") Long projectId);
-
-
     @Query("SELECT new com.potless.backend.damage.dto.controller.response.DamageResponseDTO(" +
             "d.id, " +
             "d.severity, " +
