@@ -14,7 +14,9 @@
             placeholder="아이디를 입력해 주세요."
             @input="showIdError = false"
           />
-          <div v-if="showIdError" class="error-message">아이디를 입력해주세요.</div>
+          <div v-if="showIdError" class="error-message">
+            아이디를 입력해주세요.
+          </div>
         </div>
         <div class="input-group">
           <!-- 새로운 div 추가 -->
@@ -27,7 +29,9 @@
             placeholder="비밀번호를 입력해 주세요."
             @input="showPasswordError = false"
           />
-          <div v-if="showPasswordError" class="error-message">비밀번호를 입력해주세요.</div>
+          <div v-if="showPasswordError" class="error-message">
+            비밀번호를 입력해주세요.
+          </div>
         </div>
         <button class="login-button" type="submit">
           <span class="button-text">로그인</span>
@@ -40,7 +44,9 @@
 <script setup>
 import { ref } from "vue";
 import { useRouter } from "vue-router";
+import { useAuthStore } from "../../stores/user.js";
 
+const store = useAuthStore();
 const router = useRouter();
 const auth_id = ref("");
 const auth_password = ref("");
