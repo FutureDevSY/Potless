@@ -6,7 +6,7 @@
       <div>담당자 : {{ taskHeader.managerName }}</div>
       <div>작업 건수: {{ taskHeader.projectSize }} 건</div>
       <div>작업 일자: {{ taskHeader.projectDate }}</div>
-      <button @click="prepareAndGeneratePdf">PDF로 변환하기</button>
+      <button @click="generatePdf">PDF로 변환하기</button>
     </div>
     <List :data="taskData" />
     <div id="pdf" class="report-pdf">
@@ -17,12 +17,7 @@
         id="pdf"
       />
       <div v-for="pothole in taskData" :key="pothole.id">
-        <PDFGeneratorDetail
-          :pothole="pothole"
-          ref="documentRef"
-          class="pdf"
-          @mapLoaded="handleMapLoaded(pothole.id)"
-        />
+        <PDFGeneratorDetail :pothole="pothole" ref="documentRef" class="pdf" />
       </div>
     </div>
   </div>
@@ -30,7 +25,7 @@
 
 <script setup>
 import html2pdf from "html2pdf.js";
-import { ref, onMounted, watch, nextTick } from "vue";
+import { ref, onMounted } from "vue";
 import List from "./components/List.vue";
 import data from "./DummyData.json";
 import PDFGeneratorMain from "./components/PDFGeneratorMain.vue";
@@ -39,31 +34,16 @@ import PDFGeneratorDetail from "./components/PDFGeneratorDetail.vue";
 const taskHeader = ref(data.projectResponse);
 const taskData = ref(data.projectDetailResponse);
 const documentRef = ref(null);
-const readyForPdf = ref(false);
 
 onMounted(() => {
-  watch(readyForPdf, (newVal) => {
-    if (newVal) {
-      generatePdf();
+  onMounted(() => {
+    if (documentRef.value) {
+      console.log("Document ref is available:", documentRef.value);
+    } else {
+      console.error("Document ref is not available");
     }
   });
 });
-
-function prepareAndGeneratePdf() {
-  readyForPdf.value = false; 
-  nextTick(() => {
-    checkAllMapsLoaded();
-  });
-}
-
-function checkAllMapsLoaded() {
-  const allMapsLoaded = taskData.value.every((pothole) => pothole.mapLoaded);
-  if (allMapsLoaded) {
-    readyForPdf.value = true;
-  } else {
-    setTimeout(checkAllMapsLoaded, 100); 
-  }
-}
 
 function generatePdf() {
   const pdfArea = document.getElementById("pdf");
@@ -73,7 +53,7 @@ function generatePdf() {
     margin: 0,
     filename: "downloaded.pdf",
     image: { type: "jpeg", quality: 0.98 },
-    html2canvas: { scale: 2, useCORS: true },
+    html2canvas: { scale: 2 },
   };
 
   html2pdf()
@@ -82,7 +62,6 @@ function generatePdf() {
     .save()
     .then(() => {
       pdfArea.style.display = "none";
-      readyForPdf.value = false; 
     });
 }
 </script>
@@ -91,7 +70,7 @@ function generatePdf() {
 .task-detail-container {
   box-sizing: border-box;
   overflow: hidden;
-  max-height: 100vh;
+  height: 90vh;
 }
 .header {
   display: flex;
@@ -99,9 +78,9 @@ function generatePdf() {
   padding: 20px;
   background-color: #f0f0f0;
 }
+
 .report-pdf {
   margin: 0%;
   padding: 0%;
-  display: none;
 }
 </style>
