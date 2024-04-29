@@ -44,7 +44,7 @@ public abstract class DamageEntity extends BaseEntity {
     private Double width;
     @Enumerated(EnumType.STRING)
     @Column(name = "damage_status", nullable = false)
-    private Status status;
+    private Status status = Status.작업전;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     @JoinColumn(name = "area_id")

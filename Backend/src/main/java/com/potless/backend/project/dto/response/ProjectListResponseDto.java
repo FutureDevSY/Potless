@@ -3,12 +3,14 @@ package com.potless.backend.project.dto.response;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.time.LocalDate;
 
 @Getter
 @NoArgsConstructor
 @Builder
+@ToString
 public class ProjectListResponseDto {
     private String projectName;
     private String managerName;

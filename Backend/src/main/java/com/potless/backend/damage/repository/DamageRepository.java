@@ -3,12 +3,14 @@ package com.potless.backend.damage.repository;
 
 import com.potless.backend.damage.dto.controller.response.DamageResponseDTO;
 import com.potless.backend.damage.entity.road.DamageEntity;
+import com.potless.backend.project.entity.ProjectEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface DamageRepository extends JpaRepository<DamageEntity, Long>, DamageRepositoryCustom, QuerydslPredicateExecutor<DamageEntity> {
 
@@ -20,6 +22,16 @@ public interface DamageRepository extends JpaRepository<DamageEntity, Long>, Dam
             "LEFT JOIN d.locationEntity location " +
             "WHERE d.id = :damageId")
     DamageResponseDTO findDamageDetailsByIdSimple(@Param("damageId") Long damageId);
+
+//    @Query("SELECT new com.potless.backend.damage.dto.controller.response.DamageResponseDTO(" +
+//            "d.id, d.severity, d.dirX, d.dirY, d.address, d.roadName, d.width, d.status, " +
+//            "a.areaGu, l.locationName, d.dtype) " +
+//            "FROM TaskEntity t " +
+//            "JOIN t.damage d " +
+//            "JOIN d.areaEntity a " +
+//            "JOIN d.locationEntity l " +
+//            "WHERE t.project.id = :projectId")
+//    List<DamageResponseDTO> findDetailsByProjectId(@Param("projectId") Long projectId);
 
 
     @Query("SELECT new com.potless.backend.damage.dto.controller.response.DamageResponseDTO(" +
@@ -40,6 +52,4 @@ public interface DamageRepository extends JpaRepository<DamageEntity, Long>, Dam
             "LEFT JOIN d.locationEntity location " +
             "WHERE d.id IN :damageIds")
     List<DamageResponseDTO> findDamageDetailsByIds(@Param("damageIds") List<Long> damageIds);
-
-
 }
