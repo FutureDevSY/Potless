@@ -21,8 +21,8 @@ class _button714_150State extends State<button714_150> {
     final ButtonStyle style = ElevatedButton.styleFrom(
       elevation: 5,
       padding: const EdgeInsets.all(10),
-      backgroundColor: Colors.white,
-      foregroundColor: Colors.black,
+      backgroundColor: const Color(0xff151C62),
+      foregroundColor: const Color(0xffffffff),
       textStyle: const TextStyle(fontSize: 22),
       fixedSize: Size(
         UIhelper.scaleWidth(context) * 180,

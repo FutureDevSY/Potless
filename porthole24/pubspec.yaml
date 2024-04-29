@@ -11,14 +11,17 @@ dependencies:
   flutter:
     sdk: flutter
 
+  kakao_map_plugin: ^0.3.0
+
   cupertino_icons: ^1.0.6
+  lottie: ^3.1.0
+  carousel_slider: ^4.2.1
+
   camera: ^0.10.5+9
   video_player: ^2.8.6
   path_provider: ^2.1.3
-  lottie: ^3.1.0
-  kakao_map_plugin: ^0.3.0
-  carousel_slider: ^4.2.1
   image_picker: ^1.1.0
+  photo_gallery: ^2.2.1
   
   # 욜로 ai 넣기
   tflite_flutter: ^0.10.4
@@ -35,6 +38,9 @@ dependencies:
 
   # http 요청
   http: ^1.2.1
+  intl: ^0.19.0
+  external_path: ^1.0.3
+  permission_handler: ^11.3.1
 
 dev_dependencies:
   flutter_test:
