@@ -1,6 +1,7 @@
 package com.potless.backend.damage.repository;
 
 import com.potless.backend.damage.dto.controller.request.DamageSearchRequestDTO;
+import com.potless.backend.damage.dto.controller.request.DamageVerificationRequestDTO;
 import com.potless.backend.damage.dto.controller.response.DamageResponseDTO;
 import com.potless.backend.damage.dto.controller.response.ImagesResponseDTO;
 import com.potless.backend.damage.entity.enums.Status;
@@ -11,9 +12,9 @@ import com.potless.backend.damage.entity.road.QPotholeEntity;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -22,6 +23,7 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDate;
 import java.util.List;
 
+@Slf4j
 @Repository
 public class DamageRepositoryCustomImpl implements DamageRepositoryCustom {
 
@@ -46,10 +48,12 @@ public class DamageRepositoryCustomImpl implements DamageRepositoryCustom {
 
         // 기타 코드 처리
 
+        List<DamageResponseDTO> results;
+
         if ("CRACK".equals(searchDTO.getType())) {
             QCrackEntity crack = QCrackEntity.crackEntity;
 
-            List<DamageResponseDTO> results = queryFactory
+            results = queryFactory
                     .select(Projections.constructor(DamageResponseDTO.class,
                             damage.id,
                             damage.severity,
@@ -61,13 +65,6 @@ public class DamageRepositoryCustomImpl implements DamageRepositoryCustom {
                             damage.status,
                             damage.areaEntity.areaGu,
                             damage.locationEntity.locationName,
-                            JPAExpressions
-                                    .select(Projections.constructor(ImagesResponseDTO.class,
-                                            image.id,
-                                            image.url,
-                                            image.order))
-                                    .from(image)
-                                    .where(image.damageEntity.id.eq(damage.id)),
                             damage.dtype
                     ))
                     .from(crack)
@@ -89,7 +86,7 @@ public class DamageRepositoryCustomImpl implements DamageRepositoryCustom {
         } else if ("POTHOLE".equals(searchDTO.getType())) {
             QPotholeEntity pothole = QPotholeEntity.potholeEntity;
 
-            List<DamageResponseDTO> results = queryFactory
+            results = queryFactory
                     .select(Projections.constructor(DamageResponseDTO.class,
                             damage.id,
                             damage.severity,
@@ -101,13 +98,6 @@ public class DamageRepositoryCustomImpl implements DamageRepositoryCustom {
                             damage.status,
                             damage.areaEntity.areaGu,
                             damage.locationEntity.locationName,
-                            JPAExpressions
-                                    .select(Projections.constructor(ImagesResponseDTO.class,
-                                            image.id,
-                                            image.url,
-                                            image.order))
-                                    .from(image)
-                                    .where(image.damageEntity.id.eq(damage.id)),
                             damage.dtype
                     ))
                     .from(pothole)
@@ -127,7 +117,7 @@ public class DamageRepositoryCustomImpl implements DamageRepositoryCustom {
             return new PageImpl<>(results, pageable, total);
         } else {
             // 베이스 엔티티 또는 기타 타입을 기본적으로 쿼리
-            List<DamageResponseDTO> results = queryFactory
+            results = queryFactory
                     .select(Projections.constructor(DamageResponseDTO.class,
                             damage.id,
                             damage.severity,
@@ -139,13 +129,6 @@ public class DamageRepositoryCustomImpl implements DamageRepositoryCustom {
                             damage.status,
                             damage.areaEntity.areaGu,
                             damage.locationEntity.locationName,
-                            JPAExpressions
-                                    .select(Projections.constructor(ImagesResponseDTO.class,
-                                            image.id,
-                                            image.url,
-                                            image.order))
-                                    .from(image)
-                                    .where(image.damageEntity.id.eq(damage.id)),
                             damage.dtype
                     ))
                     .from(damage)
@@ -153,6 +136,18 @@ public class DamageRepositoryCustomImpl implements DamageRepositoryCustom {
                     .offset(pageable.getOffset())
                     .limit(pageable.getPageSize())
                     .fetch();
+
+            for (DamageResponseDTO damageResponseDTO : results) {
+                List<ImagesResponseDTO> imagesForDamage = queryFactory
+                        .select(Projections.constructor(ImagesResponseDTO.class,
+                                image.id,
+                                image.url,
+                                image.order))
+                        .from(image)
+                        .where(image.damageEntity.id.eq(damageResponseDTO.getId()))
+                        .fetch();
+                damageResponseDTO.setImagesResponseDTOS(imagesForDamage);
+            }
 
             Long countResult = queryFactory
                     .select(damage.count())
@@ -164,6 +159,63 @@ public class DamageRepositoryCustomImpl implements DamageRepositoryCustom {
 
             return new PageImpl<>(results, pageable, total);
         }
+    }
+
+    @Override
+    public List<DamageResponseDTO> findDamagesByVerificationRequest(DamageVerificationRequestDTO verificationRequest) {
+
+        QDamageEntity damage = QDamageEntity.damageEntity;
+        QImageEntity image = QImageEntity.imageEntity;
+
+        BooleanBuilder builder = new BooleanBuilder();
+        if (verificationRequest.getDtype() != null) {
+            builder.and(damage.dtype.eq(verificationRequest.getDtype()));
+        }
+        if (verificationRequest.getDamageAddress() != null) {
+            builder.and(damage.address.contains(verificationRequest.getDamageAddress()));
+        }
+        if (verificationRequest.getDamageRoadName() != null) {
+            builder.and(damage.roadName.contains(verificationRequest.getDamageRoadName()));
+        }
+        if (verificationRequest.getArea() != null) {
+            builder.and(damage.areaEntity.areaGu.contains(verificationRequest.getArea()));
+        }
+        if (verificationRequest.getLocation() != null) {
+            builder.and(damage.locationEntity.locationName.contains(verificationRequest.getLocation()));
+        }
+
+        List<DamageResponseDTO> results = queryFactory
+                .select(Projections.constructor(DamageResponseDTO.class,
+                        damage.id,
+                        damage.severity,
+                        damage.dirX,
+                        damage.dirY,
+                        damage.address,
+                        damage.roadName,
+                        damage.width,
+                        damage.status,
+                        damage.areaEntity.areaGu,
+                        damage.locationEntity.locationName,
+                        damage.dtype
+                ))
+                .from(damage)
+                .where(builder)
+                .fetch();
+
+        for (DamageResponseDTO damageResponseDTO : results) {
+            List<ImagesResponseDTO> imagesForDamage = queryFactory
+                    .select(Projections.constructor(ImagesResponseDTO.class,
+                            image.id,
+                            image.url,
+                            image.order))
+                    .from(image)
+                    .where(image.damageEntity.id.eq(damageResponseDTO.getId()))
+                    .fetch();
+            damageResponseDTO.setImagesResponseDTOS(imagesForDamage);
+        }
+
+        return results;
+
     }
 
 

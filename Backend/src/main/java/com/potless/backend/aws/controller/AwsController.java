@@ -4,6 +4,8 @@ package com.potless.backend.aws.controller;
 import com.potless.backend.aws.dto.request.S3FilePullRequest;
 import com.potless.backend.aws.service.S3StorageService;
 import com.potless.backend.global.format.code.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +21,7 @@ import static com.potless.backend.global.format.response.ResponseCode.SUCCESS_TO
 @RestController
 @RequestMapping("api/aws")
 @RequiredArgsConstructor
+@Tag(name = "AWS 컨트롤러", description = "AWS Controller API")
 public class AwsController {
 
     private final S3StorageService s3StorageService;
@@ -31,6 +34,7 @@ public class AwsController {
         return "File downloaded successfully";
     }
 
+    @Operation(summary = "AWS S3 이미지 업로드", description = "이미지 업로드")
     @PostMapping("/upload")
     public ResponseEntity<?> uploadFile(@RequestParam("file") MultipartFile file) {
         try {
