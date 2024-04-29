@@ -14,7 +14,7 @@ public interface ProjectService {
 
     Long createProject(ProjectSaveRequestDto projectSaveDto);
 
-//    ProjectDetailResponseDto getProjectDetail(Long projectId);
+    ProjectDetailResponseDto getProjectDetail(Long projectId);
 
     void deleteProject(Long projectId);
 }

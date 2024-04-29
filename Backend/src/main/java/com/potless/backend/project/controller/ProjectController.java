@@ -7,6 +7,8 @@ import com.potless.backend.project.dto.request.ProjectSaveRequestDto;
 import com.potless.backend.project.dto.response.ProjectDetailResponseDto;
 import com.potless.backend.project.dto.response.ProjectListResponseDto;
 import com.potless.backend.project.service.ProjectService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -21,11 +23,13 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("api/project")
+@Tag(name = "Project 컨트롤러", description = "Project Controller API")
 public class ProjectController {
     private final ProjectService projectService;
     private final ApiResponse response;
 
 
+    @Operation(summary = "Project 리스트 조회")
     @GetMapping
     public ResponseEntity<?> getProjectAll(
             @ModelAttribute ProjectListRequestDto projectListRequestDto,
@@ -40,15 +44,17 @@ public class ProjectController {
     }
 
 
-//    @GetMapping("{projectId}")
-//    public ResponseEntity<?> getProjectDetail(
-//            @PathVariable Long projectId
-//    ) {
-//        log.info("projectId = {}", projectId);
-//        ProjectDetailResponseDto projectDetailResponseDto = projectService.getProjectDetail(projectId);
-//        return response.success(ResponseCode.PROJECT_FETCHED, projectDetailResponseDto);
-//    }
+    @Operation(summary = "Project 상세조회")
+    @GetMapping("{projectId}")
+    public ResponseEntity<?> getProjectDetail(
+            @PathVariable Long projectId
+    ) {
+        log.info("projectId = {}", projectId);
+        ProjectDetailResponseDto projectDetailResponseDto = projectService.getProjectDetail(projectId);
+        return response.success(ResponseCode.PROJECT_FETCHED, projectDetailResponseDto);
+    }
 
+    @Operation(summary = "Project 생성")
     @PostMapping
     public ResponseEntity<?> createProject(
             @RequestBody ProjectSaveRequestDto projectSaveRequestDto
@@ -58,6 +64,7 @@ public class ProjectController {
         return response.success(ResponseCode.PROJECT_FETCHED, result);
     }
 
+    @Operation(summary = "Project 삭제")
     @PutMapping("{projectId}")
     public ResponseEntity<?> deleteProject(
             @PathVariable Long projectId
