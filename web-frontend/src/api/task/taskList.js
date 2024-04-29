@@ -2,58 +2,20 @@ import { localAxios } from "@/util/http-commons";
 
 const local = localAxios();
 
-const getTaskList = async (
-  accessToken,
-  managerId,
-  start,
-  end,
-  status,
-  word,
-  area,
-  page,
-  success,
-  fail
-) => {
+// 작업 정보 지시서 전체 조회 (검색 쿼리 사용)
+const getTaskList = async (accessToken, queryParams, success, fail) => {
   await local
-    .get(
-      `/project?managerId=${managerId}&start=${start}&end=${end}&status=${status}&word=${word}&area=${area}&page=${page}&size=10`,
-      {
-        headers: {
-          Authorization: accessToken,
-        },
-      }
-    )
+    .get(`/project`, {
+      params: {
+        queryParams,
+        size: 10,
+      },
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    })
     .then(success)
     .catch(fail);
 };
 
-const postTaskCreate = async (
-  accessToken,
-  managerId,
-  teamId,
-  areaId,
-  title,
-  projectDate,
-  damageNums,
-  success,
-  fail
-) => {
-  await local
-    .post(
-      `/project`,
-      managerId,
-      teamId,
-      areaId,
-      title,
-      projectDate,
-      damageNums,
-      {
-        headers: {
-          Authorization: accessToken,
-        },
-      }
-    )
-    .then(success)
-    .catch(fail);
-};
-export { getTaskList, postTaskCreate };
+export { getTaskList };
