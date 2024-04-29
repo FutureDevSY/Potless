@@ -35,7 +35,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 controller: _idController,
                 decoration: InputDecoration(
                   filled: true,
-                  fillColor: const Color(0xff696DFF).withOpacity(0.2),
+                  fillColor: const Color(0xffffffff).withOpacity(0.2),
                   border: const OutlineInputBorder(
                     borderRadius: BorderRadius.all(
                       Radius.circular(10),
@@ -53,7 +53,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 controller: _pwController,
                 decoration: InputDecoration(
                   filled: true,
-                  fillColor: const Color(0xff696DFF).withOpacity(0.2),
+                  fillColor: const Color(0xffffffff).withOpacity(0.2),
                   border: const OutlineInputBorder(
                     borderRadius: BorderRadius.all(
                       Radius.circular(10),

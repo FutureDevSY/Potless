@@ -120,6 +120,7 @@ class _WorkDetailScreenState extends State<WorkDetailScreen> {
     return GestureDetector(
       onTap: () => _showImageSourceActionSheet(context, index),
       child: Container(
+        width: double.infinity,
         margin: const EdgeInsets.all(5.0),
         decoration: BoxDecoration(
           color: Colors.grey.shade300,
@@ -156,13 +157,21 @@ class _WorkDetailScreenState extends State<WorkDetailScreen> {
       context: context,
       builder: (BuildContext context) {
         return SafeArea(
-          child: Wrap(
-            children: <Widget>[
-              ListTile(
+          child: Container(
+            color: Colors.white,
+            child: Wrap(
+              children: <Widget>[
+                ListTile(
                   leading: const Icon(Icons.photo_library),
-                  title: const Text(
-                    '갤러리',
-                    style: TextStyle(fontSize: 20),
+                  title: Container(
+                    height: UIhelper.deviceHeight(context) * 0.1,
+                    padding: const EdgeInsets.all(20),
+                    child: const Center(
+                      child: Text(
+                        '갤러리',
+                        style: TextStyle(fontSize: 20),
+                      ),
+                    ),
                   ),
                   onTap: () async {
                     final XFile? image =
@@ -177,29 +186,38 @@ class _WorkDetailScreenState extends State<WorkDetailScreen> {
                       });
                     }
                     Navigator.of(context).pop();
-                  }),
-              ListTile(
-                leading: const Icon(Icons.photo_camera),
-                title: const Text(
-                  '사진 촬영',
-                  style: TextStyle(fontSize: 20),
+                  },
                 ),
-                onTap: () async {
-                  final XFile? photo =
-                      await picker.pickImage(source: ImageSource.camera);
-                  if (photo != null) {
-                    setState(() {
-                      if (index >= imageFiles.length) {
-                        imageFiles.add(File(photo.path));
-                      } else {
-                        imageFiles[index] = File(photo.path);
-                      }
-                    });
-                  }
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
+                const Divider(), // Insert Divider widget here
+                ListTile(
+                  leading: const Icon(Icons.photo_camera),
+                  title: Container(
+                    height: UIhelper.deviceHeight(context) * 0.1,
+                    padding: const EdgeInsets.all(10),
+                    child: const Center(
+                      child: Text(
+                        '사진 촬영',
+                        style: TextStyle(fontSize: 20),
+                      ),
+                    ),
+                  ),
+                  onTap: () async {
+                    final XFile? photo =
+                        await picker.pickImage(source: ImageSource.camera);
+                    if (photo != null) {
+                      setState(() {
+                        if (index >= imageFiles.length) {
+                          imageFiles.add(File(photo.path));
+                        } else {
+                          imageFiles[index] = File(photo.path);
+                        }
+                      });
+                    }
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            ),
           ),
         );
       },
@@ -227,9 +245,27 @@ class _WorkDetailScreenState extends State<WorkDetailScreen> {
                   ],
                 ),
               ),
+              Container(
+                decoration: BoxDecoration(
+                  border: Border.all(),
+                ),
+                child: SizedBox(
+                  width: UIhelper.deviceWidth(context) * 0.9,
+                  height: UIhelper.deviceHeight(context) * 0.3,
+                  child: KakaoMap(
+                    onMapCreated: _onMapCreated,
+                    markers: markers.toList(),
+                    center: LatLng(widget.placeLatitude, widget.placeLongitude),
+                    currentLevel: 4,
+                    // mapTypeControl: true,
+                    // mapTypeControlPosition: ControlPosition.topRight,
+                  ),
+                ),
+              ),
               SizedBox(
                 height: UIhelper.deviceHeight(context) * 0.05,
               ),
+              const Text('사진'),
               CarouselSlider(
                 options: CarouselOptions(
                     height: UIhelper.deviceHeight(context) * 0.4,
@@ -243,18 +279,6 @@ class _WorkDetailScreenState extends State<WorkDetailScreen> {
                   return _buildAddImageButton(imageFiles.length);
                 }),
               ),
-              SizedBox(
-                width: UIhelper.deviceWidth(context) * 0.9,
-                height: UIhelper.deviceHeight(context) * 0.3,
-                child: KakaoMap(
-                  onMapCreated: _onMapCreated,
-                  markers: markers.toList(),
-                  center: LatLng(widget.placeLatitude, widget.placeLongitude),
-                  currentLevel: 4,
-                  // mapTypeControl: true,
-                  // mapTypeControlPosition: ControlPosition.topRight,
-                ),
-              )
             ],
           ),
         ),
