@@ -19,7 +19,6 @@
           </div>
         </div>
         <div class="input-group">
-          <!-- 새로운 div 추가 -->
           <div class="input-title">비밀번호</div>
           <input
             class="form-control"
