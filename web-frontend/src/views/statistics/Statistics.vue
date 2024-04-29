@@ -16,10 +16,22 @@
       <div class="incident-graph">
         <IncidentGraph />
       </div>
+      <div class="title-input">
+        <p class="road-title">도로별 km당 발생 건수</p>
+        <input
+          type="text"
+          v-model="searchTerm"
+          placeholder="도로명을 입력해주세요."
+          @input="updateChart"
+        />
+      </div>
+      <div class="road-graph">
+        <RoadTypeIncidentsGraphVue :search-term="searchTerm" />
+      </div>
     </div>
     <div class="right-box">
-      <p class="road-title">지역별 발생 현황</p>
-      <RoadTypeIncidentsGraph />
+      <p class="town-title">지역별 발생 현황</p>
+      <TownTypeIncidentsGraph />
       <p class="work-title">보수 공사 현황</p>
       <WorkChart class="work-chart" />
     </div>
@@ -27,9 +39,11 @@
 </template>
 
 <script setup>
+import { ref } from "vue";
 import IncidentGraph from "./components/IncidentGraph.vue";
 import IncidentReport from "./components/IncidentReport.vue";
-import RoadTypeIncidentsGraph from "./components/RoadTypeIncidentsGraph.vue";
+import RoadTypeIncidentsGraphVue from "./components/RoadTypeIncidentsGraph.vue";
+import TownTypeIncidentsGraph from "./components/TownTypeIncidentsGraph.vue";
 import WorkChart from "./components/WorkChart.vue";
 
 const dataItems = [
@@ -37,6 +51,8 @@ const dataItems = [
   { title: "1주일", number: "1,500", subtitle: "전주 대비", percent: "-3%" },
   { title: "1개월", number: "7,420", subtitle: "전달 대비", percent: "+10%" },
 ];
+
+const searchTerm = ref("");
 </script>
 
 <style scoped>
@@ -51,7 +67,7 @@ const dataItems = [
 .right-box {
   display: flex;
   flex-direction: column;
-  padding: 0px 15px;
+  padding: 20px 15px;
 }
 .incident-report {
   display: grid;
@@ -59,7 +75,11 @@ const dataItems = [
   grid-template-columns: 1fr 1fr 1fr;
 }
 
-.totalincident-title, .incident-title, .road-title, .work-title {
+.totalincident-title,
+.incident-title,
+.town-title,
+.work-title,
+.road-title {
   font-size: 18px;
   font-weight: 600;
   color: #373737;
@@ -70,15 +90,20 @@ const dataItems = [
 }
 
 .totalincident-title {
-  margin: 10px 0px 0px 10px;
+  margin: 20px 0px 0px 10px;
 }
 
-.road-title {
+.town-title {
   margin: 10px 0px 15px 0px;
 }
 
 .work-title {
-  margin: 30px 0px 15px 0px;
+  margin: 75px 0px 15px 0px;
+}
+
+.road-title {
+  margin: 25px 0px 0px 10px;
+  padding-bottom: 15px;
 }
 
 .incident-graph {
@@ -86,6 +111,34 @@ const dataItems = [
 }
 .work-chart {
   width: 100%;
-  margin: 20px 0;
+}
+
+.title-input {
+  display: flex;
+  align-items: center;
+  margin: 40px 0px 0px 20px;
+}
+
+input {
+  width: 30%;
+  padding: 10px;
+  position: relative;
+  overflow: hidden;
+  border-radius: 8px;
+  background: none;
+  border: 2px solid #a1a1a1;
+  transition: border 0.4s ease;
+  font-size: 16px;
+  color: #373737;
+  margin-left: 20px;
+}
+
+input:focus {
+  outline: 0;
+  border-color: #1f2993;
+}
+
+.road-title {
+  margin: 0;
 }
 </style>
