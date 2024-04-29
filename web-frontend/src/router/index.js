@@ -5,7 +5,6 @@ import Login from "../views/auth/Login.vue";
 import PortholeList from "../views/porthole/PortholeList.vue";
 import PortholeDetail from "../views/porthole/PortholeDetail.vue";
 
-import PathLine from "../views/path/PathLine.vue";
 import Statistics from "../views/statistics/Statistics.vue";
 
 import TaskInfo from "../views/task/TaskInfo.vue";
@@ -36,18 +35,6 @@ const router = createRouter({
       path: "/porthole/:id",
       name: "PortholeDetail",
       component: PortholeDetail,
-      props: true,
-    },
-    {
-      path: "/path",
-      name: "PathLine",
-      component: PathLine,
-      props: true,
-    },
-    {
-      path: "/path",
-      name: "PathLine",
-      component: PathLine,
       props: true,
     },
     {
