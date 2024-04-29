@@ -18,11 +18,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr
-          v-for="task in currentTasks"
-          :key="task.id"
-          @click="store.moveTaskDetail(task.id)"
-        >
+        <tr v-for="task in currentTasks" :key="task.id" @dblclick="store.moveTaskDetail(task.id)">
           <td>{{ task.serviceSubCategory }}</td>
           <td>{{ task.projectEnd }} 건</td>
           <td>{{ task.sinceConstruction }}</td>
@@ -58,54 +54,60 @@ const currentTasks = computed(() => {
 </script>
 
 <style scoped>
-.task-info-container {
-  overflow-x: auto;
-}
-
 .search-tab {
   display: flex;
   align-items: center;
   justify-content: end;
   gap: 10px;
-  padding: 10px;
+  padding: 1.5vh 34px 1.5vh 10px;
 }
 
 .search-button {
-  padding: 5px 10px;
-  background-color: #f0f0f0;
-  border: 1px solid #ccc;
+  padding: 10px 15px;
+  background-color: #151c62;
+  border: none;
+  color: white;
+  font-size: 16px;
   border-radius: 4px;
   cursor: pointer;
-  height: 37.78px;
 }
 
 .search-button:hover {
-  background-color: #e1e1e1;
+  background-color: #0e1241;
 }
 
 table {
-  width: 100%;
+  width: 96%;
+  margin: 0 auto;
   border-collapse: collapse;
   table-layout: fixed;
+  color: #373737;
 }
 
 th,
 td {
   border: 1px solid #ddd;
-  text-align: left;
-  padding: 8px;
+  text-align: center;
+}
+
+th {
+  cursor: default;
+  padding: 2vh;
+  font-size: 2vh;
+  background-color: #232ea34f;
+}
+
+td {
+  padding: 1.5vh;
+  font-size: 1.8vh;
 }
 
 thead {
   background-color: #f9f9f9;
 }
 
-tr:nth-child(even) {
-  background-color: #f2f2f2;
-}
-
-tr:hover {
-  background-color: #ddd;
+tbody tr:hover {
+  background-color: #dddddd7e;
   cursor: pointer;
 }
 </style>
