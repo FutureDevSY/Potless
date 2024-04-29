@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:isolate';
 
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
@@ -21,7 +22,7 @@ class _CameraScreenState extends State<CameraScreen> {
   Timer? _timer;
   String? videoDirectoryPath;
   bool _continuousRecording = false;
-  bool _isPreviewOn = true;
+  bool _isPreviewOn = false;
   late CameraImage cameraImage;
 
   var cameraCount = 0;
@@ -193,6 +194,30 @@ class _CameraScreenState extends State<CameraScreen> {
     } catch (e) {
       debugPrint('Error stopping video recording: $e');
     }
+  }
+
+  void processVideoEntryPoint(SendPort sendPort) {
+    // Create a port for receiving messages from the main isolate
+    ReceivePort receivePort = ReceivePort();
+    sendPort.send(receivePort.sendPort);
+
+    // Listen for incoming messages, expecting a path to the video file
+    receivePort.listen((message) async {
+      String videoPath = message as String;
+      await processVideo(videoPath);
+
+      // After processing, you might want to send back some result or confirmation
+      sendPort.send('Completed processing $videoPath');
+    });
+  }
+
+// Example function that simulates video processing
+  Future<void> processVideo(String videoPath) async {
+    // Your video processing logic goes here
+    debugPrint('Processing video at $videoPath');
+
+    // Simulate some processing delay
+    await Future.delayed(const Duration(seconds: 5));
   }
 
   @override

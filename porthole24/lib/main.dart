@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:kakao_map_plugin/kakao_map_plugin.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:porthole24/screens/Loading/LoadingScreen.dart';
 import 'package:porthole24/screens/Login/Login.dart';
 
@@ -11,7 +12,25 @@ Future<void> main() async {
 
   WidgetsFlutterBinding.ensureInitialized();
   cameras = await availableCameras();
+  // await requestStoragePermission();
+  await requestPermissions();
   runApp(const MyApp());
+}
+
+Future<bool> requestStoragePermission() async {
+  var status = await Permission.storage.status;
+  if (!status.isGranted) {
+    status = await Permission.storage.request();
+  }
+  return status.isGranted;
+}
+
+Future<void> requestPermissions() async {
+  await [
+    Permission.camera,
+    Permission.storage,
+    // Add other permissions as needed
+  ].request();
 }
 
 class MyApp extends StatelessWidget {
