@@ -1,12 +1,16 @@
 package com.potless.backend.damage.service;
 
 import com.potless.backend.damage.dto.controller.request.DamageSearchRequestDTO;
+import com.potless.backend.damage.dto.controller.request.DamageVerificationRequestDTO;
 import com.potless.backend.damage.dto.controller.response.DamageResponseDTO;
 import com.potless.backend.damage.dto.controller.response.ImagesResponseDTO;
-import com.potless.backend.damage.dto.service.response.KakaoMapApiResponseDTO;
+import com.potless.backend.damage.dto.service.request.DamageSetRequestServiceDTO;
 import com.potless.backend.damage.entity.area.AreaEntity;
 import com.potless.backend.damage.entity.area.LocationEntity;
+import com.potless.backend.damage.entity.road.CrackEntity;
+import com.potless.backend.damage.entity.road.DamageEntity;
 import com.potless.backend.damage.entity.road.ImageEntity;
+import com.potless.backend.damage.entity.road.PotholeEntity;
 import com.potless.backend.damage.repository.AreaRepository;
 import com.potless.backend.damage.repository.DamageRepository;
 import com.potless.backend.damage.repository.ImageRepository;
@@ -45,21 +49,65 @@ public class DamageServiceImpl implements IDamageService {
         List<ImagesResponseDTO> imagesResponseDTOS = images.stream()
                 .map(img -> new ImagesResponseDTO(img.getId(), img.getUrl(), img.getOrder()))
                 .toList();
-        responseDTO.setImagesResponseDTOS(images);  // 오류 부분: 이 부분을 imagesResponseDTOS 로 변경해야 합니다.
+
+        responseDTO.setImagesResponseDTOS(imagesResponseDTOS);  // 오류 부분: 이 부분을 imagesResponseDTOS 로 변경해야 합니다.
         return responseDTO;
     }
 
 
     @Override
     @Transactional
-    public void setDamage(KakaoMapApiResponseDTO data) {
-        AreaEntity areaGu = areaRepository.findByAreaGu(data.getDocuments().get(0).getAddress().getRegion_2depth_name())
+    public void setDamage(DamageSetRequestServiceDTO data) {
+        AreaEntity areaGu = areaRepository.findByAreaGu(data.getArea())
                 .orElseThrow(PotholeLocationNotFoundException::new);
 
-        LocationEntity locationName = locationRepository.findByLocationName(data.getDocuments().get(0).getAddress().getRegion_3depth_name())
+        LocationEntity locationName = locationRepository.findByLocationName(data.getLocation())
                 .orElseThrow(PotholeLocationNotFoundException::new);
 
-        log.info("areaGu = {}", areaGu);
-        log.info("locationName = {}", locationName);
+        DamageEntity damageEntity;
+
+        if (data.getDtype().equals("CRACK")) {
+            damageEntity = CrackEntity.builder()
+                    .dirX(data.getDirX())
+                    .dirY(data.getDirY())
+                    .address(data.getAddress())
+                    .dtype(data.getDtype())
+                    .roadName(data.getRoadName())
+                    .status(data.getStatus())
+                    .areaEntity(areaGu)
+                    .locationEntity(locationName)
+                    .width(data.getWidth())
+                    .severity(data.getSeverity())
+                    .build();
+        } else {
+            damageEntity = PotholeEntity.builder()
+                    .dirX(data.getDirX())
+                    .dirY(data.getDirY())
+                    .address(data.getAddress())
+                    .dtype(data.getDtype())
+                    .roadName(data.getRoadName())
+                    .status(data.getStatus())
+                    .areaEntity(areaGu)
+                    .locationEntity(locationName)
+                    .width(data.getWidth())
+                    .severity(data.getSeverity())
+                    .build();
+        }
+        damageRepository.save(damageEntity);
+        log.info("저장 완료");
+        int order = 1;
+        for (String imageUrl : data.getImages()) {
+            ImageEntity image = ImageEntity.builder()
+                    .damageEntity(damageEntity)
+                    .url(imageUrl)
+                    .order(order++)
+                    .build();
+            imageRepository.save(image);
+        }
+    }
+
+    @Override
+    public List<DamageResponseDTO> getDamageVerification(DamageVerificationRequestDTO data) {
+        return damageRepository.findDamagesByVerificationRequest(data);
     }
 }
