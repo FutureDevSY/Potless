@@ -48,14 +48,8 @@ onMounted(() => {
 });
 
 function generatePdf() {
-  const container = document.querySelector(".task-detail-container");
   const pdfArea = document.getElementById("pdf");
-
-  container.style.overflow = "auto";
-  container.style.height = "auto";
-
-  pdfArea.style.visibility = "visible";
-  pdfArea.style.opacity = "1";
+  pdfArea.style.display = "block";
 
   const options = {
     margin: 0,
@@ -69,10 +63,7 @@ function generatePdf() {
     .from(pdfArea)
     .save()
     .then(() => {
-      pdfArea.style.visibility = "hidden";
-      pdfArea.style.opacity = "0";
-      container.style.overflow = "hidden";
-      container.style.height = "81vh"; // 초기 높이로 복귀
+      pdfArea.style.display = "none";
     });
 }
 </script>
@@ -98,7 +89,22 @@ function generatePdf() {
   margin: 0%;
   display: block;
   padding: 0%;
-  visibility: hidden;
+}
+
+.pdf-button {
+  background-color: #151c62;
+  cursor: pointer;
+  border-radius: 8px;
+  font-size: 1.8vh;
+  position: relative;
+  overflow: hidden;
+  color: rgb(255, 255, 255);
+  transition: all 0.3s;
+  padding: 1vh 1.5vh;
+}
+
+.pdf-button:hover {
+  background-color: #0e1241;
 }
 
 .report-num,
@@ -140,23 +146,5 @@ function generatePdf() {
 
 .report-worker {
   padding-bottom: 3px;
-}
-
-.pdf-button {
-  background-color: #151c62;
-  /* width: 370px;
-  height: 45px; */
-  cursor: pointer;
-  border-radius: 8px;
-  font-size: 1.8vh;
-  position: relative;
-  overflow: hidden;
-  color: rgb(255, 255, 255);
-  transition: all 0.3s;
-  padding: 1vh 1.5vh;
-}
-
-.pdf-button:hover {
-  background-color: #0e1241;
 }
 </style>

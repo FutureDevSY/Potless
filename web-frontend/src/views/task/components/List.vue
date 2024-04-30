@@ -186,6 +186,7 @@ tbody tr:hover {
   overflow-y: auto;
   max-height: 68vh;
   padding-right: 4px;
+  margin-bottom: 50px;
 }
 
 .list-overflow::-webkit-scrollbar {
