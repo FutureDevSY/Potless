@@ -217,6 +217,16 @@ public class DamageRepositoryCustomImpl implements DamageRepositoryCustom {
     }
 
     @Override
+    public StatisticCountResponseDTO getStatistic(String locationName) {
+        return null;
+    }
+
+    @Override
+    public List<StatisticCountResponseDTO> getStatistics() {
+        return null;
+    }
+
+    @Override
     public StatisticCountResponseDTO getStatisticLocation(String locationName) {
         QDamageEntity damage = QDamageEntity.damageEntity;
         // 상태별로 결과를 그룹화하고 카운트
@@ -248,6 +258,7 @@ public class DamageRepositoryCustomImpl implements DamageRepositoryCustom {
                 .countDamageDone(countDamageDone)
                 .build();
     }
+
 
     @Override
     public List<StatisticCountResponseDTO> getStatisticLocations() {

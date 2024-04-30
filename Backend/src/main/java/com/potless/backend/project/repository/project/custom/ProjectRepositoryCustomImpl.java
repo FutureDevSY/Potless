@@ -14,7 +14,6 @@ import com.potless.backend.project.entity.QTaskEntity;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
@@ -63,7 +62,6 @@ public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
                         damage.dirX,
                         damage.dirY,
                         damage.address,
-                        damage.roadName,
                         damage.width,
                         damage.status,
                         damage.areaEntity.areaGu,
