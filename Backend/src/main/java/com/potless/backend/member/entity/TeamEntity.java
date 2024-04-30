@@ -32,9 +32,13 @@ public class TeamEntity extends BaseEntity {
     @OneToMany(mappedBy = "teamEntity", fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE, CascadeType.PERSIST})
     private List<ProjectEntity> projectEntities = new ArrayList<>();
 
+    @Column(name = "team_name", nullable = false)
+    private String teamName;
+
     @Builder
-    public TeamEntity(Long id, ManagerEntity managerEntity, List<WorkerEntity> workerEntities, List<ProjectEntity> projectEntities) {
+    public TeamEntity(Long id, ManagerEntity managerEntity, String teamName, List<WorkerEntity> workerEntities, List<ProjectEntity> projectEntities) {
         this.id = id;
+        this.teamName = teamName;
         this.managerEntity = managerEntity;
         this.workerEntities = workerEntities;
         this.projectEntities = projectEntities;
