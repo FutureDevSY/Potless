@@ -24,4 +24,6 @@ public interface IDamageService {
     StatisticCountResponseDTO getStatisticLocation(String locationName);
 
     List<StatisticCountResponseDTO> getStatisticLocations();
+
+    StatisticCountResponseDTO getStatistic(String locationName);
 }

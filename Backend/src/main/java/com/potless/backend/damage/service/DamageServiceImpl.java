@@ -127,4 +127,9 @@ public class DamageServiceImpl implements IDamageService {
     public List<StatisticCountResponseDTO> getStatisticLocations() {
         return damageRepository.getStatisticLocations();
     }
+
+    @Override
+    public StatisticCountResponseDTO getStatistic(String locationName) {
+        return null;
+    }
 }
