@@ -1,5 +1,5 @@
 <template>
-  <div class="dropdown-container" @click="toggleDropdown">
+  <div class="dropdown-container" ref="dropdownRef" @click="toggleDropdown">
     <div class="dropdown-display">{{ selectedStatus || "작업 상태" }}</div>
     <img src="../../../assets/icon/select.png" alt="#" />
     <transition name="fade">
@@ -12,10 +12,11 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted, onUnmounted } from "vue";
 
 const showDropdown = ref(false);
 const selectedStatus = ref("");
+const dropdownRef = ref(null);
 
 const toggleDropdown = () => {
   showDropdown.value = !showDropdown.value;
@@ -23,19 +24,37 @@ const toggleDropdown = () => {
 
 const selectOption = (status, event) => {
   event.stopPropagation();
-  selectedStatus.value = status;
+  if (selectedStatus.value === status) {
+    selectedStatus.value = "";
+  } else {
+    selectedStatus.value = status;
+  }
   showDropdown.value = false;
 };
+
+const handleClickOutside = (event) => {
+  if (dropdownRef.value && !dropdownRef.value.contains(event.target)) {
+    showDropdown.value = false;
+  }
+};
+
+onMounted(() => {
+  document.addEventListener("click", handleClickOutside);
+});
+
+onUnmounted(() => {
+  document.removeEventListener("click", handleClickOutside);
+});
 </script>
 
 <style scoped>
 .dropdown-container {
   position: relative;
-  border: 1px solid #ccc;
+  border: 1px solid #bcbcbc;
   display: flex;
-  width: 100px;
+  width: 120px;
   align-items: center;
-  padding: 8px;
+  padding: 10px;
   background-color: white;
   cursor: pointer;
   justify-content: space-between;
@@ -44,7 +63,7 @@ const selectOption = (status, event) => {
 
 .dropdown-display {
   margin: 0 5px;
-  font-size: 12px;
+  font-size: 16px;
 }
 
 .dropdown-icon {
@@ -84,7 +103,7 @@ const selectOption = (status, event) => {
 .dropdown-list li {
   padding: 8px;
   border-bottom: 1px solid #eee;
-  font-size: 12px;
+  font-size: 16px;
 }
 
 .dropdown-list li:hover {

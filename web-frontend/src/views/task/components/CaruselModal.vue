@@ -1,7 +1,8 @@
 <template>
-  <div class="modal">
+  <div class="modal" @click="closeModal">
     <div class="modal-content">
       <span class="close" @click="toggleModal">&times;</span>
+      <img src="" alt="" />
       <!-- <div class="carousel-container">
         <button class="prev" @click="prevImage">Prev</button>
         <img :src="currentImage" alt="Carousel Image" />
@@ -27,14 +28,17 @@ const currentImage = computed(() => {
 });
 
 const prevImage = () => {
-  currentIndex.value =
-    currentIndex.value === 0
-      ? props.imgInfo.length - 1
-      : currentIndex.value - 1;
+  currentIndex.value = currentIndex.value === 0 ? props.imgInfo.length - 1 : currentIndex.value - 1;
 };
 
 const nextImage = () => {
   currentIndex.value = (currentIndex.value + 1) % props.imgInfo.length;
+};
+
+const closeModal = (event) => {
+  if (event.target.classList.contains("modal")) {
+    props.toggleModal();
+  }
 };
 </script>
 
