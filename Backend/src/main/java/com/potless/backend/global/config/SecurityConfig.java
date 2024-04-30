@@ -52,6 +52,8 @@ public class SecurityConfig {
                             "/favicon.ico",
                             "/api/member/signup",
                             "/api/member/login-web/**",
+                            "**/api/member/login-web/**",
+                            "**/api/member/login-app/**",
                             "/api/member/login-app/**",
                             "/api/member/email/**",
                             "/actuator/**",
@@ -59,10 +61,7 @@ public class SecurityConfig {
                             "/swagger/**",
                             "/swagger-ui/**",
                             "/swagger-config/**",
-                            "/swagger-resources/**",
-                            "/api/damage/**",
-                            "/api/aws/**",
-                            "/api/project/**"
+                            "/swagger-resources/**"
                     ).permitAll();
                     authorize.requestMatchers(HttpMethod.OPTIONS, "/api/**").permitAll();
                     authorize.anyRequest().authenticated();
