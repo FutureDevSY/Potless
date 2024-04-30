@@ -1,10 +1,7 @@
 package com.potless.backend.member.service;
 
 
-import com.potless.backend.global.exception.member.DuplicateEmailException;
-import com.potless.backend.global.exception.member.EmailNotFoundException;
-import com.potless.backend.global.exception.member.InvalidLoginAttemptException;
-import com.potless.backend.global.exception.member.PasswordMismatchException;
+import com.potless.backend.global.exception.member.*;
 import com.potless.backend.global.jwt.TokenInfo;
 import com.potless.backend.global.jwt.provider.TokenProvider;
 import com.potless.backend.global.jwt.repository.RefreshTokenRepository;
@@ -100,6 +97,10 @@ public class MemberServiceImpl implements MemberService {
 
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    public MemberEntity findMember(String email) {
+        return memberRepository.searchByEmail(email).orElseThrow(MemberNotFoundException::new);
+    }
 
     private void checkPasswordConfirmation(String password, String passwordConfirm) {
         if (!password.equals(passwordConfirm)) {
