@@ -4,14 +4,18 @@ import com.potless.backend.damage.dto.controller.request.DamageSearchRequestDTO;
 import com.potless.backend.damage.dto.controller.request.DamageVerificationRequestDTO;
 import com.potless.backend.damage.dto.controller.response.DamageResponseDTO;
 import com.potless.backend.damage.dto.controller.response.ImagesResponseDTO;
+import com.potless.backend.damage.dto.service.response.StatisticCountResponseDTO;
+import com.potless.backend.damage.entity.area.QLocationEntity;
 import com.potless.backend.damage.entity.enums.Status;
 import com.potless.backend.damage.entity.road.QCrackEntity;
 import com.potless.backend.damage.entity.road.QDamageEntity;
 import com.potless.backend.damage.entity.road.QImageEntity;
 import com.potless.backend.damage.entity.road.QPotholeEntity;
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +26,9 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Repository
@@ -60,7 +67,6 @@ public class DamageRepositoryCustomImpl implements DamageRepositoryCustom {
                             damage.dirX,
                             damage.dirY,
                             damage.address,
-                            damage.roadName,
                             damage.width,
                             damage.status,
                             damage.areaEntity.areaGu,
@@ -93,7 +99,6 @@ public class DamageRepositoryCustomImpl implements DamageRepositoryCustom {
                             damage.dirX,
                             damage.dirY,
                             damage.address,
-                            damage.roadName,
                             damage.width,
                             damage.status,
                             damage.areaEntity.areaGu,
@@ -124,7 +129,6 @@ public class DamageRepositoryCustomImpl implements DamageRepositoryCustom {
                             damage.dirX,
                             damage.dirY,
                             damage.address,
-                            damage.roadName,
                             damage.width,
                             damage.status,
                             damage.areaEntity.areaGu,
@@ -174,9 +178,6 @@ public class DamageRepositoryCustomImpl implements DamageRepositoryCustom {
         if (verificationRequest.getDamageAddress() != null) {
             builder.and(damage.address.contains(verificationRequest.getDamageAddress()));
         }
-        if (verificationRequest.getDamageRoadName() != null) {
-            builder.and(damage.roadName.contains(verificationRequest.getDamageRoadName()));
-        }
         if (verificationRequest.getArea() != null) {
             builder.and(damage.areaEntity.areaGu.contains(verificationRequest.getArea()));
         }
@@ -191,7 +192,6 @@ public class DamageRepositoryCustomImpl implements DamageRepositoryCustom {
                         damage.dirX,
                         damage.dirY,
                         damage.address,
-                        damage.roadName,
                         damage.width,
                         damage.status,
                         damage.areaEntity.areaGu,
@@ -213,11 +213,75 @@ public class DamageRepositoryCustomImpl implements DamageRepositoryCustom {
                     .fetch();
             damageResponseDTO.setImagesResponseDTOS(imagesForDamage);
         }
-
         return results;
-
     }
 
+    @Override
+    public StatisticCountResponseDTO getStatisticLocation(String locationName) {
+        QDamageEntity damage = QDamageEntity.damageEntity;
+        // 상태별로 결과를 그룹화하고 카운트
+        List<Tuple> counts = queryFactory
+                .select(damage.status, damage.count())
+                .from(damage)
+                .where(damage.locationEntity.locationName.eq(locationName))
+                .groupBy(damage.status)
+                .fetch();
+
+        Long countDamageBefore = 0L;
+        Long countDamageDone = 0L;
+
+        // Tuple 결과 처리
+        for (Tuple tuple : counts) {
+            Status status = tuple.get(damage.status);
+            Long count = tuple.get(1, Long.class); // 카운트 값 가져오기
+
+            if (status == Status.작업전) {
+                countDamageBefore = count;
+            } else if (status == Status.작업완료) {
+                countDamageDone = count;
+            }
+        }
+
+        return StatisticCountResponseDTO.builder()
+                .locationName(locationName)
+                .countDamageBefore(countDamageBefore)
+                .countDamageDone(countDamageDone)
+                .build();
+    }
+
+    @Override
+    public List<StatisticCountResponseDTO> getStatisticLocations() {
+        QDamageEntity damage = QDamageEntity.damageEntity;
+        QLocationEntity location = QLocationEntity.locationEntity;
+
+        List<Tuple> results = queryFactory
+                .select(location.locationName,
+                        damage.status,
+                        damage.count().as("count"))
+                .from(damage)
+                .join(damage.locationEntity, location)
+                .groupBy(location.locationName, damage.status)
+                .fetch();
+
+        Map<String, Map<Status, Long>> groupedResults = results.stream().collect(Collectors.groupingBy(
+                result -> Optional.ofNullable(result.get(location.locationName)).orElse("Unknown Location"),
+                Collectors.toMap(
+                        result -> result.get(damage.status),
+                        result -> Optional.ofNullable(result.get(Expressions.numberPath(Long.class, "count"))).orElse(0L),
+                        (u, v) -> {
+                            throw new IllegalStateException(String.format("Duplicate key %s", u));
+                        }
+                )
+        ));
+
+        return groupedResults.entrySet().stream()
+                .map(entry -> new StatisticCountResponseDTO(
+                        entry.getKey(),
+                        entry.getValue().getOrDefault(Status.작업전, 0L),
+                        entry.getValue().getOrDefault(Status.작업완료, 0L)
+                ))
+                .collect(Collectors.toList());
+    }
 
     private BooleanExpression betweenDates(QDamageEntity damage, LocalDate start, LocalDate end) {
         if (start != null && end != null) {
@@ -249,9 +313,7 @@ public class DamageRepositoryCustomImpl implements DamageRepositoryCustom {
 
     private BooleanExpression containsSearchWord(QDamageEntity damage, String searchWord) {
         if (searchWord != null) {
-            BooleanExpression roadNameMatch = damage.roadName.contains(searchWord);
-            BooleanExpression locationNameMatch = damage.locationEntity.locationName.contains(searchWord);
-            return roadNameMatch.or(locationNameMatch);
+            return damage.locationEntity.locationName.contains(searchWord);
         }
         return null;
     }

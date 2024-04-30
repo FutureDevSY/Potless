@@ -3,19 +3,17 @@ package com.potless.backend.damage.repository;
 
 import com.potless.backend.damage.dto.controller.response.DamageResponseDTO;
 import com.potless.backend.damage.entity.road.DamageEntity;
-import com.potless.backend.project.entity.ProjectEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface DamageRepository extends JpaRepository<DamageEntity, Long>, DamageRepositoryCustom, QuerydslPredicateExecutor<DamageEntity> {
 
     @Query("SELECT new com.potless.backend.damage.dto.controller.response.DamageResponseDTO(" +
-            "d.id, d.severity, d.dirX, d.dirY, d.address, d.roadName, d.width, d.status, " +
+            "d.id, d.severity, d.dirX, d.dirY, d.address, d.width, d.status, " +
             "area.areaGu, location.locationName, d.dtype) " +
             "FROM DamageEntity d " +
             "LEFT JOIN d.areaEntity area " +
@@ -29,7 +27,6 @@ public interface DamageRepository extends JpaRepository<DamageEntity, Long>, Dam
             "d.dirX, " +
             "d.dirY, " +
             "d.address, " +
-            "d.roadName, " +
             "d.width, " +
             "d.status, " +
             "area.areaGu, " +
