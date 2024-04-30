@@ -25,7 +25,6 @@ import com.potless.backend.project.entity.ProjectEntity;
 import com.potless.backend.project.entity.TaskEntity;
 import com.potless.backend.project.repository.project.ProjectRepository;
 import com.potless.backend.project.repository.task.TaskRepository;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.slf4j.Logger;
@@ -33,6 +32,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -40,6 +40,7 @@ import java.util.stream.Collectors;
 @Log4j2
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class ProjectServiceImpl implements ProjectService {
     private final ProjectRepository projectRepository;
     private final ManagerRepository managerRepository;
@@ -54,7 +55,6 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    @Transactional
     public Long createProject(ProjectSaveRequestDto projectSaveRequestDto) {
         ManagerEntity managerEntity = managerRepository.findById(projectSaveRequestDto.getManagerId())
                 .orElseThrow(ProjectNotFoundException::new);
@@ -99,27 +99,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public ProjectDetailResponseDto getProjectDetail(Long projectId) {
-        //프로젝트 정보
-        ProjectEntity projectEntity = projectRepository.findById(projectId)
-                .orElseThrow(ProjectNotFoundException::new);
-
-        //매니저 정보
-        String managerName = projectEntity.getManagerEntity().getMemberEntity().getMemberName();
-
-        //damageId 정보추출
-        List<Long> damageIds = taskRepository.findTasksByProjectId(projectId).stream()
-                .map(task -> task.getDamageEntity().getId())
-                .collect(Collectors.toList());
-
-        //damage 정보
-        List<DamageResponseDTO> damageResponseDTOS = damageRepository.findDamageDetailsByIds(damageIds);
-
-        return ProjectDetailResponseDto.builder()
-                .projectName(projectEntity.getProjectName())
-                .managerName(managerName)
-                .projectSize(projectEntity.getProjectSize())
-                .damageResponseDTOS(damageResponseDTOS)
-                .build();
+        return projectRepository.getProjectDetail(projectId);
     }
 
     @Override
