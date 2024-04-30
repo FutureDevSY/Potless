@@ -2,6 +2,7 @@ package com.potless.backend.damage.entity.area;
 
 import com.potless.backend.damage.entity.road.DamageEntity;
 import com.potless.backend.global.entity.BaseEntity;
+import com.potless.backend.global.exception.pothole.PotholeMinusException;
 import com.potless.backend.member.entity.ManagerEntity;
 import com.potless.backend.project.entity.ProjectEntity;
 import com.querydsl.core.annotations.QueryProjection;
@@ -21,7 +22,7 @@ import java.util.List;
 public class AreaEntity extends BaseEntity {
 
     @Column(name = "area_pothole_cnt", nullable = false)
-    private final Long potholeCnt = 0L;
+    private Long potholeCnt = 0L;
     @Id
     @Column(name = "area_id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -49,5 +50,16 @@ public class AreaEntity extends BaseEntity {
         this.locationEntities = locationEntities;
         this.damageEntities = damageEntities;
         this.projectEntities = projectEntities;
+    }
+
+    public void addCount() {
+        this.potholeCnt++;
+    }
+
+    public void minusCount() {
+        if (this.potholeCnt <= 0)
+            throw new PotholeMinusException();
+        else
+            this.potholeCnt--;
     }
 }

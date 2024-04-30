@@ -5,6 +5,7 @@ import com.potless.backend.damage.dto.controller.request.DamageVerificationReque
 import com.potless.backend.damage.dto.controller.response.DamageResponseDTO;
 import com.potless.backend.damage.dto.controller.response.ImagesResponseDTO;
 import com.potless.backend.damage.dto.service.request.DamageSetRequestServiceDTO;
+import com.potless.backend.damage.dto.service.response.StatisticCountResponseDTO;
 import com.potless.backend.damage.entity.area.AreaEntity;
 import com.potless.backend.damage.entity.area.LocationEntity;
 import com.potless.backend.damage.entity.road.CrackEntity;
@@ -16,6 +17,7 @@ import com.potless.backend.damage.repository.DamageRepository;
 import com.potless.backend.damage.repository.ImageRepository;
 import com.potless.backend.damage.repository.LocationRepository;
 import com.potless.backend.global.exception.pothole.PotholeLocationNotFoundException;
+import com.potless.backend.global.exception.pothole.PotholeNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -65,14 +67,13 @@ public class DamageServiceImpl implements IDamageService {
                 .orElseThrow(PotholeLocationNotFoundException::new);
 
         DamageEntity damageEntity;
-
+        log.info("data = {}", data);
         if (data.getDtype().equals("CRACK")) {
             damageEntity = CrackEntity.builder()
                     .dirX(data.getDirX())
                     .dirY(data.getDirY())
                     .address(data.getAddress())
                     .dtype(data.getDtype())
-                    .roadName(data.getRoadName())
                     .status(data.getStatus())
                     .areaEntity(areaGu)
                     .locationEntity(locationName)
@@ -85,7 +86,6 @@ public class DamageServiceImpl implements IDamageService {
                     .dirY(data.getDirY())
                     .address(data.getAddress())
                     .dtype(data.getDtype())
-                    .roadName(data.getRoadName())
                     .status(data.getStatus())
                     .areaEntity(areaGu)
                     .locationEntity(locationName)
@@ -94,7 +94,6 @@ public class DamageServiceImpl implements IDamageService {
                     .build();
         }
         damageRepository.save(damageEntity);
-        log.info("저장 완료");
         int order = 1;
         for (String imageUrl : data.getImages()) {
             ImageEntity image = ImageEntity.builder()
@@ -104,6 +103,7 @@ public class DamageServiceImpl implements IDamageService {
                     .build();
             imageRepository.save(image);
         }
+        areaGu.addCount();
     }
 
     @Override
@@ -113,6 +113,18 @@ public class DamageServiceImpl implements IDamageService {
 
     @Override
     public void deleteDamage(Long damageId) {
+        DamageEntity damageEntity = damageRepository.findById(damageId).orElseThrow(PotholeNotFoundException::new);
+        damageEntity.getAreaEntity().minusCount();
         damageRepository.deleteById(damageId);
+    }
+
+    @Override
+    public StatisticCountResponseDTO getStatisticLocation(String locationName) {
+        return damageRepository.getStatisticLocation(locationName);
+    }
+
+    @Override
+    public List<StatisticCountResponseDTO> getStatisticLocations() {
+        return damageRepository.getStatisticLocations();
     }
 }

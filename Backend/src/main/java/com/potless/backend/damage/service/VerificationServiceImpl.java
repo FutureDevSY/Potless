@@ -2,10 +2,12 @@ package com.potless.backend.damage.service;
 
 import com.potless.backend.damage.dto.controller.response.DamageResponseDTO;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
+@Transactional(readOnly = true)
 public class VerificationServiceImpl implements IVerificationService {
 
     @Override
