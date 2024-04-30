@@ -17,7 +17,7 @@
           <th>위험성</th>
           <th>종류</th>
           <th>행정동</th>
-          <th>도로명</th>
+          <th>지번 주소</th>
         </tr>
       </thead>
       <tbody>
@@ -73,7 +73,6 @@ import TaskList from "./TaskList.vue";
 import data from "./dummyData.json";
 import TeamModal from "./AddTeamModal.vue";
 
-// 더미 데이터
 const store = useMoveStore();
 const dummyData = ref(data);
 const portholes = computed(() => {
