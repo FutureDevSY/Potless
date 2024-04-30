@@ -62,7 +62,7 @@
     </div>
   </div>
 
-  <Pagination @update:current-page="setCurrentPage" :totalpage="totalPage" />
+  <!-- <Pagination @update:current-page="setCurrentPage" :totalpage="totalPage" /> -->
 </template>
 
 <script setup>
