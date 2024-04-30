@@ -43,7 +43,6 @@ class DamageControllerTest extends RestDocsSupport {
     private final KakaoService kakaoService = mock(KakaoService.class);
     private final IVerificationService iVerificationService = mock(IVerificationService.class);
     private final ApiResponse response = new ApiResponse();
-
     private final AwsService awsService = mock(AwsService.class);
 
     @Override
@@ -74,7 +73,6 @@ class DamageControllerTest extends RestDocsSupport {
                         .dirX(127.423084873712)
                         .dirY(37.0789561558879)
                         .address("경기도 안성시 죽산면 죽산초교길 69-4")
-                        .roadName("죽산초교길")
                         .width(5.5)
                         .status(Status.작업전)
                         .area("안성시")
@@ -101,7 +99,6 @@ class DamageControllerTest extends RestDocsSupport {
                         .dirX(127.423084873712)
                         .dirY(37.0789561558879)
                         .address("경기도 안성시 죽산면 죽산초교길 69-4")
-                        .roadName("죽산초교길")
                         .width(5.5)
                         .status(Status.작업전)
                         .area("안성시")
@@ -128,7 +125,6 @@ class DamageControllerTest extends RestDocsSupport {
                         .dirX(127.4234546242534)
                         .dirY(37.078243523468879)
                         .address("대전 대덕구 동춘당로")
-                        .roadName("동춘당로")
                         .width(5.5)
                         .status(Status.작업전)
                         .area("대전시")
@@ -155,7 +151,6 @@ class DamageControllerTest extends RestDocsSupport {
                         .dirX(127.423084873712)
                         .dirY(37.0789561558879)
                         .address("경기도 안성시 죽산면 죽산초교길 69-4")
-                        .roadName("죽산초교길")
                         .width(5.5)
                         .status(Status.작업전)
                         .area("안성시")
