@@ -110,4 +110,9 @@ public class DamageServiceImpl implements IDamageService {
     public List<DamageResponseDTO> getDamageVerification(DamageVerificationRequestDTO data) {
         return damageRepository.findDamagesByVerificationRequest(data);
     }
+
+    @Override
+    public void deleteDamage(Long damageId) {
+        damageRepository.deleteById(damageId);
+    }
 }
