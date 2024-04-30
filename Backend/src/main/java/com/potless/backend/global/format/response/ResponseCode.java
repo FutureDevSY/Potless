@@ -38,6 +38,9 @@ public enum ResponseCode {
     PROJECT_DETECTED(HttpStatus.CREATED, "프로젝트 정보가 성공적으로 생성되었습니다."),
     PROJECT_DELETED(HttpStatus.OK, "프로젝트 정보가 성공적으로 삭제되었습니다."),
 
+    /* 팀(Team) */
+    TEAM_CREATED(HttpStatus.CREATED, "팀이 성공적으로 생성되었습니다."),
+
     /* 경로(Path) */
     OPTIMAL_PATH_FOUND(HttpStatus.OK, "최적 경로 조회가 성공적으로 이루어졌습니다."),
 
