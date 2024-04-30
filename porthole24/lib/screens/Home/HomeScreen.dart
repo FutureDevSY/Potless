@@ -19,7 +19,15 @@ class HomeScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               SizedBox(
-                height: UIhelper.deviceHeight(context) * 0.3,
+                height: UIhelper.deviceHeight(context) * 0.05,
+              ),
+              const Text(
+                'POTLESS',
+                style: TextStyle(fontSize: 32),
+              ),
+              const Text('도로파손 통합 관리 시스템'),
+              SizedBox(
+                height: UIhelper.deviceHeight(context) * 0.2,
               ),
               MainLarge(
                 label: 'ai test',

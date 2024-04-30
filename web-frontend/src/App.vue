@@ -3,7 +3,7 @@ import { RouterView, useRoute } from "vue-router";
 import Navbar from "./views/common/Navbar.vue";
 
 const isVisibleNavbar = () => {
-  const visibleRoutes = ["Home", "Login"];
+  const visibleRoutes = ["Home"];
   const currentRouteName = useRoute().name;
   return visibleRoutes.includes(currentRouteName);
 };

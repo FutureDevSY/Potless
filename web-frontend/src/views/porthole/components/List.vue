@@ -55,6 +55,12 @@
       />
     </div>
   </div>
+  <button class="button list-button" @click="openModal('team')">팀 추가</button>
+  <div v-if="isModalOpen && modalMode === 'team'" class="modal">
+    <div class="modal-content">
+      <TeamModal :toggle-modal="toggleModal" />
+    </div>
+  </div>
 
   <Pagination @update:current-page="setCurrentPage" :totalpage="totalPage" />
 </template>
@@ -65,6 +71,7 @@ import { useMoveStore } from "../../../stores/move";
 import Pagination from "./Pagination.vue";
 import TaskList from "./TaskList.vue";
 import data from "./dummyData.json";
+import TeamModal from "./AddTeamModal.vue";
 
 // 더미 데이터
 const store = useMoveStore();

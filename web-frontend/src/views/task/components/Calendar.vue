@@ -9,11 +9,7 @@
       <template #default="{ togglePopover, inputValue, inputEvents }">
         <div class="input" @click="() => togglePopover()" tabindex="0">
           {{ formattedDateRange }}
-          <img
-            src="../../../assets/icon/calendar.png"
-            alt="#"
-            @click="() => togglePopover()"
-          />
+          <img src="../../../assets/icon/calendar.png" alt="#" @click="() => togglePopover()" />
         </div>
       </template>
     </VDatePicker>
@@ -25,11 +21,7 @@ import { ref, computed, watch } from "vue";
 
 const today = new Date();
 today.setHours(0, 0, 0, 0);
-const oneWeekAgo = new Date(
-  today.getFullYear(),
-  today.getMonth(),
-  today.getDate() - 7
-);
+const oneWeekAgo = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 7);
 
 const formatDate = (date) => {
   return date.toLocaleDateString("ko-KR", {
@@ -59,9 +51,7 @@ watch(
     if (newRange.end > today) {
       dateRange.value.end = today;
     }
-    formattedDateRange.value = `${formatDate(newRange.start)} - ${formatDate(
-      newRange.end
-    )}`;
+    formattedDateRange.value = `${formatDate(newRange.start)} - ${formatDate(newRange.end)}`;
   },
   { immediate: true, deep: true }
 );
@@ -72,8 +62,8 @@ watch(
   display: flex;
   padding: 8px;
   background-color: #fff;
-  width: 250px;
-  font-size: 12px;
+  width: 350px;
+  font-size: 16px;
   justify-content: end;
 }
 
@@ -81,7 +71,7 @@ watch(
   display: flex;
   align-items: center;
   border: 1px solid #ccc;
-  padding: 8px;
+  padding: 10px;
   cursor: pointer;
 }
 
@@ -99,6 +89,6 @@ button:hover {
 
 img {
   margin-left: 10px;
-  height: 20px;
+  height: 24px;
 }
 </style>

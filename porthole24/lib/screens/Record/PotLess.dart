@@ -1,14 +1,13 @@
 import 'dart:async';
 import 'dart:io';
-import 'dart:math';
+
 import 'package:camera/camera.dart'; // 카메라 플러그인
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
+import 'package:external_path/external_path.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:intl/intl.dart';
 import 'package:porthole24/main.dart';
+import 'package:porthole24/screens/Record/ImagePreview.dart';
 import 'package:porthole24/widgets/functions/geolocator.dart';
 import 'package:porthole24/widgets/tflite/bbox.dart';
 import 'package:porthole24/widgets/tflite/detector.dart';
@@ -32,18 +31,59 @@ class _VideoPageState extends State<VideoPage> with WidgetsBindingObserver {
   StreamSubscription? _subscription; // 객체 감지 결과 스트림의 구독
   final CameraLensDirection initialCameraLensDirection =
       CameraLensDirection.back; // 초기 카메라 렌즈 방향
+  bool _isCapturing = false;
 
   List<String> classes = []; // 감지된 객체의 클래스
   List<List<double>> bboxes = []; // 감지된 객체의 경계 상자 좌표
   List<double> scores = []; // 감지된 객체의 점수
 
+  List<XFile> imageSaveQueue = [];
+  bool _isSaving = false;
+
   int? resultIndex;
+
+  // Future<void> createTodayFolder() async {
+  //   String formattedDate =
+  //       DateFormat('yyyy-MM-dd').format(DateTime.now()); // Format today's date
+
+  //   final Directory? baseDir = await getExternalStorageDirectory();
+  //   final Directory todayDir =
+  //       Directory('${baseDir!.path}/DCIM/$formattedDate');
+  //   debugPrint(todayDir.path);
+
+  //   // Check if the directory exists, if not, create it
+  //   if (!await todayDir.exists()) {
+  //     await todayDir.create(
+  //         recursive: true); // Create the directory if it doesn't exist
+  //     debugPrint("폴더 생성함 55: ${todayDir.path}");
+  //   } else {
+  //     debugPrint("폴더 이미 있음 57: ${todayDir.path}");
+  //   }
+  // }
+
+  Future<void> createTodayFolder() async {
+    String formattedDate =
+        DateFormat('yyyy-MM-dd').format(DateTime.now()); // Format today's date
+    final String baseDir = await ExternalPath.getExternalStoragePublicDirectory(
+        ExternalPath.DIRECTORY_DCIM);
+    final Directory todayDir = Directory('$baseDir/$formattedDate');
+
+    debugPrint(todayDir.path);
+    if (!await todayDir.exists()) {
+      await todayDir.create(
+          recursive: true); // Create the directory if it doesn't exist
+      debugPrint("폴더 생성함 55: ${todayDir.path}");
+    } else {
+      debugPrint("폴더 이미 있음 57: ${todayDir.path}");
+    }
+  }
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this); // 앱 생명주기 이벤트를 관찰하기 위해 등록
     _initStateAsync(); // 비동기 초기화 메서드 호출
+    createTodayFolder();
   }
 
   // 카메라와 객체 감지기 초기화
@@ -69,9 +109,8 @@ class _VideoPageState extends State<VideoPage> with WidgetsBindingObserver {
   void _handleDetectionResults() {
     for (int i = 0; i < scores.length; i++) {
       if (scores[i] > 0.75) {
-        // Assuming 0.8 is the confidence threshold
         capturePhoto();
-        break; // Avoid multiple captures per detection event
+        break;
       }
     }
   }
@@ -115,30 +154,60 @@ class _VideoPageState extends State<VideoPage> with WidgetsBindingObserver {
   }
 
   Future<void> capturePhoto() async {
-    if (!_cameraController!.value.isInitialized) {
-      debugPrint("Controller is not initialized.");
-      return;
+    if (_cameraController != null &&
+        _cameraController!.value.isInitialized &&
+        !_cameraController!.value.isTakingPicture) {
+      try {
+        XFile picture = await _cameraController!.takePicture();
+        savePhoto(picture); // Handle saving asynchronously
+      } catch (e) {
+        debugPrint("Error capturing image: $e");
+      }
     }
+  }
 
-    if (_cameraController!.value.isTakingPicture) {
-      debugPrint("Capture is already in progress.");
-      return;
+  Future<void> savePhoto(XFile picture) async {
+    imageSaveQueue.add(picture);
+    if (!_isSaving) {
+      await _processImageQueue();
     }
+  }
+
+  Future<void> _processImageQueue() async {
+    _isSaving = true;
+    while (imageSaveQueue.isNotEmpty) {
+      final XFile imageToSave = imageSaveQueue.removeAt(0);
+      await _saveImageToFileSystem(imageToSave);
+    }
+    _isSaving = false;
+  }
+
+  Future<void> _saveImageToFileSystem(XFile image) async {
+    String formattedDate =
+        DateFormat('yyyy-MM-dd').format(DateTime.now()); // Format today's date
+    String formattedTime =
+        DateFormat('yyyy-MM-dd_ahhmm').format(DateTime.now());
+
+    final String baseDir = await ExternalPath.getExternalStoragePublicDirectory(
+        ExternalPath.DIRECTORY_DCIM);
+    debugPrint('233 코드 제발 좀 뜨자 $baseDir');
+    final String dirPath = '$baseDir/$formattedDate';
+    final String filePath = '$dirPath/$formattedTime.jpg';
+
+    setState(() {
+      _isCapturing = true;
+    });
 
     try {
-      final XFile picture = await _cameraController!.takePicture();
-      const String dirPath = 'storage/emulated/0/DCIM/Videos';
       await Directory(dirPath).create(recursive: true);
-      final String filePath =
-          '$dirPath/${DateTime.now().millisecondsSinceEpoch}.jpg';
-
-      Position position = await getCurrentLocation();
-      debugPrint('${position.latitude}, ${position.longitude}');
-
-      await picture.saveTo(filePath);
-      debugPrint("Picture saved to $filePath");
+      await image.saveTo(filePath);
+      debugPrint("Photo saved to $filePath");
     } catch (e) {
-      debugPrint("Error capturing image: $e");
+      debugPrint("Error saving photo: $e");
+    } finally {
+      setState(() {
+        _isCapturing = false;
+      });
     }
   }
 
@@ -190,55 +259,53 @@ class _VideoPageState extends State<VideoPage> with WidgetsBindingObserver {
             aspectRatio: aspect,
             child: _boundingBoxes(), // 경계 상자 위젯
           ),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                    color: Colors.white,
+                    width: UIhelper.deviceWidth(context) * 0.1,
+                    height: UIhelper.deviceWidth(context) * 0.1,
+                    child: _isCapturing
+                        ? const CircularProgressIndicator() // Shown when capturing
+                        : const Icon(Icons
+                            .camera_alt), // Empty container or any other widget when not capturing
+                  ),
+                  Container(
+                    padding: const EdgeInsets.all(20),
+                    child: FloatingActionButton(
+                      heroTag: "openFolderButton",
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => const ImagePreviewScreen(),
+                          ),
+                        );
+                      },
+                      child: const Icon(Icons.folder_open),
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.black54, // Semi-transparent black
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Text(
+                      '저장 중: ${imageSaveQueue.length}',
+                      style: const TextStyle(
+                          color: Colors.white, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ],
       ),
     );
   }
 }
-
-// // 사진을 표시하는 화면
-// class DisplayPictureScreen extends StatelessWidget {
-//   final String imagePath;
-//   final int? resultIndex;
-
-//   const DisplayPictureScreen({
-//     super.key,
-//     required this.imagePath,
-//     this.resultIndex,
-//   });
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         centerTitle: true,
-//         title: const Text('촬영한 사진 보기'),
-//       ),
-//       body: Center(
-//         child: Column(
-//           children: [
-//             const SizedBox(
-//               height: 125,
-//             ),
-//             // 이미지 회전 전에
-//             Transform.rotate(
-//               angle: pi / 2,
-//               child: SizedBox(
-//                 height: 300,
-//                 child: Image.network(
-//                   imagePath,
-//                   fit: BoxFit.fill,
-//                 ),
-//               ),
-//             ),
-//             const SizedBox(
-//               height: 100,
-//             ),
-//             const Text('뒤로가기 버튼을 눌러 추가 촬영을 진행하거나'),
-//             const Text('분석 버튼을 눌러 촬영한 사진의 분석 결과를 확인하세요.'),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }

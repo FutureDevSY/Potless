@@ -1,17 +1,17 @@
 <template>
   <div class="list-overflow">
-    <table>
+    <table class="table-container">
       <thead>
         <tr>
-          <th class="detect-column">탐지 일시</th>
+          <th>탐지 일시</th>
           <th>위험성</th>
           <th>종류</th>
           <th>행정동</th>
           <th>도로명</th>
-          <th>너비</th>
+          <th>너비(mm)</th>
           <th>사진</th>
           <th>작업 상태</th>
-          <th>삭제</th>
+          <th></th>
         </tr>
       </thead>
       <tbody>
@@ -20,27 +20,28 @@
           :key="porthole.id"
           @dblclick="store.movePortholeDetail(porthole.damageId)"
         >
-          <td>
+          <td class="detect-column">
             <div>{{ porthole.createAt.split(" ")[0] }}</div>
             <div>{{ porthole.createAt.split(" ")[1] }}</div>
           </td>
-          <td :class="dangerClass(porthole.severity)">
-            {{ porthole.severity }}
+          <td class="danger-column">
+            <div class="danger-type" :class="dangerClass(porthole.severity)">
+              {{ porthole.severity }}
+            </div>
           </td>
           <td>{{ porthole.dtype }}</td>
           <td>{{ porthole.area }}</td>
           <td>{{ porthole.roadName }}</td>
           <td>{{ porthole.width }}</td>
           <td>
-            <button
-              class="button list-button"
-              @click="openModal(porthole.imgUrl)"
-            >
-              사진 보기
-            </button>
+            <button class="list-button" @click="openModal(porthole.imgUrl)">확인하기</button>
           </td>
           <td>{{ porthole.status }}</td>
-          <td><button @click="removePorthole(index)">삭제하기</button></td>
+          <td class="delete-column">
+            <button class="delete-btn">
+              <img class="delete-img" src="../../../assets/icon/delete.png" alt="delete" />
+            </button>
+          </td>
         </tr>
       </tbody>
     </table>
@@ -92,19 +93,33 @@ function openModal(img) {
 </script>
 
 <style scoped>
+.danger-column {
+  display: flex;
+  justify-content: center;
+  padding: 20px 0px;
+  border-bottom: none;
+}
+
+.danger-type {
+  align-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 100px;
+  color: #ffffff;
+  font-size: 19px;
+  font-weight: bold;
+}
+
 .serious {
   background-color: #f5172d;
-  color: white;
 }
 
 .cautious {
-  background-color: #ffb800;
-  color: white;
+  background-color: #ffb700bf;
 }
 
 .safe {
-  background-color: #047c02;
-  color: white;
+  background-color: #008a1e75;
 }
 
 table {
@@ -113,37 +128,65 @@ table {
   table-layout: fixed;
 }
 
-th,
 td {
-  border: 1px solid #ddd;
+  border-top: 1px solid #dddddda1;
+  border-bottom: 1px solid #dddddda1;
+  border-left: none;
+  border-right: none;
   text-align: center;
-  padding: 15px;
+  padding: 22px;
+  font-size: 18px;
+  color: #373737;
 }
 
-thead {
-  background-color: #f9f9f9;
+thead th:last-child {
+  width: 50px;
 }
 
-tr:nth-child(even) {
-  background-color: #f2f2f2;
+thead th {
+  position: sticky;
+  top: 0;
+  background-color: #d3d5ed;
+  z-index: 10;
+  padding: 13px 10px;
+  font-size: 16px;
+  color: #6c6c6c;
 }
 
-tr:hover {
-  background-color: #ddd;
+tbody tr:hover {
+  background-color: #dddddd44;
   cursor: pointer;
 }
 
 .detect-column {
-  width: 150px;
-  min-width: 150px;
-  text-align: center;
-  white-space: nowrap;
+  font-size: 16px;
+}
+
+.delete-column {
+  padding: 0px;
+}
+
+.list-button {
+  font-size: 15px;
+  padding: 10px 14px;
+  cursor: pointer;
+  border: none;
+  background-color: #ffffff;
+  border-radius: 8px;
+  color: #4f58b5;
+  border: 1px solid #4f58b5;
+  transition: all 0.3s;
+}
+
+.list-button:hover {
+  background-color: #e6e6f6;
 }
 
 .list-overflow {
   overflow-y: auto;
-  max-height: 83vh;
-  margin-right: 8px;
+  max-height: 68vh;
+  padding-right: 4px;
+  margin-bottom: 50px;
 }
 
 .list-overflow::-webkit-scrollbar {
@@ -230,5 +273,24 @@ tr:hover {
   color: black;
   text-decoration: none;
   cursor: pointer;
+}
+
+.delete-img {
+  width: auto;
+  height: 30px;
+  cursor: pointer;
+}
+
+.delete-btn {
+  border-radius: 100px;
+  margin-right: 20px;
+  border: none;
+  background-color: white;
+  padding: 8px 10px;
+  transition: background-color 0.3s;
+}
+
+.delete-btn:hover {
+  background-color: #fbd6d8;
 }
 </style>

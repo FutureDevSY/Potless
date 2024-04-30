@@ -16,11 +16,16 @@
 }
 
 input[type="text"] {
-  padding: 8px 32px 8px 8px;
-  border: 1px solid #ccc;
-  width: 200px;
-  font-size: 12px;
+  padding: 11px 32px 11px 8px;
+  border: 1px solid #bcbcbc;
+  width: 250px;
+  font-size: 15px;
   height: 20px;
+}
+
+input[type="text"]:focus {
+  outline: 0;
+  border: 1px solid #6d6d6d;
 }
 
 .search-icon {

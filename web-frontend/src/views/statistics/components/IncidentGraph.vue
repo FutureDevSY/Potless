@@ -9,7 +9,7 @@ import { ref } from "vue";
 
 const chartOptions = ref({
   chart: {
-    height: 350,
+    height: 300,
     type: "line",
     stacked: false,
     toolbar: {
@@ -30,48 +30,28 @@ const chartOptions = ref({
     width: [4, 4],
   },
   dataLabels: {
-    enabled: true,
-    enabledOnSeries: [1],
+    enabled: false,
   },
-  labels: [
-    "Jan",
-    "Feb",
-    "Mar",
-    "Apr",
-    "May",
-    "Jun",
-    "Jul",
-    "Aug",
-    "Sep",
-    "Oct",
-    "Nov",
-    "Dec",
-  ],
+  markers: {
+    size: 5,
+    colors: undefined,
+    strokeColors: "#fff",
+    strokeWidth: 1,
+    shape: "circle",
+    hover: {
+      sizeOffset: 2,
+    },
+  },
+  labels: ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"],
   xaxis: {
     type: "month",
   },
   yaxis: [
     {
-      axisTicks: {
-        show: true,
-      },
-      axisBorder: {
-        show: true,
-        color: "#FF1654",
-      },
       labels: {
         style: {
-          colors: "#FF1654",
+          colors: "#373737",
         },
-      },
-      title: {
-        text: "",
-        style: {
-          color: "#FF1654",
-        },
-      },
-      tooltip: {
-        enabled: true,
       },
     },
   ],
@@ -80,30 +60,27 @@ const chartOptions = ref({
       enabled: true,
       position: "topLeft",
       offsetY: 30,
-      offsetX: 60,
+      offsetX: 100,
     },
   },
   legend: {
-    horizontalAlign: "left",
-    offsetX: 40,
+    horizontalAlign: "center",
+    offsetY: 15,
+    position: "top",
   },
+  colors: ["#d8d8d8", "#151c62"],
 });
 
 const series = ref([
   {
-    name: "막대",
+    name: "월별 탐지건수",
     type: "column",
-    data: [
-      3131, 5432, 2145, 4212, 6703, 3300, 3244, 5482, 2234, 6680, 3605, 5210,
-    ],
+    data: [3131, 5432, 2145, 4212, 6703, 3300, 3244, 5482, 2234, 6680, 3605, 5210],
   },
   {
-    name: "그래프",
+    name: "누적 탐지건수",
     type: "line",
-    data: [
-      3131, 8563, 10708, 14920, 21623, 24923, 28167, 33679, 35913, 42593, 46198,
-      51408,
-    ],
+    data: [3131, 8563, 10708, 14920, 21623, 24923, 28167, 33679, 35913, 42593, 46198, 51408],
   },
 ]);
 </script>
