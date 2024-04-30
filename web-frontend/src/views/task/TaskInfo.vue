@@ -86,20 +86,23 @@ table {
 
 th,
 td {
-  border: 1px solid #ddd;
+  border-top: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
   text-align: center;
 }
 
 th {
   cursor: default;
-  padding: 2vh;
+  padding: 1.5vh;
   font-size: 2vh;
-  background-color: #232ea34f;
+  color: #6c6c6c;
+  background-color: #d3d5ed;
 }
 
 td {
   padding: 1.5vh;
   font-size: 1.8vh;
+  color: #373737;
 }
 
 thead {
@@ -107,7 +110,7 @@ thead {
 }
 
 tbody tr:hover {
-  background-color: #dddddd7e;
+  background-color: #dddddd44;
   cursor: pointer;
 }
 </style>
