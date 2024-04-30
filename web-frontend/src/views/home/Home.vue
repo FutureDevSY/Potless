@@ -1,7 +1,7 @@
 <template>
   <div class="map-container">
-    <p class="logo">POTLESS</p>
-    <SVG />
+    <img class="logo" src="../../assets/icon/weblogo.png" alt="#" />
+    <SVG></SVG>
     <Chart
       class="chart chart1"
       :options="chartOptions"
@@ -94,10 +94,8 @@ const section = ["유성구", "대덕구", "중구", "서구", "동구"];
 }
 
 .logo {
-  font-size: 55px;
-  color: #373737;
-  font-weight: bold;
-  margin: 4.5vh 0px 0px 0px;
+  margin-top: 30px;
+  width: 317.5px;
 }
 
 .chart {
