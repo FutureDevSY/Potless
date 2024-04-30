@@ -6,7 +6,7 @@
 
 <style scoped>
 .image {
-  width: 600px;
-  height: 530px;
+  width: 38vw;
+  height: 45vh;
 }
 </style>
