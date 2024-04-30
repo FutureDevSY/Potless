@@ -12,7 +12,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, defineProps } from "vue";
+import { ref, computed, watch } from "vue";
 
 const props = defineProps({
   searchTerm: String,
@@ -42,7 +42,9 @@ const allRoadsData = ref([
 
 const filteredRoadsData = computed(() => {
   return allRoadsData.value
-    .filter((road) => road.road.toLowerCase().includes(props.searchTerm.toLowerCase()))
+    .filter((road) =>
+      road.road.toLowerCase().includes(props.searchTerm.toLowerCase())
+    )
     .sort((a, b) => b.potholes - a.potholes)
     .slice(0, 10);
 });
@@ -50,7 +52,9 @@ const filteredRoadsData = computed(() => {
 const series = computed(() => [
   {
     name: "1km당 포트홀의 개수",
-    data: filteredRoadsData.value.map((data) => data.potholes / data.roadlength),
+    data: filteredRoadsData.value.map(
+      (data) => data.potholes / data.roadlength
+    ),
   },
 ]);
 
