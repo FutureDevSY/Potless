@@ -7,15 +7,13 @@ import com.potless.backend.member.entity.ManagerEntity;
 import com.potless.backend.member.entity.TeamEntity;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDate;
 
 @Entity
 @Getter
+@ToString
 @Table(name = "project")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Tag(name = "Project 컨트롤러", description = "Project Controller API")
