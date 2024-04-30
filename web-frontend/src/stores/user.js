@@ -9,14 +9,14 @@ export const useAuthStore = defineStore(
     const username = ref("");
     const areaId = ref(null);
 
-    const login = (userData) => {
+    const login = (userData, userToken) => {
       isLoggedIn.value = true;
-      accessToken.value = userData.data.token;
+      accessToken.value = userToken;
       username.value = userData.data.memberInfo.memberName;
       areaId.value = userData.data.memberInfo.region;
     };
 
-    const logout = () => {
+    const logOut = () => {
       isLoggedIn.value = false;
       accessToken.value = null;
       username.value = "";
@@ -27,7 +27,7 @@ export const useAuthStore = defineStore(
       accessToken,
       username,
       login,
-      logout,
+      logOut,
     };
   },
   {

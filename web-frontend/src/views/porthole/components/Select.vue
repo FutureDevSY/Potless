@@ -4,7 +4,11 @@
     <img src="../../../assets/icon/select.png" alt="#" />
     <transition name="fade">
       <ul v-show="showDropdown" class="dropdown-list">
-        <li v-for="option in options" :key="option" @click="selectOption(option, $event)">
+        <li
+          v-for="option in options"
+          :key="option"
+          @click="selectOption(option, $event)"
+        >
           {{ option }}
         </li>
       </ul>
@@ -20,6 +24,7 @@ const props = defineProps({
   defaultText: String,
 });
 
+const emit = defineEmits(["update:selected"]);
 const showDropdown = ref(false);
 const selected = ref("");
 
@@ -31,6 +36,7 @@ const selectOption = (option, event) => {
   event.stopPropagation();
   selected.value = option;
   showDropdown.value = false;
+  emit("update:selected", option);
 };
 </script>
 

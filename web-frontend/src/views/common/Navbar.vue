@@ -6,24 +6,51 @@
         <img src="@/assets/icon/enter.png" alt="#" />
         <div>로그인</div>
       </button> -->
-      <button class="logout text-title" @click="store.moveLogin">
+      <button class="logout text-title" @click="clickLogout">
         <img src="@/assets/icon/out.png" alt="#" />
         <div>로그아웃</div>
       </button>
     </div>
 
     <div class="sub-navbar">
-      <div class="text-dark-title nav-item first-item" @click="store.movePorthole">포트홀 조회</div>
-      <div class="text-dark-title nav-item" @click="store.moveTask">작업 정보</div>
-      <div class="text-dark-title nav-item" @click="store.moveStatistics">통계 자료</div>
+      <div
+        class="text-dark-title nav-item first-item"
+        @click="store.movePorthole"
+      >
+        포트홀 조회
+      </div>
+      <div class="text-dark-title nav-item" @click="store.moveTask">
+        작업 정보
+      </div>
+      <div class="text-dark-title nav-item" @click="store.moveStatistics">
+        통계 자료
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
 import { useMoveStore } from "../../stores/move.js";
+import { useAuthStore } from "@/stores/user";
+import { logout } from "../../api/auth/auth";
 
 const store = useMoveStore();
+const store2 = useAuthStore();
+const clickLogout = () => {
+  console.log(store2.accessToken);
+  logout(
+    store2.accessToken,
+    (res) => {
+      if (res.status == "SUCCESS") {
+        console.log(res.message);
+        store2.logOut();
+      }
+    },
+    (error) => {
+      console.log(error);
+    }
+  );
+};
 </script>
 
 <style scoped>

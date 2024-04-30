@@ -35,12 +35,12 @@
 
 <script setup>
 import { ref } from "vue";
-import { useRouter } from "vue-router";
 import { useAuthStore } from "../../stores/user.js";
 import { login } from "../../api/auth/auth";
+import { useMoveStore } from "@/stores/move";
 
 const store = useAuthStore();
-const router = useRouter();
+const store2 = useMoveStore();
 const auth_id = ref("");
 const auth_password = ref("");
 const showError = ref(false);
@@ -54,10 +54,11 @@ const doLogin = () => {
 
   login(
     loginData,
-    (data) => {
-      if (data.status == "success") {
-        console.log(data.message);
-        store.login(data);
+    (res) => {
+      if (res.data.status == "SUCCESS") {
+        console.log(res.data.message);
+        store.login(res.data, res.data.data.token);
+        store2.moveHome();
       }
     },
     (error) => {
@@ -66,15 +67,6 @@ const doLogin = () => {
       errorMsg.value = error.message;
     }
   );
-};
-
-const moveHome = () => {
-  if (!showError.value) {
-    showError.value = true;
-  }
-  // if (auth_id.value && auth_password.value) {
-  //   router.push("/");
-  // }
 };
 </script>
 
@@ -181,3 +173,4 @@ input {
   color: #ff4343;
 }
 </style>
+../../api/auth.js ../../api/auth/auth.js
