@@ -27,7 +27,7 @@
     <div class="container">
       <div class="left">
         <List :current-data="currentData" />
-        <!-- <Pagination :total-page="totalPage" /> -->
+        <Pagination :total-page="totalPage" />
       </div>
 
       <div class="right">
