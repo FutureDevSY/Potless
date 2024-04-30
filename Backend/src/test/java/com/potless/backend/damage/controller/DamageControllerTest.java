@@ -1,5 +1,6 @@
 package com.potless.backend.damage.controller;
 
+import com.potless.backend.aws.service.AwsService;
 import com.potless.backend.common.RestDocsSupport;
 import com.potless.backend.damage.dto.controller.request.DamageSearchRequestDTO;
 import com.potless.backend.damage.dto.controller.response.DamageResponseDTO;
@@ -43,9 +44,11 @@ class DamageControllerTest extends RestDocsSupport {
     private final IVerificationService iVerificationService = mock(IVerificationService.class);
     private final ApiResponse response = new ApiResponse();
 
+    private final AwsService awsService = mock(AwsService.class);
+
     @Override
     protected Object initController() {
-        return new DamageController(iDamageService, kakaoService, response, iVerificationService);
+        return new DamageController(iDamageService, kakaoService, response, iVerificationService, awsService);
     }
 
     @DisplayName("도로 파손 리스트 가져오기")
@@ -261,8 +264,6 @@ class DamageControllerTest extends RestDocsSupport {
                                 fieldWithPath("data.empty").type(JsonFieldType.BOOLEAN).description("현재 페이지가 비어 있는지 여부")
                         )
                 ));
-
     }
-
 
 }

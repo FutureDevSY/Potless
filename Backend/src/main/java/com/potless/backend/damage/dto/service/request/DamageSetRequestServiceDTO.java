@@ -16,7 +16,6 @@ public class DamageSetRequestServiceDTO {
     private Double dirX;
     private Double dirY;
     private String address;
-    private String roadName;
     private Double width;
     private Status status;
     private String area;
@@ -26,13 +25,12 @@ public class DamageSetRequestServiceDTO {
 
 
     @Builder
-    public DamageSetRequestServiceDTO(Long id, Integer severity, Double dirX, Double dirY, String address, String roadName, Double width, Status status, String area, String location, List<String> images, String dtype) {
+    public DamageSetRequestServiceDTO(Long id, Integer severity, Double dirX, Double dirY, String address, Double width, Status status, String area, String location, List<String> images, String dtype) {
         this.id = id;
         this.severity = severity;
         this.dirX = dirX;
         this.dirY = dirY;
         this.address = address;
-        this.roadName = roadName;
         this.width = width;
         this.status = status;
         this.area = area;
