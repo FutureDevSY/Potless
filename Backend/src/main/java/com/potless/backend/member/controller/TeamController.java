@@ -4,14 +4,15 @@ import com.potless.backend.global.format.code.ApiResponse;
 import com.potless.backend.global.format.response.ResponseCode;
 import com.potless.backend.member.dto.TeamAddRequestDto;
 import com.potless.backend.member.service.TeamService;
+import com.potless.backend.project.dto.request.CreateTeamRequestDto;
+import com.potless.backend.project.dto.request.WorkerRequestDto;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -22,9 +23,33 @@ public class TeamController {
     private final ApiResponse response;
 
     @Operation(summary = "Project에 Team 입력")
-    @PostMapping
+    @PostMapping("/project")
     public ResponseEntity<?> addTeamToProject(@RequestBody TeamAddRequestDto teamAddRequestDto) {
         Long result = teamService.addTeamToProject(teamAddRequestDto);
         return response.success(ResponseCode.TEAM_CONNECT_TO_PROJECT);
+    }
+
+    @PostMapping
+    @Operation(summary = "팀 생성", description = "팀 생성 및 팀 작업자 추가 요청")
+    public ResponseEntity<?> createTeam(@Parameter(hidden = true) Authentication authentication,
+                                        @RequestBody CreateTeamRequestDto requestDto) {
+
+        return response.success(ResponseCode.TEAM_CREATED, teamService.createTeam(authentication, requestDto));
+    }
+
+    @PostMapping("/worker")
+    @Operation(summary = "팀 작업자 추가", description = "기존 팀에 신규 작업자 추가 요청")
+    public ResponseEntity<?> addWorker(@Parameter(hidden = true) Authentication authentication,
+                                       @RequestBody WorkerRequestDto requestDto) {
+
+        return response.success(ResponseCode.TEAM_CREATED, teamService.addWorker(authentication, requestDto));
+    }
+
+    @DeleteMapping("/worker")
+    @Operation(summary = "팀 작업자 삭제", description = "기존 팀에 기존 작업자 삭제 요청")
+    public ResponseEntity<?> deleteWorker(@Parameter(hidden = true) Authentication authentication,
+                                          @RequestBody WorkerRequestDto requestDto) {
+
+        return response.success(ResponseCode.TEAM_CREATED, teamService.deleteWorker(authentication, requestDto));
     }
 }

@@ -17,9 +17,4 @@ public interface ProjectService {
 
     void deleteProject(Long projectId);
 
-    Long createTeam(Authentication authentication, CreateTeamRequestDto createTeamRequestDto);
-
-    Long addWorker(Authentication authentication, WorkerRequestDto requestDto);
-
-    Long deleteWorker(Authentication authentication, WorkerRequestDto requestDto);
 }
