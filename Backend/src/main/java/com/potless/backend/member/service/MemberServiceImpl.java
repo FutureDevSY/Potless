@@ -7,15 +7,13 @@ import com.potless.backend.global.jwt.provider.TokenProvider;
 import com.potless.backend.global.jwt.repository.RefreshTokenRepository;
 import com.potless.backend.global.jwt.service.TokenService;
 import com.potless.backend.global.util.CookieUtil;
-import com.potless.backend.member.dto.LoginRequestDto;
-import com.potless.backend.member.dto.LoginResponseDto;
-import com.potless.backend.member.dto.MemberInfo;
-import com.potless.backend.member.dto.SignupRequestDto;
+import com.potless.backend.member.dto.*;
 import com.potless.backend.member.entity.MemberEntity;
 import com.potless.backend.member.repository.member.MemberRepository;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,7 +46,8 @@ public class MemberServiceImpl implements MemberService {
                         }
                 );
 
-        MemberEntity newMember = MemberEntity.of(requestDto, passwordEncoder.encode(requestDto.getPassword()));
+        MemberEntity newMember = MemberEntity.of(requestDto,
+                                                passwordEncoder.encode(requestDto.getPassword()));
         memberRepository.save(newMember);
 
         return newMember.getId();
@@ -60,10 +59,10 @@ public class MemberServiceImpl implements MemberService {
         log.info("event=LoginAttempt, email={}", requestDto.getEmail());
 
         MemberEntity member = memberRepository.searchByEmail(requestDto.getEmail())
-                .orElseThrow(EmailNotFoundException::new);
+                                              .orElseThrow(EmailNotFoundException::new);
 
         isPasswordMatchingWithEncoded(requestDto.getPassword(), member.getPassword());
-        removeOldRefreshToken(requestDto, member);
+        removeOldRefreshToken(requestDto.getEmail(), member);
 
         // 웹/앱 요청 구별, refresh token web : 24시간 / app : 일주일
         TokenInfo tokenInfo = tokenProvider.generateTokenInfo(member.getEmail(), identify);
@@ -76,13 +75,13 @@ public class MemberServiceImpl implements MemberService {
         return LoginResponseDto.builder()
                 .token(tokenInfo.getAccessToken())
                 .memberInfo(MemberInfo.builder()
-                        .Id(member.getId())
-                        .memberName(member.getMemberName())
-                        .role(member.getRole())
-                        .email(member.getEmail())
-                        .phone(member.getPhone())
-                        .region(member.getRegion())
-                        .build())
+                                      .Id(member.getId())
+                                      .memberName(member.getMemberName())
+                                      .role(member.getRole())
+                                      .email(member.getEmail())
+                                      .phone(member.getPhone())
+                                      .region(member.getRegion())
+                                      .build())
                 .build();
     }
 
@@ -91,8 +90,20 @@ public class MemberServiceImpl implements MemberService {
     public String logout(String email, HttpServletResponse servletResponse, int identify) {
         if (identify == 0) cookieUtil.removeCookie("RefreshToken", servletResponse);
         refreshTokenRepository.findById(email)
-                .ifPresent(refreshTokenRepository::delete);
+                              .ifPresent(refreshTokenRepository::delete);
         return email;
+    }
+
+    @Override
+    @Transactional
+    public String extendAppLogin(Authentication authentication, HttpServletResponse httpServletResponse, int identify) {
+        MemberEntity member = findMember(authentication.getName());
+
+        removeOldRefreshToken(member.getEmail(), member);
+        TokenInfo tokenInfo = tokenProvider.generateTokenInfo(member.getEmail(), identify);
+        tokenService.saveToken(tokenInfo);
+
+        return tokenInfo.getAccessToken();
     }
 
 
@@ -114,9 +125,9 @@ public class MemberServiceImpl implements MemberService {
         }
     }
 
-    private void removeOldRefreshToken(LoginRequestDto requestDto, MemberEntity member) {
-        refreshTokenRepository.findById(member.getEmail())
+    private void removeOldRefreshToken(String email, MemberEntity member) {
+        refreshTokenRepository.findById(email)
                 .ifPresent(refreshTokenRepository::delete);
-        log.info("event=DeleteExistingRefreshToken, email={}", requestDto.getEmail());
+        log.info("event=DeleteExistingRefreshToken, email={}", email);
     }
 }

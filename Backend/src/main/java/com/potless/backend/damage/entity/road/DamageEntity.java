@@ -16,7 +16,6 @@ import java.util.List;
 @Getter
 @Table(name = "damage", indexes = {
         @Index(name = "idx_damage_address", columnList = "damage_address"),
-        @Index(name = "idx_damage_road_name", columnList = "damage_road_name"),
         @Index(name = "idx_damage_status", columnList = "damage_status"),
         @Index(name = "idx_damage_area_id", columnList = "area_id"),
         @Index(name = "idx_damage_location_id", columnList = "location_id")

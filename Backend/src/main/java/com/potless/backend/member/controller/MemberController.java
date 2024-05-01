@@ -1,5 +1,6 @@
 package com.potless.backend.member.controller;
 
+import com.potless.backend.global.annotation.AccessToken;
 import com.potless.backend.global.format.code.ApiResponse;
 import com.potless.backend.global.format.response.ResponseCode;
 import com.potless.backend.global.jwt.service.TokenService;
@@ -101,9 +102,17 @@ public class MemberController {
         return response.success(ResponseCode.LOGIN_SUCCESS_APP, memberService.login(requestDto, httpServletResponse, 1));
     }
 
+    @PostMapping("/refresh")
+    @Operation(summary = "앱 로그인 연장", description = "앱 로그인 연장 요청에 따른 토큰 재발급")
+    public ResponseEntity<?> extendAppLogin(Authentication authentication,
+                                            HttpServletResponse httpServletResponse) {
+
+        return response.success(ResponseCode.LOGIN_EXTEND_SUCCESS_APP, memberService.extendAppLogin(authentication, httpServletResponse, 1));
+    }
+
     @PostMapping("/logout-web")
     @Operation(summary = "웹 로그아웃", description = "웹 로그아웃 요청")
-    public ResponseEntity<?> logoutWEB(Authentication authentication, HttpServletResponse servletResponse) {
+    public ResponseEntity<?> logoutWeb(Authentication authentication, HttpServletResponse servletResponse) {
         return response.success(ResponseCode.LOGOUT_SUCCESS, memberService.logout(authentication.getName(), servletResponse, 0));
     }
 
@@ -113,10 +122,10 @@ public class MemberController {
         return response.success(ResponseCode.LOGOUT_SUCCESS, memberService.logout(authentication.getName(), servletResponse, 1));
     }
 
-    @PutMapping
-    @Operation(summary = "토큰 재발급", description = "토큰 재발급 요청")
-    public ResponseEntity<?> token(@RequestBody String accessToken, int identify) {
-        return response.success(tokenService.reIssueAccessToken(accessToken, identify));
-    }
+//    @PutMapping
+//    @Operation(summary = "토큰 재발급", description = "토큰 재발급 요청")
+//    public ResponseEntity<?> token(@AccessToken @RequestBody String accessToken) {
+//        return response.success(tokenService.reIssueAccessToken(accessToken, 1));
+//    }
 
 }
