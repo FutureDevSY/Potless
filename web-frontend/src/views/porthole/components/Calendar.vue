@@ -24,8 +24,13 @@
 import { ref, computed, watch } from "vue";
 
 const emit = defineEmits(["update:dateRange"]);
-const today = new Date();
-today.setHours(0, 0, 0, 0);
+const getUtcDate = (date) => {
+  return new Date(
+    Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())
+  );
+};
+
+const today = getUtcDate(new Date());
 const oneWeekAgo = new Date(
   today.getFullYear(),
   today.getMonth(),
@@ -57,7 +62,7 @@ const formattedDateRange = ref("");
 watch(
   dateRange,
   (newRange) => {
-    if (newRange.end > today) {
+    if (newRange.end >= today) {
       dateRange.value.end = today;
     }
     formattedDateRange.value = `${formatDate(newRange.start)} - ${formatDate(
