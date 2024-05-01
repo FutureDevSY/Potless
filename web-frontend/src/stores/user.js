@@ -16,7 +16,7 @@ export const useAuthStore = defineStore(
       areaId.value = userData.data.memberInfo.region;
     };
 
-    const logOut = () => {
+    const logoutfc = () => {
       isLoggedIn.value = false;
       accessToken.value = null;
       username.value = "";
@@ -27,7 +27,7 @@ export const useAuthStore = defineStore(
       accessToken,
       username,
       login,
-      logOut,
+      logoutfc,
     };
   },
   {
