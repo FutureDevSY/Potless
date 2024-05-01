@@ -2,12 +2,13 @@
   <div class="detail-container">
     <div class="img-box">
       <div class="carusel-container">
-        <Carusel />
+        <Carusel :image="caruselImage" />
       </div>
       <div class="map">
         <RoadTypeIncidentsGraph
-          :pothole-dirx="pothole_info.dirX"
-          :pothole-diry="pothole_info.dirY"
+          v-if="pothole_info.dirX && pothole_info.dirY"
+          :pothole-dirx="pothole_info.dirY"
+          :pothole-diry="pothole_info.dirX"
         />
       </div>
     </div>
@@ -16,12 +17,12 @@
         <div class="text-left">
           <p>
             <span class="pothole-info">번호</span>
-            <span>{{ pothole_info.pothole_id }}</span>
+            <span>{{ pothole_info.id }}</span>
           </p>
           <p>
             <span class="pothole-info">위험물 정도</span>
             <span
-              >{{ pothole_info.type }} / {{ pothole_info.severity }} /
+              >{{ pothole_info.dtype }} / {{ pothole_info.severity }} /
               {{ pothole_info.status }}</span
             >
           </p>
@@ -41,7 +42,7 @@
           </p>
           <p>
             <span class="pothole-info">마지막 탐지 일시</span>
-            <span>{{ pothole_info.create_at }}</span>
+            <!-- <span>{{ pothole_info.create_at }}</span> -->
           </p>
         </div>
       </div>
@@ -54,24 +55,51 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted, computed } from "vue";
+import { useRoute } from "vue-router";
 import Carusel from "./components/Carusel.vue";
 import RoadTypeIncidentsGraph from "./components/PotholeLocationMap.vue";
 import { useMoveStore } from "@/stores/move";
-
-const pothole_info = ref({
-  pothole_id: 1,
-  severity: 2,
-  type: "포트홀",
-  status: 1,
-  width: 305,
-  address: "대전 광역시 동구 계족로 282",
-  dirX: 36.3549777,
-  dirY: 127.2983403,
-  create_at: "2023-01-04 14:22:33",
-});
+import { useAuthStore } from "@/stores/user";
+import { getPotholeDetail } from "../../api/pothole/pothole.js";
+import { storeToRefs } from "pinia";
 
 const store = useMoveStore();
+const store2 = useAuthStore();
+const { accessToken } = storeToRefs(store2);
+const route = useRoute();
+const pothole_info = ref({});
+
+const takeData = (potholeId) => {
+  getPotholeDetail(
+    accessToken.value,
+    potholeId,
+    (res) => {
+      if (res.data.status == "SUCCESS") {
+        console.log(res.data.message);
+        pothole_info.value = res.data.data;
+      }
+    },
+    (error) => {
+      console.log(error);
+      console.log(error.response.data.message);
+    }
+  );
+};
+const caruselImage = computed(() => {
+  if (
+    pothole_info.value.imagesResponseDTOS &&
+    pothole_info.value.imagesResponseDTOS.length > 0
+  ) {
+    return pothole_info.value.imagesResponseDTOS[0].url;
+  } else {
+    return "../../assets/image/default.PNG";
+  }
+});
+
+onMounted(() => {
+  takeData(route.params.id);
+});
 </script>
 
 <style scoped>

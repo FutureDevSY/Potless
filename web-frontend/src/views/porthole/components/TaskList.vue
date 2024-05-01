@@ -42,6 +42,12 @@
 import { ref, computed, reactive } from "vue";
 import TaskDetail from "./TaskDetail.vue";
 import Teamlist from "./teamData.json";
+import { postTaskCreate } from "../../../api/task/taskDetail";
+import { useAuthStore } from "@/stores/user";
+import { storeToRefs } from "pinia";
+
+const store2 = useAuthStore();
+const { accessToken } = storeToRefs(store2);
 
 const props = defineProps({
   isAddingTasks: Boolean,
@@ -79,16 +85,31 @@ const currentTasks = computed(() => {
 
 // 새 작업(작업 지시서 새로 만들기)
 function addNewTask() {
-  const newTask = {
-    id: Math.max(...currentTasks.value.map((task) => task.id)) + 1,
-    serviceSubCategory: "도로 부속 작업 보고서",
-    projectEnd: 0,
-    sinceConstruction: "정휘원",
-    workOrder: "2024-04-23",
-    registrationTime: "2024-04-21",
-  };
+  const taskData = ref({
+    managerId: 0,
+    teamId: null,
+    title: "도로 부속 작업 보고서",
+    projectDate: null,
+    areaId: store2.areaId,
+    damageNums: [],
+  });
 
-  taskData[currentPage2.value].push(newTask);
+  // postTaskCreate(
+  //   accessToken.value,
+  //   potholeId,
+  //   (res) => {
+  //     if (res.data.status == "SUCCESS") {
+  //       console.log(res.data.message);
+  //       pothole_info.value = res.data.data;
+  //     }
+  //   },
+  //   (error) => {
+  //     console.log(error);
+  //     console.log(error.response.data.message);
+  //   }
+  // );
+
+  // taskData[currentPage2.value].push(newTask);
 }
 
 // 작업 보고서 디테일
