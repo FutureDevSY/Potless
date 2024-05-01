@@ -67,7 +67,7 @@ const takeData = (currentPage) => {
     type: selectedType.value,
     status: selectedStatus.value,
     severity: selectedSeverity.value,
-    // area: store2.areaName,
+    area: store2.areaName,
     searchWord: inputValue.value,
     page: currentPage,
   };
@@ -84,8 +84,6 @@ const takeData = (currentPage) => {
     (res) => {
       if (res.data.status == "SUCCESS") {
         console.log(res.data.message);
-        console.log(res.data.data.content);
-        console.log(res.data.data.totalPages);
         currentData.value = res.data.data.content;
         totalPage.value = res.data.data.totalPages;
       }

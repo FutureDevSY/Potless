@@ -1,8 +1,12 @@
 <template>
-  <img class="image" src="../../../assets/image/test_image.png" alt="#" />
+  <img class="image" :src="image" alt="#" />
 </template>
 
-<script setup></script>
+<script setup>
+const props = defineProps({
+  image: String,
+});
+</script>
 
 <style scoped>
 .image {

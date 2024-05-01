@@ -57,6 +57,7 @@ const doLogin = () => {
     (res) => {
       if (res.data.status == "SUCCESS") {
         console.log(res.data.message);
+        console.log(res.data);
         store.login(res.data, res.data.data.token);
         store2.moveHome();
       }
