@@ -27,29 +27,37 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from "vue";
+import { ref, computed, watch, watchEffect } from "vue";
 
 const props = defineProps({
-  totalpage: Number,
+  totalPage: Number,
 });
 
-const totalPages = props.totalpage;
+const totalPages = ref(props.totalPage);
+watchEffect(() => {
+  console.log("Total pages updated to: ", props.totalPage);
+  totalPages.value = props.totalPage;
+});
 const currentPage = ref(1);
 const visiblePages = 5;
 const emit = defineEmits(["update:current-page"]);
 
 const pageNumbers = computed(() => {
   let start = Math.floor((currentPage.value - 1) / visiblePages) * visiblePages;
-  return Array.from({ length: visiblePages }, (_, i) => start + i + 1).filter(
-    (page) => page <= totalPages
-  );
+  const numbers = Array.from(
+    { length: visiblePages },
+    (_, i) => start + i + 1
+  ).filter((page) => page <= totalPages.value);
+  console.log("Computed page numbers: ", numbers);
+  return numbers;
 });
 
 function setCurrentPage(page) {
+  console.log("Setting current page to: ", page);
   if (page < 1) {
     currentPage.value = 1;
-  } else if (page > totalPages) {
-    currentPage.value = totalPages;
+  } else if (page > totalPages.value) {
+    currentPage.value = totalPages.value;
   } else {
     currentPage.value = page;
   }

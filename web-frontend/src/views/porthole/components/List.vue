@@ -75,14 +75,12 @@ const props = defineProps({
   currentData: Object,
 });
 
-const dummyData = ref(data);
 const potholes = computed(() => {
   return (props.currentData || []).map((item) => ({
     ...item,
     isSelected: selectedIds.value.has(item.id),
   }));
 });
-
 
 // 위험성 필터링
 const dangerClass = (danger) => {
@@ -110,7 +108,6 @@ function toggleSelect(porthole) {
 }
 const selectedCount = computed(() => selectedIds.value.size);
 
-// 작업 추가 버튼
 const hasSelected = computed(() => {
   return selectedIds.value.size > 0;
 });
@@ -246,6 +243,7 @@ tr:hover {
 
 .list-overflow {
   overflow-y: auto;
+  height: 63vh;
   max-height: 65vh;
   margin-right: 8px;
 }
