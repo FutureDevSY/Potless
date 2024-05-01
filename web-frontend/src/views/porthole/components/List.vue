@@ -13,7 +13,7 @@
               작업추가
             </button>
           </th>
-          <th class="detect-column">탐지 일시</th>
+          <!-- <th class="detect-column">탐지 일시</th> -->
           <th>위험성</th>
           <th>종류</th>
           <th>행정동</th>
@@ -22,22 +22,21 @@
       </thead>
       <tbody>
         <tr
-          v-for="porthole in portholes"
-          :key="porthole.id"
-          @click="toggleSelect(porthole)"
-          @dblclick="store.movePortholeDetail(porthole.id)"
+          v-for="pothole in potholes"
+          :key="pothole.id"
+          @click="toggleSelect(pothole)"
+          @dblclick="store.movePortholeDetail(pothole.id)"
         >
-          <td>{{ porthole.isSelected ? "✔️" : "" }}</td>
-          <td>
+          <td>{{ pothole.isSelected ? "✔️" : "" }}</td>
+          <!-- <td>
             <div>{{ porthole.detect.split(" ")[0] }}</div>
-            <!-- 날짜 -->
-            <div>{{ porthole.detect.split(" ")[1] }}</div>
-            <!-- 시간 -->
+          </td> -->
+          <td :class="dangerClass(pothole.severity)">
+            {{ pothole.severity }}
           </td>
-          <td :class="dangerClass(porthole.danger)">{{ porthole.danger }}</td>
-          <td>{{ porthole.type }}</td>
-          <td>{{ porthole.city }}</td>
-          <td>{{ porthole.road }}</td>
+          <td>{{ pothole.dtype }}</td>
+          <td>{{ pothole.location }}</td>
+          <td>{{ pothole.address }}</td>
         </tr>
       </tbody>
     </table>
@@ -68,28 +67,31 @@
 <script setup>
 import { ref, computed } from "vue";
 import { useMoveStore } from "../../../stores/move";
-import Pagination from "./Pagination.vue";
 import TaskList from "./TaskList.vue";
-import data from "./dummyData.json";
 import TeamModal from "./AddTeamModal.vue";
 
 const store = useMoveStore();
+const props = defineProps({
+  currentData: Object,
+});
+
 const dummyData = ref(data);
-const portholes = computed(() => {
-  return (dummyData.value[currentPage.value] || []).map((item) => ({
+const potholes = computed(() => {
+  return (props.currentData || []).map((item) => ({
     ...item,
     isSelected: selectedIds.value.has(item.id),
   }));
 });
 
+
 // 위험성 필터링
 const dangerClass = (danger) => {
   switch (danger) {
-    case "심각":
+    case 3:
       return "serious";
-    case "주의":
+    case 2:
       return "cautious";
-    case "양호":
+    case 1:
       return "safe";
     default:
       return "";
@@ -126,16 +128,6 @@ function openModal(mode) {
   modalMode.value = mode;
   toggleModal();
 }
-
-// 페이지네이션
-const currentPage = ref(1);
-function setCurrentPage(page) {
-  currentPage.value = page;
-}
-const totalPage = Object.keys(dummyData).length;
-const props = defineProps({
-  itemData: Object,
-});
 </script>
 
 <style scoped>
