@@ -27,7 +27,10 @@
     <div class="container">
       <div class="left">
         <List :current-data="currentData" />
-        <Pagination :total-page="totalPage" />
+        <Pagination
+          :total-page="totalPage"
+          @update:current-page="handleCurrentPageUpdate"
+        />
       </div>
 
       <div class="right">
@@ -64,7 +67,7 @@ const takeData = (currentPage) => {
     type: selectedType.value,
     status: selectedStatus.value,
     severity: selectedSeverity.value,
-    area: store2.areaName,
+    // area: store2.areaName,
     searchWord: inputValue.value,
     page: currentPage,
   };
@@ -135,6 +138,11 @@ const currentPage = ref(1);
 function setCurrentPage(page) {
   currentPage.value = page;
 }
+
+const handleCurrentPageUpdate = (newPage) => {
+  setCurrentPage(newPage);
+  takeData(newPage);
+};
 
 const pothole_info = ref({
   pothole_id: 1,
