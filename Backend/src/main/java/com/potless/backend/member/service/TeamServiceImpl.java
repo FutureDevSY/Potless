@@ -4,6 +4,7 @@ import com.potless.backend.damage.repository.AreaRepository;
 import com.potless.backend.global.exception.member.TeamNotFoundException;
 import com.potless.backend.global.exception.project.AreaNotFoundException;
 import com.potless.backend.global.exception.project.ProjectNotFoundException;
+import com.potless.backend.member.dto.GetTeamResponseDto;
 import com.potless.backend.member.dto.TeamAddRequestDto;
 import com.potless.backend.member.entity.ManagerEntity;
 import com.potless.backend.member.entity.MemberEntity;
@@ -111,5 +112,11 @@ public class TeamServiceImpl implements TeamService{
 
         return workerRepository.deleteByNameAtOnce(deleteTeamRequestDto.getMemberNameList());
 
+    }
+
+    @Override
+    public List<GetTeamResponseDto> getTeam(String area) {
+        //예외처리 로직을 여기로 뺄까 고민중
+        return teamRepository.getTeamListByArea(area);
     }
 }

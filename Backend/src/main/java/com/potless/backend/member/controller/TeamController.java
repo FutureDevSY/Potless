@@ -42,7 +42,7 @@ public class TeamController {
     public ResponseEntity<?> addWorker(@Parameter(hidden = true) Authentication authentication,
                                        @RequestBody WorkerRequestDto requestDto) {
 
-        return response.success(ResponseCode.TEAM_CREATED, teamService.addWorker(authentication, requestDto));
+        return response.success(ResponseCode.TEAM_WORKER_ADDED, teamService.addWorker(authentication, requestDto));
     }
 
     @DeleteMapping("/worker")
@@ -50,6 +50,15 @@ public class TeamController {
     public ResponseEntity<?> deleteWorker(@Parameter(hidden = true) Authentication authentication,
                                           @RequestBody WorkerRequestDto requestDto) {
 
-        return response.success(ResponseCode.TEAM_CREATED, teamService.deleteWorker(authentication, requestDto));
+        return response.success(ResponseCode.TEAM_WORKER_DELETED, teamService.deleteWorker(authentication, requestDto));
     }
+
+    @GetMapping
+    @Operation(summary = "지역별 팀 조회", description = "지역별 팀 목록 조회 요청")
+    public ResponseEntity<?> getTeam(@RequestParam(name = "area") String area) {
+
+        return response.success(ResponseCode.TEAM_FETCHED, teamService.getTeam(area));
+    }
+
+
 }
