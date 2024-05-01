@@ -26,6 +26,7 @@ export const useAuthStore = defineStore(
       isLoggedIn,
       accessToken,
       username,
+      areaId,
       login,
       logoutfc,
     };

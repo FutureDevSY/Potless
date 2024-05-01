@@ -53,20 +53,23 @@ import { useAuthStore } from "@/stores/user";
 import Pagination from "./components/Pagination.vue";
 
 const store2 = useAuthStore();
-const accessToken = store2.accessToken;
 const currentData = ref(null);
 const totalPage = ref(null);
 
-const takeData = () => {
+const takeData = (currentPage) => {
   const queryParams = {
-    severity: selectedSeverity.value,
+    start: dateRange.value.start,
+    end: dateRange.value.end,
     type: selectedType.value,
     status: selectedStatus.value,
-    query: inputValue.value,
+    severity: selectedSeverity.value,
+    area: store2.areaId,
+    searchWord: inputValue.value,
+    page: currentPage,
   };
 
   getPotholeList(
-    accessToken.value,
+    store2.accessToken,
     queryParams,
     (data) => {
       if (data.status == "success") {
