@@ -36,18 +36,21 @@ import { logout } from "../../api/auth/auth";
 
 const store = useMoveStore();
 const store2 = useAuthStore();
+const token = store2.accessToken;
 const clickLogout = () => {
-  console.log(store2.accessToken);
+  console.log(token);
   logout(
     store2.accessToken,
     (res) => {
       if (res.status == "SUCCESS") {
         console.log(res.message);
-        store2.logOut();
+        store2.logoutfc();
       }
     },
     (error) => {
-      console.log(error);
+      console.log(token);
+      console.log(error.message);
+      store2.logoutfc();
     }
   );
 };
