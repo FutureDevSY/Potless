@@ -15,12 +15,12 @@
           @update:selected="handleType"
         />
         <Select
-          :options="['작업 미완료', '작업 완료']"
+          :options="['작업전', '작업완료']"
           defaultText="작업 상태"
           @update:selected="handleStatus"
         />
         <Input @update:value="handleInputValue" />
-        <button class="search-button" @click="takeData">검색</button>
+        <button class="search-button" @click="takeData(0)">검색</button>
       </div>
     </div>
 
@@ -46,42 +46,57 @@ import Select from "./components/Select.vue";
 import Input from "./components/Input.vue";
 import Calendar from "./components/Calendar.vue";
 import PotholeLocationMap from "./components/PotholeLocationMap.vue";
-import { useDistrictStore } from "@/stores/district";
 import { ref } from "vue";
-import { getPotholeList } from "../../api/pothole/pothole";
+import { getPotholeList } from "../../api/pothole/pothole.js";
 import { useAuthStore } from "@/stores/user";
 import Pagination from "./components/Pagination.vue";
+import { storeToRefs } from "pinia";
 
 const store2 = useAuthStore();
+const { accessToken } = storeToRefs(store2);
 const currentData = ref(null);
 const totalPage = ref(null);
 
 const takeData = (currentPage) => {
-  const queryParams = {
-    start: dateRange.value.start,
-    end: dateRange.value.end,
+  const rawParams = {
+    start: formatDate(dateRange.value.start),
+    end: formatDate(dateRange.value.end),
     type: selectedType.value,
     status: selectedStatus.value,
     severity: selectedSeverity.value,
-    area: store2.areaId,
+    area: store2.areaName,
     searchWord: inputValue.value,
     page: currentPage,
   };
 
+  const queryParams = Object.fromEntries(
+    Object.entries(rawParams).filter(
+      ([key, value]) => value !== "" && value != null
+    )
+  );
+
   getPotholeList(
-    store2.accessToken,
+    accessToken.value,
     queryParams,
-    (data) => {
-      if (data.status == "success") {
-        console.log(data.message);
-        currentData.value = data.data.content;
-        totalPage.value = data.data.totalPages;
+    (res) => {
+      if (res.data.status == "SUCCESS") {
+        console.log(res.data.message);
+        console.log(res.data.data.content);
+        console.log(res.data.data.totalPages);
+        currentData.value = res.data.data.content;
+        totalPage.value = res.data.data.totalPages;
       }
     },
     (error) => {
       console.log(error);
+      console.log(error.response.data.message);
     }
   );
+};
+
+const formatDate = (date) => {
+  if (!date) return null;
+  return date.toISOString().split("T")[0];
 };
 
 // 날짜
@@ -121,7 +136,6 @@ function setCurrentPage(page) {
   currentPage.value = page;
 }
 
-const store = useDistrictStore();
 const pothole_info = ref({
   pothole_id: 1,
   severity: 2,

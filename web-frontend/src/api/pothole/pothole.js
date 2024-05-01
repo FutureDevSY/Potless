@@ -7,7 +7,7 @@ const getPotholeList = async (accessToken, queryParams, success, fail) => {
   await local
     .get(`/damage`, {
       params: {
-        queryParams,
+        ...queryParams,
         size: 10,
       },
       headers: {
