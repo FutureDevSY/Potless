@@ -12,11 +12,15 @@ const login = async (loginData, success, fail) => {
 // 로그아웃
 const logout = async (accessToken, success, fail) => {
   await local
-    .post(`/member/logout-web/`, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    })
+    .post(
+      `/member/logout-web`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    )
     .then(success)
     .catch(fail);
 };

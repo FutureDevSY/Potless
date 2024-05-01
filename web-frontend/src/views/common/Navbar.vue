@@ -31,26 +31,28 @@
 
 <script setup>
 import { useMoveStore } from "../../stores/move.js";
-import { useAuthStore } from "@/stores/user";
-import { logout } from "../../api/auth/auth";
+import { useAuthStore } from "../../stores/user.js";
+import { storeToRefs } from "pinia";
+import { logout } from "../../api/auth/auth.js";
 
 const store = useMoveStore();
 const store2 = useAuthStore();
-const token = store2.accessToken;
+const { accessToken } = storeToRefs(store2);
+
 const clickLogout = () => {
-  console.log(token);
   logout(
-    store2.accessToken,
+    accessToken.value,
     (res) => {
-      if (res.status == "SUCCESS") {
-        console.log(res.message);
+      if (res.data.status == "SUCCESS") {
+        console.log(res.data.message);
         store2.logoutfc();
+        store.moveHome();
+      } else {
+        console.log(res);
       }
     },
     (error) => {
-      console.log(token);
-      console.log(error.message);
-      store2.logoutfc();
+      console.log(error.response.data.message);
     }
   );
 };
