@@ -52,8 +52,6 @@ public class SecurityConfig {
                             "/favicon.ico",
                             "/api/member/signup",
                             "/api/member/login-web/**",
-                            "**/api/member/login-web/**",
-                            "**/api/member/login-app/**",
                             "/api/member/login-app/**",
                             "/api/member/email/**",
                             "/actuator/**",

@@ -77,30 +77,5 @@ public class ProjectController {
         return response.success(ResponseCode.PROJECT_DELETED);
     }
 
-    @PostMapping("/team")
-    @Operation(summary = "팀 생성", description = "팀 생성 및 팀 작업자 추가 요청")
-    public ResponseEntity<?> createTeam(@Parameter(hidden = true) Authentication authentication,
-                                        @RequestBody CreateTeamRequestDto requestDto) {
-
-        return response.success(ResponseCode.TEAM_CREATED, projectService.createTeam(authentication, requestDto));
-    }
-
-    @PostMapping("/worker")
-    @Operation(summary = "팀 작업자 추가", description = "기존 팀에 신규 작업자 추가 요청")
-    public ResponseEntity<?> addWorker(@Parameter(hidden = true) Authentication authentication,
-                                        @RequestBody WorkerRequestDto requestDto) {
-
-        return response.success(ResponseCode.TEAM_CREATED, projectService.addWorker(authentication, requestDto));
-    }
-
-    @DeleteMapping("/worker")
-    @Operation(summary = "팀 작업자 삭제", description = "기존 팀에 기존 작업자 삭제 요청")
-    public ResponseEntity<?> deleteWorker(@Parameter(hidden = true) Authentication authentication,
-                                          @RequestBody WorkerRequestDto requestDto) {
-
-        return response.success(ResponseCode.TEAM_CREATED, projectService.deleteWorker(authentication, requestDto));
-    }
-
-
 
 }
