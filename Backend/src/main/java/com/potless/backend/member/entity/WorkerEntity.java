@@ -18,9 +18,9 @@ public class WorkerEntity extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-//    @OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE, CascadeType.PERSIST}, orphanRemoval = true)
-//    @JoinColumn(name = "member_id")
-//    private MemberEntity memberEntity;
+    @OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE, CascadeType.PERSIST}, orphanRemoval = true)
+    @JoinColumn(name = "member_id")
+    private MemberEntity memberEntity;
 
     @Column(name = "worker_name", nullable = false)
     private String workerName;
