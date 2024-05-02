@@ -2,7 +2,7 @@ package com.potless.backend.path.controller;
 
 import com.potless.backend.global.format.code.ApiResponse;
 import com.potless.backend.global.format.response.ResponseCode;
-import com.potless.backend.path.dto.GetOptimalPathRequest;
+import com.potless.backend.path.dto.GetOptimalPathRequestDto;
 import com.potless.backend.path.dto.KakaoWaypointResponse;
 import com.potless.backend.path.service.PathService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -13,10 +13,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
@@ -32,9 +29,9 @@ public class PathController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "최적 경로 조회 성공", content = @Content(schema = @Schema(implementation = KakaoWaypointResponse.class)))
     })
     @PostMapping("/optimal")
-    public ResponseEntity<?> getOptimalPath(@Valid @RequestBody GetOptimalPathRequest getOptimalPathRequest) {
+    public ResponseEntity<?> getOptimalPath(@Valid @RequestBody GetOptimalPathRequestDto getOptimalPathRequestDto) {
 
-        return response.success(ResponseCode.OPTIMAL_PATH_FOUND, pathService.getOptimalPath(getOptimalPathRequest));
+        return response.success(ResponseCode.OPTIMAL_PATH_FOUND, pathService.getOptimalPath(getOptimalPathRequestDto));
     }
 
 }

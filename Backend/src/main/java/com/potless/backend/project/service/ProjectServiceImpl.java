@@ -21,6 +21,7 @@ import com.potless.backend.member.repository.member.MemberRepository;
 import com.potless.backend.member.repository.team.TeamRepository;
 import com.potless.backend.member.repository.worker.WorkerRepository;
 import com.potless.backend.member.service.MemberService;
+import com.potless.backend.path.service.PathService;
 import com.potless.backend.project.dto.request.*;
 import com.potless.backend.project.dto.response.ProjectDetailResponseDto;
 import com.potless.backend.project.dto.response.ProjectListResponseDto;
@@ -49,8 +50,6 @@ public class ProjectServiceImpl implements ProjectService {
     private final DamageRepository damageRepository;
     private final TaskRepository taskRepository;
     private final AreaRepository areaRepository;
-    private final MemberRepository memberRepository;
-    private final WorkerRepository workerRepository;
 
     @Override
     public Page<ProjectListResponseDto> getProjectAll(ProjectListRequestDto projectListRequestDto, Pageable pageable) {
@@ -61,9 +60,9 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public Long createProject(ProjectSaveRequestDto projectSaveRequestDto) {
+    public Long createProject(ProjectSaveRequestDto projectSaveRequestDto, int[] order) {
         ManagerEntity managerEntity = managerRepository.findByMemberId(projectSaveRequestDto.getMemberId())
-                .orElseThrow(ProjectNotFoundException::new);
+                .orElseThrow(MemberNotFoundException::new);
 
         TeamEntity teamEntity = null;
         if(projectSaveRequestDto.getTeamId().isPresent()){
@@ -88,16 +87,17 @@ public class ProjectServiceImpl implements ProjectService {
         ProjectEntity saveProjectEntity = projectRepository.save(projectEntity);
 
         if(projectSaveRequestDto.getDamageNums() != null && !projectSaveRequestDto.getDamageNums().isEmpty()){
-            projectSaveRequestDto.getDamageNums().forEach(damageId -> {
+            for (int i = 1; i < order.length - 1; i++) {
+                long damageId = projectSaveRequestDto.getDamageNums().get(order[i] - 1);
                 DamageEntity damageEntity = damageRepository.findById(damageId)
                         .orElseThrow(PotholeNotFoundException::new);
-
-                TaskEntity taskEntity = TaskEntity.builder().
-                        projectEntity(saveProjectEntity)
+                TaskEntity taskEntity = TaskEntity.builder()
+                        .projectEntity(saveProjectEntity)
                         .damageEntity(damageEntity)
+                        .taskOrder(i)
                         .build();
                 taskRepository.save(taskEntity);
-            });
+            }
         }
 
         return saveProjectEntity.getId();
