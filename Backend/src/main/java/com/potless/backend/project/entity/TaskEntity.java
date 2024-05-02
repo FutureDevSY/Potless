@@ -29,14 +29,10 @@ public class TaskEntity extends BaseEntity {
     @JoinColumn(name = "damage_id", nullable = false)
     private DamageEntity damageEntity;
 
-    @Column(name = "order", nullable = false)
-    private Integer order;
-
     @Builder
-    public TaskEntity(Long id, ProjectEntity projectEntity, DamageEntity damageEntity, Integer order) {
+    public TaskEntity(Long id, ProjectEntity projectEntity, DamageEntity damageEntity) {
         this.id = id;
         this.projectEntity = projectEntity;
         this.damageEntity = damageEntity;
-        this.order = order;
     }
 }
