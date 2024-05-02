@@ -1,6 +1,7 @@
 <template>
   <div class="map-container">
     <img class="logo" src="../../assets/icon/weblogo.png" alt="#" />
+    <button @click="store.moveLogin">로그인</button>
     <SVG></SVG>
     <Chart
       class="chart chart1"
@@ -38,6 +39,9 @@
 <script setup>
 import SVG from "./components/SVG.vue";
 import Chart from "./components/Chart.vue";
+import { useMoveStore } from "@/stores/move";
+
+const store = useMoveStore();
 
 const chartOptions = {
   chart: {

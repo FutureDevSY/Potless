@@ -3,25 +3,36 @@
     <div class="filter">
       <!-- 필터 -->
       <div class="horizontal-layout">
-        <Calendar />
-        <Select :options="['심각', '주의', '양호']" defaultText="위험성" />
-        <Select :options="['포트홀', '도로파손']" defaultText="종류" />
+        <Calendar @update:dateRange="handleDateRangeUpdate" />
         <Select
-          :options="['작업 미완료', '작업 중', '작업 완료']"
-          defaultText="작업 상태"
+          :options="['심각', '주의', '양호']"
+          defaultText="위험성"
+          @update:selected="handleSeverity"
         />
-        <Input />
-        <button class="search-button">검색</button>
+        <Select
+          :options="['포트홀', '도로파손']"
+          defaultText="종류"
+          @update:selected="handleType"
+        />
+        <Select
+          :options="['작업전', '작업완료']"
+          defaultText="작업 상태"
+          @update:selected="handleStatus"
+        />
+        <Input @update:value="handleInputValue" />
+        <button class="search-button" @click="takeData(0)">검색</button>
       </div>
     </div>
 
     <div class="container">
-      <!-- 왼쪽 메인 : 필터와 리스트 -->
       <div class="left">
-        <List />
+        <List :current-data="currentData" />
+        <Pagination
+          :total-page="totalPage"
+          @update:current-page="handleCurrentPageUpdate"
+        />
       </div>
 
-      <!-- 오른쪽 메인: 지도 -->
       <div class="right">
         <PotholeLocationMap
           :pothole-dirx="pothole_info.dirX"
@@ -38,10 +49,99 @@ import Select from "./components/Select.vue";
 import Input from "./components/Input.vue";
 import Calendar from "./components/Calendar.vue";
 import PotholeLocationMap from "./components/PotholeLocationMap.vue";
-import { useDistrictStore } from "@/stores/district";
 import { ref } from "vue";
+import { getPotholeList } from "../../api/pothole/pothole.js";
+import { useAuthStore } from "@/stores/user";
+import Pagination from "./components/Pagination.vue";
+import { storeToRefs } from "pinia";
 
-const store = useDistrictStore();
+const store2 = useAuthStore();
+const { accessToken } = storeToRefs(store2);
+const currentData = ref(null);
+const totalPage = ref(null);
+
+const takeData = (currentPage) => {
+  const rawParams = {
+    start: formatDate(dateRange.value.start),
+    end: formatDate(dateRange.value.end),
+    type: selectedType.value,
+    status: selectedStatus.value,
+    severity: selectedSeverity.value,
+    area: store2.areaName,
+    searchWord: inputValue.value,
+    page: currentPage,
+  };
+
+  const queryParams = Object.fromEntries(
+    Object.entries(rawParams).filter(
+      ([key, value]) => value !== "" && value != null
+    )
+  );
+
+  getPotholeList(
+    accessToken.value,
+    queryParams,
+    (res) => {
+      if (res.data.status == "SUCCESS") {
+        console.log(res.data.message);
+        currentData.value = res.data.data.content;
+        totalPage.value = res.data.data.totalPages;
+      }
+    },
+    (error) => {
+      console.log(error);
+      console.log(error.response.data.message);
+    }
+  );
+};
+
+const formatDate = (date) => {
+  if (!date) return null;
+  return date.toISOString().split("T")[0];
+};
+
+// 날짜
+const dateRange = ref({ start: null, end: null });
+
+const handleDateRangeUpdate = (newRange) => {
+  dateRange.value = newRange;
+};
+
+// 심각도
+const selectedSeverity = ref("");
+const handleSeverity = (option) => {
+  selectedSeverity.value = option;
+};
+
+// 파손 종류
+const selectedType = ref("");
+const handleType = (option) => {
+  selectedType.value = option;
+};
+
+// 현재 상황
+const selectedStatus = ref("");
+const handleStatus = (option) => {
+  selectedStatus.value = option;
+};
+
+// 검색어
+const inputValue = ref("");
+const handleInputValue = (value) => {
+  inputValue.value = value;
+};
+
+// 페이지네이션
+const currentPage = ref(1);
+function setCurrentPage(page) {
+  currentPage.value = page;
+}
+
+const handleCurrentPageUpdate = (newPage) => {
+  setCurrentPage(newPage);
+  takeData(newPage);
+};
+
 const pothole_info = ref({
   pothole_id: 1,
   severity: 2,

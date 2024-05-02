@@ -4,9 +4,9 @@
     <button class="button new_button" @click="addNewTask">새 작업</button>
     <table>
       <tr v-for="task in currentTasks" :key="task.id" @click="showDetail(task)">
-        <td>{{ task.id }}</td>
-        <td>{{ task.serviceSubCategory }}</td>
-        <td>{{ task.projectEnd }} 건</td>
+        <td>{{ task.projectName }}</td>
+        <td>{{ task.projectDate }}</td>
+        <td>{{ task.projectSize }} 건</td>
         <td
           class="add-column"
           v-if="isAddingTasks"
@@ -19,9 +19,9 @@
   </div>
   <div v-if="isDetailOpen">
     <div class="task-info">
-      <div class="info-font">{{ selectedTask.id }}</div>
-      <div class="info-font">{{ selectedTask.serviceSubCategory }}</div>
-      <div class="manager">관리자: {{ selectedTask.sinceConstruction }}</div>
+      <div class="info-font">{{ selectedTask.projectDate }}</div>
+      <div class="info-font">{{ selectedTask.projectName }}</div>
+      <div class="manager">관리자: {{ selectedTask.managerName }}</div>
     </div>
     <div class="detail-list">
       <TaskDetail :task="selectedTask" @close="isDetailOpen = false" />
@@ -39,9 +39,16 @@
 </template>
 
 <script setup>
-import { ref, computed, reactive } from "vue";
+import { ref, computed, onMounted } from "vue";
 import TaskDetail from "./TaskDetail.vue";
 import Teamlist from "./teamData.json";
+import { postTaskCreate } from "../../../api/task/taskDetail";
+import { getTaskList } from "../../../api/task/taskList";
+import { useAuthStore } from "@/stores/user";
+import { storeToRefs } from "pinia";
+
+const store2 = useAuthStore();
+const { accessToken } = storeToRefs(store2);
 
 const props = defineProps({
   isAddingTasks: Boolean,
@@ -52,43 +59,41 @@ const props = defineProps({
 const teamlist = ref(Teamlist);
 const selectedTeamId = ref(null);
 // 모달창 작업 지시서 리스트 + 더미데이터
-const taskData = reactive({
-  1: [
-    {
-      id: 113,
-      serviceSubCategory: "도로 부속 작업 보고서",
-      projectEnd: 10,
-      sinceConstruction: "정휘원",
-      workOrder: "2024-04-23",
-      registrationTime: "2024-04-21",
-    },
-    {
-      id: 114,
-      serviceSubCategory: "도로 부속 작업 보고서",
-      projectEnd: 10,
-      sinceConstruction: "정휘원",
-      workOrder: "2024-04-23",
-      registrationTime: "2024-04-21",
-    },
-  ],
-});
-const currentPage2 = ref(1);
+const taskData = ref([]);
 const currentTasks = computed(() => {
-  return taskData[currentPage2.value] || [];
+  return taskData.value || [];
 });
 
 // 새 작업(작업 지시서 새로 만들기)
 function addNewTask() {
-  const newTask = {
-    id: Math.max(...currentTasks.value.map((task) => task.id)) + 1,
-    serviceSubCategory: "도로 부속 작업 보고서",
-    projectEnd: 0,
-    sinceConstruction: "정휘원",
-    workOrder: "2024-04-23",
-    registrationTime: "2024-04-21",
-  };
+  const newData = ref({
+    memberId: store2.userId,
+    teamId: null,
+    title: "도로 부속 작업 보고서",
+    projectDate: "2024-05-02",
+    areaId: store2.areaId,
+    damageNums: [],
+  });
 
-  taskData[currentPage2.value].push(newTask);
+  postTaskCreate(
+    accessToken.value,
+    newData.value,
+    (res) => {
+      console.log(res);
+      if (res.data.status == "SUCCESS") {
+        console.log(res.data.message);
+        console.log(res);
+        taskData.value = res.data.data;
+        takeData();
+      } else {
+        console.log(res.data.message);
+      }
+    },
+    (error) => {
+      console.log(error);
+      console.log(error.data.message);
+    }
+  );
 }
 
 // 작업 보고서 디테일
@@ -113,6 +118,43 @@ function incrementProjectEnd(task, event) {
   event.stopPropagation();
   task.projectEnd += props.selectedCount;
 }
+
+const takeData = () => {
+  const rawParams = {
+    memberId: store2.userId,
+    type: "포트홀",
+    status: "작업전",
+    area: store2.areaId,
+  };
+
+  const queryParams = Object.fromEntries(
+    Object.entries(rawParams).filter(
+      ([key, value]) => value !== "" && value != null
+    )
+  );
+
+  getTaskList(
+    accessToken.value,
+    queryParams,
+    (res) => {
+      console.log(res);
+      if (res.data.status == "SUCCESS") {
+        console.log(res.data.message);
+        taskData.value = res.data.data.content;
+      } else {
+        console.log(res.data.message);
+      }
+    },
+    (error) => {
+      console.log(error);
+      console.log(error.response.data.message);
+    }
+  );
+};
+
+onMounted(() => {
+  takeData();
+});
 </script>
 
 <style scoped>

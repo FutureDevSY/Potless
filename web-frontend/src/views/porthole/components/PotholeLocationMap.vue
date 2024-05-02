@@ -27,7 +27,7 @@ onMounted(() => {
 
 function initMap() {
   const mapContainer = document.getElementById("map");
-  console.log("Coordinates: ", potholeDirx.value, potholeDiry.value);
+  // console.log("Coordinates: ", potholeDirx.value, potholeDiry.value);
   if (
     !mapContainer ||
     potholeDirx.value === undefined ||
