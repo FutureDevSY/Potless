@@ -90,7 +90,6 @@ const takeData = (currentPage) => {
     accessToken.value,
     queryParams,
     (res) => {
-      console.log(res.data.data.content);
       if (res.data.status == "SUCCESS") {
         console.log(res.data.message);
         currentData.value = res.data.data.content;

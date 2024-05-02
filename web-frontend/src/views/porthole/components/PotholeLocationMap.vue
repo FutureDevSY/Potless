@@ -40,19 +40,12 @@ function initializeMap() {
     position: mapOption.center,
   });
   marker.setMap(map);
-  console.log("Map initialized with center:", mapOption.center);
-
   watch([potholeDirx, potholeDiry], updateMapLocation, {
     immediate: true,
   });
 }
 
 function updateMapLocation() {
-  console.log(
-    "Updating map location to:",
-    potholeDirx.value,
-    potholeDiry.value
-  );
   if (
     !map ||
     potholeDirx.value === undefined ||
