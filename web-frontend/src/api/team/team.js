@@ -5,7 +5,10 @@ const local = localAxios();
 // 관리자 담당 관할 team 리스트 조회
 const getTeamList = async (accessToken, area, success, fail) => {
   await local
-    .get(`/team/${area}`, {
+    .get(`/team`, {
+      params: {
+        area,
+      },
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
@@ -34,6 +37,9 @@ const postAddTeam = async (accessToken, success, fail) => {
 const getWokerList = async (accessToken, area, success, fail) => {
   await local
     .get(`/team/worker/${area}`, {
+      params: {
+        area,
+      },
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
