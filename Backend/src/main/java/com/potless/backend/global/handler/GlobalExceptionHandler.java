@@ -130,4 +130,10 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return response.error(e.getErrorCode());
     }
 
+    @ExceptionHandler(InvalidLoginAuthException.class)
+    protected ResponseEntity<?> handle(InvalidLoginAuthException e) {
+        log.error("InvalidLoginAuthException = {}", e.getErrorCode().getMessage());
+        return response.error(e.getErrorCode());
+    }
+
 }
