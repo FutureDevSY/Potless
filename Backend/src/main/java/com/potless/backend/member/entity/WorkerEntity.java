@@ -46,4 +46,8 @@ public class WorkerEntity extends BaseEntity {
     public void changeTeam(TeamEntity teamEntity) {
         this.teamEntity = teamEntity;
     }
+
+    public void setTeamNull(){
+        this.teamEntity = null;
+    }
 }

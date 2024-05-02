@@ -10,4 +10,8 @@ public interface WorkerRepositoryCustom {
     public Long deleteByNameAtOnce(List<WorkerInfoDto> workerList);
 
     public List<WorkerEntity> findAllByAreaId(Long areaId);
+
+    public void resetTeamFromWorkers(Long teamId);
+
+    public List<WorkerEntity> findAllByteamId(Long teamId);
 }
