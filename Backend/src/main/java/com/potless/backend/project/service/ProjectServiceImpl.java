@@ -54,7 +54,13 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public Page<ProjectListResponseDto> getProjectAll(ProjectListRequestDto projectListRequestDto, Pageable pageable) {
-        return projectRepository.findProjectAll(projectListRequestDto, pageable);
+        MemberEntity memberEntity = memberRepository.findById(projectListRequestDto.getMemberId())
+                .orElseThrow(MemberNotFoundException::new);
+
+        Long managerId = managerRepository.findById(memberEntity.getId())
+                .orElseThrow(ManagerNotFoundException::new).getId();
+
+        return projectRepository.findProjectAll(managerId, projectListRequestDto, pageable);
     }
 
     @Override
