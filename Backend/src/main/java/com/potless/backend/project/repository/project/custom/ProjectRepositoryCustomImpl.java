@@ -94,11 +94,12 @@ public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
 
 
     @Override
-    public Page<ProjectListResponseDto> findProjectAll(ProjectListRequestDto projectListRequestDto, Pageable pageable) {
+    public Page<ProjectListResponseDto> findProjectAll(Long managerId, ProjectListRequestDto projectListRequestDto, Pageable pageable) {
         QProjectEntity project = QProjectEntity.projectEntity;
         BooleanBuilder builder = new BooleanBuilder();
 
-        builder.and(managerIdEquals(project, projectListRequestDto.getManagerId()))
+
+        builder.and(managerIdEquals(project, managerId))
                 .and(betweenDates(project, projectListRequestDto.getStart(), projectListRequestDto.getEnd()))
                 .and(equalToStatus(project, projectListRequestDto.getStatus()))
                 .and(containsSearchWord(project, projectListRequestDto.getWord()))

@@ -7,7 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface ProjectRepositoryCustom {
-    Page<ProjectListResponseDto> findProjectAll(ProjectListRequestDto projectListRequestDto, Pageable pageable);
+    Page<ProjectListResponseDto> findProjectAll(Long managerId, ProjectListRequestDto projectListRequestDto, Pageable pageable);
 
     ProjectDetailResponseDto getProjectDetail(Long projectId);
 }

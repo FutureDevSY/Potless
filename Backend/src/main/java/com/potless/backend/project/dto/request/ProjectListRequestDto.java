@@ -11,7 +11,7 @@ import java.time.LocalDate;
 @Builder
 @ToString
 public class ProjectListRequestDto {
-    private Long managerId;
+    private Long memberId;
     private Long areaId;
     private LocalDate start;
     private LocalDate end;
@@ -19,7 +19,7 @@ public class ProjectListRequestDto {
     private String word;
 
 
-    public ProjectListRequestDto(Long managerId, Long areaId, LocalDate start, LocalDate end, Status status, String word) {
+    public ProjectListRequestDto(Long memberId, Long areaId, LocalDate start, LocalDate end, Status status, String word) {
         if (start == null && end == null) {
             start = LocalDate.now().minusWeeks(1);
             end = LocalDate.now();
@@ -28,7 +28,7 @@ public class ProjectListRequestDto {
         else if (end == null)
             end = LocalDate.now();
 
-        this.managerId = managerId;
+        this.memberId = memberId;
         this.areaId = areaId;
         this.start = start;
         this.end = end;
