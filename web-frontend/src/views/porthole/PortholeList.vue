@@ -10,7 +10,7 @@
           @update:selected="handleSeverity"
         />
         <Select
-          :options="['포트홀', '도로파손']"
+          :options="['POTHOLE', 'CRACK']"
           defaultText="종류"
           @update:selected="handleType"
         />
@@ -27,11 +27,17 @@
     <div class="container">
       <div class="left">
         <List :current-data="currentData" />
-        <Pagination :total-page="totalPage" @update:current-page="handleCurrentPageUpdate" />
+        <Pagination
+          :total-page="totalPage"
+          @update:current-page="handleCurrentPageUpdate"
+        />
       </div>
 
       <div class="right">
-        <PotholeLocationMap :pothole-dirx="pothole_info.dirX" :pothole-diry="pothole_info.dirY" />
+        <PotholeLocationMap
+          :pothole-dirx="pothole_info.dirX"
+          :pothole-diry="pothole_info.dirY"
+        />
       </div>
     </div>
   </div>
@@ -53,6 +59,11 @@ const store2 = useAuthStore();
 const { accessToken } = storeToRefs(store2);
 const currentData = ref(null);
 const totalPage = ref(null);
+const severityMap = {
+  양호: 1,
+  주의: 2,
+  심각: 3,
+};
 
 const takeData = (currentPage) => {
   const rawParams = {
@@ -67,7 +78,9 @@ const takeData = (currentPage) => {
   };
 
   const queryParams = Object.fromEntries(
-    Object.entries(rawParams).filter(([key, value]) => value !== "" && value != null)
+    Object.entries(rawParams).filter(
+      ([key, value]) => value !== "" && value != null
+    )
   );
 
   getPotholeList(
@@ -102,7 +115,7 @@ const handleDateRangeUpdate = (newRange) => {
 // 심각도
 const selectedSeverity = ref("");
 const handleSeverity = (option) => {
-  selectedSeverity.value = option;
+  selectedSeverity.value = severityMap[option];
 };
 
 // 파손 종류

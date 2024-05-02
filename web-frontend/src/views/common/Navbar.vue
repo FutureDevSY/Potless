@@ -48,10 +48,12 @@ const clickLogout = () => {
         store2.logoutfc();
         store.moveHome();
       } else {
+        store2.logoutfc();
         console.log(res);
       }
     },
     (error) => {
+      store2.logoutfc();
       console.log(error.response.data.message);
     }
   );
