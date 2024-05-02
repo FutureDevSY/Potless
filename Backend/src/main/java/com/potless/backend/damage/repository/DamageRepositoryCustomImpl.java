@@ -4,12 +4,9 @@ import com.potless.backend.damage.dto.controller.request.DamageSearchRequestDTO;
 import com.potless.backend.damage.dto.controller.request.DamageVerificationRequestDTO;
 import com.potless.backend.damage.dto.controller.response.DamageResponseDTO;
 import com.potless.backend.damage.dto.controller.response.ImagesResponseDTO;
-<<<<<<< HEAD
 import com.potless.backend.damage.dto.service.response.StatisticCountResponseDTO;
 import com.potless.backend.damage.entity.area.QLocationEntity;
-=======
 import com.potless.backend.damage.entity.area.QAreaEntity;
->>>>>>> feature_40/getWorkDamage
 import com.potless.backend.damage.entity.enums.Status;
 import com.potless.backend.damage.entity.road.QCrackEntity;
 import com.potless.backend.damage.entity.road.QDamageEntity;

@@ -1,10 +1,7 @@
 package com.potless.backend.member.service;
 
-<<<<<<< HEAD
 import com.potless.backend.member.dto.EmailValidationRequestDto;
-=======
 import com.potless.backend.damage.dto.controller.response.DamageResponseDTO;
->>>>>>> feature_40/getWorkDamage
 import com.potless.backend.member.dto.LoginRequestDto;
 import com.potless.backend.member.dto.LoginResponseDto;
 import com.potless.backend.member.dto.SignupRequestDto;
