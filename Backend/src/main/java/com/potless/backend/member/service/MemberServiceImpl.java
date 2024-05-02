@@ -1,7 +1,15 @@
 package com.potless.backend.member.service;
 
 
+<<<<<<< HEAD
 import com.potless.backend.global.exception.member.*;
+=======
+import com.potless.backend.damage.dto.controller.response.DamageResponseDTO;
+import com.potless.backend.global.exception.member.DuplicateEmailException;
+import com.potless.backend.global.exception.member.EmailNotFoundException;
+import com.potless.backend.global.exception.member.InvalidLoginAttemptException;
+import com.potless.backend.global.exception.member.PasswordMismatchException;
+>>>>>>> feature_40/getWorkDamage
 import com.potless.backend.global.jwt.TokenInfo;
 import com.potless.backend.global.jwt.provider.TokenProvider;
 import com.potless.backend.global.jwt.repository.RefreshTokenRepository;
@@ -19,6 +27,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.lang.reflect.Member;
+import java.util.List;
 
 @Log4j2
 @Service
@@ -94,6 +103,7 @@ public class MemberServiceImpl implements MemberService {
         return email;
     }
 
+<<<<<<< HEAD
     @Override
     @Transactional
     public String extendAppLogin(Authentication authentication, HttpServletResponse httpServletResponse, int identify) {
@@ -107,6 +117,8 @@ public class MemberServiceImpl implements MemberService {
     }
 
 
+=======
+>>>>>>> feature_40/getWorkDamage
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     public MemberEntity findMember(String email) {

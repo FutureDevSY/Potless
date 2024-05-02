@@ -21,9 +21,13 @@ public interface IDamageService {
 
     void deleteDamage(Long damageId);
 
+<<<<<<< HEAD
     StatisticCountResponseDTO getStatisticLocation(String locationName);
 
     List<StatisticCountResponseDTO> getStatisticLocations();
 
     StatisticCountResponseDTO getStatistic(String locationName);
+=======
+//    List<DamageResponseDTO> getWorkDamage(Long memberId);
+>>>>>>> feature_40/getWorkDamage
 }
