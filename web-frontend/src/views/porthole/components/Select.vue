@@ -4,11 +4,7 @@
     <img src="../../../assets/icon/select.png" alt="#" />
     <transition name="fade">
       <ul v-show="showDropdown" class="dropdown-list">
-        <li
-          v-for="option in options"
-          :key="option"
-          @click="selectOption(option, $event)"
-        >
+        <li v-for="option in options" :key="option" @click="selectOption(option, $event)">
           {{ option }}
         </li>
       </ul>
@@ -45,9 +41,9 @@ const selectOption = (option, event) => {
   position: relative;
   border: 1px solid #ccc;
   display: flex;
-  width: 100px;
+  width: 120px;
   align-items: center;
-  padding: 8px;
+  padding: 10px;
   background-color: white;
   cursor: pointer;
   justify-content: space-between;
@@ -56,7 +52,7 @@ const selectOption = (option, event) => {
 
 .dropdown-display {
   margin: 0 5px;
-  font-size: 12px;
+  font-size: 16px;
 }
 
 .dropdown-icon {
@@ -96,7 +92,7 @@ const selectOption = (option, event) => {
 .dropdown-list li {
   padding: 8px;
   border-bottom: 1px solid #eee;
-  font-size: 12px;
+  font-size: 16px;
 }
 
 .dropdown-list li:hover {

@@ -2,7 +2,7 @@
   <div>
     <div class="filter">
       <!-- 필터 -->
-      <div class="horizontal-layout">
+      <div class="search-tab">
         <Calendar @update:dateRange="handleDateRangeUpdate" />
         <Select
           :options="['심각', '주의', '양호']"
@@ -27,17 +27,11 @@
     <div class="container">
       <div class="left">
         <List :current-data="currentData" />
-        <Pagination
-          :total-page="totalPage"
-          @update:current-page="handleCurrentPageUpdate"
-        />
+        <Pagination :total-page="totalPage" @update:current-page="handleCurrentPageUpdate" />
       </div>
 
       <div class="right">
-        <PotholeLocationMap
-          :pothole-dirx="pothole_info.dirX"
-          :pothole-diry="pothole_info.dirY"
-        />
+        <PotholeLocationMap :pothole-dirx="pothole_info.dirX" :pothole-diry="pothole_info.dirY" />
       </div>
     </div>
   </div>
@@ -73,9 +67,7 @@ const takeData = (currentPage) => {
   };
 
   const queryParams = Object.fromEntries(
-    Object.entries(rawParams).filter(
-      ([key, value]) => value !== "" && value != null
-    )
+    Object.entries(rawParams).filter(([key, value]) => value !== "" && value != null)
   );
 
   getPotholeList(
@@ -175,10 +167,11 @@ const pothole_info = ref({
   flex: 6;
 }
 
-.horizontal-layout {
+.search-tab {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: end;
+  gap: 10px;
 }
 
 #pagination-control {
@@ -262,26 +255,27 @@ const pothole_info = ref({
 
 /* 페이지네이션 */
 .pagination-container {
-  position: fixed;
-  bottom: 5vh;
-  left: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 3vh;
+  /* position: fixed;
+  bottom: 2vh;
   width: calc(100% * 0.563);
-  text-align: center;
-  padding: 10px 0;
-  box-shadow: 0px -2px 5px rgba(0, 0, 0, 0.1);
-  background-color: #f1f1f1;
+  text-align: center; */
 }
 
 .search-button {
-  padding: 5px 10px;
-  background-color: #f0f0f0;
-  border: 1px solid #ccc;
+  padding: 10px 15px;
+  background-color: #151c62;
+  border: none;
+  color: white;
+  font-size: 16px;
   border-radius: 4px;
   cursor: pointer;
-  height: 37.78px;
 }
 
 .search-button:hover {
-  background-color: #e1e1e1;
+  background-color: #0e1241;
 }
 </style>

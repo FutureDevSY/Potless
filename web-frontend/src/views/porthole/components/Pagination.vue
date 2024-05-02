@@ -5,7 +5,7 @@
       @click="setCurrentPage(currentPage - 5)"
       :class="{ disabled: isPrevGroupDisabled }"
     >
-      «
+      <img src="../../../assets/icon/previous.png" alt="previous-button" />
     </div>
     <div
       class="page-item"
@@ -21,7 +21,7 @@
       @click="setCurrentPage(currentPage + 5)"
       :class="{ disabled: isNextGroupDisabled }"
     >
-      »
+      <img src="../../../assets/icon/next.png" alt="next-button" />
     </div>
   </div>
 </template>
@@ -61,15 +61,11 @@ function setCurrentPage(page) {
 }
 
 const isPrevGroupDisabled = computed(() => currentPage.value <= visiblePages);
-const isNextGroupDisabled = computed(
-  () => currentPage.value > totalPages - visiblePages
-);
+const isNextGroupDisabled = computed(() => currentPage.value > totalPages - visiblePages);
 
 watch(currentPage, (newValue) => {
   if (!pageNumbers.value.includes(newValue)) {
-    setCurrentPage(
-      Math.floor((newValue - 1) / visiblePages) * visiblePages + 1
-    );
+    setCurrentPage(Math.floor((newValue - 1) / visiblePages) * visiblePages + 1);
   }
 });
 </script>
@@ -83,7 +79,8 @@ watch(currentPage, (newValue) => {
 
 .page-item {
   color: #333;
-  padding: 8px 12px;
+  font-size: 2vh;
+  padding: 1vh 0.9vw;
   margin: 0 4px;
   text-decoration: none;
   border: 1px solid #ddd;
@@ -96,8 +93,14 @@ watch(currentPage, (newValue) => {
 }
 
 .page-item.active {
-  background-color: #666;
+  background-color: #bbbbbb;
   color: white;
-  border-color: #666;
+  border-color: #bbbbbb;
+}
+
+img {
+  height: 1.2vh;
+  width: 0.6vw;
+  padding-bottom: 0.3vh;
 }
 </style>

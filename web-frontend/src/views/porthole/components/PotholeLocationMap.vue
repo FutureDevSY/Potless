@@ -28,19 +28,12 @@ onMounted(() => {
 function initMap() {
   const mapContainer = document.getElementById("map");
   // console.log("Coordinates: ", potholeDirx.value, potholeDiry.value);
-  if (
-    !mapContainer ||
-    potholeDirx.value === undefined ||
-    potholeDiry.value === undefined
-  ) {
+  if (!mapContainer || potholeDirx.value === undefined || potholeDiry.value === undefined) {
     console.log("Map or coordinates not ready");
     return;
   }
 
-  const centerPoint = new window.kakao.maps.LatLng(
-    potholeDirx.value,
-    potholeDiry.value
-  );
+  const centerPoint = new window.kakao.maps.LatLng(potholeDirx.value, potholeDiry.value);
   const mapOption = {
     center: new window.kakao.maps.LatLng(potholeDirx.value, potholeDiry.value),
     level: 3,
@@ -56,7 +49,7 @@ function initMap() {
 
 <style scoped>
 .map {
-  width: 100%;
-  height: 100%;
+  width: 40.5vw;
+  height: 73.5vh;
 }
 </style>
