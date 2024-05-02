@@ -15,7 +15,6 @@ public interface DamageRepositoryCustom {
 
     List<DamageResponseDTO> findDamagesByVerificationRequest(DamageVerificationRequestDTO verificationRequest);
 
-<<<<<<< HEAD
     StatisticCountResponseDTO getStatistic(String locationName);
 
     List<StatisticCountResponseDTO> getStatistics();
@@ -23,7 +22,5 @@ public interface DamageRepositoryCustom {
     StatisticCountResponseDTO getStatisticLocation(String locationName);
 
     List<StatisticCountResponseDTO> getStatisticLocations();
-=======
 //    List<DamageResponseDTO> findDamagesByWorker(Long memberId);
->>>>>>> feature_40/getWorkDamage
 }

@@ -118,7 +118,6 @@ public class DamageServiceImpl implements IDamageService {
         damageRepository.deleteById(damageId);
     }
 
-<<<<<<< HEAD
     @Override
     public StatisticCountResponseDTO getStatisticLocation(String locationName) {
         return damageRepository.getStatisticLocation(locationName);
@@ -133,10 +132,8 @@ public class DamageServiceImpl implements IDamageService {
     public StatisticCountResponseDTO getStatistic(String locationName) {
         return null;
     }
-=======
 //    @Override
 //    public List<DamageResponseDTO> getWorkDamage(Long memberId) {
 //        return damageRepository.findDamagesByWorker(memberId);
 //    }
->>>>>>> feature_40/getWorkDamage
 }

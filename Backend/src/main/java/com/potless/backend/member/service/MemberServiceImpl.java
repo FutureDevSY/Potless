@@ -1,15 +1,12 @@
 package com.potless.backend.member.service;
 
 
-<<<<<<< HEAD
 import com.potless.backend.global.exception.member.*;
-=======
 import com.potless.backend.damage.dto.controller.response.DamageResponseDTO;
 import com.potless.backend.global.exception.member.DuplicateEmailException;
 import com.potless.backend.global.exception.member.EmailNotFoundException;
 import com.potless.backend.global.exception.member.InvalidLoginAttemptException;
 import com.potless.backend.global.exception.member.PasswordMismatchException;
->>>>>>> feature_40/getWorkDamage
 import com.potless.backend.global.jwt.TokenInfo;
 import com.potless.backend.global.jwt.provider.TokenProvider;
 import com.potless.backend.global.jwt.repository.RefreshTokenRepository;
@@ -102,8 +99,7 @@ public class MemberServiceImpl implements MemberService {
                               .ifPresent(refreshTokenRepository::delete);
         return email;
     }
-
-<<<<<<< HEAD
+    
     @Override
     @Transactional
     public String extendAppLogin(Authentication authentication, HttpServletResponse httpServletResponse, int identify) {
@@ -116,9 +112,6 @@ public class MemberServiceImpl implements MemberService {
         return tokenInfo.getAccessToken();
     }
 
-
-=======
->>>>>>> feature_40/getWorkDamage
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     public MemberEntity findMember(String email) {
