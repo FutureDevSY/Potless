@@ -10,4 +10,5 @@ public interface ProjectRepositoryCustom {
     Page<ProjectListResponseDto> findProjectAll(Long managerId, ProjectListRequestDto projectListRequestDto, Pageable pageable);
 
     ProjectDetailResponseDto getProjectDetail(Long projectId);
+
 }
