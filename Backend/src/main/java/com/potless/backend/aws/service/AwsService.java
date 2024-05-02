@@ -1,5 +1,7 @@
 package com.potless.backend.aws.service;
 
+import com.amazonaws.AmazonServiceException;
+import com.amazonaws.SdkClientException;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.*;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +13,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -75,8 +79,22 @@ public class AwsService {
     }
 
     public void deleteFile(String sourceKey) {
-        // 파일을 새 위치로 복사
-        DeleteObjectRequest deleteObjRequest = new DeleteObjectRequest(bucketName, sourceKey);
-        s3Client.deleteObject(deleteObjRequest);
+        try {
+            // URL에서 키 부분만 추출
+            URI uri = new URI(sourceKey);
+            String path = uri.getPath();
+            String key = path.substring(path.indexOf('/') + 1); // 첫 번째 '/' 이후의 문자열이 키
+
+            log.info("Extracted key for deletion: {}", key);
+            DeleteObjectRequest deleteObjRequest = new DeleteObjectRequest(bucketName, key);
+            s3Client.deleteObject(deleteObjRequest);
+        } catch (URISyntaxException e) {
+            log.error("Error parsing URI", e);
+        } catch (AmazonServiceException e) {
+            log.error("Error deleting file: " + sourceKey, e);
+        } catch (SdkClientException e) {
+            log.error("Client error in connecting to S3", e);
+        }
     }
+
 }
