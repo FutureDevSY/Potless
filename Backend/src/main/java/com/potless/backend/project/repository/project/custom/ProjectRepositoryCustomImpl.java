@@ -109,6 +109,7 @@ public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
 
         List<ProjectListResponseDto> results = queryFactory
                 .select(Projections.constructor(ProjectListResponseDto.class,
+                        project.id,
                         project.projectName,
                         project.managerEntity.memberEntity.memberName.as("managerName"),
                         project.projectDate,
@@ -170,6 +171,5 @@ public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
         }
         return null;
     }
-
 
 }
