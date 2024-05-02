@@ -65,7 +65,7 @@ public class ProjectController {
     ){
         System.out.println("projectSaveRequestDto = " + projectSaveRequestDto);
         Long result = projectService.createProject(projectSaveRequestDto);
-        return response.success(ResponseCode.PROJECT_FETCHED, result);
+        return response.success(ResponseCode.PROJECT_DETECTED, result);
     }
 
     @Operation(summary = "Project 삭제")
