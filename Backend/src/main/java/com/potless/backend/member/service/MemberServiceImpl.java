@@ -66,6 +66,10 @@ public class MemberServiceImpl implements MemberService {
 
         MemberEntity member = memberRepository.searchByEmail(requestDto.getEmail())
                                               .orElseThrow(EmailNotFoundException::new);
+        //앱 로그인 경우에서 작업자 이외의 로그인 시도 또는 웹 로그인 경우에서 관리자 이외의 로그인 시도시 에러
+        if((identify == 1 && member.getRole() != 1) || (identify == 0 && member.getRole() != 0)){
+            throw new InvalidLoginAuthException();
+        }
 
         isPasswordMatchingWithEncoded(requestDto.getPassword(), member.getPassword());
         removeOldRefreshToken(requestDto.getEmail(), member);
