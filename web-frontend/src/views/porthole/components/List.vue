@@ -5,19 +5,15 @@
       <thead>
         <tr>
           <th class="work-column">
-            <button
-              class="button"
-              :disabled="!hasSelected"
-              @click="openModal('add')"
-            >
+            <button class="button" :disabled="!hasSelected" @click="openModal('add')">
               작업추가
             </button>
           </th>
           <!-- <th class="detect-column">탐지 일시</th> -->
-          <th>위험성</th>
-          <th>종류</th>
-          <th>행정동</th>
-          <th>지번 주소</th>
+          <th class="danger-column">위험성</th>
+          <th class="type-column">종류</th>
+          <th class="city-column">행정동</th>
+          <th class="address-column">지번 주소</th>
         </tr>
       </thead>
       <tbody>
@@ -27,12 +23,18 @@
           @click="toggleSelect(pothole)"
           @dblclick="store.movePortholeDetail(pothole.id)"
         >
-          <td>{{ pothole.isSelected ? "✔️" : "" }}</td>
+          <td class="select-column">
+            <div class="checkbox">
+              <div v-if="pothole.isSelected" class="checkmark"></div>
+            </div>
+          </td>
           <!-- <td>
             <div>{{ porthole.detect.split(" ")[0] }}</div>
           </td> -->
-          <td :class="dangerClass(pothole.severity)">
-            {{ pothole.severity }}
+          <td class="dangers-column">
+            <div class="danger-type" :class="dangerClass(pothole.severity)">
+              {{ pothole.severity }}
+            </div>
           </td>
           <td>{{ pothole.dtype }}</td>
           <td>{{ pothole.location }}</td>
@@ -42,9 +44,7 @@
     </table>
   </div>
 
-  <button class="button list-button" @click="openModal('list')">
-    작업 지시서 리스트
-  </button>
+  <button class="button list-button" @click="openModal('list')">작업 지시서 리스트</button>
   <div v-if="isModalOpen" class="modal">
     <div class="modal-content">
       <TaskList
@@ -149,19 +149,53 @@ function openModal(mode) {
 </script>
 
 <style scoped>
+/* .select-column {
+} */
+
+.checkbox {
+  width: 24px;
+  height: 24px;
+  border: 2px solid #ccc;
+  background: white;
+  display: inline-block;
+}
+
+.checkmark {
+  width: 18px;
+  height: 8px;
+  border-bottom: 4px solid #151c62;
+  border-left: 4px solid #151c62;
+  transform: translateX(9px) translateY(8px) rotate(-45deg);
+  transform-origin: left bottom;
+}
+
+.danger-type {
+  display: inline-block;
+  width: 42px;
+  height: 42px;
+  border-radius: 100%;
+  color: #ffffff;
+  font-size: 19px;
+  font-weight: bold;
+  line-height: 42px;
+  background-color: inherit;
+}
+
+.dangers-column {
+  text-align: center;
+  vertical-align: middle;
+}
+
 .serious {
   background-color: #f5172d;
-  color: white;
 }
 
 .cautious {
-  background-color: #ffb800;
-  color: rgb(255, 255, 255);
+  background-color: #ffb700bf;
 }
 
 .safe {
-  background-color: #047c02;
-  color: white;
+  background-color: #008a1e75;
 }
 
 table {
@@ -170,39 +204,79 @@ table {
   table-layout: fixed;
 }
 
-th,
+/* th,
 td {
   border: 1px solid #ddd;
   text-align: center;
   padding: 15px;
-}
+} */
 
-thead {
+/* thead {
   background-color: #f9f9f9;
+} */
+
+td {
+  border-top: 1px solid #dddddda1;
+  border-bottom: 1px solid #dddddda1;
+  border-left: none;
+  border-right: none;
+  text-align: center;
+  padding: 1.7vh;
+  font-size: 1.9vh;
+  color: #373737;
 }
 
-tr:nth-child(even) {
-  background-color: #f2f2f2;
+thead th {
+  position: sticky;
+  top: 0;
+  background-color: #d3d5ed;
+  z-index: 10;
+  padding: 1.3vh 1vh;
+  font-size: 1.7vh;
+  color: #6c6c6c;
 }
 
-tr:hover {
-  background-color: #ddd;
+tbody tr:hover {
+  background-color: #dddddd44;
   cursor: pointer;
 }
 
 .work-column {
-  width: 70px;
-  min-width: 50px;
+  width: 5.4vw;
   text-align: center;
   white-space: nowrap;
 }
 
-.detect-column {
+/* .detect-column {
   width: 150px;
   min-width: 150px;
   text-align: center;
   white-space: nowrap;
+} */
+
+.danger-column {
+  width: 5vw;
+  text-align: center;
+  white-space: nowrap;
 }
+
+.type-column {
+  width: 10vw;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.city-column {
+  width: 10vw;
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* .address-column {
+  width: 10vw;
+  text-align: center;
+  white-space: nowrap;
+} */
 
 .modal {
   position: fixed;
@@ -238,20 +312,29 @@ tr:hover {
 }
 
 .button {
-  padding: 5px 10px;
-  background-color: #f0f0f0;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  padding: 5px 15px;
+  background-color: #f8f8fc;
+  border-radius: 5px;
   cursor: pointer;
   height: 37.78px;
-}
-
-.list-button {
-  margin: 1vh 0px 1vh 0px;
+  color: #4f58b5;
+  border: 1px solid #4f58b5;
+  transition: background-color 0.3s;
 }
 
 .button:hover {
-  background-color: #e1e1e1;
+  background-color: #e6e6f6;
+}
+
+.button:disabled {
+  color: #a0a0a0;
+  cursor: default;
+  background-color: #f0f0f0;
+  border-color: #d0d0d0;
+}
+
+.button:disabled:hover {
+  background-color: #f0f0f0;
 }
 
 .new_button {
@@ -264,9 +347,8 @@ tr:hover {
 
 .list-overflow {
   overflow-y: auto;
-  height: 63vh;
-  max-height: 65vh;
-  margin-right: 8px;
+  height: 65vh;
+  margin-right: 6px;
 }
 
 .list-overflow::-webkit-scrollbar {
