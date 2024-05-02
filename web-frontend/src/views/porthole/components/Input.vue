@@ -1,13 +1,12 @@
 <template>
   <div class="input-container">
-    <input type="text" placeholder="지역(동) 또는 도로명" />
-    <img
-      src="../../../assets/icon//search.png"
-      alt="#"
-      class="search-icon"
+    <input
+      type="text"
+      placeholder="지역(동) 또는 도로명"
       :value="inputValue"
       @input="updateInput"
     />
+    <img src="../../../assets/icon//search.png" alt="#" class="search-icon" />
   </div>
 </template>
 
