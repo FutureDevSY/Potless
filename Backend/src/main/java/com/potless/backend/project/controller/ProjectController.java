@@ -36,6 +36,7 @@ public class ProjectController {
     @Operation(summary = "Project 리스트 조회")
     @GetMapping
     public ResponseEntity<?> getProjectAll(
+            @Parameter(hidden = true) Authentication authentication,
             @ModelAttribute ProjectListRequestDto projectListRequestDto,
             @PageableDefault(size = 10) Pageable pageable,
             BindingResult bindingResult
@@ -43,7 +44,8 @@ public class ProjectController {
         if (bindingResult.hasErrors()) {
             return response.fail(bindingResult);
         }
-        Page<ProjectListResponseDto> projectListResponseDtos = projectService.getProjectAll(projectListRequestDto, pageable);
+
+        Page<ProjectListResponseDto> projectListResponseDtos = projectService.getProjectAll(authentication.getName(), projectListRequestDto, pageable);
         return response.success(ResponseCode.PROJECT_LIST_FETCHED, projectListResponseDtos);
     }
 
@@ -61,10 +63,11 @@ public class ProjectController {
     @Operation(summary = "Project 생성")
     @PostMapping
     public ResponseEntity<?> createProject(
+            @Parameter(hidden = true) Authentication authentication,
             @RequestBody ProjectSaveRequestDto projectSaveRequestDto
     ){
         System.out.println("projectSaveRequestDto = " + projectSaveRequestDto);
-        Long result = projectService.createProject(projectSaveRequestDto);
+        Long result = projectService.createProject(authentication.getName(), projectSaveRequestDto);
         return response.success(ResponseCode.PROJECT_DETECTED, result);
     }
 
@@ -76,11 +79,4 @@ public class ProjectController {
         projectService.deleteProject(projectId);
         return response.success(ResponseCode.PROJECT_DELETED);
     }
-
-//    @Operation(summary = "Project 수정", description = "Status 변경, damage 변경")
-//    @PutMapping("{projectId}")
-//    public ResponseEntity<?> updateProject(@PathVariable Long projectId){
-//
-//    }
-
 }

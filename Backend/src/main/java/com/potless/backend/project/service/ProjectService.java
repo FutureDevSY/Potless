@@ -9,9 +9,9 @@ import org.springframework.security.core.Authentication;
 
 public interface ProjectService {
 
-    Page<ProjectListResponseDto> getProjectAll(ProjectListRequestDto projectListRequestDto, Pageable pageable);
+    Page<ProjectListResponseDto> getProjectAll(String email, ProjectListRequestDto projectListRequestDto, Pageable pageable);
 
-    Long createProject(ProjectSaveRequestDto projectSaveDto);
+    Long createProject(String email, ProjectSaveRequestDto projectSaveDto);
 
     ProjectDetailResponseDto getProjectDetail(Long projectId);
 
