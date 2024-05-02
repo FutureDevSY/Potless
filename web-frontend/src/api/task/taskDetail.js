@@ -41,7 +41,7 @@ const postTaskCreate = async (accessToken, taskInfo, success, fail) => {
 // 작업 정보 지시서에 팀 할당
 const postTeam = async (accessToken, assignTeam, success, fail) => {
   await local
-    .post(`/team`, assignTeam, {
+    .post(`/team/project`, assignTeam, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },

@@ -49,7 +49,7 @@ import Select from "./components/Select.vue";
 import Input from "./components/Input.vue";
 import Calendar from "./components/Calendar.vue";
 import PotholeLocationMap from "./components/PotholeLocationMap.vue";
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { getPotholeList } from "../../api/pothole/pothole.js";
 import { useAuthStore } from "@/stores/user";
 import Pagination from "./components/Pagination.vue";
@@ -157,6 +157,10 @@ const pothole_info = ref({
   dirX: 36.3549777,
   dirY: 127.2983403,
   create_at: "2023-01-04 14:22:33",
+});
+
+onMounted(() => {
+  takeData();
 });
 </script>
 
