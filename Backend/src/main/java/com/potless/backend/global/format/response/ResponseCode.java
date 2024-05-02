@@ -44,12 +44,17 @@ public enum ResponseCode {
     PROJECT_DETECTED(HttpStatus.CREATED, "프로젝트 정보가 성공적으로 생성되었습니다."),
     PROJECT_DELETED(HttpStatus.OK, "프로젝트 정보가 성공적으로 삭제되었습니다."),
 
+    /* 작업(Task)*/
+    TASK_DETECTED(HttpStatus.CREATED,"작업 정보가 프로젝트에 성공적으로 저장되었습니다."),
+    TASK_DELETED(HttpStatus.OK,"작업 정보가 성공적으로 삭제되었습니다."),
+
     /* 팀(Team) */
     TEAM_CREATED(HttpStatus.CREATED, "팀이 성공적으로 생성되었습니다."),
     TEAM_WORKER_ADDED(HttpStatus.CREATED, "팀원이 성공적으로 추가되었습니다."),
     TEAM_WORKER_DELETED(HttpStatus.OK, "팀원 삭제가 성공적으로 이루어졌습니다."),
     TEAM_FETCHED(HttpStatus.OK, "지역별 팀원 조회가 성공적으로 이루어졌습니다."),
     WORKER_FETCHED(HttpStatus.OK, "지역별 작업자 조회가 성공적으로 이루어졌습니다."),
+    TEAD_DELETED(HttpStatus.OK, "팀이 성공적으로 삭제되었습니다."),
 
     /* 경로(Path) */
     OPTIMAL_PATH_FOUND(HttpStatus.OK, "최적 경로 조회가 성공적으로 이루어졌습니다."),

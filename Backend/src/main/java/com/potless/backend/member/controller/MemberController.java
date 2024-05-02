@@ -4,13 +4,12 @@ import com.potless.backend.global.annotation.AccessToken;
 import com.potless.backend.global.format.code.ApiResponse;
 import com.potless.backend.global.format.response.ResponseCode;
 import com.potless.backend.global.jwt.service.TokenService;
-import com.potless.backend.member.dto.EmailCheckRequestDto;
-import com.potless.backend.member.dto.EmailValidationRequestDto;
-import com.potless.backend.member.dto.LoginRequestDto;
-import com.potless.backend.member.dto.SignupRequestDto;
+import com.potless.backend.member.dto.*;
 import com.potless.backend.member.service.MailService;
 import com.potless.backend.member.service.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -77,7 +76,9 @@ public class MemberController {
 
     /* 로그인 요청 web/app 구별, refresh token 만료기간 차이*/
     @PostMapping("/login-web")
-    @Operation(summary = "웹 로그인", description = "웹 로그인 요청")
+    @Operation(summary = "웹 로그인", description = "웹 로그인 요청",
+            responses = { @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "지역별 팀 목록 조회 요청 성공"
+                    , content = @Content(schema = @Schema(implementation = LoginResponseDto.class)))})
     public ResponseEntity<?> loginWeb(@Valid @RequestBody LoginRequestDto requestDto,
                                       BindingResult bindingResult,
                                       HttpServletResponse httpServletResponse) {
@@ -90,7 +91,9 @@ public class MemberController {
     }
 
     @PostMapping("/login-app")
-    @Operation(summary = "앱 로그인", description = "앱 로그인 요청")
+    @Operation(summary = "앱 로그인", description = "앱 로그인 요청",
+            responses = { @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "지역별 팀 목록 조회 요청 성공"
+                    , content = @Content(schema = @Schema(implementation = LoginResponseDto.class)))})
     public ResponseEntity<?> loginApp(@Valid @RequestBody LoginRequestDto requestDto,
                                       BindingResult bindingResult,
                                       HttpServletResponse httpServletResponse) {

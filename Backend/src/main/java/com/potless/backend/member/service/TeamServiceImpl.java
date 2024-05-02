@@ -111,7 +111,8 @@ public class TeamServiceImpl implements TeamService{
                                                   .teamEntity(team)
                                                   .workerName(workerInfoDto.getWorkerName())
                                                   //memberId가 없는경우 가입된 작업자가 아님, null할당
-                                                  .memberEntity(workerInfoDto.getMemberId() != null ? memberRepository.findById(workerInfoDto.getMemberId()).orElseThrow(MemberNotFoundException::new) : null)
+                                                  .memberEntity(workerInfoDto.getMemberId() != null ? memberRepository.findById(workerInfoDto.getMemberId())
+                                                                                                                      .orElseThrow(MemberNotFoundException::new) : null)
                                                   .areaEntity(area)
                                                   .build())
 
@@ -159,6 +160,20 @@ public class TeamServiceImpl implements TeamService{
                                                                          .build())
                                 .toList();
 
-        }else return new ArrayList<GetWorkerResponseDto>();
+        } else return new ArrayList<GetWorkerResponseDto>();
+
+    }
+
+    @Override
+    public Long deleteTeam(Long teamId) {
+
+        // 해당 team에 해당되는 작업자의 team 필드를 null로 변경
+        List<WorkerEntity> workerList = workerRepository.findAllByteamId(teamId);
+        for(WorkerEntity worker : workerList){
+            worker.setTeamNull();
+        }
+
+        teamRepository.deleteById(teamId);
+        return teamId;
     }
 }

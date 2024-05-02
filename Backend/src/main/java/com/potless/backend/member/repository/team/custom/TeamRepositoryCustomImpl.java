@@ -6,6 +6,9 @@ import com.potless.backend.global.exception.project.TeamNotFoundException;
 import com.potless.backend.member.dto.GetTeamResponseDto;
 import com.potless.backend.member.dto.WorkerInfoDto;
 import com.potless.backend.member.entity.QTeamEntity;
+import com.potless.backend.member.entity.TeamEntity;
+import com.potless.backend.member.entity.WorkerEntity;
+import com.querydsl.core.types.Path;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -62,4 +65,5 @@ public class TeamRepositoryCustomImpl implements TeamRepositoryCustom {
 
         return teamList;
     }
+
 }

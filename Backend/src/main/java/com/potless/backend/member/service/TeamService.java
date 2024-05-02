@@ -22,4 +22,6 @@ public interface TeamService {
     List<GetTeamResponseDto> getTeam(String area);
 
     List<GetWorkerResponseDto> getWorker(String area);
+
+    Long deleteTeam(Long teamId);
 }

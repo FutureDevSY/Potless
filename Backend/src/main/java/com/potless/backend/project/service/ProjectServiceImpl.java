@@ -65,7 +65,7 @@ public class ProjectServiceImpl implements ProjectService {
                 .orElseThrow(MemberNotFoundException::new);
 
         TeamEntity teamEntity = null;
-        if(projectSaveRequestDto.getTeamId().isPresent()){
+        if (projectSaveRequestDto.getTeamId().isPresent()) {
             teamEntity = teamRepository.findById(projectSaveRequestDto.getTeamId().get())
                     .orElseThrow(ManagerNotFoundException::new);
         }

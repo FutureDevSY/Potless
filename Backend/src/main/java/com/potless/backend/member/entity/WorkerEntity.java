@@ -19,18 +19,18 @@ public class WorkerEntity extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE, CascadeType.PERSIST}, orphanRemoval = true)
+    @OneToOne(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST}, orphanRemoval = true)
     @JoinColumn(name = "member_id")
     private MemberEntity memberEntity;
 
     @Column(name = "worker_name", nullable = false)
     private String workerName;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST})
     @JoinColumn(name = "team_id")
     private TeamEntity teamEntity;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST})
     @JoinColumn(name = "area_id")
     private AreaEntity areaEntity;
 
@@ -45,5 +45,9 @@ public class WorkerEntity extends BaseEntity {
 
     public void changeTeam(TeamEntity teamEntity) {
         this.teamEntity = teamEntity;
+    }
+
+    public void setTeamNull(){
+        this.teamEntity = null;
     }
 }
