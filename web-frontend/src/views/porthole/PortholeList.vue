@@ -26,7 +26,10 @@
 
     <div class="container">
       <div class="left">
-        <List :current-data="currentData" />
+        <List
+          :current-data="currentData"
+          @updateMapLocation="handleMapUpdate"
+        />
         <Pagination
           :total-page="totalPage"
           @update:current-page="handleCurrentPageUpdate"
@@ -35,8 +38,8 @@
 
       <div class="right">
         <PotholeLocationMap
-          :pothole-dirx="pothole_info.dirX"
-          :pothole-diry="pothole_info.dirY"
+          :pothole-dirx="potholeInfo.dirY"
+          :pothole-diry="potholeInfo.dirX"
         />
       </div>
     </div>
@@ -87,6 +90,7 @@ const takeData = (currentPage) => {
     accessToken.value,
     queryParams,
     (res) => {
+      console.log(res.data.data.content);
       if (res.data.status == "SUCCESS") {
         console.log(res.data.message);
         currentData.value = res.data.data.content;
@@ -147,17 +151,15 @@ const handleCurrentPageUpdate = (newPage) => {
   takeData(newPage);
 };
 
-const pothole_info = ref({
-  pothole_id: 1,
-  severity: 2,
-  type: "포트홀",
-  status: 1,
-  width: 305,
-  address: "대전 광역시 동구 계족로 282",
+const potholeInfo = ref({
   dirX: 36.3549777,
   dirY: 127.2983403,
-  create_at: "2023-01-04 14:22:33",
 });
+
+const handleMapUpdate = ({ dirX, dirY }) => {
+  potholeInfo.value.dirX = dirX;
+  potholeInfo.value.dirY = dirY;
+};
 
 onMounted(() => {
   takeData();

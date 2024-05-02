@@ -24,6 +24,7 @@
         <tr
           v-for="pothole in potholes"
           :key="pothole.id"
+          @mouseover="updateMapLocation(pothole.dirX, pothole.dirY)"
           @click="toggleSelect(pothole)"
           @dblclick="store.movePortholeDetail(pothole.id)"
         >
@@ -152,6 +153,11 @@ function openModal(mode) {
   modalMode.value = mode;
   toggleModal();
 }
+
+const emit = defineEmits(["updateMapLocation"]);
+const updateMapLocation = (dirX, dirY) => {
+  emit("updateMapLocation", { dirX, dirY });
+};
 </script>
 
 <style scoped>
