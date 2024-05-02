@@ -75,6 +75,7 @@ const takeData = (potholeId) => {
     accessToken.value,
     potholeId,
     (res) => {
+      // console.log(res);
       if (res.data.status == "SUCCESS") {
         console.log(res.data.message);
         pothole_info.value = res.data.data;
