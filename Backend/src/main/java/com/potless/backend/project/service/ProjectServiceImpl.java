@@ -7,6 +7,7 @@ import com.potless.backend.damage.entity.road.DamageEntity;
 import com.potless.backend.damage.repository.AreaRepository;
 import com.potless.backend.damage.repository.DamageRepository;
 import com.potless.backend.global.exception.member.ManagerNotFoundException;
+import com.potless.backend.global.exception.member.MemberNotFoundException;
 import com.potless.backend.global.exception.pothole.PotholeNotFoundException;
 import com.potless.backend.global.exception.project.AreaNotFoundException;
 import com.potless.backend.global.exception.project.ProjectNotFoundException;
@@ -16,6 +17,7 @@ import com.potless.backend.member.entity.MemberEntity;
 import com.potless.backend.member.entity.TeamEntity;
 import com.potless.backend.member.entity.WorkerEntity;
 import com.potless.backend.member.repository.manager.ManagerRepository;
+import com.potless.backend.member.repository.member.MemberRepository;
 import com.potless.backend.member.repository.team.TeamRepository;
 import com.potless.backend.member.repository.worker.WorkerRepository;
 import com.potless.backend.member.service.MemberService;
@@ -47,7 +49,7 @@ public class ProjectServiceImpl implements ProjectService {
     private final DamageRepository damageRepository;
     private final TaskRepository taskRepository;
     private final AreaRepository areaRepository;
-    private final MemberService memberService;
+    private final MemberRepository memberRepository;
     private final WorkerRepository workerRepository;
 
     @Override
@@ -57,7 +59,11 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public Long createProject(ProjectSaveRequestDto projectSaveRequestDto) {
-        ManagerEntity managerEntity = managerRepository.findById(projectSaveRequestDto.getManagerId())
+        MemberEntity memberEntity = memberRepository.findById(projectSaveRequestDto.getMemberId())
+                .orElseThrow(MemberNotFoundException::new);
+
+
+        ManagerEntity managerEntity = managerRepository.findById(memberEntity.getId())
                 .orElseThrow(ProjectNotFoundException::new);
 
         TeamEntity teamEntity = null;

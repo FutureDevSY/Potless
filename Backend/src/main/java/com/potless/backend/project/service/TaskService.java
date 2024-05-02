@@ -2,6 +2,8 @@ package com.potless.backend.project.service;
 
 import com.potless.backend.project.dto.request.TaskAddRequestDto;
 
+import java.util.List;
+
 public interface TaskService {
-    Long addTaskToProject(TaskAddRequestDto taskAddRequestDto);
+    List<Long> addTaskToProject(TaskAddRequestDto taskAddRequestDto);
 }

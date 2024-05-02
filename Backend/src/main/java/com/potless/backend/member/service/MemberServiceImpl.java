@@ -99,7 +99,7 @@ public class MemberServiceImpl implements MemberService {
                               .ifPresent(refreshTokenRepository::delete);
         return email;
     }
-    
+
     @Override
     @Transactional
     public String extendAppLogin(Authentication authentication, HttpServletResponse httpServletResponse, int identify) {
