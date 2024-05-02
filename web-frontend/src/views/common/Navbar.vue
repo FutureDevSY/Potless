@@ -49,11 +49,13 @@ const clickLogout = () => {
         store.moveHome();
       } else {
         store2.logoutfc();
+        store.moveHome();
         console.log(res);
       }
     },
     (error) => {
       store2.logoutfc();
+      store.moveHome();
       console.log(error.response.data.message);
     }
   );

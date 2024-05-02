@@ -36,7 +36,7 @@ const postAddTeam = async (accessToken, success, fail) => {
 // 지역별 작업자 조회
 const getWokerList = async (accessToken, area, success, fail) => {
   await local
-    .get(`/team/worker/${area}`, {
+    .get(`/team/worker`, {
       params: {
         area,
       },
