@@ -72,7 +72,7 @@ public class ProjectController {
     }
 
     @Operation(summary = "Project 삭제")
-    @PutMapping("{projectId}")
+    @DeleteMapping("{projectId}")
     public ResponseEntity<?> deleteProject(
             @PathVariable Long projectId
     ){
@@ -80,5 +80,10 @@ public class ProjectController {
         return response.success(ResponseCode.PROJECT_DELETED);
     }
 
+//    @Operation(summary = "Project 수정", description = "Status 변경, damage 변경")
+//    @PutMapping("{projectId}")
+//    public ResponseEntity<?> updateProject(@PathVariable Long projectId){
+//
+//    }
 
 }

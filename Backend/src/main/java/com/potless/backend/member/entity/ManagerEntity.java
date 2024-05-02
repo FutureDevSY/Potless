@@ -23,18 +23,18 @@ public class ManagerEntity extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST})
     @JoinColumn(name = "area_id")
     private AreaEntity areaEntity;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE, CascadeType.PERSIST}, orphanRemoval = true)
+    @OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST}, orphanRemoval = true)
     @JoinColumn(name = "member_id")
     private MemberEntity memberEntity;
 
-    @OneToMany(mappedBy = "managerEntity", fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE, CascadeType.PERSIST})
+    @OneToMany(mappedBy = "managerEntity", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST})
     private List<TeamEntity> teamEntities = new ArrayList<>();
 
-    @OneToMany(mappedBy = "managerEntity", fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE, CascadeType.PERSIST})
+    @OneToMany(mappedBy = "managerEntity", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST})
     private List<ProjectEntity> projectEntities = new ArrayList<>();
 
     @Builder
