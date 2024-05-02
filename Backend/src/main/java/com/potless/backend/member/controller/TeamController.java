@@ -67,5 +67,12 @@ public class TeamController {
         return response.success(ResponseCode.WORKER_FETCHED, teamService.getWorker(area));
     }
 
+    @DeleteMapping("{teamId}")
+    @Operation(summary = "팀 삭제", description = "팀 삭제 요청")
+    public ResponseEntity<?> deleteTeam(@PathVariable(name = "teamId") Long teamId) {
+
+        return response.success(ResponseCode.TEAD_DELETED, teamService.deleteTeam(teamId));
+    }
+
 
 }

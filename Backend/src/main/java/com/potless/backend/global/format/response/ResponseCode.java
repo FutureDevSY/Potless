@@ -54,6 +54,7 @@ public enum ResponseCode {
     TEAM_WORKER_DELETED(HttpStatus.OK, "팀원 삭제가 성공적으로 이루어졌습니다."),
     TEAM_FETCHED(HttpStatus.OK, "지역별 팀원 조회가 성공적으로 이루어졌습니다."),
     WORKER_FETCHED(HttpStatus.OK, "지역별 작업자 조회가 성공적으로 이루어졌습니다."),
+    TEAD_DELETED(HttpStatus.OK, "팀이 성공적으로 삭제되었습니다."),
 
     /* 경로(Path) */
     OPTIMAL_PATH_FOUND(HttpStatus.OK, "최적 경로 조회가 성공적으로 이루어졌습니다."),

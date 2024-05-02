@@ -1,7 +1,9 @@
 package com.potless.backend.member.repository.worker.custom;
 
 import com.potless.backend.member.dto.WorkerInfoDto;
+import com.potless.backend.member.entity.TeamEntity;
 import com.potless.backend.member.entity.WorkerEntity;
+import com.querydsl.core.types.Path;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -54,5 +56,20 @@ public class WorkerRepositoryCustomImpl implements WorkerRepositoryCustom {
                     .where(workerEntity.areaEntity.id.eq(areaId))
                     .fetch();
     }
+
+    @Override
+    public void resetTeamFromWorkers(Long teamId) {
+        query.update(workerEntity).set(workerEntity.teamEntity, (TeamEntity) null)
+             .where(workerEntity.teamEntity.id.eq(teamId))
+             .execute();
+    }
+
+    @Override
+    public List<WorkerEntity> findAllByteamId(Long teamId) {
+        return query.selectFrom(workerEntity)
+                .where(workerEntity.teamEntity.id.eq(teamId))
+                .fetch();
+    }
+
 
 }
