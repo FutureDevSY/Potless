@@ -5,6 +5,9 @@ import com.potless.backend.damage.dto.controller.request.DamageVerificationReque
 import com.potless.backend.damage.dto.controller.response.DamageResponseDTO;
 import com.potless.backend.damage.dto.controller.response.ImagesResponseDTO;
 import com.potless.backend.damage.dto.service.response.StatisticCountResponseDTO;
+import com.potless.backend.damage.dto.service.response.StatisticListResponseDTO;
+import com.potless.backend.damage.dto.service.response.StatisticLocationCountResponseDTO;
+import com.potless.backend.damage.entity.area.AreaEntity;
 import com.potless.backend.damage.entity.area.QLocationEntity;
 import com.potless.backend.damage.entity.area.QAreaEntity;
 import com.potless.backend.damage.entity.enums.Status;
@@ -40,9 +43,11 @@ import java.util.stream.Collectors;
 @Repository
 public class DamageRepositoryCustomImpl implements DamageRepositoryCustom {
 
+    private final EntityManager em;
     private final JPAQueryFactory queryFactory;
 
     public DamageRepositoryCustomImpl(EntityManager entityManager) {
+        this.em = entityManager;
         this.queryFactory = new JPAQueryFactory(entityManager);
     }
 
@@ -109,7 +114,8 @@ public class DamageRepositoryCustomImpl implements DamageRepositoryCustom {
                             damage.status,
                             damage.areaEntity.areaGu,
                             damage.locationEntity.locationName,
-                            damage.dtype
+                            damage.dtype,
+                            damage.createdDateTime
                     ))
                     .from(crack)
                     .where(builder)
@@ -141,7 +147,8 @@ public class DamageRepositoryCustomImpl implements DamageRepositoryCustom {
                             damage.status,
                             damage.areaEntity.areaGu,
                             damage.locationEntity.locationName,
-                            damage.dtype
+                            damage.dtype,
+                            damage.createdDateTime
                     ))
                     .from(pothole)
                     .where(builder)
@@ -171,7 +178,8 @@ public class DamageRepositoryCustomImpl implements DamageRepositoryCustom {
                             damage.status,
                             damage.areaEntity.areaGu,
                             damage.locationEntity.locationName,
-                            damage.dtype
+                            damage.dtype,
+                            damage.createdDateTime
                     ))
                     .from(damage)
                     .where(builder)
@@ -234,7 +242,8 @@ public class DamageRepositoryCustomImpl implements DamageRepositoryCustom {
                         damage.status,
                         damage.areaEntity.areaGu,
                         damage.locationEntity.locationName,
-                        damage.dtype
+                        damage.dtype,
+                        damage.createdDateTime
                 ))
                 .from(damage)
                 .where(builder)
@@ -255,17 +264,79 @@ public class DamageRepositoryCustomImpl implements DamageRepositoryCustom {
     }
 
     @Override
-    public StatisticCountResponseDTO getStatistic(String locationName) {
-        return null;
+    public StatisticListResponseDTO getStatistic(Long areaId) {
+        QDamageEntity damage = QDamageEntity.damageEntity;
+        QLocationEntity location = QLocationEntity.locationEntity;
+        QAreaEntity area = QAreaEntity.areaEntity;
+
+        List<Tuple> rawResults = queryFactory
+                .select(location.id, location.locationName, damage.status, damage.count())
+                .from(location)
+                .leftJoin(location.damageEntities, damage)
+                .where(location.areaEntity.id.eq(areaId))
+                .groupBy(location.id, damage.status)
+                .fetch();
+
+        List<StatisticLocationCountResponseDTO> results = rawResults.stream()
+                .collect(Collectors.groupingBy(
+                        tuple -> tuple.get(location.id),
+                        Collectors.mapping(tuple -> new StatisticLocationCountResponseDTO(
+                                        tuple.get(location.locationName),
+                                        tuple.get(damage.status) == Status.작업전 ? tuple.get(damage.count()) : 0L,
+                                        tuple.get(damage.status) == Status.작업완료 ? tuple.get(damage.count()) : 0L
+                                ),
+                                Collectors.toList()
+                        )
+                ))
+                .values()
+                .stream()
+                .flatMap(list -> list.stream().reduce((dto1, dto2) -> new StatisticLocationCountResponseDTO(
+                        dto1.getLocationName(),
+                        dto1.getCountDamageBefore() + dto2.getCountDamageBefore(),
+                        dto1.getCountDamageDone() + dto2.getCountDamageDone()
+                )).stream())
+                .collect(Collectors.toList());
+
+        String areaGu = em.find(AreaEntity.class, areaId).getAreaGu();
+        return new StatisticListResponseDTO(areaGu, results);
     }
+
 
     @Override
     public List<StatisticCountResponseDTO> getStatistics() {
-        return null;
+        QDamageEntity damage = QDamageEntity.damageEntity;
+        QAreaEntity area = QAreaEntity.areaEntity;
+
+        List<Tuple> results = queryFactory
+                .select(area.areaGu,
+                        damage.status,
+                        damage.count().as("count"))
+                .from(damage)
+                .join(damage.areaEntity, area)
+                .groupBy(area.areaGu, damage.status)
+                .fetch();
+
+        Map<String, Map<Status, Long>> groupedResults = results.stream().collect(Collectors.groupingBy(
+                result -> Optional.ofNullable(result.get(area.areaGu)).orElse("Unknown Area"),
+                Collectors.toMap(
+                        result -> result.get(damage.status),
+                        result -> Optional.ofNullable(result.get(Expressions.numberPath(Long.class, "count"))).orElse(0L),
+                        (u, v) -> {
+                            throw new IllegalStateException(String.format("Duplicate key %s", u));
+                        }
+                )
+        ));
+        return groupedResults.entrySet().stream()
+                .map(entry -> new StatisticCountResponseDTO(
+                        entry.getKey(),
+                        entry.getValue().getOrDefault(Status.작업전, 0L),
+                        entry.getValue().getOrDefault(Status.작업완료, 0L)
+                ))
+                .collect(Collectors.toList());
     }
 
     @Override
-    public StatisticCountResponseDTO getStatisticLocation(String locationName) {
+    public StatisticLocationCountResponseDTO getStatisticLocation(String locationName) {
         QDamageEntity damage = QDamageEntity.damageEntity;
         // 상태별로 결과를 그룹화하고 카운트
         List<Tuple> counts = queryFactory
@@ -290,7 +361,7 @@ public class DamageRepositoryCustomImpl implements DamageRepositoryCustom {
             }
         }
 
-        return StatisticCountResponseDTO.builder()
+        return StatisticLocationCountResponseDTO.builder()
                 .locationName(locationName)
                 .countDamageBefore(countDamageBefore)
                 .countDamageDone(countDamageDone)
@@ -299,7 +370,7 @@ public class DamageRepositoryCustomImpl implements DamageRepositoryCustom {
 
 
     @Override
-    public List<StatisticCountResponseDTO> getStatisticLocations() {
+    public List<StatisticLocationCountResponseDTO> getStatisticLocations() {
         QDamageEntity damage = QDamageEntity.damageEntity;
         QLocationEntity location = QLocationEntity.locationEntity;
 
@@ -324,7 +395,7 @@ public class DamageRepositoryCustomImpl implements DamageRepositoryCustom {
         ));
 
         return groupedResults.entrySet().stream()
-                .map(entry -> new StatisticCountResponseDTO(
+                .map(entry -> new StatisticLocationCountResponseDTO(
                         entry.getKey(),
                         entry.getValue().getOrDefault(Status.작업전, 0L),
                         entry.getValue().getOrDefault(Status.작업완료, 0L)

@@ -6,6 +6,8 @@ import com.potless.backend.damage.dto.controller.response.DamageResponseDTO;
 import com.potless.backend.damage.dto.controller.response.ImagesResponseDTO;
 import com.potless.backend.damage.dto.service.request.DamageSetRequestServiceDTO;
 import com.potless.backend.damage.dto.service.response.StatisticCountResponseDTO;
+import com.potless.backend.damage.dto.service.response.StatisticListResponseDTO;
+import com.potless.backend.damage.dto.service.response.StatisticLocationCountResponseDTO;
 import com.potless.backend.damage.entity.area.AreaEntity;
 import com.potless.backend.damage.entity.area.LocationEntity;
 import com.potless.backend.damage.entity.road.CrackEntity;
@@ -55,7 +57,6 @@ public class DamageServiceImpl implements IDamageService {
         responseDTO.setImagesResponseDTOS(imagesResponseDTOS);  // 오류 부분: 이 부분을 imagesResponseDTOS 로 변경해야 합니다.
         return responseDTO;
     }
-
 
     @Override
     @Transactional
@@ -119,19 +120,25 @@ public class DamageServiceImpl implements IDamageService {
     }
 
     @Override
-    public StatisticCountResponseDTO getStatisticLocation(String locationName) {
+    public StatisticLocationCountResponseDTO getStatisticLocation(String locationName) {
         return damageRepository.getStatisticLocation(locationName);
     }
 
     @Override
-    public List<StatisticCountResponseDTO> getStatisticLocations() {
+    public List<StatisticLocationCountResponseDTO> getStatisticLocations() {
         return damageRepository.getStatisticLocations();
     }
 
     @Override
-    public StatisticCountResponseDTO getStatistic(String locationName) {
-        return null;
+    public StatisticListResponseDTO getStatistic(Long areaId) {
+        return damageRepository.getStatistic(areaId);
     }
+
+    @Override
+    public List<StatisticCountResponseDTO> getStatistics() {
+        return damageRepository.getStatistics();
+    }
+
 //    @Override
 //    public List<DamageResponseDTO> getWorkDamage(Long memberId) {
 //        return damageRepository.findDamagesByWorker(memberId);

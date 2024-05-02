@@ -8,6 +8,8 @@ import com.potless.backend.damage.dto.controller.request.DamageVerificationReque
 import com.potless.backend.damage.dto.controller.response.DamageResponseDTO;
 import com.potless.backend.damage.dto.service.request.DamageSetRequestServiceDTO;
 import com.potless.backend.damage.dto.service.response.StatisticCountResponseDTO;
+import com.potless.backend.damage.dto.service.response.StatisticListResponseDTO;
+import com.potless.backend.damage.dto.service.response.StatisticLocationCountResponseDTO;
 import com.potless.backend.damage.dto.service.response.kakao.Address;
 import com.potless.backend.damage.dto.service.response.kakao.RoadAddress;
 import com.potless.backend.damage.entity.enums.Status;
@@ -75,25 +77,58 @@ public class DamageController {
         return response.success(ResponseCode.POTHOLE_DELETED);
     }
 
-    @Operation(summary = "Damage 구 별 통계 조회", description = "동 별 통계 조회")
-    @GetMapping("statistic/{locationName}")
-    public ResponseEntity<?> getStatistic(Authentication authentication, @PathVariable String locationName) {
-        StatisticCountResponseDTO statistic = iDamageService.getStatistic(locationName);
+    @Operation(summary = "Damage 구별 통계 조회", description = "구별 통계 조회")
+    @GetMapping("statistic")
+    public ResponseEntity<?> getStatistics(Authentication authentication) {
+        List<StatisticCountResponseDTO> statistics = iDamageService.getStatistics();
+        return response.success(ResponseCode.POTHOLE_STATISTICS_COUNT, statistics);
+    }
+
+    @Operation(summary = "Damage 구에 속한 동 통계 조회", description = "구에 속한 동 통계 조회")
+    @GetMapping("statistic/{areaId}")
+    public ResponseEntity<?> getStatistic(Authentication authentication, @PathVariable Long areaId) {
+        StatisticListResponseDTO statistic = iDamageService.getStatistic(areaId);
         return response.success(ResponseCode.POTHOLE_STATISTIC_COUNT, statistic);
     }
 
-    @Operation(summary = "Damage 동 별 통계 조회", description = "동 별 통계 조회")
+    @Operation(summary = "Damage 동 이름 을 활용해 통계 조회", description = "동 이름 을 활용해 통계 조회")
     @GetMapping("statistic/location/{locationName}")
     public ResponseEntity<?> getStatisticLocation(Authentication authentication, @PathVariable String locationName) {
-        StatisticCountResponseDTO statistic = iDamageService.getStatisticLocation(locationName);
+        StatisticLocationCountResponseDTO statistic = iDamageService.getStatisticLocation(locationName);
         return response.success(ResponseCode.POTHOLE_STATISTIC_COUNT, statistic);
     }
 
-    @Operation(summary = "Damage 동 전체 통계 조회", description = "동 별 조회")
+    @Operation(summary = "Damage 동 전체 통계 조회", description = "동 전체 통계 조회")
     @GetMapping("statistic/location")
     public ResponseEntity<?> getStatisticLocations(Authentication authentication) {
-        List<StatisticCountResponseDTO> statistic = iDamageService.getStatisticLocations();
-        return response.success(ResponseCode.POTHOLE_STATISTIC_COUNT, statistic);
+        List<StatisticLocationCountResponseDTO> statistic = iDamageService.getStatisticLocations();
+        return response.success(ResponseCode.POTHOLE_STATISTICS_COUNT, statistic);
+    }
+
+    @Operation(summary = "Damage 작업 중 사진 추가 하기", description = "작업 중 사진 추가 하기")
+    @PostMapping(value = "set/during", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<?> setDuringDamage(
+            Authentication authentication,
+            @RequestPart("damageId") String damageId,
+            @RequestPart("files") List<MultipartFile> files) {
+
+        Map<String, String> fileUrlsAndKeys = files.stream()
+                .map(file -> {
+                    try {
+                        String fileName = "AfterVerification/DuringWork" + System.currentTimeMillis() + "_" + file.getOriginalFilename();
+                        return awsService.uploadFileToS3(file, fileName);
+                    } catch (IOException e) {
+                        log.error("Error uploading file to S3", e);
+                        return null;
+                    }
+                })
+                .filter(Objects::nonNull)
+                .flatMap(map -> map.entrySet().stream())
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
+        List<String> fileUrls = new ArrayList<>(fileUrlsAndKeys.values()); // URL 리스트 추출
+
+        return response.success(ResponseCode.POTHOLE_DURING_WORK);
     }
 
     @Operation(summary = "Damage 삽입", description = "삽입")
@@ -116,7 +151,8 @@ public class DamageController {
         Map<String, String> fileUrlsAndKeys = files.stream()
                 .map(file -> {
                     try {
-                        return awsService.uploadFileToS3(file);
+                        String fileName = "BeforeVerification/" + System.currentTimeMillis() + "_" + file.getOriginalFilename();
+                        return awsService.uploadFileToS3(file, fileName);
                     } catch (IOException e) {
                         log.error("Error uploading file to S3", e);
                         return null;
@@ -156,7 +192,7 @@ public class DamageController {
                         if (iVerificationService.verificationDamage(damageVerification)) {
                             // 이미지 위치 옮기기
                             List<String> newUrls = fileUrlsAndKeys.keySet().stream()
-                                    .map(s -> awsService.moveFileToVerified(s, "검증후/" + s.substring(s.lastIndexOf('/') + 1)))
+                                    .map(s -> awsService.moveFileToVerified(s, "AfterVerification/BeforeWork/" + s.substring(s.lastIndexOf('/') + 1)))
                                     .toList();
                             // width 구하기, 위험도 구하기 로직 추가 해야됨
                             DamageSetRequestServiceDTO serviceDTO = DamageSetRequestServiceDTO.builder()
