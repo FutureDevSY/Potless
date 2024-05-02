@@ -16,6 +16,7 @@ import com.potless.backend.damage.entity.enums.Status;
 import com.potless.backend.damage.service.IDamageService;
 import com.potless.backend.damage.service.IVerificationService;
 import com.potless.backend.damage.service.KakaoService;
+import com.potless.backend.global.exception.pothole.PotholeNotFoundException;
 import com.potless.backend.global.format.code.ApiResponse;
 import com.potless.backend.global.format.response.ResponseCode;
 import io.swagger.v3.oas.annotations.Operation;
@@ -109,13 +110,13 @@ public class DamageController {
     @PostMapping(value = "set/during", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<?> setDuringDamage(
             Authentication authentication,
-            @RequestPart("damageId") Long damageId,
-            @RequestPart("files") List<MultipartFile> files) {
-
+            @RequestPart("damageId") String damageId,
+            @RequestPart("files") List<MultipartFile> files
+    ) {
         Map<String, String> fileUrlsAndKeys = files.stream()
                 .map(file -> {
                     try {
-                        String fileName = "AfterVerification/DuringWork" + System.currentTimeMillis() + "_" + file.getOriginalFilename();
+                        String fileName = "AfterVerification/DuringWork/" + System.currentTimeMillis() + "_" + file.getOriginalFilename();
                         return awsService.uploadFileToS3(file, fileName);
                     } catch (IOException e) {
                         log.error("Error uploading file to S3", e);
@@ -128,7 +129,13 @@ public class DamageController {
 
         List<String> fileUrls = new ArrayList<>(fileUrlsAndKeys.values()); // URL 리스트 추출
 
-        iDamageService.setImageForStatus(damageId, fileUrls);
+        try {
+            iDamageService.setImageForStatus(Long.valueOf(damageId), fileUrls);
+        } catch (Exception e) {
+            for (String s : fileUrls)
+                awsService.deleteFile(s);
+            throw new PotholeNotFoundException();
+        }
         return response.success(ResponseCode.POTHOLE_DURING_WORK);
     }
 
@@ -136,13 +143,13 @@ public class DamageController {
     @PostMapping(value = "set/after", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<?> setAfterDamage(
             Authentication authentication,
-            @RequestPart("damageId") Long damageId,
+            @RequestPart("damageId") String damageId,
             @RequestPart("files") List<MultipartFile> files) {
 
         Map<String, String> fileUrlsAndKeys = files.stream()
                 .map(file -> {
                     try {
-                        String fileName = "AfterVerification/AfterWork" + System.currentTimeMillis() + "_" + file.getOriginalFilename();
+                        String fileName = "AfterVerification/AfterWork/" + System.currentTimeMillis() + "_" + file.getOriginalFilename();
                         return awsService.uploadFileToS3(file, fileName);
                     } catch (IOException e) {
                         log.error("Error uploading file to S3", e);
@@ -155,7 +162,14 @@ public class DamageController {
 
         List<String> fileUrls = new ArrayList<>(fileUrlsAndKeys.values()); // URL 리스트 추출
 
-        iDamageService.setImageForStatus(damageId, fileUrls);
+        try {
+            iDamageService.setImageForStatus(Long.valueOf(damageId), fileUrls);
+        } catch (Exception e) {
+            for (String s : fileUrls)
+                awsService.deleteFile(s);
+            throw new PotholeNotFoundException();
+        }
+
         return response.success(ResponseCode.POTHOLE_AFTER_WORK);
     }
 
@@ -246,7 +260,9 @@ public class DamageController {
                             iDamageService.setDamage(serviceDTO);
                         }
                     } catch (Exception e) {
-                        log.error("An error occurred in thenAcceptAsync method", e);
+                        for (String s : fileUrls)
+                            awsService.deleteFile(s);
+                        throw new PotholeNotFoundException();
                     }
                 });
 

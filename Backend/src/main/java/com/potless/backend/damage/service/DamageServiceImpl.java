@@ -142,6 +142,7 @@ public class DamageServiceImpl implements IDamageService {
     }
 
     @Override
+    @Transactional
     public void setImageForStatus(Long damageId, List<String> fileUrls) {
         DamageEntity damageEntity = damageRepository.findById(damageId).orElseThrow(PotholeNotFoundException::new);
         int order = 1;
@@ -156,6 +157,7 @@ public class DamageServiceImpl implements IDamageService {
     }
 
     @Override
+    @Transactional
     public void setWorkDone(Long damageId) {
         DamageEntity damageEntity = damageRepository.findById(damageId).orElseThrow(PotholeNotFoundException::new);
         damageEntity.changeStatus(Status.작업완료);
