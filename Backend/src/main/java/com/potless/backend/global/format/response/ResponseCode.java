@@ -34,6 +34,7 @@ public enum ResponseCode {
     POTHOLE_DELETED(HttpStatus.OK, "포트홀 감지 정보가 성공적으로 삭제되었습니다."),
     POTHOLE_STATISTIC_COUNT(HttpStatus.OK, "포트홀 구별 감지 정보 통계가 성공적으로 조회되었습니다."),
     POTHOLE_STATISTICS_COUNT(HttpStatus.OK, "포트홀 전체 감지 정보 통계가 성공적으로 조회되었습니다."),
+    POTHOLE_DURING_WORK(HttpStatus.OK, "포트홀 진행 정보가 성공적으로 저장되었습니다."),
 
     /* 프로젝트(Project) */
     PROJECT_LIST_FETCHED(HttpStatus.OK, "프로젝트 리스트 정보가 성공적으로 조회되었습니다."),

@@ -5,15 +5,15 @@ import lombok.*;
 @Getter
 @ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class StatisticCountResponseDTO {
+public class StatisticLocationCountResponseDTO {
 
-    private String areaGu;
+    private String locationName;
     private Long countDamageBefore;
     private Long countDamageDone;
 
     @Builder
-    public StatisticCountResponseDTO(String areaGu, Long countDamageBefore, Long countDamageDone) {
-        this.areaGu = areaGu;
+    public StatisticLocationCountResponseDTO(String locationName, Long countDamageBefore, Long countDamageDone) {
+        this.locationName = locationName;
         this.countDamageBefore = countDamageBefore;
         this.countDamageDone = countDamageDone;
     }

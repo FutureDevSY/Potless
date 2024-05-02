@@ -5,6 +5,8 @@ import com.potless.backend.damage.dto.controller.request.DamageSearchRequestDTO;
 import com.potless.backend.damage.dto.controller.request.DamageVerificationRequestDTO;
 import com.potless.backend.damage.dto.controller.response.DamageResponseDTO;
 import com.potless.backend.damage.dto.service.response.StatisticCountResponseDTO;
+import com.potless.backend.damage.dto.service.response.StatisticListResponseDTO;
+import com.potless.backend.damage.dto.service.response.StatisticLocationCountResponseDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -15,12 +17,13 @@ public interface DamageRepositoryCustom {
 
     List<DamageResponseDTO> findDamagesByVerificationRequest(DamageVerificationRequestDTO verificationRequest);
 
-    StatisticCountResponseDTO getStatistic(String locationName);
+    StatisticLocationCountResponseDTO getStatisticLocation(String locationName);
+
+    List<StatisticLocationCountResponseDTO> getStatisticLocations();
+
+    StatisticListResponseDTO getStatistic(Long areaId);
 
     List<StatisticCountResponseDTO> getStatistics();
 
-    StatisticCountResponseDTO getStatisticLocation(String locationName);
-
-    List<StatisticCountResponseDTO> getStatisticLocations();
 //    List<DamageResponseDTO> findDamagesByWorker(Long memberId);
 }

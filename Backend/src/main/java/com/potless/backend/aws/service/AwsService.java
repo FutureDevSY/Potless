@@ -38,8 +38,7 @@ public class AwsService {
         inputStream.close();
     }
 
-    public Map<String, String> uploadFileToS3(MultipartFile file) throws IOException {
-        String fileName = "검증전/" + System.currentTimeMillis() + "_" + file.getOriginalFilename();
+    public Map<String, String> uploadFileToS3(MultipartFile file, String fileName) throws IOException {
         File localFile = convertMultiPartToFile(file);
         s3Client.putObject(new PutObjectRequest(bucketName, fileName, localFile));
         if (!localFile.delete()) {
@@ -73,5 +72,11 @@ public class AwsService {
         fos.write(file.getBytes());
         fos.close();
         return convFile;
+    }
+
+    public void deleteFile(String sourceKey) {
+        // 파일을 새 위치로 복사
+        DeleteObjectRequest deleteObjRequest = new DeleteObjectRequest(bucketName, sourceKey);
+        s3Client.deleteObject(deleteObjRequest);
     }
 }
