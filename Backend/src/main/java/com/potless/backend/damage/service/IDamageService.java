@@ -5,6 +5,8 @@ import com.potless.backend.damage.dto.controller.request.DamageVerificationReque
 import com.potless.backend.damage.dto.controller.response.DamageResponseDTO;
 import com.potless.backend.damage.dto.service.request.DamageSetRequestServiceDTO;
 import com.potless.backend.damage.dto.service.response.StatisticCountResponseDTO;
+import com.potless.backend.damage.dto.service.response.StatisticListResponseDTO;
+import com.potless.backend.damage.dto.service.response.StatisticLocationCountResponseDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -21,10 +23,13 @@ public interface IDamageService {
 
     void deleteDamage(Long damageId);
 
-    StatisticCountResponseDTO getStatisticLocation(String locationName);
+    StatisticLocationCountResponseDTO getStatisticLocation(String locationName);
 
-    List<StatisticCountResponseDTO> getStatisticLocations();
+    List<StatisticLocationCountResponseDTO> getStatisticLocations();
 
-    StatisticCountResponseDTO getStatistic(String locationName);
+    StatisticListResponseDTO getStatistic(Long areaId);
+
+    List<StatisticCountResponseDTO> getStatistics();
+
 //    List<DamageResponseDTO> getWorkDamage(Long memberId);
 }
