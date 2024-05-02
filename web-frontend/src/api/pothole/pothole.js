@@ -7,7 +7,7 @@ const getPotholeList = async (accessToken, queryParams, success, fail) => {
   await local
     .get(`/damage`, {
       params: {
-        queryParams,
+        ...queryParams,
         size: 10,
       },
       headers: {
@@ -33,7 +33,7 @@ const getPotholeDetail = async (accessToken, damageId, success, fail) => {
 // 포트홀 정보 삭제
 const deletePothole = async (accessToken, damageId, success, fail) => {
   await local
-    .put(`/damage/${damageId}`, {
+    .delete(`/damage/${damageId}`, {
       headers: {
         Authorization: accessToken,
       },

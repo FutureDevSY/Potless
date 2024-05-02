@@ -13,31 +13,30 @@
               작업추가
             </button>
           </th>
-          <th class="detect-column">탐지 일시</th>
+          <!-- <th class="detect-column">탐지 일시</th> -->
           <th>위험성</th>
           <th>종류</th>
           <th>행정동</th>
-          <th>도로명</th>
+          <th>지번 주소</th>
         </tr>
       </thead>
       <tbody>
         <tr
-          v-for="porthole in portholes"
-          :key="porthole.id"
-          @click="toggleSelect(porthole)"
-          @dblclick="store.movePortholeDetail(porthole.id)"
+          v-for="pothole in potholes"
+          :key="pothole.id"
+          @click="toggleSelect(pothole)"
+          @dblclick="store.movePortholeDetail(pothole.id)"
         >
-          <td>{{ porthole.isSelected ? "✔️" : "" }}</td>
-          <td>
+          <td>{{ pothole.isSelected ? "✔️" : "" }}</td>
+          <!-- <td>
             <div>{{ porthole.detect.split(" ")[0] }}</div>
-            <!-- 날짜 -->
-            <div>{{ porthole.detect.split(" ")[1] }}</div>
-            <!-- 시간 -->
+          </td> -->
+          <td :class="dangerClass(pothole.severity)">
+            {{ pothole.severity }}
           </td>
-          <td :class="dangerClass(porthole.danger)">{{ porthole.danger }}</td>
-          <td>{{ porthole.type }}</td>
-          <td>{{ porthole.city }}</td>
-          <td>{{ porthole.road }}</td>
+          <td>{{ pothole.dtype }}</td>
+          <td>{{ pothole.location }}</td>
+          <td>{{ pothole.address }}</td>
         </tr>
       </tbody>
     </table>
@@ -62,22 +61,43 @@
     </div>
   </div>
 
-  <Pagination @update:current-page="setCurrentPage" :totalpage="totalPage" />
+  <!-- <Pagination @update:current-page="setCurrentPage" :totalpage="totalPage" /> -->
 </template>
 
 <script setup>
 import { ref, computed } from "vue";
 import { useMoveStore } from "../../../stores/move";
-import Pagination from "./Pagination.vue";
 import TaskList from "./TaskList.vue";
-import data from "./dummyData.json";
 import TeamModal from "./AddTeamModal.vue";
+import { postPothole } from "../../../api/task/taskDetail";
 
-// 더미 데이터
 const store = useMoveStore();
-const dummyData = ref(data);
-const portholes = computed(() => {
-  return (dummyData.value[currentPage.value] || []).map((item) => ({
+const props = defineProps({
+  currentData: Object,
+});
+
+const assignPothole = (taskId) => {
+  const potholeData = ref({
+    projectId: taskId,
+    damageId: 1,
+  });
+
+  postPothole(
+    potholeData,
+    (res) => {
+      console.log(res);
+      if (res.data.status == "SUCCESS") {
+        console.log(res.data.message);
+      }
+    },
+    (error) => {
+      console.log(error);
+    }
+  );
+};
+
+const potholes = computed(() => {
+  return (props.currentData || []).map((item) => ({
     ...item,
     isSelected: selectedIds.value.has(item.id),
   }));
@@ -86,11 +106,11 @@ const portholes = computed(() => {
 // 위험성 필터링
 const dangerClass = (danger) => {
   switch (danger) {
-    case "심각":
+    case 3:
       return "serious";
-    case "주의":
+    case 2:
       return "cautious";
-    case "양호":
+    case 1:
       return "safe";
     default:
       return "";
@@ -109,7 +129,6 @@ function toggleSelect(porthole) {
 }
 const selectedCount = computed(() => selectedIds.value.size);
 
-// 작업 추가 버튼
 const hasSelected = computed(() => {
   return selectedIds.value.size > 0;
 });
@@ -127,16 +146,6 @@ function openModal(mode) {
   modalMode.value = mode;
   toggleModal();
 }
-
-// 페이지네이션
-const currentPage = ref(1);
-function setCurrentPage(page) {
-  currentPage.value = page;
-}
-const totalPage = Object.keys(dummyData).length;
-const props = defineProps({
-  itemData: Object,
-});
 </script>
 
 <style scoped>
@@ -255,6 +264,7 @@ tr:hover {
 
 .list-overflow {
   overflow-y: auto;
+  height: 63vh;
   max-height: 65vh;
   margin-right: 8px;
 }

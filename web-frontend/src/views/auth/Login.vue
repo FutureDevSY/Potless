@@ -4,35 +4,28 @@
       <div class="login-title">관리자 로그인</div>
       <form class="login-form" @submit.prevent="moveHome">
         <div class="input-group">
-          <!-- 새로운 div 추가 -->
           <div class="input-title">아이디</div>
           <input
             class="form-control"
-            :class="{ 'input-error': showIdError }"
             type="text"
             v-model="auth_id"
             placeholder="아이디를 입력해 주세요."
-            @input="showIdError = false"
           />
-          <div v-if="showIdError" class="error-message">
-            아이디를 입력해주세요.
-          </div>
         </div>
         <div class="input-group">
           <div class="input-title">비밀번호</div>
           <input
             class="form-control"
-            :class="{ 'input-error': showPasswordError }"
             type="password"
             v-model="auth_password"
             placeholder="비밀번호를 입력해 주세요."
-            @input="showPasswordError = false"
+            @input="showError = false"
           />
-          <div v-if="showPasswordError" class="error-message">
-            비밀번호를 입력해주세요.
+          <div v-if="showError" class="error-message">
+            {{ errorMsg }}
           </div>
         </div>
-        <button class="login-button" type="submit">
+        <button class="login-button" type="submit" @click="doLogin">
           <span class="button-text">로그인</span>
         </button>
       </form>
@@ -42,26 +35,38 @@
 
 <script setup>
 import { ref } from "vue";
-import { useRouter } from "vue-router";
 import { useAuthStore } from "../../stores/user.js";
+import { login } from "../../api/auth/auth";
+import { useMoveStore } from "@/stores/move";
 
 const store = useAuthStore();
-const router = useRouter();
+const store2 = useMoveStore();
 const auth_id = ref("");
 const auth_password = ref("");
-const showIdError = ref(false);
-const showPasswordError = ref(false);
+const showError = ref(false);
+const errorMsg = ref("");
 
-const moveHome = () => {
-  if (!auth_id.value) {
-    showIdError.value = true;
-  }
-  if (!auth_password.value) {
-    showPasswordError.value = true;
-  }
-  if (auth_id.value && auth_password.value) {
-    router.push("/");
-  }
+const doLogin = () => {
+  const loginData = ref({
+    email: auth_id.value,
+    password: auth_password.value,
+  });
+
+  login(
+    loginData,
+    (res) => {
+      if (res.data.status == "SUCCESS") {
+        console.log(res.data.message);
+        store.login(res.data, res.data.data.token);
+        store2.moveHome();
+      }
+    },
+    (error) => {
+      console.log(error);
+      showError.value = true;
+      errorMsg.value = error.message;
+    }
+  );
 };
 </script>
 
@@ -168,3 +173,4 @@ input {
   color: #ff4343;
 }
 </style>
+../../api/auth.js ../../api/auth/auth.js

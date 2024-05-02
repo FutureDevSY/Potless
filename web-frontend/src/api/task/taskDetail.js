@@ -73,6 +73,7 @@ const postOptimal = async (accessToken, success, fail) => {
     .then(success)
     .catch(fail);
 };
+
 export {
   getTaskDetail,
   postOptimal,
