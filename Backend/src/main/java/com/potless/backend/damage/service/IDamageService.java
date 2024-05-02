@@ -31,5 +31,9 @@ public interface IDamageService {
 
     List<StatisticCountResponseDTO> getStatistics();
 
+    void setImageForStatus(Long damageId, List<String> fileUrls);
+
+    void setWorkDone(Long damageId);
+
 //    List<DamageResponseDTO> getWorkDamage(Long memberId);
 }
