@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -26,7 +28,7 @@ public class TaskController {
     @Operation(summary = "Project에 Task 입력")
     @PostMapping
     public ResponseEntity<?> addTaskToProject(@RequestBody TaskAddRequestDto taskAddRequestDto) {
-        Long result = taskService.addTaskToProject(taskAddRequestDto);
+        List<Long> result = taskService.addTaskToProject(taskAddRequestDto);
         return response.success(ResponseCode.PROJECT_FETCHED,result);
     }
 
