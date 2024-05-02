@@ -319,7 +319,7 @@ tbody tr:hover {
   height: 37.78px;
   color: #4f58b5;
   border: 1px solid #4f58b5;
-  transition: background-color 0.3s;
+  transition: background-color 0.4s;
 }
 
 .button:hover {
