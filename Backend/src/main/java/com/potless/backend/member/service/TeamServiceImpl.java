@@ -30,6 +30,8 @@ import java.awt.geom.Area;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Log4j2
 @Service
@@ -80,15 +82,37 @@ public class TeamServiceImpl implements TeamService{
         List<WorkerEntity> workerEntityList = createTeamRequestDto
                 .getWorkerList()
                 .stream()
-                .map(workerInfoDto -> WorkerEntity.builder()
-                                                  .teamEntity(newTeam)
-                                                  .workerName(workerInfoDto.getWorkerName())
-                                                  .memberEntity(memberRepository.findById(workerInfoDto.getMemberId())
-                                                                                //memberId가 없는경우 가입된 작업자가 아님, null할당
-                                                                                .orElse(null))
-                                                  .areaEntity(area)
-                                                  .build())
-                .toList();
+                .map(workerInfoDto -> {
+                        Long workerMemberId = workerInfoDto.getMemberId();
+                        MemberEntity workerMember = null;
+
+                        if(workerInfoDto.getMemberId() != null){
+                            workerMember = memberRepository.findById(workerMemberId)
+                                                           .orElseThrow(MemberNotFoundException::new);
+                        }
+                        // 기존 작업자에 추가되어있지 않다면 새로 생성
+                        if(workerInfoDto.getMemberId() == null || workerRepository.findByMemberId(workerMemberId).isEmpty()){
+                            WorkerEntity newWorker = WorkerEntity.builder()
+                                                                 .teamEntity(newTeam)
+                                                                 .workerName(workerInfoDto.getWorkerName())
+                                                                 // null 혹은 memberId 참조
+                                                                 .memberEntity(workerMember)
+                                                                 .areaEntity(area)
+                                                                 .build();
+
+                            return newWorker;
+
+                        // 기존 작업자에 추가되어있다면 정보 수정
+                        } else {
+                            WorkerEntity existWorker = workerRepository.findByMemberId(workerMemberId)
+                                                                       .orElseThrow(MemberNotFoundException::new);
+                            existWorker.changeTeam(newTeam);
+                            existWorker.changeArea(area);
+
+                            return existWorker;
+                        }
+
+                }).collect(Collectors.toList());
 
         workerRepository.saveAll(workerEntityList);
 
@@ -99,7 +123,7 @@ public class TeamServiceImpl implements TeamService{
     public Long addWorker(Authentication authentication, WorkerRequestDto createTeamRequestDto) {
 
         TeamEntity team = teamRepository.findById(createTeamRequestDto.getTeamId())
-                                        .orElseThrow(com.potless.backend.global.exception.project.TeamNotFoundException::new);
+                                        .orElseThrow(TeamNotFoundException::new);
 
         AreaEntity area = team.getManagerEntity().getAreaEntity();
 
@@ -137,8 +161,14 @@ public class TeamServiceImpl implements TeamService{
 
     @Override
     public List<GetTeamResponseDto> getTeam(String area) {
-        //예외처리 로직을 여기로 뺄까 고민중
-        return teamRepository.getTeamListByArea(area);
+        teamRepository.getAreaIdByAreaGu(area).orElseThrow(AreaNotFoundException::new);
+        List<GetTeamResponseDto> teamList = teamRepository.getTeamListByArea(area);
+
+        for(GetTeamResponseDto dto : teamList){
+            dto.setWorkerList(teamRepository.getWorkerListByTeamId(dto.getTeamId()));
+        }
+
+        return teamList;
     }
 
     @Override

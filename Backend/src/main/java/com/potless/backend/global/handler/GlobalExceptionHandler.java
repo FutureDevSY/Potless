@@ -8,6 +8,8 @@ import com.potless.backend.global.exception.pothole.PotholeAreaNotFoundException
 import com.potless.backend.global.exception.pothole.PotholeLocationNotFoundException;
 import com.potless.backend.global.exception.pothole.PotholeMinusException;
 import com.potless.backend.global.exception.pothole.PotholeNotFoundException;
+import com.potless.backend.global.exception.project.AreaNotFoundException;
+import com.potless.backend.global.exception.project.ProjectNotFoundException;
 import com.potless.backend.global.format.code.ApiResponse;
 import com.potless.backend.global.format.response.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -103,4 +105,29 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         log.error("PotholeNotFoundException = {}", e.getErrorCode().getMessage());
         return response.error(e.getErrorCode());
     }
+
+    @ExceptionHandler(TeamNotFoundException.class)
+    protected ResponseEntity<?> handle(TeamNotFoundException e) {
+        log.error("TeamNotFoundException = {}", e.getErrorCode().getMessage());
+        return response.error(e.getErrorCode());
+    }
+
+    @ExceptionHandler(MemberNotFoundException.class)
+    protected ResponseEntity<?> handle(MemberNotFoundException e) {
+        log.error("MemberNotFoundException = {}", e.getErrorCode().getMessage());
+        return response.error(e.getErrorCode());
+    }
+
+    @ExceptionHandler(ProjectNotFoundException.class)
+    protected ResponseEntity<?> handle(ProjectNotFoundException e) {
+        log.error("ProjectNotFoundException = {}", e.getErrorCode().getMessage());
+        return response.error(e.getErrorCode());
+    }
+
+    @ExceptionHandler(AreaNotFoundException.class)
+    protected ResponseEntity<?> handle(AreaNotFoundException e) {
+        log.error("AreaNotFoundException = {}", e.getErrorCode().getMessage());
+        return response.error(e.getErrorCode());
+    }
+
 }
