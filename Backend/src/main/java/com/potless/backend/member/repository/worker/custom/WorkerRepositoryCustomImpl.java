@@ -1,5 +1,6 @@
 package com.potless.backend.member.repository.worker.custom;
 
+import com.potless.backend.member.dto.WorkerInfoDto;
 import com.potless.backend.member.entity.WorkerEntity;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -19,11 +20,12 @@ public class WorkerRepositoryCustomImpl implements WorkerRepositoryCustom {
     private final JPAQueryFactory query;
 
     @Override
-    public Long deleteByNameAtOnce(List<String> nameList) {
+    public Long deleteByNameAtOnce(List<WorkerInfoDto> workerList) {
+
         Map<String, Integer> nameCounts = new HashMap<>();
         Long deletedCount = 0L;
-        for (String name : nameList) {
-            nameCounts.put(name, nameCounts.getOrDefault(name, 0) + 1);
+        for (WorkerInfoDto workerInfo : workerList) {
+            nameCounts.put(workerInfo.getWorkerName(), nameCounts.getOrDefault(workerInfo.getWorkerName(), 0) + 1);
         }
 
         for (Map.Entry<String, Integer> entry : nameCounts.entrySet()) {
@@ -44,6 +46,13 @@ public class WorkerRepositoryCustomImpl implements WorkerRepositoryCustom {
             }
         }
         return deletedCount;
+    }
+
+    @Override
+    public List<WorkerEntity> findAllByAreaId(Long areaId) {
+        return query.selectFrom(workerEntity)
+                    .where(workerEntity.areaEntity.id.eq(areaId))
+                    .fetch();
     }
 
 }

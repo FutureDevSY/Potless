@@ -59,6 +59,8 @@ public enum ErrorCode {
     TEAM_NOT_FOUND(HttpStatus.UNAUTHORIZED, "관련 팀 정보를 찾을 수 없습니다."),
     PROJECT_AREA_NOT_FOUND(HttpStatus.UNAUTHORIZED, "관련 지역 정보를 찾을 수 없습니다."),
 
+    // 팀, 작업자 관련 예외 처리
+
     // AWS ERROR
     FAILED_TO_UPLOAD(HttpStatus.INTERNAL_SERVER_ERROR, "S3 이미지 저장에 실패했습니다.");
 

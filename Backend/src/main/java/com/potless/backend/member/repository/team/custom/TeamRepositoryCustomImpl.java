@@ -4,6 +4,7 @@ import com.potless.backend.damage.dto.controller.response.DamageResponseDTO;
 import com.potless.backend.global.exception.project.AreaNotFoundException;
 import com.potless.backend.global.exception.project.TeamNotFoundException;
 import com.potless.backend.member.dto.GetTeamResponseDto;
+import com.potless.backend.member.dto.WorkerInfoDto;
 import com.potless.backend.member.entity.QTeamEntity;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -51,10 +52,10 @@ public class TeamRepositoryCustomImpl implements TeamRepositoryCustom {
         if(teamList == null || teamList.isEmpty()) throw new TeamNotFoundException();
 
         for (GetTeamResponseDto dto : teamList) {
-            List<String> workerList = query.select(workerEntity.workerName)
-                                           .from(workerEntity)
-                                           .where(workerEntity.teamEntity.id.eq(dto.getTeamId()))
-                                           .fetch();
+            List<WorkerInfoDto> workerList = query.select(Projections.constructor(WorkerInfoDto.class, workerEntity.memberEntity.Id, workerEntity.workerName))
+                                                  .from(workerEntity)
+                                                  .where(workerEntity.teamEntity.id.eq(dto.getTeamId()))
+                                                  .fetch();
 
             dto.setWorkerList(workerList);
         }

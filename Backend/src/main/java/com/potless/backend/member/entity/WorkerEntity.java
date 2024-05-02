@@ -1,5 +1,6 @@
 package com.potless.backend.member.entity;
 
+import com.potless.backend.damage.entity.area.AreaEntity;
 import com.potless.backend.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -18,9 +19,9 @@ public class WorkerEntity extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-//    @OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE, CascadeType.PERSIST}, orphanRemoval = true)
-//    @JoinColumn(name = "member_id")
-//    private MemberEntity memberEntity;
+    @OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE, CascadeType.PERSIST}, orphanRemoval = true)
+    @JoinColumn(name = "member_id")
+    private MemberEntity memberEntity;
 
     @Column(name = "worker_name", nullable = false)
     private String workerName;
@@ -29,11 +30,17 @@ public class WorkerEntity extends BaseEntity {
     @JoinColumn(name = "team_id")
     private TeamEntity teamEntity;
 
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @JoinColumn(name = "area_id")
+    private AreaEntity areaEntity;
+
     @Builder
-    public WorkerEntity(Long id, String workerName, TeamEntity teamEntity) {
+    public WorkerEntity(Long id, MemberEntity memberEntity, String workerName, TeamEntity teamEntity, AreaEntity areaEntity) {
         this.id = id;
+        this.memberEntity = memberEntity;
         this.workerName = workerName;
         this.teamEntity = teamEntity;
+        this.areaEntity = areaEntity;
     }
 
     public void changeTeam(TeamEntity teamEntity) {

@@ -1,5 +1,6 @@
 package com.potless.backend.project.dto.request;
 
+import com.potless.backend.member.dto.WorkerInfoDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,6 +16,6 @@ public class WorkerRequestDto {
 
     private Long teamId;
 
-    private ArrayList<String> memberNameList;
+    private ArrayList<WorkerInfoDto> workerList;
 
 }

@@ -60,5 +60,12 @@ public class TeamController {
         return response.success(ResponseCode.TEAM_FETCHED, teamService.getTeam(area));
     }
 
+    @GetMapping("/worker")
+    @Operation(summary = "지역별 작업자 조회", description = "지역별 작업자 목록 조회 요청")
+    public ResponseEntity<?> getWorker(@RequestParam(name = "area") String area) {
+
+        return response.success(ResponseCode.WORKER_FETCHED, teamService.getWorker(area));
+    }
+
 
 }

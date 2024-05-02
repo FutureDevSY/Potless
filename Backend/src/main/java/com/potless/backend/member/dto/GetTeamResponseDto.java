@@ -15,7 +15,7 @@ public class GetTeamResponseDto {
     private String areaGu;
 
     @Setter
-    private List<String> workerList;
+    private List<WorkerInfoDto> workerList;
 
     public GetTeamResponseDto(Long teamId, String teamName, Long areaId, String areaGu){
         this.teamId = teamId;
