@@ -53,7 +53,6 @@ const takeWorkerList = () => {
       if (res.data.status == "SUCCESS") {
         console.log(res.data.message);
         datas.value = res.data.data;
-        console.log(res.data.data);
       }
     },
     (error) => {
