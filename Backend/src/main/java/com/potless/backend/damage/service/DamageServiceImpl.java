@@ -115,6 +115,7 @@ public class DamageServiceImpl implements IDamageService {
     }
 
     @Override
+    @Transactional
     public void deleteDamage(Long damageId) {
         DamageEntity damageEntity = damageRepository.findById(damageId).orElseThrow(PotholeNotFoundException::new);
         damageEntity.getAreaEntity().minusCount();
