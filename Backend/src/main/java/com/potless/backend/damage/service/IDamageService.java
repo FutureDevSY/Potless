@@ -19,4 +19,6 @@ public interface IDamageService {
     List<DamageResponseDTO> getDamageVerification(DamageVerificationRequestDTO data);
 
     void deleteDamage(Long damageId);
+
+//    List<DamageResponseDTO> getWorkDamage(Long memberId);
 }

@@ -4,11 +4,17 @@ import com.potless.backend.damage.dto.controller.request.DamageSearchRequestDTO;
 import com.potless.backend.damage.dto.controller.request.DamageVerificationRequestDTO;
 import com.potless.backend.damage.dto.controller.response.DamageResponseDTO;
 import com.potless.backend.damage.dto.controller.response.ImagesResponseDTO;
+import com.potless.backend.damage.entity.area.QAreaEntity;
 import com.potless.backend.damage.entity.enums.Status;
 import com.potless.backend.damage.entity.road.QCrackEntity;
 import com.potless.backend.damage.entity.road.QDamageEntity;
 import com.potless.backend.damage.entity.road.QImageEntity;
 import com.potless.backend.damage.entity.road.QPotholeEntity;
+import com.potless.backend.member.entity.QMemberEntity;
+import com.potless.backend.member.entity.QTeamEntity;
+import com.potless.backend.member.entity.QWorkerEntity;
+import com.potless.backend.project.entity.QProjectEntity;
+import com.potless.backend.project.entity.QTaskEntity;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -32,6 +38,38 @@ public class DamageRepositoryCustomImpl implements DamageRepositoryCustom {
     public DamageRepositoryCustomImpl(EntityManager entityManager) {
         this.queryFactory = new JPAQueryFactory(entityManager);
     }
+
+//    @Override
+//    public List<DamageResponseDTO> findDamagesByWorker(Long memberId) {
+//        QDamageEntity damage = QDamageEntity.damageEntity;
+//        QImageEntity image = QImageEntity.imageEntity;
+//        QTeamEntity team = QTeamEntity.teamEntity;
+//        QWorkerEntity worker = QWorkerEntity.workerEntity;
+//        QTaskEntity task = QTaskEntity.taskEntity;
+//        QMemberEntity member = QMemberEntity.memberEntity;
+//        QProjectEntity project = QProjectEntity.projectEntity;
+//        QAreaEntity area = QAreaEntity.areaEntity;
+//
+//        List<DamageResponseDTO> results = queryFactory
+//                .select(Projections.constructor(DamageResponseDTO.class,
+//                        damage.id,
+//                        damage.severity,
+//                        damage.dirX,
+//                        damage.dirY,
+//                        damage.address,
+//                        damage.roadName,
+//                        damage.width,
+//                        damage.status,
+//                        damage.areaEntity.areaGu,
+//                        damage.locationEntity.locationName,
+//                        damage.dtype
+//                ))
+//                .from(damage)
+//                .innerJoin(damage.en)
+//                .innerJoin(area.en)
+//
+//    }
+
 
     @Override
     public Page<DamageResponseDTO> findDamagesWithLatestTransaction(DamageSearchRequestDTO searchDTO, Pageable pageable) {

@@ -115,4 +115,9 @@ public class DamageServiceImpl implements IDamageService {
     public void deleteDamage(Long damageId) {
         damageRepository.deleteById(damageId);
     }
+
+//    @Override
+//    public List<DamageResponseDTO> getWorkDamage(Long memberId) {
+//        return damageRepository.findDamagesByWorker(memberId);
+//    }
 }
