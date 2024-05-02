@@ -32,7 +32,10 @@ export const useAuthStore = defineStore(
     const logoutfc = () => {
       isLoggedIn.value = false;
       accessToken.value = null;
+      areaId.value = null;
+      userId.value = null;
       username.value = "";
+      areaName.value = "";
     };
 
     return {
@@ -48,7 +51,20 @@ export const useAuthStore = defineStore(
   },
   {
     persist: {
-      storage: sessionStorage,
+      enabled: true,
+      strategies: [
+        {
+          storage: sessionStorage,
+          paths: [
+            "isLoggedIn",
+            "accessToken",
+            "username",
+            "areaId",
+            "areaName",
+            "userId",
+          ],
+        },
+      ],
     },
   }
 );
