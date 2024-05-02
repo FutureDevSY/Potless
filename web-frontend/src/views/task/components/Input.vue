@@ -1,11 +1,26 @@
 <template>
   <div class="input-container">
-    <input type="text" placeholder="작업 보고서명 혹은 작업 관리자 이름" />
+    <input
+      type="text"
+      placeholder="작업 보고서명 혹은 작업 관리자 이름"
+      :value="inputValue"
+      @input="updateInput"
+    />
     <img src="../../../assets/icon//search.png" alt="#" class="search-icon" />
   </div>
 </template>
 
-<script setup></script>
+<script setup>
+import { ref } from "vue";
+
+const emit = defineEmits(["update:value"]);
+const inputValue = ref("");
+
+const updateInput = (event) => {
+  inputValue.value = event.target.value;
+  emit("update:value", inputValue.value);
+};
+</script>
 
 <style scoped>
 .input-container {

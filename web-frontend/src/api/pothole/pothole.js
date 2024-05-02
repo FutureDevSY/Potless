@@ -35,7 +35,7 @@ const deletePothole = async (accessToken, damageId, success, fail) => {
   await local
     .delete(`/damage/${damageId}`, {
       headers: {
-        Authorization: accessToken,
+        Authorization: `Bearer ${accessToken}`,
       },
     })
     .then(success)

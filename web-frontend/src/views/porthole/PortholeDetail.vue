@@ -57,7 +57,9 @@
     <!-- 버튼 -->
     <div class="button-container">
       <button class="back-btn" @click="store.moveBack">뒤로가기</button>
-      <button class="delete-btn">삭제하기</button>
+      <button class="delete-btn" @click="deleteData(pothole_info.id)">
+        삭제하기
+      </button>
     </div>
   </div>
 </template>
@@ -69,7 +71,7 @@ import Carusel from "./components/Carusel.vue";
 import RoadTypeIncidentsGraph from "./components/PotholeLocationMap.vue";
 import { useMoveStore } from "@/stores/move";
 import { useAuthStore } from "@/stores/user";
-import { getPotholeDetail } from "../../api/pothole/pothole.js";
+import { getPotholeDetail, deletePothole } from "../../api/pothole/pothole.js";
 import { storeToRefs } from "pinia";
 
 const store = useMoveStore();
@@ -95,6 +97,25 @@ const takeData = (potholeId) => {
     }
   );
 };
+
+const deleteData = (potholeId) => {
+  deletePothole(
+    accessToken.value,
+    potholeId,
+    (res) => {
+      console.log(res);
+      if (res.data.status == "SUCCESS") {
+        console.log(res.data.message);
+        store.moveBack();
+      }
+    },
+    (error) => {
+      console.log(error);
+      console.log(error.response.data.message);
+    }
+  );
+};
+
 const caruselImage = computed(() => {
   if (
     pothole_info.value.imagesResponseDTOS &&
