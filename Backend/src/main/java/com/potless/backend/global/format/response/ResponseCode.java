@@ -44,6 +44,10 @@ public enum ResponseCode {
     PROJECT_DETECTED(HttpStatus.CREATED, "프로젝트 정보가 성공적으로 생성되었습니다."),
     PROJECT_DELETED(HttpStatus.OK, "프로젝트 정보가 성공적으로 삭제되었습니다."),
 
+    /* 작업(Task)*/
+    TASK_DETECTED(HttpStatus.CREATED,"작업 정보가 프로젝트에 성공적으로 저장되었습니다."),
+    TASK_DELETED(HttpStatus.OK,"작업 정보가 성공적으로 삭제되었습니다."),
+
     /* 팀(Team) */
     TEAM_CREATED(HttpStatus.CREATED, "팀이 성공적으로 생성되었습니다."),
     TEAM_WORKER_ADDED(HttpStatus.CREATED, "팀원이 성공적으로 추가되었습니다."),
