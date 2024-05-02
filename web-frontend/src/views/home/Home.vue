@@ -39,9 +39,33 @@
 <script setup>
 import SVG from "./components/SVG.vue";
 import Chart from "./components/Chart.vue";
+import { ref, onMounted } from "vue";
 import { useMoveStore } from "@/stores/move";
+import { useAuthStore } from "@/stores/user";
+import { storeToRefs } from "pinia";
+import { getGuList } from "../../api/statistics/statistics";
 
 const store = useMoveStore();
+const store2 = useAuthStore();
+const { accessToken } = storeToRefs(store2);
+const taskData = ref(null);
+
+const takeData = () => {
+  getGuList(
+    accessToken.value,
+    (res) => {
+      console.log(res);
+      if (res.data.status == "SUCCESS") {
+        console.log(res.data.message);
+        taskData.value = res.data.data;
+      }
+    },
+    (error) => {
+      console.log(error);
+      console.log(error.response.data.message);
+    }
+  );
+};
 
 const chartOptions = {
   chart: {
@@ -84,6 +108,10 @@ const chart3Series = [20, 80];
 const chart4Series = [10, 90];
 const chart5Series = [50, 50];
 const section = ["유성구", "대덕구", "중구", "서구", "동구"];
+
+onMounted(() => {
+  takeData;
+});
 </script>
 
 <style scoped>
