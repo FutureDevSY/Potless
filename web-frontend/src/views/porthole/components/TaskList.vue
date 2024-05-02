@@ -4,9 +4,9 @@
     <button class="button new_button" @click="addNewTask">새 작업</button>
     <table>
       <tr v-for="task in currentTasks" :key="task.id" @click="showDetail(task)">
-        <td>{{ task.id }}</td>
-        <td>{{ task.serviceSubCategory }}</td>
-        <td>{{ task.projectEnd }} 건</td>
+        <td>{{ task.projectName }}</td>
+        <td>{{ task.projectDate }}</td>
+        <td>{{ task.projectSize }} 건</td>
         <td
           class="add-column"
           v-if="isAddingTasks"
@@ -19,9 +19,9 @@
   </div>
   <div v-if="isDetailOpen">
     <div class="task-info">
-      <div class="info-font">{{ selectedTask.id }}</div>
-      <div class="info-font">{{ selectedTask.serviceSubCategory }}</div>
-      <div class="manager">관리자: {{ selectedTask.sinceConstruction }}</div>
+      <div class="info-font">{{ selectedTask.projectDate }}</div>
+      <div class="info-font">{{ selectedTask.projectName }}</div>
+      <div class="manager">관리자: {{ selectedTask.managerName }}</div>
     </div>
     <div class="detail-list">
       <TaskDetail :task="selectedTask" @close="isDetailOpen = false" />
@@ -59,7 +59,7 @@ const props = defineProps({
 const teamlist = ref(Teamlist);
 const selectedTeamId = ref(null);
 // 모달창 작업 지시서 리스트 + 더미데이터
-const taskData = ref({});
+const taskData = ref([]);
 const currentTasks = computed(() => {
   return taskData.value || [];
 });
@@ -67,22 +67,24 @@ const currentTasks = computed(() => {
 // 새 작업(작업 지시서 새로 만들기)
 function addNewTask() {
   const newData = ref({
-    managerId: store2.userId,
+    memberId: store2.userId,
     teamId: null,
     title: "도로 부속 작업 보고서",
-    projectDate: null,
+    projectDate: "2024-05-02",
     areaId: store2.areaId,
     damageNums: [],
   });
 
   postTaskCreate(
     accessToken.value,
-    newData,
+    newData.value,
     (res) => {
       console.log(res);
       if (res.data.status == "SUCCESS") {
         console.log(res.data.message);
+        console.log(res);
         taskData.value = res.data.data;
+        takeData();
       } else {
         console.log(res.data.message);
       }
@@ -119,7 +121,7 @@ function incrementProjectEnd(task, event) {
 
 const takeData = () => {
   const rawParams = {
-    managerId: store2.userId,
+    memberId: store2.userId,
     type: "포트홀",
     status: "작업전",
     area: store2.areaId,
@@ -135,9 +137,12 @@ const takeData = () => {
     accessToken.value,
     queryParams,
     (res) => {
+      console.log(res);
       if (res.data.status == "SUCCESS") {
         console.log(res.data.message);
         taskData.value = res.data.data.content;
+      } else {
+        console.log(res.data.message);
       }
     },
     (error) => {

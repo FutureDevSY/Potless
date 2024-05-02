@@ -69,11 +69,32 @@ import { ref, computed } from "vue";
 import { useMoveStore } from "../../../stores/move";
 import TaskList from "./TaskList.vue";
 import TeamModal from "./AddTeamModal.vue";
+import { postPothole } from "../../../api/task/taskDetail";
 
 const store = useMoveStore();
 const props = defineProps({
   currentData: Object,
 });
+
+const assignPothole = (taskId) => {
+  const potholeData = ref({
+    projectId: taskId,
+    damageId: 1,
+  });
+
+  postPothole(
+    potholeData,
+    (res) => {
+      console.log(res);
+      if (res.data.status == "SUCCESS") {
+        console.log(res.data.message);
+      }
+    },
+    (error) => {
+      console.log(error);
+    }
+  );
+};
 
 const potholes = computed(() => {
   return (props.currentData || []).map((item) => ({
