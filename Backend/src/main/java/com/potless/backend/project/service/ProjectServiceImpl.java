@@ -54,10 +54,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public Page<ProjectListResponseDto> getProjectAll(ProjectListRequestDto projectListRequestDto, Pageable pageable) {
-        MemberEntity memberEntity = memberRepository.findById(projectListRequestDto.getMemberId())
-                .orElseThrow(MemberNotFoundException::new);
-
-        Long managerId = managerRepository.findById(memberEntity.getId())
+        Long managerId = managerRepository.findByMemberId(projectListRequestDto.getMemberId())
                 .orElseThrow(ManagerNotFoundException::new).getId();
 
         return projectRepository.findProjectAll(managerId, projectListRequestDto, pageable);
@@ -65,11 +62,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public Long createProject(ProjectSaveRequestDto projectSaveRequestDto) {
-        MemberEntity memberEntity = memberRepository.findById(projectSaveRequestDto.getMemberId())
-                .orElseThrow(MemberNotFoundException::new);
-
-
-        ManagerEntity managerEntity = managerRepository.findById(memberEntity.getId())
+        ManagerEntity managerEntity = managerRepository.findByMemberId(projectSaveRequestDto.getMemberId())
                 .orElseThrow(ProjectNotFoundException::new);
 
         TeamEntity teamEntity = null;
