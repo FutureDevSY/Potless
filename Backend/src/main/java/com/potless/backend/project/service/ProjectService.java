@@ -11,7 +11,7 @@ public interface ProjectService {
 
     Page<ProjectListResponseDto> getProjectAll(ProjectListRequestDto projectListRequestDto, Pageable pageable);
 
-    Long createProject(ProjectSaveRequestDto projectSaveDto);
+    Long createProject(ProjectSaveRequestDto projectSaveDto, int[] order);
 
     ProjectDetailResponseDto getProjectDetail(Long projectId);
 

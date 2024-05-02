@@ -2,6 +2,7 @@ package com.potless.backend.project.controller;
 
 import com.potless.backend.global.format.code.ApiResponse;
 import com.potless.backend.global.format.response.ResponseCode;
+import com.potless.backend.path.service.PathService;
 import com.potless.backend.project.dto.request.WorkerRequestDto;
 import com.potless.backend.project.dto.request.CreateTeamRequestDto;
 import com.potless.backend.project.dto.request.ProjectListRequestDto;
@@ -30,6 +31,7 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "Project 컨트롤러", description = "Project Controller API")
 public class ProjectController {
     private final ProjectService projectService;
+    private final PathService pathService;
     private final ApiResponse response;
 
 
@@ -64,7 +66,8 @@ public class ProjectController {
             @RequestBody ProjectSaveRequestDto projectSaveRequestDto
     ){
         System.out.println("projectSaveRequestDto = " + projectSaveRequestDto);
-        Long result = projectService.createProject(projectSaveRequestDto);
+        int[] order = pathService.getOptimalOrder(projectSaveRequestDto.getOrigin(), projectSaveRequestDto.getDamageNums());
+        Long result = projectService.createProject(projectSaveRequestDto, order);
         return response.success(ResponseCode.PROJECT_DETECTED, result);
     }
 

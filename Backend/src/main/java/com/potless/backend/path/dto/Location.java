@@ -1,5 +1,6 @@
 package com.potless.backend.path.dto;
 
+import com.potless.backend.project.entity.TaskEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
