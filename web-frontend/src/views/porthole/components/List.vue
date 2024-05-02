@@ -92,7 +92,6 @@ const assignPothole = (taskId) => {
   postPothole(
     potholeData,
     (res) => {
-      console.log(res);
       if (res.data.status == "SUCCESS") {
         console.log(res.data.message);
       }

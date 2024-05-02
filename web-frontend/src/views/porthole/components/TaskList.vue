@@ -67,7 +67,6 @@ const currentTasks = computed(() => {
 // 새 작업(작업 지시서 새로 만들기)
 function addNewTask() {
   const newData = ref({
-    memberId: store2.userId,
     teamId: null,
     title: "도로 부속 작업 보고서",
     projectDate: "2024-05-02",
@@ -121,10 +120,8 @@ function incrementProjectEnd(task, event) {
 
 const takeData = () => {
   const rawParams = {
-    memberId: store2.userId,
-    type: "포트홀",
+    areaId: store2.areaId,
     status: "작업전",
-    area: store2.areaId,
   };
 
   const queryParams = Object.fromEntries(

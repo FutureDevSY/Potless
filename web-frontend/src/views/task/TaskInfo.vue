@@ -91,7 +91,6 @@ const handleCurrentPageUpdate = (newPage) => {
 
 const takeData = (currentPage) => {
   const rawParams = {
-    memberId: store2.userId,
     areaId: store2.areaId,
     start: formatDate(dateRange.value.start),
     end: formatDate(dateRange.value.end),
