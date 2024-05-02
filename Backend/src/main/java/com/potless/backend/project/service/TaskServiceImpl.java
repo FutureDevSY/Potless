@@ -4,6 +4,7 @@ import com.potless.backend.damage.entity.road.DamageEntity;
 import com.potless.backend.damage.repository.DamageRepository;
 import com.potless.backend.global.exception.pothole.PotholeNotFoundException;
 import com.potless.backend.global.exception.project.ProjectNotFoundException;
+import com.potless.backend.global.exception.task.TaskNotFoundException;
 import com.potless.backend.project.dto.request.TaskAddRequestDto;
 import com.potless.backend.project.entity.ProjectEntity;
 import com.potless.backend.project.entity.TaskEntity;
@@ -23,7 +24,7 @@ import java.util.List;
 @Log4j2
 @Service
 @RequiredArgsConstructor
-public class TaskServiceImpl implements TaskService{
+public class TaskServiceImpl implements TaskService {
 
     private final ProjectRepository projectRepository;
     private final DamageRepository damageRepository;
@@ -41,7 +42,7 @@ public class TaskServiceImpl implements TaskService{
 
         List<Long> taskIds = new ArrayList<>();
 
-        for(Long damageId : taskAddRequestDto.getDamageIds()){
+        for (Long damageId : taskAddRequestDto.getDamageIds()) {
             DamageEntity damage = damageRepository.findById(damageId)
                     .orElseThrow(PotholeNotFoundException::new);
 
@@ -55,6 +56,14 @@ public class TaskServiceImpl implements TaskService{
         }
 
         return taskIds;
+    }
+
+    @Override
+    public void deleteTask(Long taskId) {
+        TaskEntity taskEntity = taskRepository.findById(taskId)
+                .orElseThrow(TaskNotFoundException::new);
+        taskEntity.softDelet();
+        taskRepository.save(taskEntity);
     }
 
 }

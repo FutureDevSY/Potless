@@ -49,8 +49,6 @@ public class ProjectServiceImpl implements ProjectService {
     private final DamageRepository damageRepository;
     private final TaskRepository taskRepository;
     private final AreaRepository areaRepository;
-    private final MemberRepository memberRepository;
-    private final WorkerRepository workerRepository;
 
     @Override
     public Page<ProjectListResponseDto> getProjectAll(ProjectListRequestDto projectListRequestDto, Pageable pageable) {
@@ -66,7 +64,7 @@ public class ProjectServiceImpl implements ProjectService {
                 .orElseThrow(ProjectNotFoundException::new);
 
         TeamEntity teamEntity = null;
-        if(projectSaveRequestDto.getTeamId().isPresent()){
+        if (projectSaveRequestDto.getTeamId().isPresent()) {
             teamEntity = teamRepository.findById(projectSaveRequestDto.getTeamId().get())
                     .orElseThrow(ManagerNotFoundException::new);
         }
@@ -87,7 +85,7 @@ public class ProjectServiceImpl implements ProjectService {
 
         ProjectEntity saveProjectEntity = projectRepository.save(projectEntity);
 
-        if(projectSaveRequestDto.getDamageNums() != null && !projectSaveRequestDto.getDamageNums().isEmpty()){
+        if (projectSaveRequestDto.getDamageNums() != null && !projectSaveRequestDto.getDamageNums().isEmpty()) {
             projectSaveRequestDto.getDamageNums().forEach(damageId -> {
                 DamageEntity damageEntity = damageRepository.findById(damageId)
                         .orElseThrow(PotholeNotFoundException::new);
