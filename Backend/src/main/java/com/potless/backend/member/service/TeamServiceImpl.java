@@ -1,15 +1,19 @@
 package com.potless.backend.member.service;
 
+import com.potless.backend.damage.entity.area.AreaEntity;
 import com.potless.backend.damage.repository.AreaRepository;
+import com.potless.backend.global.exception.member.MemberNotFoundException;
 import com.potless.backend.global.exception.member.TeamNotFoundException;
 import com.potless.backend.global.exception.project.AreaNotFoundException;
 import com.potless.backend.global.exception.project.ProjectNotFoundException;
 import com.potless.backend.member.dto.GetTeamResponseDto;
+import com.potless.backend.member.dto.GetWorkerResponseDto;
 import com.potless.backend.member.dto.TeamAddRequestDto;
 import com.potless.backend.member.entity.ManagerEntity;
 import com.potless.backend.member.entity.MemberEntity;
 import com.potless.backend.member.entity.TeamEntity;
 import com.potless.backend.member.entity.WorkerEntity;
+import com.potless.backend.member.repository.member.MemberRepository;
 import com.potless.backend.member.repository.team.TeamRepository;
 import com.potless.backend.member.repository.worker.WorkerRepository;
 import com.potless.backend.project.dto.request.CreateTeamRequestDto;
@@ -22,7 +26,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.awt.geom.Area;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Log4j2
 @Service
@@ -35,6 +42,7 @@ public class TeamServiceImpl implements TeamService{
     private final WorkerRepository workerRepository;
     private final MemberService memberService;
     private final AreaRepository areaRepository;
+    private final MemberRepository memberRepository;
 
 
     @Override
@@ -55,12 +63,12 @@ public class TeamServiceImpl implements TeamService{
     @Override
     public Long createTeam(Authentication authentication, CreateTeamRequestDto createTeamRequestDto) {
         MemberEntity member = memberService.findMember(authentication.getName());
+        AreaEntity area = areaRepository.findByAreaGu(createTeamRequestDto.getArea()).orElseThrow(AreaNotFoundException::new);
 
         TeamEntity newTeam =
                 TeamEntity.builder()
                           .managerEntity(ManagerEntity.builder()
-                                                      .areaEntity(areaRepository.findById(createTeamRequestDto.getAreaId())
-                                                                                .orElseThrow(AreaNotFoundException::new))
+                                                      .areaEntity(area)
                                                       .memberEntity(member)
                                                       .build())
                           .teamName(createTeamRequestDto.getTeamName())
@@ -70,11 +78,16 @@ public class TeamServiceImpl implements TeamService{
 
         // 팀 worker 정보 생성, memberNameList 없는경우 고려하기!!
         List<WorkerEntity> workerEntityList = createTeamRequestDto
-                .getMemberNameList()
+                .getWorkerList()
                 .stream()
-                .map(memberName -> WorkerEntity.builder()
-                                               .teamEntity(newTeam)
-                                               .workerName(memberName).build())
+                .map(workerInfoDto -> WorkerEntity.builder()
+                                                  .teamEntity(newTeam)
+                                                  .workerName(workerInfoDto.getWorkerName())
+                                                  .memberEntity(memberRepository.findById(workerInfoDto.getMemberId())
+                                                                                //memberId가 없는경우 가입된 작업자가 아님, null할당
+                                                                                .orElse(null))
+                                                  .areaEntity(area)
+                                                  .build())
                 .toList();
 
         workerRepository.saveAll(workerEntityList);
@@ -88,13 +101,20 @@ public class TeamServiceImpl implements TeamService{
         TeamEntity team = teamRepository.findById(createTeamRequestDto.getTeamId())
                                         .orElseThrow(com.potless.backend.global.exception.project.TeamNotFoundException::new);
 
+        AreaEntity area = team.getManagerEntity().getAreaEntity();
+
         // 팀 worker 정보 생성
         List<WorkerEntity> workerEntityList = createTeamRequestDto
-                .getMemberNameList()
+                .getWorkerList()
                 .stream()
-                .map(memberName -> WorkerEntity.builder()
-                                               .teamEntity(team)
-                                               .workerName(memberName).build())
+                .map(workerInfoDto -> WorkerEntity.builder()
+                                                  .teamEntity(team)
+                                                  .workerName(workerInfoDto.getWorkerName())
+                                                  //memberId가 없는경우 가입된 작업자가 아님, null할당
+                                                  .memberEntity(workerInfoDto.getMemberId() != null ? memberRepository.findById(workerInfoDto.getMemberId()).orElseThrow(MemberNotFoundException::new) : null)
+                                                  .areaEntity(area)
+                                                  .build())
+
                 .toList();
 
         workerRepository.saveAll(workerEntityList);
@@ -106,11 +126,11 @@ public class TeamServiceImpl implements TeamService{
     public Long deleteWorker(Authentication authentication, WorkerRequestDto deleteTeamRequestDto) {
 
         TeamEntity team = teamRepository.findById(deleteTeamRequestDto.getTeamId())
-                                        .orElseThrow(com.potless.backend.global.exception.project.TeamNotFoundException::new);
+                                        .orElseThrow(TeamNotFoundException::new);
 
         //리스트에 해당되는 사용자 이름이 없을경우 예외 처리 로직 추가 필요
 
-        return workerRepository.deleteByNameAtOnce(deleteTeamRequestDto.getMemberNameList());
+        return workerRepository.deleteByNameAtOnce(deleteTeamRequestDto.getWorkerList());
 
     }
 
@@ -118,5 +138,27 @@ public class TeamServiceImpl implements TeamService{
     public List<GetTeamResponseDto> getTeam(String area) {
         //예외처리 로직을 여기로 뺄까 고민중
         return teamRepository.getTeamListByArea(area);
+    }
+
+    @Override
+    public List<GetWorkerResponseDto> getWorker(String area) {
+        AreaEntity areaEntity = areaRepository.findByAreaGu(area).orElseThrow(AreaNotFoundException::new);
+        List<WorkerEntity> workerList = workerRepository.findAllByAreaId(areaEntity.getId());
+        log.info("workerListSize = {}", workerList.size());
+
+        if(!workerList.isEmpty()) {
+            return workerList.stream()
+                                .map(workerEntity -> GetWorkerResponseDto.builder()
+                                                                         .memberId(Optional.ofNullable(workerEntity.getMemberEntity())
+                                                                                           .map(MemberEntity::getId)
+                                                                                           .orElse(null))
+                                                                         .workerName(workerEntity.getWorkerName())
+                                                                         .teamId(Optional.ofNullable(workerEntity.getTeamEntity())
+                                                                                           .map(TeamEntity::getId)
+                                                                                           .orElse(null))
+                                                                         .build())
+                                .toList();
+
+        }else return new ArrayList<GetWorkerResponseDto>();
     }
 }

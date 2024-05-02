@@ -5,6 +5,8 @@ import com.potless.backend.member.entity.WorkerEntity;
 import com.potless.backend.member.repository.worker.custom.WorkerRepositoryCustom;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface WorkerRepository extends JpaRepository<WorkerEntity, Long>, WorkerRepositoryCustom {
+import java.util.List;
+import java.util.Optional;
 
+public interface WorkerRepository extends JpaRepository<WorkerEntity, Long>, WorkerRepositoryCustom {
 }
