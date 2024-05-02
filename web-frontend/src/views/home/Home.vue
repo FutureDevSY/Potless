@@ -48,13 +48,13 @@ import { getGuList } from "../../api/statistics/statistics";
 const store = useMoveStore();
 const store2 = useAuthStore();
 const { accessToken } = storeToRefs(store2);
+// 여기에 통계 정보 들어감
 const taskData = ref(null);
 
 const takeData = () => {
   getGuList(
     accessToken.value,
     (res) => {
-      console.log(res);
       if (res.data.status == "SUCCESS") {
         console.log(res.data.message);
         taskData.value = res.data.data;
@@ -110,7 +110,7 @@ const chart5Series = [50, 50];
 const section = ["유성구", "대덕구", "중구", "서구", "동구"];
 
 onMounted(() => {
-  takeData;
+  takeData();
 });
 </script>
 

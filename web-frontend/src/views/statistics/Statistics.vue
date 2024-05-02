@@ -55,7 +55,7 @@ import {
 } from "../../api/statistics/statistics";
 
 const store = useAuthStore();
-const { accessToken, userId } = storeToRefs(store);
+const { accessToken, areaId } = storeToRefs(store);
 
 // 대전 시 전체 구 데이터
 const GuData = ref(null);
@@ -73,7 +73,7 @@ const TakeStatistics = () => {
   getGuList(
     accessToken.value,
     (res) => {
-      console.log(res);
+      console.log("구 전체 리스트 요청", res);
       if (res.data.status == "SUCCESS") {
         console.log(res.data.message);
         GuData.value = res.data.data;
@@ -89,7 +89,7 @@ const TakeStatistics = () => {
     accessToken.value,
     areaId.value,
     (res) => {
-      console.log(res);
+      console.log("동 리스트 요청", res);
       if (res.data.status == "SUCCESS") {
         console.log(res.data.message);
         DongListData.value = res.data.data;
@@ -104,7 +104,7 @@ const TakeStatistics = () => {
   getTotalDongList(
     accessToken.value,
     (res) => {
-      console.log(res);
+      console.log("동 전체 정보", res);
       if (res.data.status == "SUCCESS") {
         console.log(res.data.message);
         TotalDongListData.value = res.data.data;
@@ -141,7 +141,7 @@ const dataItems = [
 
 const searchTerm = ref("");
 onMounted(() => {
-  TakeStatistics;
+  TakeStatistics();
 });
 </script>
 
