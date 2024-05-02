@@ -1,12 +1,18 @@
 package com.potless.backend.member.service;
 
+<<<<<<< HEAD
 import com.potless.backend.member.dto.EmailValidationRequestDto;
+=======
+import com.potless.backend.damage.dto.controller.response.DamageResponseDTO;
+>>>>>>> feature_40/getWorkDamage
 import com.potless.backend.member.dto.LoginRequestDto;
 import com.potless.backend.member.dto.LoginResponseDto;
 import com.potless.backend.member.dto.SignupRequestDto;
 import com.potless.backend.member.entity.MemberEntity;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.core.Authentication;
+
+import java.util.List;
 
 public interface MemberService {
 

@@ -39,7 +39,7 @@ import java.util.List;
 @Log4j2
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
+@Transactional
 public class ProjectServiceImpl implements ProjectService {
     private final ProjectRepository projectRepository;
     private final ManagerRepository managerRepository;
