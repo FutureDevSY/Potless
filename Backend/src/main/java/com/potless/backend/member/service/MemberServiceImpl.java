@@ -1,6 +1,7 @@
 package com.potless.backend.member.service;
 
 
+import com.potless.backend.damage.dto.controller.response.DamageResponseDTO;
 import com.potless.backend.global.exception.member.DuplicateEmailException;
 import com.potless.backend.global.exception.member.EmailNotFoundException;
 import com.potless.backend.global.exception.member.InvalidLoginAttemptException;
@@ -24,6 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.lang.reflect.Member;
+import java.util.List;
 
 @Log4j2
 @Service
@@ -97,7 +99,6 @@ public class MemberServiceImpl implements MemberService {
                 .ifPresent(refreshTokenRepository::delete);
         return email;
     }
-
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

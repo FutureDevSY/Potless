@@ -13,4 +13,6 @@ public interface DamageRepositoryCustom {
     Page<DamageResponseDTO> findDamagesWithLatestTransaction(DamageSearchRequestDTO damageSearchRequestDTO, Pageable pageable);
 
     List<DamageResponseDTO> findDamagesByVerificationRequest(DamageVerificationRequestDTO verificationRequest);
+
+//    List<DamageResponseDTO> findDamagesByWorker(Long memberId);
 }
