@@ -10,6 +10,7 @@ import com.potless.backend.damage.dto.service.response.StatisticListResponseDTO;
 import com.potless.backend.damage.dto.service.response.StatisticLocationCountResponseDTO;
 import com.potless.backend.damage.entity.area.AreaEntity;
 import com.potless.backend.damage.entity.area.LocationEntity;
+import com.potless.backend.damage.entity.enums.Status;
 import com.potless.backend.damage.entity.road.CrackEntity;
 import com.potless.backend.damage.entity.road.DamageEntity;
 import com.potless.backend.damage.entity.road.ImageEntity;
@@ -28,6 +29,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -139,7 +141,27 @@ public class DamageServiceImpl implements IDamageService {
         return damageRepository.getStatistics();
     }
 
-//    @Override
+    @Override
+    public void setImageForStatus(Long damageId, List<String> fileUrls) {
+        DamageEntity damageEntity = damageRepository.findById(damageId).orElseThrow(PotholeNotFoundException::new);
+        int order = 1;
+        for (String imageUrl : fileUrls) {
+            ImageEntity image = ImageEntity.builder()
+                    .damageEntity(damageEntity)
+                    .url(imageUrl)
+                    .order(order++)
+                    .build();
+            imageRepository.save(image);
+        }
+    }
+
+    @Override
+    public void setWorkDone(Long damageId) {
+        DamageEntity damageEntity = damageRepository.findById(damageId).orElseThrow(PotholeNotFoundException::new);
+        damageEntity.changeStatus(Status.작업완료);
+    }
+
+    //    @Override
 //    public List<DamageResponseDTO> getWorkDamage(Long memberId) {
 //        return damageRepository.findDamagesByWorker(memberId);
 //    }

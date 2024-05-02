@@ -109,7 +109,7 @@ public class DamageController {
     @PostMapping(value = "set/during", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<?> setDuringDamage(
             Authentication authentication,
-            @RequestPart("damageId") String damageId,
+            @RequestPart("damageId") Long damageId,
             @RequestPart("files") List<MultipartFile> files) {
 
         Map<String, String> fileUrlsAndKeys = files.stream()
@@ -128,7 +128,42 @@ public class DamageController {
 
         List<String> fileUrls = new ArrayList<>(fileUrlsAndKeys.values()); // URL 리스트 추출
 
+        iDamageService.setImageForStatus(damageId, fileUrls);
         return response.success(ResponseCode.POTHOLE_DURING_WORK);
+    }
+
+    @Operation(summary = "Damage 작업 완료 사진 추가 하기", description = "작업 완료 사진 추가 하기")
+    @PostMapping(value = "set/after", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<?> setAfterDamage(
+            Authentication authentication,
+            @RequestPart("damageId") Long damageId,
+            @RequestPart("files") List<MultipartFile> files) {
+
+        Map<String, String> fileUrlsAndKeys = files.stream()
+                .map(file -> {
+                    try {
+                        String fileName = "AfterVerification/AfterWork" + System.currentTimeMillis() + "_" + file.getOriginalFilename();
+                        return awsService.uploadFileToS3(file, fileName);
+                    } catch (IOException e) {
+                        log.error("Error uploading file to S3", e);
+                        return null;
+                    }
+                })
+                .filter(Objects::nonNull)
+                .flatMap(map -> map.entrySet().stream())
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
+        List<String> fileUrls = new ArrayList<>(fileUrlsAndKeys.values()); // URL 리스트 추출
+
+        iDamageService.setImageForStatus(damageId, fileUrls);
+        return response.success(ResponseCode.POTHOLE_AFTER_WORK);
+    }
+
+    @Operation(summary = "Damage 작업 완료 상태 전환", description = "작업 완료로 상태 전환")
+    @PostMapping("workDone")
+    public ResponseEntity<?> setWorkDone(Authentication authentication, @RequestPart("damageId") Long damageId) {
+        iDamageService.setWorkDone(damageId);
+        return response.success(ResponseCode.POTHOLE_DONE_WORK);
     }
 
     @Operation(summary = "Damage 삽입", description = "삽입")
