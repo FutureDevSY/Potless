@@ -1,6 +1,7 @@
 package com.potless.backend.member.repository.worker.custom;
 
 import com.potless.backend.member.dto.WorkerInfoDto;
+import com.potless.backend.member.entity.MemberEntity;
 import com.potless.backend.member.entity.TeamEntity;
 import com.potless.backend.member.entity.WorkerEntity;
 import com.querydsl.core.types.Path;
@@ -8,10 +9,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.potless.backend.member.entity.QWorkerEntity.workerEntity;
 
@@ -69,6 +67,13 @@ public class WorkerRepositoryCustomImpl implements WorkerRepositoryCustom {
         return query.selectFrom(workerEntity)
                 .where(workerEntity.teamEntity.id.eq(teamId))
                 .fetch();
+    }
+
+    @Override
+    public Optional<WorkerEntity> findByMemberId(Long memberId) {
+        return Optional.ofNullable(query.selectFrom(workerEntity)
+                           .where(workerEntity.memberEntity.Id.eq(memberId))
+                           .fetchOne());
     }
 
 
