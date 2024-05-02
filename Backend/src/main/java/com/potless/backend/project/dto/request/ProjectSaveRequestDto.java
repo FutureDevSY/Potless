@@ -14,19 +14,17 @@ import java.util.Optional;
 @Builder
 @ToString
 public class ProjectSaveRequestDto {
-    private Long memberId;
     private Optional<Long> teamId;
     private String title;
     private LocalDate projectDate;
     private Long areaId;
     private List<Long> damageNums;
 
-    public ProjectSaveRequestDto(Long memberId, Optional<Long> teamId, String title, LocalDate projectDate, Long areaId, List<Long> damageNums) {
+    public ProjectSaveRequestDto(Optional<Long> teamId, String title, LocalDate projectDate, Long areaId, List<Long> damageNums) {
         if (title == null) {
             title = "도로 부속 작업 보고서";
         }
 
-        this.memberId = memberId;
         this.teamId = teamId;
         this.title = title;
         this.projectDate = projectDate;

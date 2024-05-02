@@ -49,18 +49,24 @@ public class ProjectServiceImpl implements ProjectService {
     private final DamageRepository damageRepository;
     private final TaskRepository taskRepository;
     private final AreaRepository areaRepository;
+    private final MemberRepository memberRepository;
 
     @Override
-    public Page<ProjectListResponseDto> getProjectAll(ProjectListRequestDto projectListRequestDto, Pageable pageable) {
-        Long managerId = managerRepository.findByMemberId(projectListRequestDto.getMemberId())
+    public Page<ProjectListResponseDto> getProjectAll(String email, ProjectListRequestDto projectListRequestDto, Pageable pageable) {
+        Long memberId = memberRepository.searchByEmail(email)
+                .orElseThrow(MemberNotFoundException::new).getId();
+
+        Long managerId = managerRepository.findByMemberId(memberId)
                 .orElseThrow(ManagerNotFoundException::new).getId();
 
         return projectRepository.findProjectAll(managerId, projectListRequestDto, pageable);
     }
 
     @Override
-    public Long createProject(ProjectSaveRequestDto projectSaveRequestDto) {
-        ManagerEntity managerEntity = managerRepository.findByMemberId(projectSaveRequestDto.getMemberId())
+    public Long createProject(String email, ProjectSaveRequestDto projectSaveRequestDto) {
+        Long memberId = memberRepository.searchByEmail(email)
+                .orElseThrow(MemberNotFoundException::new).getId();;
+        ManagerEntity managerEntity = managerRepository.findByMemberId(memberId)
                 .orElseThrow(ProjectNotFoundException::new);
 
         TeamEntity teamEntity = null;
