@@ -66,7 +66,8 @@ public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
                         damage.status,
                         damage.areaEntity.areaGu,
                         damage.locationEntity.locationName,
-                        damage.dtype
+                        damage.dtype,
+                        damage.createdDateTime
                 ))
                 .from(damage)
                 .where(damage.id.in(damageIds))
@@ -113,7 +114,8 @@ public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
                         project.projectName,
                         project.managerEntity.memberEntity.memberName.as("managerName"),
                         project.projectDate,
-                        project.projectSize
+                        project.projectSize,
+                        project.createdDateTime
                 ))
                 .from(project)
                 .where(builder)
