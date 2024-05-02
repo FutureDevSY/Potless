@@ -43,11 +43,11 @@ public abstract class DamageEntity extends BaseEntity {
     @Column(name = "damage_status", nullable = false)
     private Status status = Status.작업전;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST})
     @JoinColumn(name = "area_id")
     private AreaEntity areaEntity;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST})
     @JoinColumn(name = "location_id")
     private LocationEntity locationEntity;
 

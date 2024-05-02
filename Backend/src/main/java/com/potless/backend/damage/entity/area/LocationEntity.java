@@ -26,11 +26,11 @@ public class LocationEntity extends BaseEntity {
     @Column(name = "location_name", nullable = false)
     private String locationName;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST})
     @JoinColumn(name = "area_id")
     private AreaEntity areaEntity;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, mappedBy = "locationEntity")
+    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST}, mappedBy = "locationEntity")
     private List<DamageEntity> damageEntities = new ArrayList<>();
 
     @Builder

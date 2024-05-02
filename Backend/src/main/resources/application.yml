@@ -9,11 +9,6 @@ spring:
       - kakao
       - aws
 
-#  datasource:
-#    driver-class-name: com.mysql.cj.jdbc.Driver
-#    url: ${MYSQL_DATASOURCE_URL}
-#    username: ${MYSQL_DATASOURCE_USERNAME}
-#    password: ${MYSQL_DATASOURCE_PASSWORD}
   jpa:
     database: mysql
     database-platform: org.hibernate.dialect.MySQLDialect
@@ -36,3 +31,7 @@ spring:
 cors:
   allowed:
     origins: "*"
+
+server:
+  port: 7080
+
