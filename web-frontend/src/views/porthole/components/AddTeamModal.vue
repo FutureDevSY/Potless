@@ -19,23 +19,43 @@
     <div v-else>
       <div class="team-list" v-for="team in datas">
         <div class="team-name">{{ team.teamName }}</div>
-        <div class="person">{{ team.teamList }}</div>
+        <div class="person">{{ team.workerList }}</div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from "vue";
-import data from "./teamData.json";
+import { ref, onMounted } from "vue";
 import AddTeam from "./AddTeam.vue";
+import { useAuthStore } from "@/stores/user";
+import { getTeamList } from "../../../api/team/team";
+import { storeToRefs } from "pinia";
 
-const datas = ref(Object.values(data));
+const store2 = useAuthStore();
+const { accessToken, areaName } = storeToRefs(store2);
+const datas = ref(null);
 const isAddingTeam = ref(false);
-
 const props = defineProps({
   toggleModal: Function,
 });
+
+const takeTeamList = () => {
+  getTeamList(
+    accessToken.value,
+    areaName.value,
+    (res) => {
+      if (res.data.status == "SUCCESS") {
+        console.log(res.data.message);
+        datas.value = res.data.data;
+      }
+    },
+    (error) => {
+      console.log(error);
+      console.log(error.response.data.message);
+    }
+  );
+};
 
 function updateIsAddingTeam(value) {
   isAddingTeam.value = value;
@@ -47,6 +67,10 @@ function handleAddTeam(newTeamData) {
     teamList: newTeamData.teamList,
   });
 }
+
+onMounted(() => {
+  takeTeamList();
+});
 </script>
 
 <style scoped>

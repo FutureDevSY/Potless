@@ -5,7 +5,11 @@
       <thead>
         <tr>
           <th class="work-column">
-            <button class="button" :disabled="!hasSelected" @click="openModal('add')">
+            <button
+              class="button"
+              :disabled="!hasSelected"
+              @click="openModal('add')"
+            >
               작업추가
             </button>
           </th>
@@ -44,8 +48,10 @@
     </table>
   </div>
 
-  <button class="button list-button" @click="openModal('list')">작업 지시서 리스트</button>
-  <div v-if="isModalOpen" class="modal">
+  <button class="button list-button" @click="openModal('list')">
+    작업 지시서 리스트
+  </button>
+  <div v-if="isModalOpen && modalMode === 'list'" class="modal">
     <div class="modal-content">
       <TaskList
         :is-adding-tasks="modalMode === 'add'"
