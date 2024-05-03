@@ -19,14 +19,6 @@ spring:
         dialect: org.hibernate.dialect.MySQL8Dialect
 
 ---
-spring:
-  jpa:
-    show-sql: true
-    hibernate.ddl-auto: update
-    properties:
-      hibernate:
-        format_sql=true:
-        use_sql_comments=true:
 
 cors:
   allowed:
