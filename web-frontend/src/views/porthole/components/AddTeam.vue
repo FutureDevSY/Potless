@@ -1,7 +1,11 @@
 <template>
   <div class="create-team-container">
     <div class="add-team-form">
-      <input v-model="newTeam.name" type="text" placeholder="팀 이름" />
+      <input
+        v-model="newTeamName"
+        type="text"
+        placeholder="팀 이름을 입력해주세요"
+      />
       <!-- <div v-for="index in 5" :key="index">
         <input
           v-model="newTeam.members[index - 1]"
@@ -37,14 +41,16 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { useAuthStore } from "@/stores/user";
-import { getWokerList } from "../../../api/team/team";
+import { getWokerList, postAddTeam } from "../../../api/team/team";
 import { storeToRefs } from "pinia";
 
 const datas = ref([]);
 const teamMembers = ref([]);
 const newworker = ref("");
 const store2 = useAuthStore();
+const newTeamName = ref("");
 const { accessToken, areaName } = storeToRefs(store2);
+
 const takeWorkerList = () => {
   getWokerList(
     accessToken.value,
@@ -76,19 +82,30 @@ const pushTeam = (workerInfo) => {
   });
 };
 
-const newTeam = ref({
-  name: "",
-  members: Array(5).fill(""),
-});
-const emit = defineEmits(["update:isAddingTeam", "addTeam"]);
+const emit = defineEmits(["update:isAddingTeam"]);
 
 function addTeam() {
-  // 입력된 새 팀 정보를 이벤트로 전달합니다.
-  emit("addTeam", {
-    teamName: newTeam.value.name,
-    teamList: newTeam.value.members.filter((member) => member),
+  const reqBody = ref({
+    teamName: newTeamName.value,
+    workerList: teamMembers.value,
+    area: areaName.value,
   });
 
+  // api 요청
+  postAddTeam(
+    accessToken.value,
+    reqBody.value,
+    (res) => {
+      console.log(res);
+      if (res.data.status == "SUCCESS") {
+        console.log(res.data.message);
+      }
+    },
+    (error) => {
+      console.log(error);
+      console.log(error.response.data.message);
+    }
+  );
   // 모달을 닫기 위한 이벤트를 발생시킵니다.
   emit("update:isAddingTeam", false);
 }
