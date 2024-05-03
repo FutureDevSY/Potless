@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="main-navbar">
-      <div class="logo text-title" @click="store.moveHome">POTLESS</div>
+      <div class="logo text-title" @click="store.movePorthole">POTLESS</div>
       <!-- <button class="logout text-title" @click="store.moveLogin">
         <img src="@/assets/icon/enter.png" alt="#" />
         <div>로그인</div>
@@ -13,18 +13,9 @@
     </div>
 
     <div class="sub-navbar">
-      <div
-        class="text-dark-title nav-item first-item"
-        @click="store.movePorthole"
-      >
-        포트홀 조회
-      </div>
-      <div class="text-dark-title nav-item" @click="store.moveTask">
-        작업 정보
-      </div>
-      <div class="text-dark-title nav-item" @click="store.moveStatistics">
-        통계 자료
-      </div>
+      <div class="text-dark-title nav-item first-item" @click="store.movePorthole">포트홀 조회</div>
+      <div class="text-dark-title nav-item" @click="store.moveTask">작업 정보</div>
+      <div class="text-dark-title nav-item" @click="store.moveStatistics">통계 자료</div>
     </div>
   </div>
 </template>

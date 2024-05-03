@@ -1,7 +1,9 @@
 <template>
   <div class="map-container">
-    <img class="logo" src="../../assets/icon/weblogo.png" alt="#" />
-    <button @click="store.moveLogin">로그인</button>
+    <div class="header">
+      <img class="logo" src="../../assets/icon/weblogo.png" alt="#" />
+      <button class="login-btn" @click="store.moveLogin">로그인</button>
+    </div>
     <SVG></SVG>
     <Chart
       class="chart chart1"
@@ -94,7 +96,7 @@ const chartOptions = {
       },
     },
   ],
-  colors: ["#273a86", "#4f5e9d6f"],
+  colors: ["#232EA3", "#A7ABDA"],
   tooltip: {
     y: {
       formatter: (value) => `${value}%`,
@@ -115,6 +117,12 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.header {
+  display: flex;
+  margin-left: auto;
+  align-items: center;
+}
+
 .et {
   color: #4f5e9d6f;
 }
@@ -126,8 +134,9 @@ onMounted(() => {
 }
 
 .logo {
-  margin-top: 30px;
-  width: 317.5px;
+  margin-top: 3.5vh;
+  width: 40vh;
+  margin-right: 27vw;
 }
 
 .chart {
@@ -164,5 +173,25 @@ onMounted(() => {
 .chart5 {
   top: 47vh;
   right: 1vw;
+}
+
+.login-btn {
+  background-color: #151c62;
+  width: 9vw;
+  height: 5.5vh;
+  cursor: pointer;
+  border-radius: 8px;
+  font-size: 18px;
+  position: relative;
+  overflow: hidden;
+  color: rgb(255, 255, 255);
+  font-weight: bold;
+  transition: all 0.3s;
+  margin-top: 3vh;
+  margin-right: 4vw;
+}
+
+.login-btn:hover {
+  background-color: #0e1241;
 }
 </style>
