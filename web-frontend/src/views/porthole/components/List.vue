@@ -52,7 +52,10 @@
   <button class="button list-button" @click="openModal('list')">
     작업 지시서 리스트
   </button>
-  <div v-if="isModalOpen && modalMode === 'list'" class="modal">
+  <div
+    v-if="isModalOpen && (modalMode === 'list' || modalMode === 'add')"
+    class="modal"
+  >
     <div class="modal-content">
       <TaskList
         :is-adding-tasks="modalMode === 'add'"
@@ -145,7 +148,7 @@ const modalMode = ref("");
 function toggleModal() {
   isModalOpen.value = !isModalOpen.value;
   if (!isModalOpen.value) {
-    selectedIds.value.clear(); // 모달 닫힐 때 선택 초기화
+    selectedIds.value.clear();
   }
 }
 function openModal(mode) {
