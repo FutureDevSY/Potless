@@ -1,0 +1,4 @@
+[[AWS-API]]
+=== AWS S3 이미지 저장
+
+include::api/uploadToS3.adoc[]

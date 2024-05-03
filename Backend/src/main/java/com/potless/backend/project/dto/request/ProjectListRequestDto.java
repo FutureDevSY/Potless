@@ -1,23 +1,24 @@
 package com.potless.backend.project.dto.request;
 
 import com.potless.backend.damage.entity.enums.Status;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDate;
 
 @Getter
 @Setter
 @NoArgsConstructor
+@Builder
+@ToString
 public class ProjectListRequestDto {
-    private Long managerId;
+    private Long areaId;
     private LocalDate start;
     private LocalDate end;
     private Status status;
     private String word;
 
-    public ProjectListRequestDto(Long managerId, LocalDate start, LocalDate end, Status status, String word) {
+
+    public ProjectListRequestDto(Long areaId, LocalDate start, LocalDate end, Status status, String word) {
         if (start == null && end == null) {
             start = LocalDate.now().minusWeeks(1);
             end = LocalDate.now();
@@ -26,10 +27,11 @@ public class ProjectListRequestDto {
         else if (end == null)
             end = LocalDate.now();
 
-        this.managerId = managerId;
+        this.areaId = areaId;
         this.start = start;
         this.end = end;
         this.status = status;
         this.word = word;
+
     }
 }

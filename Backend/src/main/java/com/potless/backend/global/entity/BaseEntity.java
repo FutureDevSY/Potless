@@ -1,5 +1,6 @@
 package com.potless.backend.global.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
 import lombok.Getter;
@@ -19,6 +20,13 @@ public abstract class BaseEntity {
 
     @LastModifiedDate
     private LocalDateTime modifiedDateTime;
+
+    @Column(name = "is_deleted")
+    private Boolean deleted = false;
+
+    public void softDelet(){
+        this.deleted = true;
+    }
 
 }
 

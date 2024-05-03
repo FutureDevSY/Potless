@@ -47,14 +47,20 @@ public class SecurityConfig {
                 {
                     authorize.requestMatchers(
                             "/api-docs/**",
+                            "/v3/api-docs/**",
                             "/webjars/**",
                             "/favicon.ico",
                             "/api/member/signup",
-                            "/api/member/login/**",
+                            "/api/member/login-web/**",
+                            "/api/member/login-app/**",
                             "/api/member/email/**",
                             "/actuator/**",
-                            // 임시
-                            "/**"
+                            "/B106-DOCS/**",
+                            "/swagger/**",
+                            "/swagger-ui/**",
+                            "/swagger-config/**",
+                            "/swagger-resources/**",
+                            "/api/damage/statistic/**"
                     ).permitAll();
                     authorize.requestMatchers(HttpMethod.OPTIONS, "/api/**").permitAll();
                     authorize.anyRequest().authenticated();

@@ -1,0 +1,10 @@
+[[get-optimal-path]]
+==== HTTP Request
+
+include::{snippets}/get-optimal-path/http-request.adoc[]
+include::{snippets}/get-optimal-path/request-body.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/get-optimal-path/http-response.adoc[]
+include::{snippets}/get-optimal-path/response-fields.adoc[]
