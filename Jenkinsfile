@@ -44,6 +44,7 @@ pipeline {
                 script {
                     // Backend 이미지 빌드
                     dir('Backend') {
+                        sh 'chmod +x ./gradlew'
                         // Gradle을 사용하여 Spring Boot 애플리케이션 빌드
                         sh './gradlew clean bootJar'
                         // Docker 이미지 빌드
