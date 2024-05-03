@@ -9,6 +9,7 @@ import 'package:http/http.dart';
 import 'package:intl/intl.dart';
 import 'package:porthole24/API/api_request.dart';
 import 'package:porthole24/main.dart';
+import 'package:porthole24/models/detected.dart';
 import 'package:porthole24/screens/Record/ImagePreview.dart';
 import 'package:porthole24/widgets/functions/geolocator.dart';
 import 'package:porthole24/widgets/tflite/bbox.dart';
@@ -31,7 +32,7 @@ class _VideoPageState extends State<VideoPage> with WidgetsBindingObserver {
   StreamSubscription? _subscription;
   final CameraLensDirection initialCameraLensDirection =
       CameraLensDirection.back;
-  bool _isCapturing = false;
+  final bool _isCapturing = false;
   final ApiService _apiService = ApiService();
 
   List<String> classes = [];
@@ -39,9 +40,12 @@ class _VideoPageState extends State<VideoPage> with WidgetsBindingObserver {
   List<double> scores = [];
 
   List<XFile> imageSaveQueue = [];
-  bool _isSaving = false;
+  final bool _isSaving = false;
 
   int? resultIndex;
+
+  final StreamController<QueuedImage> _uploadStreamController =
+      StreamController<QueuedImage>();
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) async {
@@ -79,6 +83,7 @@ class _VideoPageState extends State<VideoPage> with WidgetsBindingObserver {
     WidgetsBinding.instance.addObserver(this);
     _initStateAsync();
     createTodayFolder();
+    _uploadStreamController.stream.listen(_uploadImage);
   }
 
   void _initStateAsync() async {
@@ -98,20 +103,11 @@ class _VideoPageState extends State<VideoPage> with WidgetsBindingObserver {
     });
   }
 
-  void _handleDetectionResults() {
-    for (int i = 0; i < scores.length; i++) {
-      if (scores[i] > 0.75) {
-        capturePhoto();
-        break;
-      }
-    }
-  }
-
   // 카메라 초기화
   Future<void> _initializeCamera() async {
     _cameraController = CameraController(
       cameras[0],
-      ResolutionPreset.max,
+      ResolutionPreset.veryHigh,
       enableAudio: false,
     )..initialize().then((_) async {
         await _controller.startImageStream(onLatestImageAvailable);
@@ -124,55 +120,39 @@ class _VideoPageState extends State<VideoPage> with WidgetsBindingObserver {
     _detector?.processFrame(cameraImage);
   }
 
+  void _handleDetectionResults() {
+    for (int i = 0; i < scores.length; i++) {
+      if (scores[i] > 0.75) {
+        debugPrint('Detection with high confidence, capturing photo...');
+        capturePhoto();
+        break;
+      }
+    }
+  }
+
   Future<void> capturePhoto() async {
-    while (true) {
-      if (_cameraController != null && _cameraController!.value.isInitialized) {
-        if (!_cameraController!.value.isTakingPicture) {
-          try {
-            XFile picture = await _cameraController!.takePicture();
-            savePhoto(picture);
-          } catch (e) {
-            debugPrint("Error capturing image: $e");
-          }
+    if (_cameraController != null && _cameraController!.value.isInitialized) {
+      if (!_cameraController!.value.isTakingPicture) {
+        try {
+          XFile picture = await _cameraController!.takePicture();
+          Position position = await Geolocator.getCurrentPosition(
+              desiredAccuracy: LocationAccuracy.high);
+          _uploadStreamController.add(QueuedImage(picture, position));
+        } catch (e) {
+          debugPrint("Error capturing image: $e");
         }
       }
-      await Future.delayed(
-        const Duration(milliseconds: 100),
-      );
     }
+    await Future.delayed(
+      const Duration(milliseconds: 500),
+    );
   }
 
-  Future<void> savePhoto(XFile picture) async {
-    imageSaveQueue.add(picture);
-    if (!_isSaving) {
-      _processImageQueue();
-    }
-  }
-
-  Future<void> _processImageQueue() async {
-    _isSaving = true;
-    while (imageSaveQueue.isNotEmpty) {
-      final XFile imageToSave = imageSaveQueue.removeAt(0);
-      await _uploadImage(imageToSave);
-    }
-    _isSaving = false;
-  }
-
-  Future<void> _uploadImage(XFile image) async {
-    Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high);
-    double lat = position.latitude;
-    double lng = position.longitude;
-
-    setState(() {
-      _isCapturing = true;
-    });
-
-    debugPrint(lat.toString());
-    debugPrint(lng.toString());
-
+  Future<void> _uploadImage(QueuedImage queuedImage) async {
     try {
-      File file = File(image.path);
+      File file = File(queuedImage.imageFile.path);
+      double lat = queuedImage.position.latitude;
+      double lng = queuedImage.position.longitude;
 
       bool success = await _apiService.damageSet('POTHOLE', lng, lat, file);
 
@@ -183,10 +163,6 @@ class _VideoPageState extends State<VideoPage> with WidgetsBindingObserver {
       }
     } catch (e) {
       debugPrint('potless 212 에러 $e');
-    } finally {
-      setState(() {
-        _isCapturing = false;
-      });
     }
   }
 
@@ -207,6 +183,7 @@ class _VideoPageState extends State<VideoPage> with WidgetsBindingObserver {
 
   @override
   void dispose() {
+    _uploadStreamController.close();
     WidgetsBinding.instance.removeObserver(this);
     _cameraController?.dispose();
     _detector?.stop();
