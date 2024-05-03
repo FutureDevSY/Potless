@@ -76,8 +76,10 @@ public class ProjectController {
             @Parameter(hidden = true) Authentication authentication,
             @RequestBody ProjectSaveRequestDto projectSaveRequestDto
     ){
-        System.out.println("projectSaveRequestDto = " + projectSaveRequestDto);
-        int[] order = pathService.getOptimalOrder(projectSaveRequestDto.getOrigin(), projectSaveRequestDto.getDamageNums());
+        int[] order;
+        if (projectSaveRequestDto.getDamageNums() != null && !projectSaveRequestDto.getDamageNums().isEmpty()) {
+            order = pathService.getOptimalOrder(projectSaveRequestDto.getOrigin(), projectSaveRequestDto.getDamageNums());
+        } else order = new int[0];
         Long result = projectService.createProject(authentication.getName(), projectSaveRequestDto, order);
         return response.success(ResponseCode.PROJECT_DETECTED, result);
     }
