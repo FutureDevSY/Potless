@@ -63,10 +63,9 @@ pipeline {
         stage('Deploy') {
             steps {
                 script {
-                    // 호스트 시스템의 디렉토리를 도커 컨테이너 내부에 마운트하여 사용
                     dir('/home/ubuntu/B106-DOCKER/') {
                         sh 'docker-compose -f /home/ubuntu/B106-DOCKER/docker-compose.yml pull && docker-compose -f /home/ubuntu/B106-DOCKER/docker-compose.yml up -d'
-                    }
+                    }`
                 }
             }
         }
