@@ -56,7 +56,7 @@ const currentData = ref(null);
 const totalPage = ref(null);
 
 // 상태 검색
-const selectedStatus = ref("");
+const selectedStatus = ref("작업전");
 const handleStatus = (option) => {
   selectedStatus.value = option;
 };

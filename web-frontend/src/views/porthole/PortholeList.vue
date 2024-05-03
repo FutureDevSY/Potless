@@ -151,8 +151,8 @@ const handleCurrentPageUpdate = (newPage) => {
 };
 
 const potholeInfo = ref({
-  dirX: 36.3549777,
-  dirY: 127.2983403,
+  dirX: 127.2983403,
+  dirY: 36.3549777,
 });
 
 const handleMapUpdate = ({ dirX, dirY }) => {
