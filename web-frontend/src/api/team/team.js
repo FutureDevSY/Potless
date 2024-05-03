@@ -18,17 +18,13 @@ const getTeamList = async (accessToken, area, success, fail) => {
 };
 
 // 새로운 팀 생성
-const postAddTeam = async (accessToken, success, fail) => {
+const postAddTeam = async (accessToken, workerInfo, success, fail) => {
   await local
-    .post(
-      `/team`,
-      {},
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      }
-    )
+    .post(`/team`, workerInfo, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    })
     .then(success)
     .catch(fail);
 };
@@ -72,4 +68,22 @@ const deleteWorker = async (accessToken, workerInfo, success, fail) => {
     .catch(fail);
 };
 
-export { getTeamList, postAddTeam, getWokerList, postAddWorker, deleteWorker };
+const deleteTeam = async (accessToken, teamId, success, fail) => {
+  await local
+    .delete(`/team/${teamId}`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    })
+    .then(success)
+    .catch(fail);
+};
+
+export {
+  getTeamList,
+  postAddTeam,
+  getWokerList,
+  postAddWorker,
+  deleteWorker,
+  deleteTeam,
+};
