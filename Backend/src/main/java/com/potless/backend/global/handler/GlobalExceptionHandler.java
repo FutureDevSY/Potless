@@ -136,4 +136,10 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return response.error(e.getErrorCode());
     }
 
+    @ExceptionHandler(InvalidCreateTeamAuthException.class)
+    protected ResponseEntity<?> handle(InvalidCreateTeamAuthException e) {
+        log.error("InvalidCreateTeamAuthException = {}", e.getErrorCode().getMessage());
+        return response.error(e.getErrorCode());
+    }
+
 }

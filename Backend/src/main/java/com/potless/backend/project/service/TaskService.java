@@ -1,11 +1,13 @@
 package com.potless.backend.project.service;
 
 import com.potless.backend.project.dto.request.TaskAddRequestDto;
+import com.potless.backend.project.dto.response.GetTaskResponseDto;
 
 import java.util.List;
 
 public interface TaskService {
     List<Long> addTaskToProject(TaskAddRequestDto taskAddRequestDto);
+    void deleteTask(Long taskId);
+    GetTaskResponseDto getTask();
 
-    Long deleteTask(Long taskId);
 }

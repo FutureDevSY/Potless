@@ -62,6 +62,7 @@ public enum ErrorCode {
 
     // 작업 관련 예외 처리
     TASK_NOT_FOUND(HttpStatus.UNAUTHORIZED,"작업 정보를 찾을 수 없습니다."),
+    CREATE_TEAM_FAILED(HttpStatus.UNAUTHORIZED, "관리자 본인 해당 지역구의 팀만 생성할 수 있습니다."),
 
     // AWS ERROR
     FAILED_TO_UPLOAD(HttpStatus.INTERNAL_SERVER_ERROR, "S3 이미지 저장에 실패했습니다.");
