@@ -3,7 +3,6 @@ import 'package:lottie/lottie.dart';
 import 'package:porthole24/API/api_request.dart';
 import 'package:porthole24/screens/Home/HomeScreen.dart';
 import 'package:porthole24/widgets/UI/ScreenSize.dart';
-import 'package:porthole24/widgets/animations/login_shaking.dart';
 import 'package:porthole24/widgets/buttons/714_150button.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -40,9 +39,7 @@ class _LoginScreenState extends State<LoginScreen>
 
     _positionAnimation = Tween(begin: 0.0, end: 10.0).animate(
       CurvedAnimation(
-        parent: _animationController,
-        curve: Curves.easeInOutCubic,
-      ),
+          parent: _animationController, curve: Curves.easeInOutCubic),
     );
 
     _animationController.addListener(() {
@@ -74,44 +71,64 @@ class _LoginScreenState extends State<LoginScreen>
           child: Column(
             children: [
               SizedBox(height: UIhelper.deviceHeight(context) * 0.1),
-              const Text(
-                '포트리스',
-                style: TextStyle(fontSize: 26),
-              ),
+              const Text('포트리스', style: TextStyle(fontSize: 26)),
               const Text('Pot-Less'),
               Lottie.asset('assets/lottie/loading_truck.json'),
-              TextField(
-                controller: _idController,
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: const Color(0xffffffff).withOpacity(0.2),
-                  border: const OutlineInputBorder(
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(10),
-                    ),
+              InkWell(
+                onTap: () {
+                  _openInputModal(context, _idController, 'ID를 입력해주세요');
+                },
+                child: Container(
+                  height: UIhelper.deviceHeight(context) * 0.08,
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.blue),
+                    borderRadius: BorderRadius.circular(10),
                   ),
-                  hintText: 'ID를 입력해주세요',
-                  contentPadding: EdgeInsets.symmetric(
-                    vertical: UIhelper.deviceHeight(context) * 0.02,
-                    horizontal: UIhelper.deviceWidth(context) * 0.04,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          _idController.text.isEmpty
+                              ? 'ID를 입력해주세요'
+                              : _idController.text,
+                          style: const TextStyle(fontSize: 16),
+                        ),
+                      ),
+                      const Icon(Icons.edit, color: Colors.blue),
+                    ],
                   ),
                 ),
               ),
               SizedBox(height: UIhelper.deviceHeight(context) * 0.02),
-              TextField(
-                controller: _pwController,
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: const Color(0xffffffff).withOpacity(0.2),
-                  border: const OutlineInputBorder(
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(10),
+              InkWell(
+                onTap: () {
+                  _openInputModal(context, _pwController, 'PW를 입력해주세요');
+                },
+                child: Material(
+                  type: MaterialType.transparency,
+                  child: Container(
+                    height: UIhelper.deviceHeight(context) * 0.08,
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.blue),
+                      borderRadius: BorderRadius.circular(10),
                     ),
-                  ),
-                  hintText: 'PW를 입력해주세요',
-                  contentPadding: EdgeInsets.symmetric(
-                    vertical: UIhelper.deviceHeight(context) * 0.02,
-                    horizontal: UIhelper.deviceWidth(context) * 0.04,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            _pwController.text.isEmpty
+                                ? 'PW를 입력해주세요'
+                                : '•' * _pwController.text.length,
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                        ),
+                        const Icon(Icons.edit, color: Colors.blue),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -119,9 +136,7 @@ class _LoginScreenState extends State<LoginScreen>
               button714_150(
                 lable: '로그인',
                 backgroundColor: _colorAnimation.value,
-                onPressed: () {
-                  _handleLogin();
-                },
+                onPressed: _handleLogin,
                 transform: Matrix4.translationValues(
                     _positionAnimation.value *
                         (_animationController.value <= 0.5 ? 1 : -1),
@@ -139,10 +154,60 @@ class _LoginScreenState extends State<LoginScreen>
     bool success =
         await _apiService.login(_idController.text, _pwController.text);
     if (success) {
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => const HomeScreen()));
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const HomeScreen(),
+        ),
+      );
     } else {
       _animationController.forward(from: 0);
     }
+  }
+
+  void _openInputModal(
+      BuildContext context, TextEditingController controller, String hintText) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          insetPadding: const EdgeInsets.all(10),
+          child: Center(
+            child: Material(
+              type: MaterialType.transparency,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 20, horizontal: 30),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    child: TextField(
+                      autofocus: true,
+                      controller: controller,
+                      decoration: InputDecoration(
+                        hintText: hintText,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: const Text('입력'),
+                  )
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
   }
 }
