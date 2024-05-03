@@ -37,6 +37,7 @@ public enum ResponseCode {
     POTHOLE_DURING_WORK(HttpStatus.OK, "포트홀 진행 중 사진 정보가 성공적으로 저장되었습니다."),
     POTHOLE_AFTER_WORK(HttpStatus.OK, "포트홀 진행 완료 사진 정보가 성공적으로 저장되었습니다."),
     POTHOLE_DONE_WORK(HttpStatus.OK, "포트홀 상태가 성공적으로 작업완료로 저장되었습니다."),
+    POTHOLE_AREA_DATE_COUNT(HttpStatus.OK, "포트홀 구별 조회가 성공적으로 조회되었습니다."),
 
     /* 프로젝트(Project) */
     PROJECT_LIST_FETCHED(HttpStatus.OK, "프로젝트 리스트 정보가 성공적으로 조회되었습니다."),
