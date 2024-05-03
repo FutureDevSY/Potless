@@ -57,7 +57,7 @@ dependencies {
     annotationProcessor "jakarta.annotation:jakarta.annotation-api"
     annotationProcessor "jakarta.persistence:jakarta.persistence-api"
     //쿼리 파라미터 로그 개발중에만 적용
-    implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.9.0'
+    //implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.9.0'
 
     // Security
     implementation 'org.springframework.boot:spring-boot-starter-security'
