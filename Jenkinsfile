@@ -17,8 +17,7 @@ pipeline {
         stage('Prepare Config') {
             steps {
                 dir('Backend') {
-                    sh 'pwd'
-                    sh 'ls -la'
+                    sh 'chmod -R 775 src/main/resources'
                     withCredentials([file(credentialsId: 'application-db', variable: 'APP_DB_CONFIG')]) {
                         sh 'cp $APP_DB_CONFIG src/main/resources/application-db.yml'
                     }
