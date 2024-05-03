@@ -63,6 +63,7 @@ pipeline {
         stage('Deploy') {
             steps {
                 script {
+                    sh 'chmod -R 777 /home/ubuntu/B106-DOCKER/' // 권한 변경
                     dir('/home/ubuntu/B106-DOCKER/') {
                         sh 'ls -la' // 디렉토리 권한과 내용을 확인
                         sh 'docker-compose -f /home/ubuntu/B106-DOCKER/docker-compose.yml pull && docker-compose -f /home/ubuntu/B106-DOCKER/docker-compose.yml up -d'
