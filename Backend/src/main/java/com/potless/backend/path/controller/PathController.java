@@ -25,7 +25,7 @@ public class PathController {
     private final PathService pathService;
     private final ApiResponse response;
 
-    @Operation(summary = "최적 경로 조회", description = "작업할 모든 포트홀을 지나는 최적 경로를 조회합니다", responses = {
+    @Operation(summary = "최적 경로 조회", description = "작업할 모든 포트홀을 지나는 최적 경로를 조회합니다.", responses = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "최적 경로 조회 성공", content = @Content(schema = @Schema(implementation = KakaoWaypointResponse.class)))
     })
     @PostMapping("/optimal")

@@ -28,7 +28,9 @@ public class TeamController {
     private final TeamService teamService;
     private final ApiResponse response;
 
-    @Operation(summary = "Project에 Team 입력")
+    @Operation(summary = "프로젝트에 팀 입력", description = "프로젝트에 팀을 입력합니다.", responses = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "팀 입력 성공", content = @Content(schema = @Schema(implementation = String.class)))
+    })
     @PostMapping("/project")
     public ResponseEntity<?> addTeamToProject(@RequestBody TeamAddRequestDto teamAddRequestDto) {
         Long result = teamService.addTeamToProject(teamAddRequestDto);
@@ -36,7 +38,9 @@ public class TeamController {
     }
 
     @PostMapping
-    @Operation(summary = "팀 생성", description = "팀 생성 및 팀 작업자 추가 요청")
+    @Operation(summary = "팀 생성", description = "팀을 생성합니다.", responses = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "팀 생성 성공", content = @Content(schema = @Schema(implementation = Long.class)))
+    })
     public ResponseEntity<?> createTeam(@Parameter(hidden = true) Authentication authentication,
                                         @RequestBody CreateTeamRequestDto requestDto) {
 
@@ -44,7 +48,9 @@ public class TeamController {
     }
 
     @PostMapping("/worker")
-    @Operation(summary = "팀 작업자 추가", description = "기존 팀에 신규 작업자 추가 요청")
+    @Operation(summary = "작업자 추가", description = "기존 팀에 신규 작업자를 추가합니다.", responses = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "작업자 추가 성공", content = @Content(schema = @Schema(implementation = Long.class)))
+    })
     public ResponseEntity<?> addWorker(@Parameter(hidden = true) Authentication authentication,
                                        @RequestBody WorkerRequestDto requestDto) {
 
@@ -52,7 +58,9 @@ public class TeamController {
     }
 
     @DeleteMapping("/worker")
-    @Operation(summary = "팀 작업자 삭제", description = "기존 팀에 기존 작업자 삭제 요청")
+    @Operation(summary = "작업자 삭제", description = "기존 팀에 기존 작업자를 삭제합니다.", responses = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "작업자 삭제 성공", content = @Content(schema = @Schema(implementation = Long.class)))
+    })
     public ResponseEntity<?> deleteWorker(@Parameter(hidden = true) Authentication authentication,
                                           @RequestBody WorkerRequestDto requestDto) {
 
@@ -78,7 +86,9 @@ public class TeamController {
     }
 
     @DeleteMapping("{teamId}")
-    @Operation(summary = "팀 삭제", description = "팀 삭제 요청")
+    @Operation(summary = "팀 삭제", description = "기존 팀을 삭제합니다.", responses = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "팀 삭제 성공", content = @Content(schema = @Schema(implementation = Long.class)))
+    })
     public ResponseEntity<?> deleteTeam(@PathVariable(name = "teamId") Long teamId) {
 
         return response.success(ResponseCode.TEAD_DELETED, teamService.deleteTeam(teamId));
