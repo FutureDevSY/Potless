@@ -64,10 +64,7 @@ pipeline {
             steps {
                 script {
                     dir('/home/ubuntu/B106-DOCKER') {
-                        // 이미지를 강제로 업데이트하기 위해 pull 실행
-                        sh 'docker-compose -f docker-compose.yml pull'
-                        // 서비스 시작 또는 업데이트
-                        sh 'docker-compose -f docker-compose.yml up -d'
+                        sh 'docker-compose -f docker-compose.yml pull && docker-compose -f docker-compose.yml up -d'
                     }
                 }
             }
