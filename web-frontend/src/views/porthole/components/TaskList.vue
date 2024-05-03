@@ -4,6 +4,7 @@
     <button class="button new_button" @click="addNewTask">새 작업</button>
     <table>
       <tr v-for="task in currentTasks" :key="task.id" @click="showDetail(task)">
+        <td>No. {{ task.projectId }}</td>
         <td>{{ task.projectName }}</td>
         <td>{{ task.projectDate }}</td>
         <td>{{ task.projectSize }} 건</td>
