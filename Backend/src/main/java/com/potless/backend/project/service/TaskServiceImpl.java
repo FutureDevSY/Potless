@@ -6,6 +6,7 @@ import com.potless.backend.global.exception.pothole.PotholeNotFoundException;
 import com.potless.backend.global.exception.project.ProjectNotFoundException;
 import com.potless.backend.global.exception.task.TaskNotFoundException;
 import com.potless.backend.project.dto.request.TaskAddRequestDto;
+import com.potless.backend.project.dto.response.GetTaskResponseDto;
 import com.potless.backend.project.entity.ProjectEntity;
 import com.potless.backend.project.entity.TaskEntity;
 import com.potless.backend.project.repository.project.ProjectRepository;
@@ -65,6 +66,11 @@ public class TaskServiceImpl implements TaskService {
         taskEntity.softDelet();
         taskRepository.save(taskEntity);
         return taskEntity.getProjectEntity().getId();
+    }
+
+    @Override
+    public GetTaskResponseDto getTask() {
+        return null;
     }
 
 }

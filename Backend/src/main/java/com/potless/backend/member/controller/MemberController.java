@@ -31,7 +31,8 @@ public class MemberController {
     private final MailService mailService;
 
     /* 일반 회원가입 */
-    @Operation(summary = "회원가입", description = "일반 사용자 회원가입")
+    @Operation(summary = "회원가입", description = "일반 사용자 회원가입", responses = { @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "지역별 작업자 목록 조회 요청 성공"
+            ,content = @Content(schema = @Schema(implementation = GetWorkerResponseDto.class)))})
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@Valid @RequestBody SignupRequestDto requestDto,
                                     BindingResult bindingResult) {

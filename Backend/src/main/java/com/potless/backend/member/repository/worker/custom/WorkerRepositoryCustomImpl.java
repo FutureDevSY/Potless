@@ -1,7 +1,6 @@
 package com.potless.backend.member.repository.worker.custom;
 
 import com.potless.backend.member.dto.WorkerInfoDto;
-import com.potless.backend.member.entity.MemberEntity;
 import com.potless.backend.member.entity.TeamEntity;
 import com.potless.backend.member.entity.WorkerEntity;
 import com.querydsl.core.types.Path;
@@ -75,6 +74,7 @@ public class WorkerRepositoryCustomImpl implements WorkerRepositoryCustom {
                            .where(workerEntity.memberEntity.Id.eq(memberId))
                            .fetchOne());
     }
+
 
 
 }

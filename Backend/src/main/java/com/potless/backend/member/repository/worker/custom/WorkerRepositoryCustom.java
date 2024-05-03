@@ -18,4 +18,5 @@ public interface WorkerRepositoryCustom {
     public List<WorkerEntity> findAllByteamId(Long teamId);
 
     public Optional<WorkerEntity> findByMemberId(Long memberId);
+
 }

@@ -50,4 +50,10 @@ public class TaskController {
         return response.success(ResponseCode.TASK_DELETED);
     }
 
+    @Operation(summary = "작업자별 할당된 작업 목록 조회", description = "작업자에 할당된 작업 목록 조회")
+    @GetMapping
+    public ResponseEntity<?> getTask() {
+        return response.success(ResponseCode.TASK_DETECTED, taskService.getTask());
+    }
+
 }
