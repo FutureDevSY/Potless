@@ -19,7 +19,10 @@ import com.potless.backend.damage.service.KakaoService;
 import com.potless.backend.global.exception.pothole.PotholeNotFoundException;
 import com.potless.backend.global.format.code.ApiResponse;
 import com.potless.backend.global.format.response.ResponseCode;
+import com.potless.backend.path.dto.KakaoWaypointResponse;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -53,7 +56,9 @@ public class DamageController {
     private final IVerificationService iVerificationService;
     private final AwsService awsService;
 
-    @Operation(summary = "Damage 리스트 조회", description = "리스트 조회")
+    @Operation(summary = "Damage 리스트 조회", description = "Damage 리스트를 조회합니다.", responses = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "최적 경로 조회 성공", content = @Content(schema = @Schema(implementation = DamageResponseDTO.class)))
+    })
     @GetMapping
     public ResponseEntity<?> getDamages(
             Authentication authentication,
@@ -64,49 +69,63 @@ public class DamageController {
         return response.success(ResponseCode.POTHOLE_LIST_FETCHED, damages);
     }
 
-    @Operation(summary = "Damage 조회", description = "조회")
+    @Operation(summary = "Damage 조회", description = "단일 Damage를 조회합니다.", responses = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "단일 Damage 조회 성공", content = @Content(schema = @Schema(implementation = DamageResponseDTO.class)))
+    })
     @GetMapping({"{damageId}"})
     public ResponseEntity<?> getDamage(Authentication authentication, @PathVariable Long damageId) {
         DamageResponseDTO damageResponseDTO = iDamageService.getDamage(damageId);
         return response.success(ResponseCode.POTHOLE_FETCHED, damageResponseDTO);
     }
 
-    @Operation(summary = "Damage 삭제", description = "삭제")
+    @Operation(summary = "Damage 삭제", description = "단일 Damage를 삭제합니다.", responses = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "단일 Damage 삭제 성공", content = @Content(schema = @Schema(implementation = String.class)))
+    })
     @DeleteMapping("{damageId}")
     public ResponseEntity<?> deleteDamage(Authentication authentication, @PathVariable Long damageId) {
         iDamageService.deleteDamage(damageId);
         return response.success(ResponseCode.POTHOLE_DELETED);
     }
 
-    @Operation(summary = "Damage 구별 통계 조회", description = "구별 통계 조회")
+    @Operation(summary = "구별 Damage 통계 조회", description = "구별 Damage 통계를 조회합니다.", responses = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "구별 Damage 통계 조회 성공", content = @Content(schema = @Schema(implementation = StatisticCountResponseDTO.class)))
+    })
     @GetMapping("statistic")
     public ResponseEntity<?> getStatistics(Authentication authentication) {
         List<StatisticCountResponseDTO> statistics = iDamageService.getStatistics();
         return response.success(ResponseCode.POTHOLE_STATISTICS_COUNT, statistics);
     }
 
-    @Operation(summary = "Damage 구에 속한 동 통계 조회", description = "구에 속한 동 통계 조회")
+    @Operation(summary = "단일 구의 동별 Damage 통계 조회", description = "단일 구의 동별 Damage 통계를 조회합니다.", responses = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "단일 구의 동별 Damage 통계 조회 성공", content = @Content(schema = @Schema(implementation = StatisticListResponseDTO.class)))
+    })
     @GetMapping("statistic/{areaId}")
     public ResponseEntity<?> getStatistic(Authentication authentication, @PathVariable Long areaId) {
         StatisticListResponseDTO statistic = iDamageService.getStatistic(areaId);
         return response.success(ResponseCode.POTHOLE_STATISTIC_COUNT, statistic);
     }
 
-    @Operation(summary = "Damage 동 이름 을 활용해 통계 조회", description = "동 이름 을 활용해 통계 조회")
+    @Operation(summary = "단일 동의 Damage 통계 조회", description = "단일 동의 Damage 통계를 조회합니다.", responses = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "단일 동의 Damage 통계 조회 성공", content = @Content(schema = @Schema(implementation = StatisticLocationCountResponseDTO.class)))
+    })
     @GetMapping("statistic/location/{locationName}")
     public ResponseEntity<?> getStatisticLocation(Authentication authentication, @PathVariable String locationName) {
         StatisticLocationCountResponseDTO statistic = iDamageService.getStatisticLocation(locationName);
         return response.success(ResponseCode.POTHOLE_STATISTIC_COUNT, statistic);
     }
 
-    @Operation(summary = "Damage 동 전체 통계 조회", description = "동 전체 통계 조회")
+    @Operation(summary = "전체 동의 Damage 통계 조회", description = "전체 동의 Damage 통계를 조회합니다.", responses = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "전체 동의 Damage 통계 조회 성공", content = @Content(schema = @Schema(implementation = StatisticLocationCountResponseDTO.class)))
+    })
     @GetMapping("statistic/location")
     public ResponseEntity<?> getStatisticLocations(Authentication authentication) {
         List<StatisticLocationCountResponseDTO> statistic = iDamageService.getStatisticLocations();
         return response.success(ResponseCode.POTHOLE_STATISTICS_COUNT, statistic);
     }
 
-    @Operation(summary = "Damage 작업 중 사진 추가 하기", description = "작업 중 사진 추가 하기")
+    @Operation(summary = "Damage 작업 중 사진 추가", description = "Damage의 작업 중 사진을 추가합니다.", responses = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Damage의 작업 중 사진 추가 성공", content = @Content(schema = @Schema(implementation = String.class)))
+    })
     @PostMapping(value = "set/during", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<?> setDuringDamage(
             Authentication authentication,
@@ -139,7 +158,9 @@ public class DamageController {
         return response.success(ResponseCode.POTHOLE_DURING_WORK);
     }
 
-    @Operation(summary = "Damage 작업 완료 사진 추가 하기", description = "작업 완료 사진 추가 하기")
+    @Operation(summary = "Damage 작업 완료 사진 추가", description = "Damage의 작업 완료 사진을 추가합니다.", responses = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Damage의 작업 완료 사진 추가 성공", content = @Content(schema = @Schema(implementation = String.class)))
+    })
     @PostMapping(value = "set/after", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<?> setAfterDamage(
             Authentication authentication,
@@ -173,14 +194,18 @@ public class DamageController {
         return response.success(ResponseCode.POTHOLE_AFTER_WORK);
     }
 
-    @Operation(summary = "Damage 작업 완료 상태 전환", description = "작업 완료로 상태 전환")
+    @Operation(summary = "Damage 작업 완료 상태 전환", description = "Damage의 상태를 작업 완료로 전환합니다.", responses = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Damage의 상태 전환 성공", content = @Content(schema = @Schema(implementation = String.class)))
+    })
     @PostMapping("workDone")
     public ResponseEntity<?> setWorkDone(Authentication authentication, @RequestPart("damageId") Long damageId) {
         iDamageService.setWorkDone(damageId);
         return response.success(ResponseCode.POTHOLE_DONE_WORK);
     }
 
-    @Operation(summary = "Damage 삽입", description = "삽입")
+    @Operation(summary = "Damage 삽입", description = "Damage를 삽입합니다.", responses = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Damage 삽입 성공", content = @Content(schema = @Schema(implementation = String.class)))
+    })
     @PostMapping(value = "set", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<?> setDamage(
             Authentication authentication,

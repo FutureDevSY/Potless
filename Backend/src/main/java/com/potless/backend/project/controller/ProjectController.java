@@ -2,6 +2,7 @@ package com.potless.backend.project.controller;
 
 import com.potless.backend.global.format.code.ApiResponse;
 import com.potless.backend.global.format.response.ResponseCode;
+import com.potless.backend.path.dto.KakaoWaypointResponse;
 import com.potless.backend.path.service.PathService;
 import com.potless.backend.project.dto.request.WorkerRequestDto;
 import com.potless.backend.project.dto.request.CreateTeamRequestDto;
@@ -11,6 +12,8 @@ import com.potless.backend.project.dto.response.ProjectDetailResponseDto;
 import com.potless.backend.project.dto.response.ProjectListResponseDto;
 import com.potless.backend.project.service.ProjectService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
@@ -34,8 +37,9 @@ public class ProjectController {
     private final PathService pathService;
     private final ApiResponse response;
 
-
-    @Operation(summary = "Project 리스트 조회")
+    @Operation(summary = "프로젝트 리스트 조회", description = "프로젝트 리스트를 조회합니다.", responses = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "프로젝트 리스트 조회 성공", content = @Content(schema = @Schema(implementation = ProjectListResponseDto.class)))
+    })
     @GetMapping
     public ResponseEntity<?> getProjectAll(
             @Parameter(hidden = true) Authentication authentication,
@@ -52,7 +56,9 @@ public class ProjectController {
     }
 
 
-    @Operation(summary = "Project 상세조회")
+    @Operation(summary = "프로젝트 상세 조회", description = "단일 프로젝트를 조회합니다.", responses = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "단일 프로젝트 조회 성공", content = @Content(schema = @Schema(implementation = ProjectDetailResponseDto.class)))
+    })
     @GetMapping("{projectId}")
     public ResponseEntity<?> getProjectDetail(
             @PathVariable Long projectId
@@ -62,7 +68,9 @@ public class ProjectController {
         return response.success(ResponseCode.PROJECT_FETCHED, projectDetailResponseDto);
     }
 
-    @Operation(summary = "Project 생성")
+    @Operation(summary = "프로젝트 생성", description = "프로젝트를 생성합니다.", responses = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "프로젝트 생성 성공", content = @Content(schema = @Schema(implementation = Long.class)))
+    })
     @PostMapping
     public ResponseEntity<?> createProject(
             @Parameter(hidden = true) Authentication authentication,
@@ -74,7 +82,9 @@ public class ProjectController {
         return response.success(ResponseCode.PROJECT_DETECTED, result);
     }
 
-    @Operation(summary = "Project 삭제")
+    @Operation(summary = "프로젝트 삭제", description = "프로젝트를 삭제합니다.", responses = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "프로젝트 삭제 성공", content = @Content(schema = @Schema(implementation = String.class)))
+    })
     @DeleteMapping("{projectId}")
     public ResponseEntity<?> deleteProject(
             @PathVariable Long projectId

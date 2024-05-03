@@ -106,7 +106,9 @@ public class MemberController {
     }
 
     @PostMapping("/refresh")
-    @Operation(summary = "앱 로그인 연장", description = "앱 로그인 연장 요청에 따른 토큰 재발급")
+    @Operation(summary = "앱 로그인 연장", description = "앱 로그인 연장 요청에 따라 토큰을 재발급합니다.", responses = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "토큰 재발급 성공", content = @Content(schema = @Schema(implementation = String.class)))
+    })
     public ResponseEntity<?> extendAppLogin(Authentication authentication,
                                             HttpServletResponse httpServletResponse) {
 
@@ -114,13 +116,17 @@ public class MemberController {
     }
 
     @PostMapping("/logout-web")
-    @Operation(summary = "웹 로그아웃", description = "웹 로그아웃 요청")
+    @Operation(summary = "웹 로그아웃", description = "웹에서 로그아웃합니다.", responses = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "웹 로그아웃 성공", content = @Content(schema = @Schema(implementation = String.class)))
+    })
     public ResponseEntity<?> logoutWeb(Authentication authentication, HttpServletResponse servletResponse) {
         return response.success(ResponseCode.LOGOUT_SUCCESS, memberService.logout(authentication.getName(), servletResponse, 0));
     }
 
     @PostMapping("/logout-app")
-    @Operation(summary = "앱 로그아웃", description = "앱 로그아웃 요청")
+    @Operation(summary = "앱 로그아웃", description = "앱에서 로그아웃합니다.", responses = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "앱 로그아웃 성공", content = @Content(schema = @Schema(implementation = String.class)))
+    })
     public ResponseEntity<?> logoutApp(Authentication authentication, HttpServletResponse servletResponse) {
         return response.success(ResponseCode.LOGOUT_SUCCESS, memberService.logout(authentication.getName(), servletResponse, 1));
     }
