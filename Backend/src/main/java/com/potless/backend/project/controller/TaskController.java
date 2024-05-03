@@ -2,7 +2,9 @@ package com.potless.backend.project.controller;
 
 import com.potless.backend.global.format.code.ApiResponse;
 import com.potless.backend.global.format.response.ResponseCode;
+import com.potless.backend.path.service.PathService;
 import com.potless.backend.project.dto.request.TaskAddRequestDto;
+import com.potless.backend.project.dto.request.TaskDeleteRequestDto;
 import com.potless.backend.project.service.TaskService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -22,6 +24,7 @@ import java.util.List;
 @Tag(name = "Task 컨트롤러", description = "Task Controller API")
 public class TaskController {
     private final TaskService taskService;
+    private final PathService pathService;
     private final ApiResponse response;
 
     @Operation(summary = "프로젝트에 task 입력", description = "프로젝트에 task를 입력합니다.", responses = {
@@ -30,17 +33,20 @@ public class TaskController {
     @PostMapping
     public ResponseEntity<?> addTaskToProject(@RequestBody TaskAddRequestDto taskAddRequestDto) {
         List<Long> result = taskService.addTaskToProject(taskAddRequestDto);
-        return response.success(ResponseCode.TASK_DETECTED,result);
+        pathService.updateOptimalOrder(result, taskAddRequestDto.getOrigin());
+        return response.success(ResponseCode.TASK_DETECTED, result);
     }
 
     @Operation(summary = "프로젝트에서 task 삭제", description = "프로젝트에서 task를 삭제합니다.", responses = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "task 삭제 성공", content = @Content(schema = @Schema(implementation = String.class)))
     })
-    @DeleteMapping
+    @PatchMapping
     public ResponseEntity<?> deleteProject(
-            @PathVariable Long taskId
+            @RequestBody TaskDeleteRequestDto taskDeleteRequestDto
     ){
-        taskService.deleteTask(taskId);
+        long taskId = taskDeleteRequestDto.getTaskId();
+        long projectId = taskService.deleteTask(taskId);
+        pathService.updateOptimalOrder(projectId, taskDeleteRequestDto.getOrigin());
         return response.success(ResponseCode.TASK_DELETED);
     }
 

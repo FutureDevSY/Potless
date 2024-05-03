@@ -59,11 +59,12 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public void deleteTask(Long taskId) {
+    public Long deleteTask(Long taskId) {
         TaskEntity taskEntity = taskRepository.findById(taskId)
                 .orElseThrow(TaskNotFoundException::new);
         taskEntity.softDelet();
         taskRepository.save(taskEntity);
+        return taskEntity.getProjectEntity().getId();
     }
 
 }

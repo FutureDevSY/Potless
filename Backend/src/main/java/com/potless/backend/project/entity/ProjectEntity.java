@@ -10,6 +10,8 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -48,8 +50,11 @@ public class ProjectEntity extends BaseEntity {
     @Column(name = "project_status", nullable = false)
     private Status status = Status.작업전;
 
+    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, mappedBy = "projectEntity")
+    private List<TaskEntity> taskEntities = new ArrayList<>();
+
     @Builder
-    public ProjectEntity(Long id, String projectName, ManagerEntity managerEntity, TeamEntity teamEntity, LocalDate projectDate, Integer projectSize, Status status, AreaEntity areaEntity) {
+    public ProjectEntity(Long id, String projectName, ManagerEntity managerEntity, TeamEntity teamEntity, LocalDate projectDate, Integer projectSize, Status status, AreaEntity areaEntity, List<TaskEntity> taskEntities) {
         this.id = id;
         this.projectName = projectName;
         this.managerEntity = managerEntity;
@@ -58,6 +63,7 @@ public class ProjectEntity extends BaseEntity {
         this.projectSize = projectSize;
         this.status = status;
         this.areaEntity = areaEntity;
+        this.taskEntities = taskEntities;
     }
 
     public void changeStatus(Status status) {

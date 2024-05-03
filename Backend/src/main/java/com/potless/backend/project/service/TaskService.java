@@ -7,5 +7,5 @@ import java.util.List;
 public interface TaskService {
     List<Long> addTaskToProject(TaskAddRequestDto taskAddRequestDto);
 
-    void deleteTask(Long taskId);
+    Long deleteTask(Long taskId);
 }
