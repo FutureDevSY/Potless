@@ -5,7 +5,9 @@ import 'package:camera/camera.dart'; // 카메라 플러그인
 import 'package:external_path/external_path.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:http/http.dart';
 import 'package:intl/intl.dart';
+import 'package:porthole24/API/api_request.dart';
 import 'package:porthole24/main.dart';
 import 'package:porthole24/screens/Record/ImagePreview.dart';
 import 'package:porthole24/widgets/functions/geolocator.dart';
@@ -13,9 +15,8 @@ import 'package:porthole24/widgets/tflite/bbox.dart';
 import 'package:porthole24/widgets/tflite/detector.dart';
 import 'package:porthole24/widgets/tflite/screen.dart';
 import 'package:porthole24/widgets/UI/AppBar.dart';
-import 'package:porthole24/widgets/UI/ScreenSize.dart'; // Flutter의 머티리얼 디자인 위젯
+import 'package:porthole24/widgets/UI/ScreenSize.dart';
 
-// YOLO 객체 감지 페이지를 위한 StatefulWidget
 class VideoPage extends StatefulWidget {
   const VideoPage({super.key});
 
@@ -23,37 +24,34 @@ class VideoPage extends StatefulWidget {
   _VideoPageState createState() => _VideoPageState();
 }
 
-// YoloPage의 상태 관리 클래스
 class _VideoPageState extends State<VideoPage> with WidgetsBindingObserver {
-  CameraController? _cameraController; // 카메라 컨트롤러
-  get _controller => _cameraController; // 초기화되었을 때만 사용됨, null이 아님
-  Detector? _detector; // 객체 감지기
-  StreamSubscription? _subscription; // 객체 감지 결과 스트림의 구독
+  CameraController? _cameraController;
+  get _controller => _cameraController;
+  Detector? _detector;
+  StreamSubscription? _subscription;
   final CameraLensDirection initialCameraLensDirection =
-      CameraLensDirection.back; // 초기 카메라 렌즈 방향
+      CameraLensDirection.back;
   bool _isCapturing = false;
+  final ApiService _apiService = ApiService();
 
-  List<String> classes = []; // 감지된 객체의 클래스
-  List<List<double>> bboxes = []; // 감지된 객체의 경계 상자 좌표
-  List<double> scores = []; // 감지된 객체의 점수
+  List<String> classes = [];
+  List<List<double>> bboxes = [];
+  List<double> scores = [];
 
   List<XFile> imageSaveQueue = [];
   bool _isSaving = false;
 
   int? resultIndex;
 
-  // 앱 생명주기 상태 변경 시 호출
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) async {
     switch (state) {
       case AppLifecycleState.inactive:
-        // 앱이 비활성 상태가 되면 리소스 해제
         _cameraController?.stopImageStream();
         _detector?.stop();
         _subscription?.cancel();
         break;
       case AppLifecycleState.resumed:
-        // 앱이 다시 활성화되면 초기화
         _initStateAsync();
         break;
       default:
@@ -61,16 +59,14 @@ class _VideoPageState extends State<VideoPage> with WidgetsBindingObserver {
   }
 
   Future<void> createTodayFolder() async {
-    String formattedDate =
-        DateFormat('yyyy-MM-dd').format(DateTime.now()); // Format today's date
+    String formattedDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
     final String baseDir = await ExternalPath.getExternalStoragePublicDirectory(
         ExternalPath.DIRECTORY_DCIM);
     final Directory todayDir = Directory('$baseDir/$formattedDate');
 
     debugPrint(todayDir.path);
     if (!await todayDir.exists()) {
-      await todayDir.create(
-          recursive: true); // Create the directory if it doesn't exist
+      await todayDir.create(recursive: true);
       debugPrint("폴더 생성함 55: ${todayDir.path}");
     } else {
       debugPrint("폴더 이미 있음 57: ${todayDir.path}");
@@ -80,19 +76,16 @@ class _VideoPageState extends State<VideoPage> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addObserver(this); // 앱 생명주기 이벤트를 관찰하기 위해 등록
-    _initStateAsync(); // 비동기 초기화 메서드 호출
+    WidgetsBinding.instance.addObserver(this);
+    _initStateAsync();
     createTodayFolder();
   }
 
-  // 카메라와 객체 감지기 초기화
   void _initStateAsync() async {
-    _initializeCamera(); // 카메라 초기화
-    // 새로운 isolate에서 객체 감지기 시작
+    _initializeCamera();
     Detector.start().then((instance) {
       setState(() {
         _detector = instance;
-        // 결과 스트림을 구독하여 상태를 업데이트
         _subscription = instance.resultsStream.stream.listen((values) {
           setState(() {
             classes = values['cls'];
@@ -121,48 +114,31 @@ class _VideoPageState extends State<VideoPage> with WidgetsBindingObserver {
       ResolutionPreset.max,
       enableAudio: false,
     )..initialize().then((_) async {
-        await _controller
-            .startImageStream(onLatestImageAvailable); // 카메라 이미지 스트림 시작
+        await _controller.startImageStream(onLatestImageAvailable);
         setState(() {});
-        ScreenParams.previewSize =
-            _controller.value.previewSize!; // 화면 매개변수 업데이트
+        ScreenParams.previewSize = _controller.value.previewSize!;
       });
   }
 
-  // 새 카메라 이미지가 사용 가능할 때 호출되는 메서드
   void onLatestImageAvailable(CameraImage cameraImage) async {
-    _detector?.processFrame(cameraImage); // 이미지를 객체 감지기로 전달하여 처리
+    _detector?.processFrame(cameraImage);
   }
 
-  // Future<void> capturePhoto() async {
-  //   if (_cameraController != null &&
-  //       _cameraController!.value.isInitialized &&
-  //       !_cameraController!.value.isTakingPicture) {
-  //     try {
-  //       XFile picture = await _cameraController!.takePicture();
-  //       savePhoto(picture); // Handle saving asynchronously
-  //     } catch (e) {
-  //       debugPrint("Error capturing image: $e");
-  //     }
-  //   }
-  // }
-
   Future<void> capturePhoto() async {
-    // Continuously attempt to capture without checking the save queue
     while (true) {
       if (_cameraController != null && _cameraController!.value.isInitialized) {
         if (!_cameraController!.value.isTakingPicture) {
           try {
             XFile picture = await _cameraController!.takePicture();
-            savePhoto(
-                picture); // Offload to queue and immediately ready for next capture
+            savePhoto(picture);
           } catch (e) {
             debugPrint("Error capturing image: $e");
           }
         }
       }
-      await Future.delayed(const Duration(
-          milliseconds: 100)); // Small delay to prevent hogging the main thread
+      await Future.delayed(
+        const Duration(milliseconds: 100),
+      );
     }
   }
 
@@ -177,33 +153,36 @@ class _VideoPageState extends State<VideoPage> with WidgetsBindingObserver {
     _isSaving = true;
     while (imageSaveQueue.isNotEmpty) {
       final XFile imageToSave = imageSaveQueue.removeAt(0);
-      await _saveImageToFileSystem(imageToSave);
+      await _uploadImage(imageToSave);
     }
     _isSaving = false;
   }
 
-  Future<void> _saveImageToFileSystem(XFile image) async {
-    String formattedDate =
-        DateFormat('yyyy-MM-dd').format(DateTime.now()); // Format today's date
-    String formattedTime =
-        DateFormat('yyyy-MM-dd_ahhmm').format(DateTime.now());
-
-    final String baseDir = await ExternalPath.getExternalStoragePublicDirectory(
-        ExternalPath.DIRECTORY_DCIM);
-    debugPrint('233 코드 제발 좀 뜨자 $baseDir');
-    final String dirPath = '$baseDir/$formattedDate';
-    final String filePath = '$dirPath/$formattedTime.jpg';
+  Future<void> _uploadImage(XFile image) async {
+    Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+    double lat = position.latitude;
+    double lng = position.longitude;
 
     setState(() {
       _isCapturing = true;
     });
 
+    debugPrint(lat.toString());
+    debugPrint(lng.toString());
+
     try {
-      await Directory(dirPath).create(recursive: true);
-      await image.saveTo(filePath);
-      debugPrint("Photo saved to $filePath");
+      File file = File(image.path);
+
+      bool success = await _apiService.damageSet('POTHOLE', lng, lat, file);
+
+      if (success) {
+        debugPrint('potless 207 업로드 올라감');
+      } else {
+        debugPrint('potless 209 업로드 실패');
+      }
     } catch (e) {
-      debugPrint("Error saving photo: $e");
+      debugPrint('potless 212 에러 $e');
     } finally {
       setState(() {
         _isCapturing = false;
