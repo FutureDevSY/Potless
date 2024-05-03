@@ -65,7 +65,7 @@ pipeline {
                 script {
                     dir('/home/ubuntu/B106-DOCKER/') {
                         sh 'docker-compose -f /home/ubuntu/B106-DOCKER/docker-compose.yml pull && docker-compose -f /home/ubuntu/B106-DOCKER/docker-compose.yml up -d'
-                    }`
+                    }
                 }
             }
         }
