@@ -16,7 +16,6 @@ import java.util.List;
 @Getter
 @Table(name = "damage", indexes = {
         @Index(name = "idx_damage_address", columnList = "damage_address"),
-        @Index(name = "idx_damage_road_name", columnList = "damage_road_name"),
         @Index(name = "idx_damage_status", columnList = "damage_status"),
         @Index(name = "idx_damage_area_id", columnList = "area_id"),
         @Index(name = "idx_damage_location_id", columnList = "location_id")
@@ -38,19 +37,17 @@ public abstract class DamageEntity extends BaseEntity {
     private Double dirY;
     @Column(name = "damage_address", nullable = false)
     private String address;
-    @Column(name = "damage_road_name", nullable = false)
-    private String roadName;
     @Column(name = "damage_width", nullable = false)
     private Double width;
     @Enumerated(EnumType.STRING)
     @Column(name = "damage_status", nullable = false)
     private Status status = Status.작업전;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST})
     @JoinColumn(name = "area_id")
     private AreaEntity areaEntity;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST})
     @JoinColumn(name = "location_id")
     private LocationEntity locationEntity;
 
@@ -60,13 +57,12 @@ public abstract class DamageEntity extends BaseEntity {
     @Column(name = "dtype", insertable = false, updatable = false)
     private String dtype;
 
-    public DamageEntity(Long id, Integer severity, Double dirX, Double dirY, String address, String roadName, Double width, Status status, AreaEntity areaEntity, LocationEntity locationEntity, List<ImageEntity> imageEntities, String dtype) {
+    public DamageEntity(Long id, Integer severity, Double dirX, Double dirY, String address, Double width, Status status, AreaEntity areaEntity, LocationEntity locationEntity, List<ImageEntity> imageEntities, String dtype) {
         this.id = id;
         this.severity = severity;
         this.dirX = dirX;
         this.dirY = dirY;
         this.address = address;
-        this.roadName = roadName;
         this.width = width;
         this.status = status;
         this.areaEntity = areaEntity;

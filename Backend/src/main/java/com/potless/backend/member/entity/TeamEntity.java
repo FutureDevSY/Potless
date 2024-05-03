@@ -22,19 +22,23 @@ public class TeamEntity extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST})
     @JoinColumn(name = "manager_id")
     private ManagerEntity managerEntity;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, mappedBy = "teamEntity")
+    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST}, mappedBy = "teamEntity")
     private List<WorkerEntity> workerEntities = new ArrayList<>();
 
-    @OneToMany(mappedBy = "teamEntity", fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE, CascadeType.PERSIST})
+    @OneToMany(mappedBy = "teamEntity", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST})
     private List<ProjectEntity> projectEntities = new ArrayList<>();
 
+    @Column(name = "team_name", nullable = false)
+    private String teamName;
+
     @Builder
-    public TeamEntity(Long id, ManagerEntity managerEntity, List<WorkerEntity> workerEntities, List<ProjectEntity> projectEntities) {
+    public TeamEntity(Long id, ManagerEntity managerEntity, String teamName, List<WorkerEntity> workerEntities, List<ProjectEntity> projectEntities) {
         this.id = id;
+        this.teamName = teamName;
         this.managerEntity = managerEntity;
         this.workerEntities = workerEntities;
         this.projectEntities = projectEntities;

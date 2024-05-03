@@ -1,0 +1,10 @@
+[[get-damage-list]]
+==== HTTP Request
+
+include::{snippets}/get-damage-list/http-request.adoc[]
+include::{snippets}/get-damage-list/query-parameters.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/get-damage-list/http-response.adoc[]
+include::{snippets}/get-damage-list/response-fields.adoc[]

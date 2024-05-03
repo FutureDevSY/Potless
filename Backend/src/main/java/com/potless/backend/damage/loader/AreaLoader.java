@@ -4,6 +4,7 @@ import com.potless.backend.damage.entity.area.AreaEntity;
 import com.potless.backend.damage.repository.AreaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,6 +13,7 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
+@Order(1)
 public class AreaLoader implements CommandLineRunner {
 
     private final AreaRepository areaRepository;

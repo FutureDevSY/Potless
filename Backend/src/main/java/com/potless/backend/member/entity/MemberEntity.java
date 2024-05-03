@@ -1,5 +1,6 @@
 package com.potless.backend.member.entity;
 
+import com.potless.backend.damage.entity.area.AreaEntity;
 import com.potless.backend.global.entity.MemberBaseEntity;
 import com.potless.backend.member.dto.SignupRequestDto;
 import jakarta.persistence.*;
@@ -41,11 +42,15 @@ public class MemberEntity extends MemberBaseEntity {
     @OneToOne(mappedBy = "memberEntity", fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE, CascadeType.PERSIST}, orphanRemoval = true)
     private ManagerEntity managerEntity;
 
-    @OneToOne(mappedBy = "memberEntity", fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE, CascadeType.PERSIST}, orphanRemoval = true)
-    private WorkerEntity workerEntity;
+//    @OneToOne(mappedBy = "memberEntity", fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE, CascadeType.PERSIST}, orphanRemoval = true)
+//    private WorkerEntity workerEntity;
+
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST})
+    @JoinColumn(name = "area_id")
+    private AreaEntity area;
 
     @Builder
-    public MemberEntity(Long id, String memberName, Integer role, String email, String phone, String password, Integer region, ManagerEntity managerEntity, WorkerEntity workerEntity) {
+    public MemberEntity(Long id, String memberName, Integer role, String email, String phone, String password, Integer region, ManagerEntity managerEntity) {
         Id = id;
         this.memberName = memberName;
         this.role = role;
@@ -54,7 +59,7 @@ public class MemberEntity extends MemberBaseEntity {
         this.password = password;
         this.region = region;
         this.managerEntity = managerEntity;
-        this.workerEntity = workerEntity;
+//        this.workerEntity = workerEntity;
     }
 
     public static MemberEntity of(SignupRequestDto requestDto, String encodedPassword) {

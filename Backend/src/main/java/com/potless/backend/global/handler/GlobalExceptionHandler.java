@@ -2,16 +2,14 @@ package com.potless.backend.global.handler;
 
 import com.potless.backend.global.exception.email.FailedMessageTransmissionException;
 import com.potless.backend.global.exception.email.InvalidAuthCodeException;
-import com.potless.backend.global.exception.member.DuplicateEmailException;
-import com.potless.backend.global.exception.member.MissingPathVariableException;
-import com.potless.backend.global.exception.member.PasswordMismatchException;
+import com.potless.backend.global.exception.jwt.RefreshTokenNotFoundException;
+import com.potless.backend.global.exception.member.*;
 import com.potless.backend.global.exception.pothole.PotholeAreaNotFoundException;
 import com.potless.backend.global.exception.pothole.PotholeLocationNotFoundException;
+import com.potless.backend.global.exception.pothole.PotholeMinusException;
 import com.potless.backend.global.exception.pothole.PotholeNotFoundException;
-import com.potless.backend.global.exception.member.InvalidLoginAttemptException;
-
-import com.potless.backend.global.exception.member.EmailNotFoundException;
-import com.potless.backend.global.exception.jwt.RefreshTokenNotFoundException;
+import com.potless.backend.global.exception.project.AreaNotFoundException;
+import com.potless.backend.global.exception.project.ProjectNotFoundException;
 import com.potless.backend.global.format.code.ApiResponse;
 import com.potless.backend.global.format.response.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -101,4 +99,41 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         log.error("PotholeNotFoundException = {}", e.getErrorCode().getMessage());
         return response.error(e.getErrorCode());
     }
+
+    @ExceptionHandler(PotholeMinusException.class)
+    protected ResponseEntity<?> handle(PotholeMinusException e) {
+        log.error("PotholeNotFoundException = {}", e.getErrorCode().getMessage());
+        return response.error(e.getErrorCode());
+    }
+
+    @ExceptionHandler(TeamNotFoundException.class)
+    protected ResponseEntity<?> handle(TeamNotFoundException e) {
+        log.error("TeamNotFoundException = {}", e.getErrorCode().getMessage());
+        return response.error(e.getErrorCode());
+    }
+
+    @ExceptionHandler(MemberNotFoundException.class)
+    protected ResponseEntity<?> handle(MemberNotFoundException e) {
+        log.error("MemberNotFoundException = {}", e.getErrorCode().getMessage());
+        return response.error(e.getErrorCode());
+    }
+
+    @ExceptionHandler(ProjectNotFoundException.class)
+    protected ResponseEntity<?> handle(ProjectNotFoundException e) {
+        log.error("ProjectNotFoundException = {}", e.getErrorCode().getMessage());
+        return response.error(e.getErrorCode());
+    }
+
+    @ExceptionHandler(AreaNotFoundException.class)
+    protected ResponseEntity<?> handle(AreaNotFoundException e) {
+        log.error("AreaNotFoundException = {}", e.getErrorCode().getMessage());
+        return response.error(e.getErrorCode());
+    }
+
+    @ExceptionHandler(InvalidLoginAuthException.class)
+    protected ResponseEntity<?> handle(InvalidLoginAuthException e) {
+        log.error("InvalidLoginAuthException = {}", e.getErrorCode().getMessage());
+        return response.error(e.getErrorCode());
+    }
+
 }

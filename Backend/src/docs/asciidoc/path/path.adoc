@@ -1,0 +1,4 @@
+[[PATH-API]]
+=== 최적 경로 조회하기
+
+include::api/getOptimalPath.adoc[]

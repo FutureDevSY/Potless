@@ -45,18 +45,26 @@ public enum ErrorCode {
     AUTH_CODE_INVALID(HttpStatus.BAD_REQUEST, "인증 코드가 유효하지 않습니다."),
 
     PROFILE_UPDATE_FAILED(HttpStatus.BAD_REQUEST, "회원정보를 수정할 수 없습니다."),
-    MEMBER_NOT_FOUND(HttpStatus.UNAUTHORIZED,"관련 회원 정보를 찾을 수 없습니다."),
-    MANAGER_NOT_FOUND(HttpStatus.UNAUTHORIZED,"관련 매니저 정보를 찾을 수 없습니다."),
+    MEMBER_NOT_FOUND(HttpStatus.UNAUTHORIZED, "관련 회원 정보를 찾을 수 없습니다."),
+    MANAGER_NOT_FOUND(HttpStatus.UNAUTHORIZED, "관련 매니저 정보를 찾을 수 없습니다."),
+    LOGIN_AUTH_UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "잘못된 권한을 가진 계정의 로그인 시도입니다."),
 
     // 포트홀 관련 예외 처리
     POTHOLE_NOT_FOUND(HttpStatus.UNAUTHORIZED, "관련 포트홀 정보를 찾을 수 없습니다."),
     POTHOLE_LOCATION_NOT_FOUND(HttpStatus.UNAUTHORIZED, "동 정보를 찾을 수 없습니다."),
     POTHOLE_AREA_NOT_FOUND(HttpStatus.UNAUTHORIZED, "지역 정보를 찾을 수 없습니다."),
-
+    POTHOLE_MINUS_NOT_FOUND(HttpStatus.UNAUTHORIZED, "삭제할 포트홀 정보를 찾을 수 없습니다."),
 
     // 프로젝트 관련 예외 처리
-    PROJECT_NOT_FOUND(HttpStatus.UNAUTHORIZED,"관련 프로젝트 정보를 찾을 수 없습니다."),
-    TEAM_NOT_FOUND(HttpStatus.UNAUTHORIZED,"관련 팀 정보를 찾을 수 없습니다.");
+    PROJECT_NOT_FOUND(HttpStatus.UNAUTHORIZED, "관련 프로젝트 정보를 찾을 수 없습니다."),
+    TEAM_NOT_FOUND(HttpStatus.UNAUTHORIZED, "관련 팀 정보를 찾을 수 없습니다."),
+    PROJECT_AREA_NOT_FOUND(HttpStatus.UNAUTHORIZED, "관련 지역 정보를 찾을 수 없습니다."),
+
+    // 작업 관련 예외 처리
+    TASK_NOT_FOUND(HttpStatus.UNAUTHORIZED,"작업 정보를 찾을 수 없습니다."),
+
+    // AWS ERROR
+    FAILED_TO_UPLOAD(HttpStatus.INTERNAL_SERVER_ERROR, "S3 이미지 저장에 실패했습니다.");
 
     private final HttpStatus status;
     private final String message;

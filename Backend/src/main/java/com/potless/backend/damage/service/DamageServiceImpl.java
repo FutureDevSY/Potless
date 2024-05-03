@@ -1,17 +1,26 @@
 package com.potless.backend.damage.service;
 
 import com.potless.backend.damage.dto.controller.request.DamageSearchRequestDTO;
+import com.potless.backend.damage.dto.controller.request.DamageVerificationRequestDTO;
 import com.potless.backend.damage.dto.controller.response.DamageResponseDTO;
 import com.potless.backend.damage.dto.controller.response.ImagesResponseDTO;
-import com.potless.backend.damage.dto.service.response.KakaoMapApiResponseDTO;
+import com.potless.backend.damage.dto.service.request.DamageSetRequestServiceDTO;
+import com.potless.backend.damage.dto.service.response.StatisticCountResponseDTO;
+import com.potless.backend.damage.dto.service.response.StatisticListResponseDTO;
+import com.potless.backend.damage.dto.service.response.StatisticLocationCountResponseDTO;
 import com.potless.backend.damage.entity.area.AreaEntity;
 import com.potless.backend.damage.entity.area.LocationEntity;
+import com.potless.backend.damage.entity.enums.Status;
+import com.potless.backend.damage.entity.road.CrackEntity;
+import com.potless.backend.damage.entity.road.DamageEntity;
 import com.potless.backend.damage.entity.road.ImageEntity;
+import com.potless.backend.damage.entity.road.PotholeEntity;
 import com.potless.backend.damage.repository.AreaRepository;
 import com.potless.backend.damage.repository.DamageRepository;
 import com.potless.backend.damage.repository.ImageRepository;
 import com.potless.backend.damage.repository.LocationRepository;
 import com.potless.backend.global.exception.pothole.PotholeLocationNotFoundException;
+import com.potless.backend.global.exception.pothole.PotholeNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -20,6 +29,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -45,21 +55,117 @@ public class DamageServiceImpl implements IDamageService {
         List<ImagesResponseDTO> imagesResponseDTOS = images.stream()
                 .map(img -> new ImagesResponseDTO(img.getId(), img.getUrl(), img.getOrder()))
                 .toList();
-        responseDTO.setImagesResponseDTOS(images);  // 오류 부분: 이 부분을 imagesResponseDTOS 로 변경해야 합니다.
+
+        responseDTO.setImagesResponseDTOS(imagesResponseDTOS);  // 오류 부분: 이 부분을 imagesResponseDTOS 로 변경해야 합니다.
         return responseDTO;
     }
 
+    @Override
+    @Transactional
+    public void setDamage(DamageSetRequestServiceDTO data) {
+        AreaEntity areaGu = areaRepository.findByAreaGu(data.getArea())
+                .orElseThrow(PotholeLocationNotFoundException::new);
+
+        LocationEntity locationName = locationRepository.findByLocationName(data.getLocation())
+                .orElseThrow(PotholeLocationNotFoundException::new);
+
+        DamageEntity damageEntity;
+        log.info("data = {}", data);
+        if (data.getDtype().equals("CRACK")) {
+            damageEntity = CrackEntity.builder()
+                    .dirX(data.getDirX())
+                    .dirY(data.getDirY())
+                    .address(data.getAddress())
+                    .dtype(data.getDtype())
+                    .status(data.getStatus())
+                    .areaEntity(areaGu)
+                    .locationEntity(locationName)
+                    .width(data.getWidth())
+                    .severity(data.getSeverity())
+                    .build();
+        } else {
+            damageEntity = PotholeEntity.builder()
+                    .dirX(data.getDirX())
+                    .dirY(data.getDirY())
+                    .address(data.getAddress())
+                    .dtype(data.getDtype())
+                    .status(data.getStatus())
+                    .areaEntity(areaGu)
+                    .locationEntity(locationName)
+                    .width(data.getWidth())
+                    .severity(data.getSeverity())
+                    .build();
+        }
+        damageRepository.save(damageEntity);
+        int order = 1;
+        for (String imageUrl : data.getImages()) {
+            ImageEntity image = ImageEntity.builder()
+                    .damageEntity(damageEntity)
+                    .url(imageUrl)
+                    .order(order++)
+                    .build();
+            imageRepository.save(image);
+        }
+        areaGu.addCount();
+    }
+
+    @Override
+    public List<DamageResponseDTO> getDamageVerification(DamageVerificationRequestDTO data) {
+        return damageRepository.findDamagesByVerificationRequest(data);
+    }
 
     @Override
     @Transactional
-    public void setDamage(KakaoMapApiResponseDTO data) {
-        AreaEntity areaGu = areaRepository.findByAreaGu(data.getDocuments().get(0).getAddress().getRegion_2depth_name())
-                .orElseThrow(PotholeLocationNotFoundException::new);
-
-        LocationEntity locationName = locationRepository.findByLocationName(data.getDocuments().get(0).getAddress().getRegion_3depth_name())
-                .orElseThrow(PotholeLocationNotFoundException::new);
-
-        log.info("areaGu = {}", areaGu);
-        log.info("locationName = {}", locationName);
+    public void deleteDamage(Long damageId) {
+        DamageEntity damageEntity = damageRepository.findById(damageId).orElseThrow(PotholeNotFoundException::new);
+        damageEntity.getAreaEntity().minusCount();
+        damageRepository.deleteById(damageId);
     }
+
+    @Override
+    public StatisticLocationCountResponseDTO getStatisticLocation(String locationName) {
+        return damageRepository.getStatisticLocation(locationName);
+    }
+
+    @Override
+    public List<StatisticLocationCountResponseDTO> getStatisticLocations() {
+        return damageRepository.getStatisticLocations();
+    }
+
+    @Override
+    public StatisticListResponseDTO getStatistic(Long areaId) {
+        return damageRepository.getStatistic(areaId);
+    }
+
+    @Override
+    public List<StatisticCountResponseDTO> getStatistics() {
+        return damageRepository.getStatistics();
+    }
+
+    @Override
+    @Transactional
+    public void setImageForStatus(Long damageId, List<String> fileUrls) {
+        DamageEntity damageEntity = damageRepository.findById(damageId).orElseThrow(PotholeNotFoundException::new);
+        int order = 1;
+        for (String imageUrl : fileUrls) {
+            ImageEntity image = ImageEntity.builder()
+                    .damageEntity(damageEntity)
+                    .url(imageUrl)
+                    .order(order++)
+                    .build();
+            imageRepository.save(image);
+        }
+    }
+
+    @Override
+    @Transactional
+    public void setWorkDone(Long damageId) {
+        DamageEntity damageEntity = damageRepository.findById(damageId).orElseThrow(PotholeNotFoundException::new);
+        damageEntity.changeStatus(Status.작업완료);
+    }
+
+    //    @Override
+//    public List<DamageResponseDTO> getWorkDamage(Long memberId) {
+//        return damageRepository.findDamagesByWorker(memberId);
+//    }
 }
