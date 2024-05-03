@@ -17,8 +17,6 @@ pipeline {
         stage('Prepare Config') {
             steps {
                 dir('Backend') {
-                    sh 'pwd'
-                    sh 'ls -la'
                     withCredentials([file(credentialsId: 'application-db', variable: 'APP_DB_CONFIG')]) {
                         sh 'cp $APP_DB_CONFIG src/main/resources/application-db.yml'
                     }
@@ -46,7 +44,7 @@ pipeline {
                     // Backend 이미지 빌드
                     dir('Backend') {
                         // Gradle을 사용하여 Spring Boot 애플리케이션 빌드
-                        sh 'gradle build'
+                        sh './gradlew clean bootJar'
                         // Docker 이미지 빌드
                         sh 'docker build -t ${DOCKER_HUB_USER}/${BUILD_ID}-backend .'
                         sh 'docker login -u ${DOCKER_HUB_USER} -p ${DOCKER_HUB_PASS}'
