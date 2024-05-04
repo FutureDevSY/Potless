@@ -158,11 +158,12 @@ public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
 
         for(GetTaskResponseDto dto : responseDtoList){
             List<DamageResponseDTO> damageList =
-                    queryFactory.select(Projections.constructor(DamageResponseDTO.class))
-                            .from(taskEntity)
-                            .join(taskEntity).on(taskEntity.projectEntity.id.eq(projectEntity.id))
-                            .where(taskEntity.projectEntity.id.eq(dto.getProjectId()))
-                            .fetch();
+                    queryFactory.select(Projections.constructor(DamageResponseDTO.class, damageEntity))
+                                .from(taskEntity)
+                                .join(damageEntity).on(taskEntity.damageEntity.id.eq(damageEntity.id))
+                                .where(taskEntity.projectEntity.id.eq(dto.getProjectId()))
+                                .orderBy(taskEntity.taskOrder.asc())
+                                .fetch();
 
             for (DamageResponseDTO damageResponseDTO : damageList) {
                 List<ImagesResponseDTO> imagesForDamage = queryFactory
