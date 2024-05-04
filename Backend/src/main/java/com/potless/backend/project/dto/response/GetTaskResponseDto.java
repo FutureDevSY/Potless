@@ -31,13 +31,13 @@ public class GetTaskResponseDto {
     private Integer projectSize;
 
     @Schema(description = "프로젝트 생성 일자")
-    private String createdDate;
+    private LocalDateTime createdDate;
 
     @Setter
     @Schema(description = "프로젝트별 할당된 작업 목록 DTO 리스트")
     private List<DamageResponseDTO> damangeResponseDtoList;
 
-    public GetTaskResponseDto(Long teamId, Long projectId, String projectName, LocalDate projectDate, Integer projectSize, String createdDate) {
+    public GetTaskResponseDto(Long teamId, Long projectId, String projectName, LocalDate projectDate, Integer projectSize, LocalDateTime createdDate) {
         this.teamId = teamId;
         this.projectId = projectId;
         this.projectName = projectName;
