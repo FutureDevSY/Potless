@@ -1,6 +1,7 @@
 package com.potless.backend.damage.dto.controller.response;
 
 import com.potless.backend.damage.entity.enums.Status;
+import com.potless.backend.damage.entity.road.DamageEntity;
 import com.querydsl.core.annotations.QueryProjection;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
@@ -72,5 +73,20 @@ public class DamageResponseDTO {
         this.dtype = dtype;
         this.createdDateTime = createdDateTime;
     }
+
+    public DamageResponseDTO(DamageEntity damageEntity) {
+        this.id = damageEntity.getId();
+        this.severity = damageEntity.getSeverity();
+        this.dirX = damageEntity.getDirX();
+        this.dirY = damageEntity.getDirY();
+        this.address = damageEntity.getAddress();
+        this.width = damageEntity.getWidth();
+        this.status = damageEntity.getStatus();
+        this.area = damageEntity.getAreaEntity().getAreaGu();
+        this.location = damageEntity.getLocationEntity().getLocationName();
+        this.dtype = damageEntity.getDtype();
+        this.createdDateTime = damageEntity.getCreatedDateTime();
+    }
+
 
 }

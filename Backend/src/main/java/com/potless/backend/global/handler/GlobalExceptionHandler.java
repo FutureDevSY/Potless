@@ -142,4 +142,10 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return response.error(e.getErrorCode());
     }
 
+    @ExceptionHandler(UnauthorizedRequestException.class)
+    protected ResponseEntity<?> handle(UnauthorizedRequestException e) {
+        log.error("UnauthorizedRequestException = {}", e.getErrorCode().getMessage());
+        return response.error(e.getErrorCode());
+    }
+
 }

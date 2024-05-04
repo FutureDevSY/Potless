@@ -4,6 +4,7 @@ import com.potless.backend.member.entity.MemberEntity;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 
+import java.util.List;
 import java.util.Optional;
 
 import static com.potless.backend.member.entity.QMemberEntity.memberEntity;
@@ -18,6 +19,13 @@ public class MemberRepositoryCustomImpl implements MemberRepositoryCustom {
         return Optional.ofNullable(query.selectFrom(memberEntity)
                 .where(memberEntity.email.eq(email))
                 .fetchFirst());
+    }
+
+    @Override
+    public List<MemberEntity> findAllByAreaId(Long areaId) {
+        return query.selectFrom(memberEntity)
+                .where(memberEntity.area.id.eq(areaId).and(memberEntity.role.eq(1)))
+                .fetch();
     }
 
 }

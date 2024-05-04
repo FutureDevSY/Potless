@@ -62,4 +62,12 @@ public class TeamRepositoryCustomImpl implements TeamRepositoryCustom {
 
     }
 
+    @Override
+    public List<TeamEntity> findByMemberId(Long memberId) {
+        return query.selectFrom(teamEntity)
+                    .join(workerEntity).on(workerEntity.teamEntity.id.eq(teamEntity.id))
+                    .where(workerEntity.memberEntity.Id.eq(memberId))
+                    .fetch();
+    }
+
 }

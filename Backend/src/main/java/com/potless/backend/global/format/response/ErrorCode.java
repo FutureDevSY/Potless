@@ -48,6 +48,7 @@ public enum ErrorCode {
     MEMBER_NOT_FOUND(HttpStatus.UNAUTHORIZED, "관련 회원 정보를 찾을 수 없습니다."),
     MANAGER_NOT_FOUND(HttpStatus.UNAUTHORIZED, "관련 매니저 정보를 찾을 수 없습니다."),
     LOGIN_AUTH_UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "잘못된 권한을 가진 계정의 로그인 시도입니다."),
+    UNAUTHORIZED_ACCESS_TO_SERVICE(HttpStatus.UNAUTHORIZED, "잘못된 권한을 가진 계정의 요청 시도입니다. 권한을 확인해주세요."),
 
     // 포트홀 관련 예외 처리
     POTHOLE_NOT_FOUND(HttpStatus.UNAUTHORIZED, "관련 포트홀 정보를 찾을 수 없습니다."),

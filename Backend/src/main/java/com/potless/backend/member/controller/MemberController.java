@@ -7,6 +7,8 @@ import com.potless.backend.global.jwt.service.TokenService;
 import com.potless.backend.member.dto.*;
 import com.potless.backend.member.service.MailService;
 import com.potless.backend.member.service.MemberService;
+import com.potless.backend.project.dto.response.ProjectDetailResponseDto;
+import com.potless.backend.project.service.TaskService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -29,6 +31,7 @@ public class MemberController {
     private final MemberService memberService;
     private final ApiResponse response;
     private final MailService mailService;
+    private final TaskService taskService;
 
     /* 일반 회원가입 */
     @Operation(summary = "회원가입", description = "일반 사용자 회원가입", responses = { @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "지역별 작업자 목록 조회 요청 성공"
@@ -130,6 +133,13 @@ public class MemberController {
     })
     public ResponseEntity<?> logoutApp(Authentication authentication, HttpServletResponse servletResponse) {
         return response.success(ResponseCode.LOGOUT_SUCCESS, memberService.logout(authentication.getName(), servletResponse, 1));
+    }
+
+    @Operation(summary = "작업자 할당 작업 목록 조회", description = "작업자 계정에 할당된 작업 목록을 조회합니다.", responses = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "작업 목록 조회 성공", content = @Content(schema = @Schema(implementation = ProjectDetailResponseDto.class)))})
+    @GetMapping("/task")
+    public ResponseEntity<?> getTaskList(Authentication authentication) {
+        return response.success(ResponseCode.TASK_FETCHED, taskService.getTaskList(authentication));
     }
 
 //    @PutMapping
