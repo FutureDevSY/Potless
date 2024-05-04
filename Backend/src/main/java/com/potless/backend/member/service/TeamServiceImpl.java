@@ -58,11 +58,12 @@ public class TeamServiceImpl implements TeamService{
         TeamEntity team = teamRepository.findById(teamAddRequestDto.getTeamId())
                 .orElseThrow(TeamNotFoundException::new);
 
-        ProjectEntity saveProject = project.builder()
-                .teamEntity(team)
-                .build();
-        projectRepository.save(saveProject);
-        return saveProject.getId();
+//        ProjectEntity saveProject = project.builder()
+//                .teamEntity(team)
+//                .build();
+        project.setTeam(team);
+
+        return project.getId();
     }
 
     @Override
