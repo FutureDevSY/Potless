@@ -2,9 +2,17 @@ package com.potless.backend.project.service;
 
 import com.potless.backend.damage.entity.road.DamageEntity;
 import com.potless.backend.damage.repository.DamageRepository;
+import com.potless.backend.global.exception.member.InvalidLoginAuthException;
+import com.potless.backend.global.exception.member.MemberNotFoundException;
+import com.potless.backend.global.exception.member.UnauthorizedRequestException;
 import com.potless.backend.global.exception.pothole.PotholeNotFoundException;
 import com.potless.backend.global.exception.project.ProjectNotFoundException;
 import com.potless.backend.global.exception.task.TaskNotFoundException;
+import com.potless.backend.member.entity.MemberEntity;
+import com.potless.backend.member.entity.TeamEntity;
+import com.potless.backend.member.repository.member.MemberRepository;
+import com.potless.backend.member.repository.team.TeamRepository;
+import com.potless.backend.member.service.MemberService;
 import com.potless.backend.project.dto.request.TaskAddRequestDto;
 import com.potless.backend.project.dto.response.GetTaskResponseDto;
 import com.potless.backend.project.entity.ProjectEntity;
@@ -16,6 +24,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,6 +39,8 @@ public class TaskServiceImpl implements TaskService {
     private final ProjectRepository projectRepository;
     private final DamageRepository damageRepository;
     private final TaskRepository taskRepository;
+    private final MemberRepository memberRepository;
+    private final TeamRepository teamRepository;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -70,8 +81,31 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public GetTaskResponseDto getTask() {
-        return null;
+    public List<GetTaskResponseDto> getTaskList(Authentication authentication) {
+        MemberEntity member = memberRepository.searchByEmail(authentication.getName())
+                                              .orElseThrow(MemberNotFoundException::new);
+
+        // 작업자 계정으로 접속한건지 검증
+        if(member.getRole() != 1) throw new UnauthorizedRequestException();
+
+        // 본인이 어떤 팀에 속해있는지 확인
+        List<TeamEntity> teamList = teamRepository.findByMemberId(member.getId());
+        // 속해있는 팀이 없을경우 빈값 반환
+        if(teamList.isEmpty()){
+            return new ArrayList<GetTaskResponseDto>();
+
+        }else{
+            List<Long> teamIdList = teamList.stream()
+                                            .map(TeamEntity::getId)
+                                            .toList();
+
+            // 해당 팀이 할당받은 프로젝트와 작업정보 조회
+            return projectRepository.findProjectAndTaskByTeamId(teamIdList);
+        }
+
+
+
     }
+
 
 }
