@@ -32,6 +32,6 @@ public class SignupRequestDto {
     @Pattern(regexp="^010-\\d{4}-\\d{4}$", message="전화번호 형식이 유효하지 않습니다.")
     private String phone;
 
-    private int region;
+    private Long region;
 
 }
