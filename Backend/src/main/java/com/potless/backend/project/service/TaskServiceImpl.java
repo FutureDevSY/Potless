@@ -50,6 +50,7 @@ public class TaskServiceImpl implements TaskService {
             TaskEntity task = TaskEntity.builder()
                     .projectEntity(project)
                     .damageEntity(damage)
+                    .taskOrder(0)
                     .build();
 
             taskRepository.save(task);

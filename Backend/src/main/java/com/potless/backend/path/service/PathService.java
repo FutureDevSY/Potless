@@ -42,7 +42,6 @@ public class PathService {
 
     private final TaskRepository taskRepository;
     private final DamageRepository damageRepository;
-    private final ProjectRepository projectRepository;
 
     @Value("${kakao.api-service-key}")
     private String KAKAO_API_KEY;
@@ -115,10 +114,9 @@ public class PathService {
     }
 
     public void updateOptimalOrder(Long projectId, Location origin) {
-        ProjectEntity projectEntity = projectRepository.findById(projectId)
-                .orElseThrow(ProjectNotFoundException::new);
-        List<TaskEntity> taskEntityList = projectEntity.getTaskEntities();
-        updateOrder(origin, taskEntityList);
+        List<TaskEntity> taskEntityList = taskRepository.findTasksByProjectId(projectId);
+        System.out.println(taskEntityList.size());
+        if (!taskEntityList.isEmpty()) updateOrder(origin, taskEntityList);
     }
 
     public void updateOrder(Location origin, List<TaskEntity> taskEntityList) {
@@ -160,6 +158,7 @@ public class PathService {
                         .retrieve()
                         .bodyToMono(KakaoDistanceResponse.class).log();
                 KakaoDistanceResponse kakaoDistanceResponse = response.block();
+                if (kakaoDistanceResponse.getRoutes().get(0).getResultCode() != 0) continue;
                 int dist = kakaoDistanceResponse.getRoutes().get(0).getSummary().getDistance();
                 distance[i][j] = dist;
                 distance[j][i] = dist;
