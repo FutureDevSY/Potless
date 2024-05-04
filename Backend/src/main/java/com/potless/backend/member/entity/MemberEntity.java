@@ -50,26 +50,26 @@ public class MemberEntity extends MemberBaseEntity {
     private AreaEntity area;
 
     @Builder
-    public MemberEntity(Long id, String memberName, Integer role, String email, String phone, String password, Integer region, ManagerEntity managerEntity) {
+    public MemberEntity(Long id, String memberName, Integer role, String email, String phone, String password, AreaEntity area, ManagerEntity managerEntity) {
         Id = id;
         this.memberName = memberName;
         this.role = role;
         this.email = email;
         this.phone = phone;
         this.password = password;
-        this.region = region;
+        this.area = area;
         this.managerEntity = managerEntity;
 //        this.workerEntity = workerEntity;
     }
 
-    public static MemberEntity of(SignupRequestDto requestDto, String encodedPassword) {
+    public static MemberEntity of(SignupRequestDto requestDto, AreaEntity area, String encodedPassword) {
         return MemberEntity.builder()
                 .email(requestDto.getEmail())
                 .password(encodedPassword)
                 .memberName(requestDto.getMemberName())
                 .role(0)
                 .phone(requestDto.getPhone())
-                .region(requestDto.getRegion())
+                .area(area)
                 .build();
     }
 
