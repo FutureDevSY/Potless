@@ -69,5 +69,9 @@ public class ProjectEntity extends BaseEntity {
     public void changeStatus(Status status) {
         this.status = status;
     }
+
+    public void setTeam(TeamEntity team){
+        this.teamEntity = team;
+    };
 }
 

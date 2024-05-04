@@ -30,7 +30,7 @@ public class TaskEntity extends BaseEntity {
     @JoinColumn(name = "damage_id", nullable = false)
     private DamageEntity damageEntity;
 
-    @Column(name = "task_order", nullable = false)
+    @Column(name = "task_order")
     private int taskOrder;
 
     @Builder
