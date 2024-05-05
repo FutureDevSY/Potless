@@ -63,6 +63,7 @@ pipeline {
         stage('Deploy') {
             steps {
                 script {
+                    sh 'echo Current user is: $(whoami)'
                     sh 'pwd'
                     sh 'if [ -d "/home/ubuntu/B106-DOCKER" ]; then echo "Directory exists"; else echo "Directory does not exist"; fi'
                     dir('/home/ubuntu/B106-DOCKER') {
