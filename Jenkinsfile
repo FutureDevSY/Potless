@@ -63,8 +63,6 @@ pipeline {
         stage('Deploy') {
             steps {
                 script {
-                    sh 'sudo chown -R jenkins:jenkins /home/ubuntu/B106-DOCKER'
-                    sh 'sudo chmod -R 775 /home/ubuntu/B106-DOCKER'
                     dir('/home/ubuntu/B106-DOCKER/') {
                         try {
                             sh 'ls -la'
