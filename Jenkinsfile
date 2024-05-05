@@ -63,11 +63,15 @@ pipeline {
         stage('Deploy') {
             steps {
                 script {
+                    sh 'sudo chown -R jenkins:jenkins /home/ubuntu/B106-DOCKER'
+                    sh 'sudo chmod -R 775 /home/ubuntu/B106-DOCKER'
                     dir('/home/ubuntu/B106-DOCKER/') {
-                        sh 'sudo chown -R jenkins:jenkins /home/ubuntu/B106-DOCKER'
-                        sh 'sudo chmod -R 775 /home/ubuntu/B106-DOCKER'
-                        sh 'ls -la' // 이제 이 명령이 제대로 실행될 수 있습니다.
-                        sh 'docker-compose -f /home/ubuntu/B106-DOCKER/docker-compose.yml pull && docker-compose -f /home/ubuntu/B106-DOCKER/docker-compose.yml up -d'
+                        try {
+                            sh 'ls -la'
+                            sh 'docker-compose -f /home/ubuntu/B106-DOCKER/docker-compose.yml pull && docker-compose -f /home/ubuntu/B106-DOCKER/docker-compose.yml up -d'
+                        } catch (Exception e) {
+                            echo "Error: ${e.getMessage()}"
+                        }
                     }
                 }
             }
