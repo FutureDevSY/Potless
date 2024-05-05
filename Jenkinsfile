@@ -69,7 +69,7 @@ pipeline {
                     sh 'echo "Running as user: $(whoami)"'
                     sh 'echo "Current directory: $(pwd)"'
                     sh 'ls -ld /home/ubuntu/B106-DOCKER'
-                    dir('/home/ubuntu/B106-DOCKER') {
+                    dir('/var/lib/jenkins/workspace/S10P31B106/B106-DOCKER') {
                         sh 'pwd'
                         // sh 'docker-compose -f docker-compose.yml pull && docker-compose -f docker-compose.yml up -d'
                     }
