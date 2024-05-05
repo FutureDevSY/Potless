@@ -64,7 +64,9 @@ pipeline {
             steps {
                 script {
                     dir('/home/ubuntu/B106-DOCKER/') {
-                        sh 'ls -la' // 디렉토리 권한과 내용을 확인
+                        sh 'sudo chown -R jenkins:jenkins /home/ubuntu/B106-DOCKER'
+                        sh 'sudo chmod -R 775 /home/ubuntu/B106-DOCKER'
+                        sh 'ls -la' // 이제 이 명령이 제대로 실행될 수 있습니다.
                         sh 'docker-compose -f /home/ubuntu/B106-DOCKER/docker-compose.yml pull && docker-compose -f /home/ubuntu/B106-DOCKER/docker-compose.yml up -d'
                     }
                 }
