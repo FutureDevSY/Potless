@@ -64,11 +64,7 @@ pipeline {
             steps {
                 script {
                     dir('/home/ubuntu/B106-DOCKER/') {
-                        try {
-                            sh 'docker-compose -f docker-compose.yml pull && docker-compose -f docker-compose.yml up -d'
-                        } catch (Exception e) {
-                            echo "Error: ${e.getMessage()}"
-                        }
+                        sh 'docker-compose -f docker-compose.yml pull && docker-compose -f docker-compose.yml up -d'
                     }
                 }
             }
