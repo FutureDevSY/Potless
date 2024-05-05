@@ -63,7 +63,7 @@ pipeline {
         stage('Deploy') {
             steps {
                 script {
-                    dir('/home/ubuntu/B106-DOCKER/') {
+                    dir('/home/ubuntu/B106-DOCKER') {
                         sh 'docker-compose -f docker-compose.yml pull && docker-compose -f docker-compose.yml up -d'
                     }
                 }
