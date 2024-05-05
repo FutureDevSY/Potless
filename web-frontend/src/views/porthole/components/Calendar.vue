@@ -65,7 +65,7 @@ watch(
 <style scoped>
 .date-picker {
   display: flex;
-  padding: 8px;
+  padding: 5px;
   background-color: #fff;
   width: 350px;
   font-size: 16px;
@@ -76,7 +76,7 @@ watch(
   display: flex;
   align-items: center;
   border: 1px solid #ccc;
-  padding: 10px;
+  padding: 1.1vh;
   cursor: pointer;
 }
 

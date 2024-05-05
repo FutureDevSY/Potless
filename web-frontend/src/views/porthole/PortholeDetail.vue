@@ -48,18 +48,12 @@
           <span class="info-title">경도 좌표</span>
           <span class="infos">{{ pothole_info.dirY }}</span>
         </p>
-        <p>
-          <span class="info-title">마지막 탐지 일시</span>
-          <!-- <span class="infos">{{ pothole_info.create_at }}</span> -->
-        </p>
+        <!-- 버튼 -->
+        <div class="button-container">
+          <button class="back-btn" @click="store.moveBack">뒤로가기</button>
+          <button class="delete-btn" @click="deleteData(pothole_info.id)">삭제하기</button>
+        </div>
       </div>
-    </div>
-    <!-- 버튼 -->
-    <div class="button-container">
-      <button class="back-btn" @click="store.moveBack">뒤로가기</button>
-      <button class="delete-btn" @click="deleteData(pothole_info.id)">
-        삭제하기
-      </button>
     </div>
   </div>
 </template>
@@ -117,10 +111,7 @@ const deleteData = (potholeId) => {
 };
 
 const caruselImage = computed(() => {
-  if (
-    pothole_info.value.imagesResponseDTOS &&
-    pothole_info.value.imagesResponseDTOS.length > 0
-  ) {
+  if (pothole_info.value.imagesResponseDTOS && pothole_info.value.imagesResponseDTOS.length > 0) {
     return pothole_info.value.imagesResponseDTOS[0].url;
   } else {
     return "../../assets/image/default.PNG";
@@ -134,7 +125,7 @@ onMounted(() => {
 
 <style scoped>
 .detail-container {
-  margin: 2vh 10.5vw 0vh 10.5vw;
+  margin: 1vh 10.5vw 0vh 10.5vw;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -144,20 +135,21 @@ onMounted(() => {
   display: grid;
   grid-template-columns: 1fr 1fr;
   width: 100%;
+  height: 52.03vh;
 }
 
 .map {
   display: flex;
   justify-content: center;
   width: 100%;
-  padding-top: 0.6vh;
   align-self: stretch;
+  margin-top: 0px;
+  height: 55.03vh;
 }
 
 .carusel-container {
   display: flex;
   justify-content: center;
-  padding-top: 0.6vh;
   align-self: stretch;
 }
 
@@ -165,20 +157,29 @@ onMounted(() => {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  width: 78vw;
+  width: 57vw;
   border-radius: 4px;
-  margin-top: 1.5vh;
+  margin-top: 2.5vh;
+}
+
+.image {
+  height: 55.03vh;
+  object-fit: cover;
+}
+
+p {
+  margin: 1.9vh 0px;
 }
 
 .info-title {
   color: #959595;
-  font-size: 2vh;
+  font-size: 1.95vh;
   font-weight: bold;
 }
 
 .infos {
   color: #373737;
-  font-size: 2.3vh;
+  font-size: 2vh;
 }
 
 .text-left {
@@ -196,9 +197,10 @@ onMounted(() => {
 
 .button-container {
   display: flex;
-  justify-content: space-between;
+  justify-content: right;
   width: 100%;
-  margin-top: 2vh;
+  margin-top: 6vh;
+  margin-left: 170px;
 }
 
 .back-btn {
@@ -209,8 +211,9 @@ onMounted(() => {
   background-color: #f8f8f8;
   border-radius: 8px;
   color: #373737;
-  border: 1px solid #373737;
+  border: 1px solid #acacac;
   transition: background-color 0.3s;
+  margin-right: 8px;
 }
 
 .back-btn:hover {

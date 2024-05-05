@@ -18,11 +18,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr
-          v-for="task in currentData"
-          :key="task.id"
-          @dblclick="store.moveTaskDetail(task.id)"
-        >
+        <tr v-for="task in currentData" :key="task.id" @click="store.moveTaskDetail(task.id)">
           <td>{{ task.projectName }}</td>
           <td>{{ task.projectSize }} 건</td>
           <td>{{ task.managerName }}</td>
@@ -31,10 +27,7 @@
         </tr>
       </tbody>
     </table>
-    <Pagenation
-      :total-page="totalPage"
-      @update:current-page="handleCurrentPageUpdate"
-    />
+    <Pagenation :total-page="totalPage" @update:current-page="handleCurrentPageUpdate" />
   </div>
 </template>
 
@@ -100,9 +93,7 @@ const takeData = (currentPage) => {
   };
 
   const queryParams = Object.fromEntries(
-    Object.entries(rawParams).filter(
-      ([key, value]) => value !== "" && value != null
-    )
+    Object.entries(rawParams).filter(([key, value]) => value !== "" && value != null)
   );
 
   getTaskList(
