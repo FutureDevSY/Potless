@@ -39,31 +39,33 @@ pipeline {
                 }
             }
         }
-        stage('Build Docker Images') {
-            steps {
-                script {
-                    // Backend 이미지 빌드
-                    dir('Backend') {
-                        sh 'chmod +x ./gradlew'
-                        // Gradle을 사용하여 Spring Boot 애플리케이션 빌드
-                        sh './gradlew clean bootJar'
-                        // Docker 이미지 빌드
-                        sh 'docker build -t ${DOCKER_HUB_USER}/${BUILD_ID}-backend .'
-                        sh 'docker login -u ${DOCKER_HUB_USER} -p ${DOCKER_HUB_PASS}'
-                        sh 'docker push ${DOCKER_HUB_USER}/${BUILD_ID}-backend'
-                    }
-                    // Frontend 이미지 빌드
-                    dir('web-frontend') {
-                        sh 'docker build -t ${DOCKER_HUB_USER}/${BUILD_ID}-frontend .'
-                        sh 'docker push ${DOCKER_HUB_USER}/${BUILD_ID}-frontend'
-                    }
-                }
-            }
-        }
+        // stage('Build Docker Images') {
+        //     steps {
+        //         script {
+        //             // Backend 이미지 빌드
+        //             dir('Backend') {
+        //                 sh 'chmod +x ./gradlew'
+        //                 // Gradle을 사용하여 Spring Boot 애플리케이션 빌드
+        //                 sh './gradlew clean bootJar'
+        //                 // Docker 이미지 빌드
+        //                 sh 'docker build -t ${DOCKER_HUB_USER}/${BUILD_ID}-backend .'
+        //                 sh 'docker login -u ${DOCKER_HUB_USER} -p ${DOCKER_HUB_PASS}'
+        //                 sh 'docker push ${DOCKER_HUB_USER}/${BUILD_ID}-backend'
+        //             }
+        //             // Frontend 이미지 빌드
+        //             dir('web-frontend') {
+        //                 sh 'docker build -t ${DOCKER_HUB_USER}/${BUILD_ID}-frontend .'
+        //                 sh 'docker push ${DOCKER_HUB_USER}/${BUILD_ID}-frontend'
+        //             }
+        //         }
+        //     }
+        // }
         stage('Deploy') {
             steps {
                 script {
+                    sh 'pwd'
                     dir('/home/ubuntu/B106-DOCKER') {
+                        sh 'pwd'
                         sh 'docker-compose -f docker-compose.yml pull && docker-compose -f docker-compose.yml up -d'
                     }
                 }
