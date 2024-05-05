@@ -31,11 +31,10 @@ const updateInput = (event) => {
 }
 
 input[type="text"] {
-  padding: 11px 32px 11px 8px;
+  padding: 1.3vh 2px 1.3vh 8px;
   border: 1px solid #bcbcbc;
   width: 250px;
   font-size: 15px;
-  height: 20px;
 }
 
 input[type="text"]:focus {
@@ -48,6 +47,6 @@ input[type="text"]:focus {
   right: 10px;
   cursor: pointer;
   margin-left: 10px;
-  height: 20px;
+  height: 3vh;
 }
 </style>
