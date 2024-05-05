@@ -7,6 +7,7 @@ import com.potless.backend.global.jwt.service.TokenService;
 import com.potless.backend.member.dto.*;
 import com.potless.backend.member.service.MailService;
 import com.potless.backend.member.service.MemberService;
+import com.potless.backend.project.dto.response.GetTaskResponseDto;
 import com.potless.backend.project.dto.response.ProjectDetailResponseDto;
 import com.potless.backend.project.service.TaskService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -136,7 +137,7 @@ public class MemberController {
     }
 
     @Operation(summary = "작업자 할당 작업 목록 조회", description = "작업자 계정에 할당된 작업 목록을 조회합니다.", responses = {
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "작업 목록 조회 성공", content = @Content(schema = @Schema(implementation = ProjectDetailResponseDto.class)))})
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "작업 목록 조회 성공", content = @Content(schema = @Schema(implementation = GetTaskResponseDto.class)))})
     @GetMapping("/task")
     public ResponseEntity<?> getTaskList(Authentication authentication) {
         return response.success(ResponseCode.TASK_FETCHED, taskService.getTaskList(authentication));
