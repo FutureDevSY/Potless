@@ -66,6 +66,9 @@ pipeline {
                     sh 'echo Current user is: $(whoami)'
                     sh 'pwd'
                     sh 'if [ -d "/home/ubuntu/B106-DOCKER" ]; then echo "Directory exists"; else echo "Directory does not exist"; fi'
+                    sh 'echo "Running as user: $(whoami)"'
+                    sh 'echo "Current directory: $(pwd)"'
+                    sh 'ls -ld /home/ubuntu/B106-DOCKER'
                     dir('/home/ubuntu/B106-DOCKER') {
                         sh 'pwd'
                         // sh 'docker-compose -f docker-compose.yml pull && docker-compose -f docker-compose.yml up -d'
