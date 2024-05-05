@@ -63,8 +63,7 @@ pipeline {
         stage('Deploy') {
             steps {
                 script {
-                    dir('/var/lib/jenkins/workspace/S10P31B106/B106-DOCKER') {
-                        sh 'pwd'
+                    dir('/var/lib/jenkins/workspace/B106-DOCKER') {
                         sh 'docker-compose -f docker-compose.yml pull && docker-compose -f docker-compose.yml up -d'
                     }
                 }
