@@ -64,6 +64,7 @@ pipeline {
             steps {
                 script {
                     sh 'pwd'
+                    sh 'if [ -d "/home/ubuntu/B106-DOCKER" ]; then echo "Directory exists"; else echo "Directory does not exist"; fi'
                     dir('/home/ubuntu/B106-DOCKER') {
                         sh 'pwd'
                         // sh 'docker-compose -f docker-compose.yml pull && docker-compose -f docker-compose.yml up -d'
