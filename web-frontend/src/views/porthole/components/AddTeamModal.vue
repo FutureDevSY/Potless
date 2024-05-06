@@ -12,15 +12,15 @@
       <div v-if="isAddingTeam">
         <AddTeam :is-adding-team="isAddingTeam" @update:isAddingTeam="updateIsAddingTeam" />
       </div>
-      <div v-else>
+      <div class="list-container" v-else>
         <div class="team-list" v-for="team in datas">
           <div class="team-name">{{ team.teamName }}</div>
           <div class="person" v-for="worker in team.workerList">
-            작업자 번호: {{ worker.memberId }} / 작업자 이름:
-            {{ worker.workerName }}
+            <li>작업자 번호: {{ worker.memberId }} / 작업자 이름: {{ worker.workerName }}</li>
           </div>
-          <button @click="deleteTeamEvent(team.teamId)">팀 삭제</button>
-          <hr />
+          <div class="button-wrapper">
+            <button class="delete-btn" @click="deleteTeamEvent(team.teamId)">팀 삭제</button>
+          </div>
         </div>
       </div>
     </div>
@@ -122,14 +122,44 @@ onMounted(() => {
   cursor: pointer;
 }
 
+.list-container {
+  height: 55vh;
+  overflow-y: auto;
+}
+
+.team-list {
+  background-color: #f0f0f0b0;
+  padding: 2vh 1.2vw 2vh 1.2vw;
+  margin-bottom: 1.4vh;
+  border-radius: 8px;
+}
+
+.team-name {
+  font-weight: bold;
+  color: #515151;
+  font-size: 2vh;
+  margin-bottom: 1.4vh;
+}
+
+.person {
+  color: #373737;
+  font-size: 1.8vh;
+  margin-bottom: 0.7vh;
+}
+
+li {
+  margin-left: 2px;
+}
+
+li::marker {
+  color: #151c62;
+}
+
 .add-team-modal {
   margin: 1vh 0px;
   height: 57vh;
   /* overflow-y: auto; */
   /* border: 1px solid black; */
-}
-
-.team-list {
 }
 
 .new-team-btn {
@@ -143,10 +173,32 @@ onMounted(() => {
   color: rgb(255, 255, 255);
   font-weight: bold;
   transition: all 0.3s;
-  margin-top: 2vh;
+  margin-bottom: 1vh;
 }
 
 .new-team-btn:hover {
   background-color: #0e1241;
+}
+
+.button-wrapper {
+  text-align: right;
+  margin-top: -2vh;
+}
+
+.delete-btn {
+  font-size: 1.55vh;
+  padding: 1vh 1.2vw;
+  cursor: pointer;
+  border: none;
+  background-color: #fef1f1;
+  border-radius: 8px;
+  color: #cd0404;
+  border: 1px solid #cd0404;
+  transition: background-color 0.3s;
+  margin-right: 10px;
+}
+
+.delete-btn:hover {
+  background-color: #fccccc;
 }
 </style>
