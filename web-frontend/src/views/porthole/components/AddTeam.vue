@@ -147,7 +147,7 @@ onMounted(() => {
 .add-team-form {
   padding: 20px;
   height: 55vh;
-  background-color: rgba(240, 240, 240, 0.689);
+  background-color: #f0f0f0b0;
   margin: 0vh 0px 1.7vh 0px;
   border-radius: 4px;
   overflow-y: auto;
@@ -156,7 +156,7 @@ onMounted(() => {
 .team-list {
   padding: 20px;
   height: 55vh;
-  background-color: rgba(240, 240, 240, 0.689);
+  background-color: #f0f0f0b0;
   margin: 0vh 0px 1.7vh 0px;
   border-radius: 4px;
   overflow-y: auto;
@@ -226,7 +226,7 @@ li::marker {
   font-size: 1.55vh;
   position: relative;
   overflow: hidden;
-  color: rgb(255, 255, 255);
+  color: #ffffff;
   font-weight: bold;
   transition: all 0.3s;
   margin-top: 2vh;
