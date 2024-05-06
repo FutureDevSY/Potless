@@ -18,7 +18,11 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="task in currentData" :key="task.id" @click="store.moveTaskDetail(task.id)">
+        <tr
+          v-for="task in currentData"
+          :key="task.id"
+          @click="store.moveTaskDetail(task.id)"
+        >
           <td>{{ task.projectName }}</td>
           <td>{{ task.projectSize }} 건</td>
           <td>{{ task.managerName }}</td>
@@ -27,12 +31,15 @@
         </tr>
       </tbody>
     </table>
-    <Pagenation :total-page="totalPage" @update:current-page="handleCurrentPageUpdate" />
+    <Pagenation
+      :total-page="totalPage"
+      @update:current-page="handleCurrentPageUpdate"
+    />
   </div>
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import Calendar from "./components/Calendar.vue";
 import Select from "./components/Select.vue";
 import Input from "./components/Input.vue";
@@ -93,7 +100,9 @@ const takeData = (currentPage) => {
   };
 
   const queryParams = Object.fromEntries(
-    Object.entries(rawParams).filter(([key, value]) => value !== "" && value != null)
+    Object.entries(rawParams).filter(
+      ([key, value]) => value !== "" && value != null
+    )
   );
 
   getTaskList(
@@ -115,6 +124,10 @@ const takeData = (currentPage) => {
     }
   );
 };
+
+onMounted(() => {
+  takeData(0);
+});
 </script>
 
 <style scoped>
