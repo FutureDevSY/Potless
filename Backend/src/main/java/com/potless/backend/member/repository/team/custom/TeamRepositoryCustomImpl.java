@@ -34,19 +34,16 @@ public class TeamRepositoryCustomImpl implements TeamRepositoryCustom {
     }
 
     @Override
-    public List<GetTeamResponseDto> getTeamListByArea(String area) {
+    public List<GetTeamResponseDto> getTeamListByArea(Long areaId) {
         return query.select(Projections.constructor(GetTeamResponseDto.class,
                                         teamEntity.id,
                                         teamEntity.teamName,
                                         managerEntity.areaEntity.id,
                                         managerEntity.areaEntity.areaGu))
                      .from(managerEntity)
-                     .where(managerEntity.areaEntity.id.eq(query.select(areaEntity.id)
-                                                                .from(areaEntity)
-                                                                .where(areaEntity.areaGu.like(area))
-                                                                .fetchOne()))
                      .leftJoin(teamEntity)
                      .on(managerEntity.id.eq(teamEntity.managerEntity.id))
+                     .where(teamEntity.managerEntity.areaEntity.id.eq(areaId))
                      .fetch();
 
     }

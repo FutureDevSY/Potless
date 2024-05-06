@@ -196,10 +196,12 @@ public class TeamServiceImpl implements TeamService{
 
     @Override
     public List<GetTeamResponseDto> getTeam(String area) {
-        teamRepository.getAreaIdByAreaGu(area).orElseThrow(AreaNotFoundException::new);
-        List<GetTeamResponseDto> teamList = teamRepository.getTeamListByArea(area);
+        Long areaId = teamRepository.getAreaIdByAreaGu(area).orElseThrow(AreaNotFoundException::new);
+        log.info("areaId = {}", areaId);
+        List<GetTeamResponseDto> teamList = teamRepository.getTeamListByArea(areaId);
 
         for(GetTeamResponseDto dto : teamList){
+            log.info("teamId = {}", dto.getTeamId());
             dto.setWorkerList(teamRepository.getWorkerListByTeamId(dto.getTeamId()));
         }
 

@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public interface TeamRepositoryCustom {
 
-    public List<GetTeamResponseDto> getTeamListByArea(String area);
+    public List<GetTeamResponseDto> getTeamListByArea(Long areaId);
 
     public Optional<Long> getAreaIdByAreaGu(String area);
 
