@@ -33,9 +33,7 @@ public class TaskController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "task 입력 성공", content = @Content(schema = @Schema(implementation = Long.class)))
     })
     @PostMapping
-    public ResponseEntity<?> addTaskToProject(
-            @Parameter(hidden = true) Authentication authentication,
-            @RequestBody TaskAddRequestDto taskAddRequestDto) {
+    public ResponseEntity<?> addTaskToProject(@Parameter(hidden = true) Authentication authentication, @RequestBody TaskAddRequestDto taskAddRequestDto) {
         List<Long> result = taskService.addTaskToProject(taskAddRequestDto);
         pathService.updateOptimalOrder(result, taskAddRequestDto.getOrigin());
         return response.success(ResponseCode.TASK_DETECTED, result);
@@ -46,8 +44,9 @@ public class TaskController {
     })
     @PatchMapping
     public ResponseEntity<?> deleteProject(
+            @Parameter(hidden = true) Authentication authentication,
             @RequestBody TaskDeleteRequestDto taskDeleteRequestDto
-    ){
+    ) {
         long taskId = taskDeleteRequestDto.getTaskId();
         long projectId = taskService.deleteTask(taskId);
         pathService.updateOptimalOrder(projectId, taskDeleteRequestDto.getOrigin());

@@ -103,9 +103,14 @@ public class TeamServiceImpl implements TeamService{
                 .stream()
                 .flatMap(workerInfoDto -> {
                         MemberEntity workerMember = null;
-                        Long workerMemberId = workerInfoDto.getMemberId();
-                        WorkerEntity emptyTeamWorker = workerRepository.findByMemberIdAndAreaWhereTeamIsEmpty(workerMemberId, area.getId())
-                                                               .orElse(null);
+                        WorkerEntity emptyTeamWorker = null;
+                        Long workerMemberId = null;
+
+                        if(workerInfoDto.getMemberId() != null) {
+                            workerMemberId = workerInfoDto.getMemberId();
+                            emptyTeamWorker = workerRepository.findByMemberIdAndAreaWhereTeamIsEmpty(workerMemberId, area.getId())
+                                                              .orElse(null);
+                        }
 
                         // 작업자의 memberId가 존재하는경우
                         if(workerMemberId != null){
@@ -191,10 +196,12 @@ public class TeamServiceImpl implements TeamService{
 
     @Override
     public List<GetTeamResponseDto> getTeam(String area) {
-        teamRepository.getAreaIdByAreaGu(area).orElseThrow(AreaNotFoundException::new);
-        List<GetTeamResponseDto> teamList = teamRepository.getTeamListByArea(area);
+        Long areaId = teamRepository.getAreaIdByAreaGu(area).orElseThrow(AreaNotFoundException::new);
+        log.info("areaId = {}", areaId);
+        List<GetTeamResponseDto> teamList = teamRepository.getTeamListByArea(areaId);
 
         for(GetTeamResponseDto dto : teamList){
+            log.info("teamId = {}", dto.getTeamId());
             dto.setWorkerList(teamRepository.getWorkerListByTeamId(dto.getTeamId()));
         }
 
