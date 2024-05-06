@@ -1,12 +1,12 @@
 package com.potless.backend.damage.service;
 
+import com.potless.backend.damage.dto.controller.request.AreaDamageCountForDateRequestDTO;
 import com.potless.backend.damage.dto.controller.request.DamageSearchRequestDTO;
 import com.potless.backend.damage.dto.controller.request.DamageVerificationRequestDTO;
 import com.potless.backend.damage.dto.controller.response.DamageResponseDTO;
+import com.potless.backend.damage.dto.service.request.AreaDamageCountForMonthServiceRequestDTO;
 import com.potless.backend.damage.dto.service.request.DamageSetRequestServiceDTO;
-import com.potless.backend.damage.dto.service.response.StatisticCountResponseDTO;
-import com.potless.backend.damage.dto.service.response.StatisticListResponseDTO;
-import com.potless.backend.damage.dto.service.response.StatisticLocationCountResponseDTO;
+import com.potless.backend.damage.dto.service.response.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -34,6 +34,10 @@ public interface IDamageService {
     void setImageForStatus(Long damageId, List<String> fileUrls);
 
     void setWorkDone(Long damageId);
+
+    AreaForDateListResponseDTO getAreaDamageCountForDate(AreaDamageCountForDateRequestDTO areaDamageCountForDateRequestDTO);
+
+    AreaForMonthListResponseDTO getAreaDamageCountForMonth(AreaDamageCountForMonthServiceRequestDTO areaDamageCountForMonthServiceRequestDTO);
 
 //    List<DamageResponseDTO> getWorkDamage(Long memberId);
 }

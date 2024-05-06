@@ -5,8 +5,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.potless.backend.damage.entity.road.DamageEntity;
 import com.potless.backend.damage.repository.DamageRepository;
 import com.potless.backend.global.exception.pothole.PotholeNotFoundException;
+import com.potless.backend.global.exception.project.ProjectNotFoundException;
+import com.potless.backend.global.exception.task.TaskNotFoundException;
 import com.potless.backend.path.dto.*;
+import com.potless.backend.project.entity.ProjectEntity;
 import com.potless.backend.project.entity.TaskEntity;
+import com.potless.backend.project.repository.project.ProjectRepository;
 import com.potless.backend.project.repository.task.TaskRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -56,7 +60,6 @@ public class PathService {
         List<TaskEntity> taskEntityList = taskRepository.findTasksByProjectId(getOptimalPathRequestDto.getProjectId());
         List<Location> taskList = new ArrayList<>();
         for (TaskEntity taskEntity : taskEntityList) {
-            System.out.println(taskEntity.getDamageEntity());
             taskList.add(Location.builder()
                     .x(taskEntity.getDamageEntity().getDirX())
                     .y(taskEntity.getDamageEntity().getDirY())
@@ -71,7 +74,6 @@ public class PathService {
         try {
             Mono<KakaoWaypointResponse> response = webClient.post()
                     .body(BodyInserters.fromValue(objectMapper.writeValueAsString(kakaoWaypointRequest)))
-
                     .retrieve()
                     .bodyToMono(KakaoWaypointResponse.class).log();
             return response.block();
@@ -101,6 +103,44 @@ public class PathService {
         return path;
     }
 
+    public void updateOptimalOrder(List<Long> taskIdList, Location origin) {
+        List<TaskEntity> taskEntityList = new ArrayList<>();
+        for (Long taskId : taskIdList) {
+            TaskEntity taskEntity = taskRepository.findById(taskId)
+                    .orElseThrow(TaskNotFoundException::new);
+            taskEntityList.add(taskEntity);
+        }
+        updateOrder(origin, taskEntityList);
+    }
+
+    public void updateOptimalOrder(Long projectId, Location origin) {
+        List<TaskEntity> taskEntityList = taskRepository.findTasksByProjectId(projectId);
+        System.out.println(taskEntityList.size());
+        if (!taskEntityList.isEmpty()) updateOrder(origin, taskEntityList);
+    }
+
+    public void updateOrder(Location origin, List<TaskEntity> taskEntityList) {
+        List<Location> potholeList = new ArrayList<>();
+        for (TaskEntity taskEntity : taskEntityList) {
+            DamageEntity damageEntity = taskEntity.getDamageEntity();
+            potholeList.add(Location.builder()
+                    .x(damageEntity.getDirX())
+                    .y(damageEntity.getDirY())
+                    .build());
+        }
+
+        int nodeNum = potholeList.size() + 1;
+        int subsetNum = 1 << (nodeNum - 1);
+        getDistance(origin, potholeList, nodeNum, subsetNum);
+        tspAlgorithm(nodeNum, subsetNum);
+        findOptimalPath(nodeNum, subsetNum);
+
+        for (int i = 1; i < nodeNum; i++) {
+            TaskEntity taskEntity = taskEntityList.get(path[i] - 1);
+            taskEntity.changeTaskOrder(i);
+        }
+    }
+
     public void getDistance(Location origin, List<Location> potholeList, int nodeNum, int subsetNum) {
         distance = new int[nodeNum][nodeNum];
         memoization = new int[nodeNum][subsetNum];
@@ -118,67 +158,13 @@ public class PathService {
                         .retrieve()
                         .bodyToMono(KakaoDistanceResponse.class).log();
                 KakaoDistanceResponse kakaoDistanceResponse = response.block();
+                if (kakaoDistanceResponse.getRoutes().get(0).getResultCode() != 0) continue;
                 int dist = kakaoDistanceResponse.getRoutes().get(0).getSummary().getDistance();
                 distance[i][j] = dist;
                 distance[j][i] = dist;
             }
         }
     }
-
-//    public KakaoWaypointResponse getOptimalPath(GetOptimalPathRequest getOptimalPathRequest) {
-//        int nodeNum = getOptimalPathRequest.getPotholeList().size() + 1;
-//        int subsetNum = 1 << (nodeNum - 1);
-//        getDistance(getOptimalPathRequest, nodeNum, subsetNum);
-//        tspAlgorithm(nodeNum, subsetNum);
-//        findOptimalPath(nodeNum, subsetNum);
-//
-//        List<Location> optimalPath = new ArrayList<>();
-//        for (int i = 1; i < nodeNum; i++) {
-//            optimalPath.add(getOptimalPathRequest.getPotholeList().get(path[i]));
-//        }
-//        KakaoWaypointRequest kakaoWaypointRequest = KakaoWaypointRequest.builder()
-//                .origin(getOptimalPathRequest.getOrigin())
-//                .waypoints(optimalPath)
-//                .build();
-//
-//        ObjectMapper objectMapper = new ObjectMapper();
-//        WebClient webClient = webClientUtil.getBaseUrl(WAYPOINT_URL);
-//        try {
-//            Mono<KakaoWaypointResponse> response = webClient.post()
-//                    .body(BodyInserters.fromValue(objectMapper.writeValueAsString(kakaoWaypointRequest)))
-//                    .retrieve()
-//                    .bodyToMono(KakaoWaypointResponse.class).log();
-//            return response.block();
-//        } catch (JsonProcessingException e) {
-//            e.printStackTrace();
-//        }
-//        return null;
-//    }
-//
-//    public void getDistance(GetOptimalPathRequest getOptimalPathRequest, int nodeNum, int subsetNum) {
-//        distance = new int[nodeNum][nodeNum];
-//        memoization = new int[nodeNum][subsetNum];
-//        previousNode = new int[nodeNum][subsetNum];
-//        path = new int[nodeNum + 1];
-//
-//        for (int i = 0; i < nodeNum - 1; i++) {
-//            Location origin = getOptimalPathRequest.getOrigin();
-//            if (i != 0) origin = getOptimalPathRequest.getPotholeList().get(i - 1);
-//            for (int j = i + 1; j < nodeNum; j++) {
-//                Location destination = getOptimalPathRequest.getPotholeList().get(j - 1);
-//
-//                WebClient webClient = webClientUtil.getBaseUrl(DISTANCE_URL + "&origin=" + origin.getX() + "," + origin.getY()
-//                        + "&destination=" + destination.getX() + "," + destination.getY());
-//                Mono<KakaoDistanceResponse> response = webClient.get()
-//                        .retrieve()
-//                        .bodyToMono(KakaoDistanceResponse.class).log();
-//                KakaoDistanceResponse kakaoDistanceResponse = response.block();
-//                int dist = kakaoDistanceResponse.getRoutes().get(0).getSummary().getDistance();
-//                distance[i][j] = dist;
-//                distance[j][i] = dist;
-//            }
-//        }
-//    }
 
     public void tspAlgorithm(int nodeNum, int subsetNum) {
         for (int i = 1; i < nodeNum; i++) memoization[i][0] = distance[i][0];

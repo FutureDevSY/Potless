@@ -48,6 +48,7 @@ public enum ErrorCode {
     MEMBER_NOT_FOUND(HttpStatus.UNAUTHORIZED, "관련 회원 정보를 찾을 수 없습니다."),
     MANAGER_NOT_FOUND(HttpStatus.UNAUTHORIZED, "관련 매니저 정보를 찾을 수 없습니다."),
     LOGIN_AUTH_UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "잘못된 권한을 가진 계정의 로그인 시도입니다."),
+    UNAUTHORIZED_ACCESS_TO_SERVICE(HttpStatus.UNAUTHORIZED, "잘못된 권한을 가진 계정의 요청 시도입니다. 권한을 확인해주세요."),
 
     // 포트홀 관련 예외 처리
     POTHOLE_NOT_FOUND(HttpStatus.UNAUTHORIZED, "관련 포트홀 정보를 찾을 수 없습니다."),
@@ -62,6 +63,7 @@ public enum ErrorCode {
 
     // 작업 관련 예외 처리
     TASK_NOT_FOUND(HttpStatus.UNAUTHORIZED,"작업 정보를 찾을 수 없습니다."),
+    CREATE_TEAM_FAILED(HttpStatus.UNAUTHORIZED, "관리자 본인 해당 지역구의 팀만 생성할 수 있습니다."),
 
     // AWS ERROR
     FAILED_TO_UPLOAD(HttpStatus.INTERNAL_SERVER_ERROR, "S3 이미지 저장에 실패했습니다.");

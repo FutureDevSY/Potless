@@ -17,5 +17,6 @@ public interface WorkerRepositoryCustom {
 
     public List<WorkerEntity> findAllByteamId(Long teamId);
 
-    public Optional<WorkerEntity> findByMemberId(Long memberId);
+    public Optional<WorkerEntity> findByMemberIdAndAreaWhereTeamIsEmpty(Long memberId, Long areaId);
+
 }

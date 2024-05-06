@@ -6,6 +6,7 @@ import com.potless.backend.damage.entity.enums.Status;
 import com.potless.backend.damage.entity.road.QDamageEntity;
 import com.potless.backend.damage.entity.road.QImageEntity;
 import com.potless.backend.project.dto.request.ProjectListRequestDto;
+import com.potless.backend.project.dto.response.GetTaskResponseDto;
 import com.potless.backend.project.dto.response.ProjectDetailResponseDto;
 import com.potless.backend.project.dto.response.ProjectListResponseDto;
 import com.potless.backend.project.entity.ProjectEntity;
@@ -15,6 +16,7 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -23,6 +25,12 @@ import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
 import java.util.List;
+
+import static com.potless.backend.damage.entity.road.QDamageEntity.damageEntity;
+import static com.potless.backend.damage.entity.road.QImageEntity.imageEntity;
+import static com.potless.backend.member.entity.QTeamEntity.teamEntity;
+import static com.potless.backend.project.entity.QProjectEntity.projectEntity;
+import static com.potless.backend.project.entity.QTaskEntity.taskEntity;
 
 @Slf4j
 public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
@@ -35,10 +43,10 @@ public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
 
     @Override
     public ProjectDetailResponseDto getProjectDetail(Long projectId) {
-        QProjectEntity project = QProjectEntity.projectEntity;
-        QDamageEntity damage = QDamageEntity.damageEntity;
-        QImageEntity image = QImageEntity.imageEntity;
-        QTaskEntity task = QTaskEntity.taskEntity;
+        QProjectEntity project = projectEntity;
+        QDamageEntity damage = damageEntity;
+        QImageEntity image = imageEntity;
+        QTaskEntity task = taskEntity;
 
         ProjectEntity projectEntity = queryFactory
                 .selectFrom(project)
@@ -93,10 +101,9 @@ public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
         );
     }
 
-
     @Override
     public Page<ProjectListResponseDto> findProjectAll(Long managerId, ProjectListRequestDto projectListRequestDto, Pageable pageable) {
-        QProjectEntity project = QProjectEntity.projectEntity;
+        QProjectEntity project = projectEntity;
         BooleanBuilder builder = new BooleanBuilder();
 
 
@@ -132,6 +139,51 @@ public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
         long total = (countResult != null) ? countResult : 0;
         return new PageImpl<>(results, pageable, total);
     }
+
+    @Override
+    public List<GetTaskResponseDto> findProjectAndTaskByTeamId(List<Long> teamIdList) {
+        List<GetTaskResponseDto> responseDtoList =
+                queryFactory.select(Projections.constructor(GetTaskResponseDto.class,
+                            projectEntity.teamEntity.id,
+                            projectEntity.id,
+                            projectEntity.projectName,
+                            projectEntity.projectDate,
+                            projectEntity.projectSize,
+                            projectEntity.createdDateTime
+                ))
+                .from(projectEntity)
+                .join(teamEntity).on(teamEntity.id.eq(projectEntity.teamEntity.id))
+                .where(projectEntity.teamEntity.id.in(teamIdList))
+                .fetch();
+
+        for(GetTaskResponseDto dto : responseDtoList){
+            List<DamageResponseDTO> damageList =
+                    queryFactory.select(Projections.constructor(DamageResponseDTO.class, damageEntity))
+                                .from(taskEntity)
+                                .join(damageEntity).on(taskEntity.damageEntity.id.eq(damageEntity.id))
+                                .where(taskEntity.projectEntity.id.eq(dto.getProjectId()))
+                                .orderBy(taskEntity.taskOrder.asc())
+                                .fetch();
+
+            for (DamageResponseDTO damageResponseDTO : damageList) {
+                List<ImagesResponseDTO> imagesForDamage = queryFactory
+                        .select(Projections.constructor(ImagesResponseDTO.class,
+                                imageEntity.id,
+                                imageEntity.url,
+                                imageEntity.order))
+                        .from(imageEntity)
+                        .where(imageEntity.damageEntity.id.eq(damageResponseDTO.getId()))
+                        .fetch();
+                damageResponseDTO.setImagesResponseDTOS(imagesForDamage);
+            }
+            dto.setDamangeResponseDtoList(damageList);
+        }
+
+        return responseDtoList;
+    }
+
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     //매니저
     private BooleanExpression managerIdEquals(QProjectEntity project, Long managerId) {
