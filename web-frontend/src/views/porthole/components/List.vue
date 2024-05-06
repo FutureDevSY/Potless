@@ -303,7 +303,7 @@ tbody tr:hover {
 
 .modal-content {
   background-color: white;
-  margin: 10% auto;
+  margin: 16vh auto;
   padding: 0vh 1.8vw 6vh 1.8vw;
   border: 1px solid #dddddda1;
   width: 40vw;
