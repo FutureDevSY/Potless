@@ -2,14 +2,11 @@ package com.potless.backend.damage.controller;
 
 
 import com.potless.backend.aws.service.AwsService;
-import com.potless.backend.damage.dto.controller.request.DamageSearchRequestDTO;
-import com.potless.backend.damage.dto.controller.request.DamageSetRequestDTO;
-import com.potless.backend.damage.dto.controller.request.DamageVerificationRequestDTO;
+import com.potless.backend.damage.dto.controller.request.*;
 import com.potless.backend.damage.dto.controller.response.DamageResponseDTO;
+import com.potless.backend.damage.dto.service.request.AreaDamageCountForMonthServiceRequestDTO;
 import com.potless.backend.damage.dto.service.request.DamageSetRequestServiceDTO;
-import com.potless.backend.damage.dto.service.response.StatisticCountResponseDTO;
-import com.potless.backend.damage.dto.service.response.StatisticListResponseDTO;
-import com.potless.backend.damage.dto.service.response.StatisticLocationCountResponseDTO;
+import com.potless.backend.damage.dto.service.response.*;
 import com.potless.backend.damage.dto.service.response.kakao.Address;
 import com.potless.backend.damage.dto.service.response.kakao.RoadAddress;
 import com.potless.backend.damage.entity.enums.Status;
@@ -19,7 +16,6 @@ import com.potless.backend.damage.service.KakaoService;
 import com.potless.backend.global.exception.pothole.PotholeNotFoundException;
 import com.potless.backend.global.format.code.ApiResponse;
 import com.potless.backend.global.format.response.ResponseCode;
-import com.potless.backend.path.dto.KakaoWaypointResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -36,6 +32,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -56,8 +54,46 @@ public class DamageController {
     private final IVerificationService iVerificationService;
     private final AwsService awsService;
 
+    @Operation(summary = "구별 월별 지정 발생한 도로 파손", description = "구별 월별 지정 발생한 도로 파손  (START 만 입력시 단일 조회 START, END 입력시 START ~ END 조회)", responses = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "포트홀 구별 통계 조회 성공", content = @Content(schema = @Schema(implementation = AreaForMonthListResponseDTO.class)))
+    })
+    @GetMapping("damage/month/area")
+    public ResponseEntity<?> getAreaDamageCountForMonth(
+            Authentication authentication,
+            @ModelAttribute AreaDamageCountForMonthRequestDTO areaDamageCountForMonthRequestDTO
+    ) {
+        log.info("areaDamageCountForMonthRequestDTO = {}", areaDamageCountForMonthRequestDTO);
+
+        // DTO 변환 로직
+        YearMonth startMonth = YearMonth.parse(areaDamageCountForMonthRequestDTO.getStart(), DateTimeFormatter.ofPattern("yyyy-MM"));
+        YearMonth endMonth = areaDamageCountForMonthRequestDTO.getEnd() != null ? YearMonth.parse(areaDamageCountForMonthRequestDTO.getEnd(), DateTimeFormatter.ofPattern("yyyy-MM")) : startMonth;
+
+        AreaDamageCountForMonthServiceRequestDTO serviceRequestDTO = AreaDamageCountForMonthServiceRequestDTO.builder()
+                .start(startMonth)
+                .end(endMonth)
+                .build();
+
+        // 서비스 계층 호출
+        AreaForMonthListResponseDTO areaDamageCountForMonth = iDamageService.getAreaDamageCountForMonth(serviceRequestDTO);
+
+        // 결과 반환
+        return response.success(ResponseCode.POTHOLE_AREA_DATE_COUNT, areaDamageCountForMonth);
+    }
+
+    @Operation(summary = "구별 날짜 지정 발생한 도로 파손", description = "구별 날짜 지정 발생한 도로 파손  ( START 만 입력시 단일 조회 START, END 입력시 START ~ END 조회 )", responses = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "포트홀 구별 통계 조회 성공", content = @Content(schema = @Schema(implementation = DamageResponseDTO.class)))
+    })
+    @GetMapping("damage/date/area")
+    public ResponseEntity<?> getAreaDamageCountForDate(
+            Authentication authentication,
+            @ModelAttribute AreaDamageCountForDateRequestDTO areaDamageCountForDateRequestDTO
+    ) {
+        AreaForDateListResponseDTO areaDamageCountForDate = iDamageService.getAreaDamageCountForDate(areaDamageCountForDateRequestDTO);
+        return response.success(ResponseCode.POTHOLE_AREA_DATE_COUNT, areaDamageCountForDate);
+    }
+
     @Operation(summary = "Damage 리스트 조회", description = "Damage 리스트를 조회합니다.", responses = {
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "최적 경로 조회 성공", content = @Content(schema = @Schema(implementation = DamageResponseDTO.class)))
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "포트홀 조회 성공", content = @Content(schema = @Schema(implementation = DamageResponseDTO.class)))
     })
     @GetMapping
     public ResponseEntity<?> getDamages(

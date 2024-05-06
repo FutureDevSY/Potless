@@ -2,6 +2,7 @@ package com.potless.backend.member.service;
 
 import com.potless.backend.damage.entity.area.AreaEntity;
 import com.potless.backend.damage.repository.AreaRepository;
+import com.potless.backend.global.exception.member.InvalidCreateTeamAuthException;
 import com.potless.backend.global.exception.member.MemberNotFoundException;
 import com.potless.backend.global.exception.member.TeamNotFoundException;
 import com.potless.backend.global.exception.project.AreaNotFoundException;
@@ -13,6 +14,7 @@ import com.potless.backend.member.entity.ManagerEntity;
 import com.potless.backend.member.entity.MemberEntity;
 import com.potless.backend.member.entity.TeamEntity;
 import com.potless.backend.member.entity.WorkerEntity;
+import com.potless.backend.member.repository.manager.ManagerRepository;
 import com.potless.backend.member.repository.member.MemberRepository;
 import com.potless.backend.member.repository.team.TeamRepository;
 import com.potless.backend.member.repository.worker.WorkerRepository;
@@ -45,6 +47,7 @@ public class TeamServiceImpl implements TeamService{
     private final MemberService memberService;
     private final AreaRepository areaRepository;
     private final MemberRepository memberRepository;
+    private final ManagerRepository managerRepository;
 
 
     @Override
@@ -55,43 +58,80 @@ public class TeamServiceImpl implements TeamService{
         TeamEntity team = teamRepository.findById(teamAddRequestDto.getTeamId())
                 .orElseThrow(TeamNotFoundException::new);
 
-        ProjectEntity saveProject = project.builder()
-                .teamEntity(team)
-                .build();
-        projectRepository.save(saveProject);
-        return saveProject.getId();
+//        ProjectEntity saveProject = project.builder()
+//                .teamEntity(team)
+//                .build();
+        project.setTeam(team);
+
+        return project.getId();
     }
 
     @Override
     public Long createTeam(Authentication authentication, CreateTeamRequestDto createTeamRequestDto) {
         MemberEntity member = memberService.findMember(authentication.getName());
         AreaEntity area = areaRepository.findByAreaGu(createTeamRequestDto.getArea()).orElseThrow(AreaNotFoundException::new);
+        ManagerEntity manager = managerRepository.findByMemberId(member.getId()).orElse(null);
+
+        log.info("areaId = {}", area.getId());
+        log.info("manager areaId = {}", manager.getAreaEntity().getId());
+
+        //매니저 아이디가 이미 있는데 매니저의 지역구과 생성하려는 팀의 지역구가 일치하지 않는경우
+        if(manager != null){
+            if(!area.getId().equals(manager.getAreaEntity().getId())){
+                throw new InvalidCreateTeamAuthException();
+            }
+        }else{
+            // 기존에 매니저 정보가 없는경우 새로 생성
+            manager = ManagerEntity.builder()
+                                   .areaEntity(area)
+                                   .memberEntity(member)
+                                   .build();
+        }
 
         TeamEntity newTeam =
                 TeamEntity.builder()
-                          .managerEntity(ManagerEntity.builder()
-                                                      .areaEntity(area)
-                                                      .memberEntity(member)
-                                                      .build())
+                          .managerEntity(manager)
                           .teamName(createTeamRequestDto.getTeamName())
                           .build();
 
         teamRepository.save(newTeam);
 
-        // 팀 worker 정보 생성, memberNameList 없는경우 고려하기!!
+        // 팀 worker 정보 생성
+        // 팀 정보를 바꾸면 안되고 새로 생성해야함
         List<WorkerEntity> workerEntityList = createTeamRequestDto
                 .getWorkerList()
                 .stream()
-                .map(workerInfoDto -> {
-                        Long workerMemberId = workerInfoDto.getMemberId();
+                .flatMap(workerInfoDto -> {
                         MemberEntity workerMember = null;
+                        Long workerMemberId = workerInfoDto.getMemberId();
+                        WorkerEntity emptyTeamWorker = workerRepository.findByMemberIdAndAreaWhereTeamIsEmpty(workerMemberId, area.getId())
+                                                               .orElse(null);
 
-                        if(workerInfoDto.getMemberId() != null){
+                        // 작업자의 memberId가 존재하는경우
+                        if(workerMemberId != null){
                             workerMember = memberRepository.findById(workerMemberId)
                                                            .orElseThrow(MemberNotFoundException::new);
-                        }
-                        // 기존 작업자에 추가되어있지 않다면 새로 생성
-                        if(workerInfoDto.getMemberId() == null || workerRepository.findByMemberId(workerMemberId).isEmpty()){
+
+                            // worker로 등록되어있지만 team이 할당되지 않은경우 수정, team 할당
+                            if(emptyTeamWorker != null){
+                                emptyTeamWorker.changeTeam(newTeam);
+                                return Stream.of(emptyTeamWorker);
+
+                            }
+                            // worker로 등록되어있지만 team이 할당되어 있는 경우 새로 생성
+                            else{
+                                WorkerEntity newWorker = WorkerEntity.builder()
+                                                                     .teamEntity(newTeam)
+                                                                     .workerName(workerInfoDto.getWorkerName())
+                                                                     // null 혹은 memberId 참조
+                                                                     .memberEntity(workerMember)
+                                                                     .areaEntity(area)
+                                                                     .build();
+                                return Stream.of(newWorker);
+                            }
+
+                        // 작업자의 memberId값이 비어있는경우는 새로 생성
+                        }else {
                             WorkerEntity newWorker = WorkerEntity.builder()
                                                                  .teamEntity(newTeam)
                                                                  .workerName(workerInfoDto.getWorkerName())
@@ -99,17 +139,7 @@ public class TeamServiceImpl implements TeamService{
                                                                  .memberEntity(workerMember)
                                                                  .areaEntity(area)
                                                                  .build();
-
-                            return newWorker;
-
-                        // 기존 작업자에 추가되어있다면 정보 수정
-                        } else {
-                            WorkerEntity existWorker = workerRepository.findByMemberId(workerMemberId)
-                                                                       .orElseThrow(MemberNotFoundException::new);
-                            existWorker.changeTeam(newTeam);
-                            existWorker.changeArea(area);
-
-                            return existWorker;
+                            return Stream.of(newWorker);
                         }
 
                 }).collect(Collectors.toList());
@@ -204,6 +234,7 @@ public class TeamServiceImpl implements TeamService{
         }
 
         teamRepository.deleteById(teamId);
+
         return teamId;
     }
 }

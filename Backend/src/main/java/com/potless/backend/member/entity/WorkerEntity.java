@@ -19,7 +19,7 @@ public class WorkerEntity extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST}, orphanRemoval = true)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST})
     @JoinColumn(name = "member_id")
     private MemberEntity memberEntity;
 
@@ -45,10 +45,6 @@ public class WorkerEntity extends BaseEntity {
 
     public void changeTeam(TeamEntity teamEntity) {
         this.teamEntity = teamEntity;
-    }
-
-    public void changeArea(AreaEntity areaEntity) {
-        this.areaEntity = areaEntity;
     }
 
     public void setTeamNull(){

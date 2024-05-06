@@ -1,5 +1,6 @@
 package com.potless.backend.project.entity;
 
+import com.potless.backend.damage.entity.enums.Status;
 import com.potless.backend.damage.entity.road.DamageEntity;
 import com.potless.backend.global.entity.BaseEntity;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -29,7 +30,7 @@ public class TaskEntity extends BaseEntity {
     @JoinColumn(name = "damage_id", nullable = false)
     private DamageEntity damageEntity;
 
-    @Column(name = "task_order", nullable = false)
+    @Column(name = "task_order")
     private int taskOrder;
 
     @Builder
@@ -37,6 +38,10 @@ public class TaskEntity extends BaseEntity {
         this.id = id;
         this.projectEntity = projectEntity;
         this.damageEntity = damageEntity;
+        this.taskOrder = taskOrder;
+    }
+
+    public void changeTaskOrder(int taskOrder) {
         this.taskOrder = taskOrder;
     }
 }

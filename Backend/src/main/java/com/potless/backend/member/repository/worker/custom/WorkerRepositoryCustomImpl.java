@@ -1,7 +1,6 @@
 package com.potless.backend.member.repository.worker.custom;
 
 import com.potless.backend.member.dto.WorkerInfoDto;
-import com.potless.backend.member.entity.MemberEntity;
 import com.potless.backend.member.entity.TeamEntity;
 import com.potless.backend.member.entity.WorkerEntity;
 import com.querydsl.core.types.Path;
@@ -70,11 +69,14 @@ public class WorkerRepositoryCustomImpl implements WorkerRepositoryCustom {
     }
 
     @Override
-    public Optional<WorkerEntity> findByMemberId(Long memberId) {
-        return Optional.ofNullable(query.selectFrom(workerEntity)
-                           .where(workerEntity.memberEntity.Id.eq(memberId))
-                           .fetchOne());
+     public Optional<WorkerEntity> findByMemberIdAndAreaWhereTeamIsEmpty(Long memberId, Long areaId) {
+        return Optional.ofNullable(query.select(workerEntity)
+                                        .from(workerEntity)
+                                        .where(workerEntity.memberEntity.Id.eq(memberId)
+                                            .and(workerEntity.areaEntity.id.eq(areaId)))
+                                        .fetchFirst());
     }
+
 
 
 }

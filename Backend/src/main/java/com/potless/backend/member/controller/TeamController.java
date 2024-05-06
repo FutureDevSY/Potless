@@ -34,7 +34,7 @@ public class TeamController {
     @PostMapping("/project")
     public ResponseEntity<?> addTeamToProject(@RequestBody TeamAddRequestDto teamAddRequestDto) {
         Long result = teamService.addTeamToProject(teamAddRequestDto);
-        return response.success(ResponseCode.TEAM_CONNECT_TO_PROJECT);
+        return response.success(ResponseCode.TEAM_CONNECT_TO_PROJECT, result);
     }
 
     @PostMapping
