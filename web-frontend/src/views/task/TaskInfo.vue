@@ -27,7 +27,7 @@
           <td>{{ task.projectSize }} 건</td>
           <td>{{ task.managerName }}</td>
           <td>{{ task.projectDate }}</td>
-          <td>{{ task.registrationTime }}</td>
+          <td>{{ task.createdDate }}</td>
         </tr>
       </tbody>
     </table>

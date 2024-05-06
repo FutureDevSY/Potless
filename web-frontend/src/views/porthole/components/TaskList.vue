@@ -11,7 +11,7 @@
         <td
           class="add-column"
           v-if="isAddingTasks"
-          @click.stop="incrementProjectEnd(task, $event)"
+          @click="assignPothole(task.projectId)"
         >
           추가✅
         </td>
@@ -43,7 +43,7 @@
 import { ref, computed, onMounted } from "vue";
 import TaskDetail from "./TaskDetail.vue";
 import Teamlist from "./teamData.json";
-import { postTaskCreate } from "../../../api/task/taskDetail";
+import { postTaskCreate, postPothole } from "../../../api/task/taskDetail";
 import { getTaskList } from "../../../api/task/taskList";
 import { useAuthStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
@@ -54,7 +54,7 @@ const { accessToken } = storeToRefs(store2);
 const props = defineProps({
   isAddingTasks: Boolean,
   toggleModal: Function,
-  selectedCount: Number,
+  selectedIds: Array,
 });
 
 const teamlist = ref(Teamlist);
@@ -114,10 +114,25 @@ function saveDetail() {
 }
 
 // 작업 보고서 추가
-function incrementProjectEnd(task, event) {
-  event.stopPropagation();
-  task.projectEnd += props.selectedCount;
-}
+const assignPothole = (taskId) => {
+  const damageIdsArray = Array.from(props.selectedIds);
+  const potholeData = ref({
+    projectId: taskId,
+    damageId: damageIdsArray,
+  });
+
+  postPothole(
+    potholeData,
+    (res) => {
+      if (res.data.status == "SUCCESS") {
+        console.log(res.data.message);
+      }
+    },
+    (error) => {
+      console.log(error);
+    }
+  );
+};
 
 const takeData = () => {
   const rawParams = {
