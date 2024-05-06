@@ -1,12 +1,12 @@
 <template>
   <div>
     <div class="main-navbar">
-      <div class="logo text-title" @click="store.moveHome">POTLESS</div>
+      <div class="logo text-title" @click="store.movePorthole">POTLESS</div>
       <!-- <button class="logout text-title" @click="store.moveLogin">
         <img src="@/assets/icon/enter.png" alt="#" />
         <div>로그인</div>
       </button> -->
-      <button class="logout text-title" @click="store.moveLogin">
+      <button class="logout text-title" @click="clickLogout">
         <img src="@/assets/icon/out.png" alt="#" />
         <div>로그아웃</div>
       </button>
@@ -22,8 +22,35 @@
 
 <script setup>
 import { useMoveStore } from "../../stores/move.js";
+import { useAuthStore } from "../../stores/user.js";
+import { storeToRefs } from "pinia";
+import { logout } from "../../api/auth/auth.js";
 
 const store = useMoveStore();
+const store2 = useAuthStore();
+const { accessToken } = storeToRefs(store2);
+
+const clickLogout = () => {
+  logout(
+    accessToken.value,
+    (res) => {
+      if (res.data.status == "SUCCESS") {
+        console.log(res.data.message);
+        store2.logoutfc();
+        store.moveHome();
+      } else {
+        store2.logoutfc();
+        store.moveHome();
+        console.log(res);
+      }
+    },
+    (error) => {
+      store2.logoutfc();
+      store.moveHome();
+      console.log(error.response.data.message);
+    }
+  );
+};
 </script>
 
 <style scoped>

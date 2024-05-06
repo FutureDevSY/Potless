@@ -1,10 +1,10 @@
 <template>
   <div class="task-info-container">
     <div class="search-tab">
-      <Calendar />
-      <Select />
-      <Input />
-      <button class="search-button" @click="search">검색</button>
+      <Calendar @update:dateRange="handleDateRangeUpdate" />
+      <Select @statusSelected="handleStatus" />
+      <Input @update:value="handleInputValue" />
+      <button class="search-button" @click="takeData(0)">검색</button>
     </div>
 
     <table>
@@ -18,38 +18,120 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="task in currentTasks" :key="task.id" @dblclick="store.moveTaskDetail(task.id)">
-          <td>{{ task.serviceSubCategory }}</td>
-          <td>{{ task.projectEnd }} 건</td>
-          <td>{{ task.sinceConstruction }}</td>
-          <td>{{ task.workOrder }}</td>
-          <td>{{ task.registrationTime }}</td>
+        <tr
+          v-for="task in currentData"
+          :key="task.id"
+          @click="store.moveTaskDetail(task.id)"
+        >
+          <td>{{ task.projectName }}</td>
+          <td>{{ task.projectSize }} 건</td>
+          <td>{{ task.managerName }}</td>
+          <td>{{ task.projectDate }}</td>
+          <td>{{ task.createdDate }}</td>
         </tr>
       </tbody>
     </table>
-    <Pagenation @update:current-page="setCurrentPage" :totalpage="totalPage" />
+    <Pagenation
+      :total-page="totalPage"
+      @update:current-page="handleCurrentPageUpdate"
+    />
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref, onMounted } from "vue";
 import Calendar from "./components/Calendar.vue";
 import Select from "./components/Select.vue";
 import Input from "./components/Input.vue";
 import Pagenation from "./components/Pagenation.vue";
-import data from "./TaskData.json";
 import { useMoveStore } from "../../stores/move.js";
+import { useAuthStore } from "@/stores/user";
+import { storeToRefs } from "pinia";
+import { getTaskList } from "../../api/task/taskList";
+import { getTeamList } from "../../api/team/team";
 
 const store = useMoveStore();
+const store2 = useAuthStore();
+const { accessToken, areaName } = storeToRefs(store2);
+const currentData = ref(null);
+const totalPage = ref(null);
+
+
+
+
+// 상태 검색
+const selectedStatus = ref("작업전");
+const handleStatus = (option) => {
+  selectedStatus.value = option;
+};
+
+// 날짜 검색
+const formatDate = (date) => {
+  if (!date) return null;
+  return date.toISOString().split("T")[0];
+};
+const dateRange = ref({ start: null, end: null });
+
+const handleDateRangeUpdate = (newRange) => {
+  dateRange.value = newRange;
+};
+
+// 쿼리 검색
+const inputValue = ref("");
+const handleInputValue = (value) => {
+  inputValue.value = value;
+};
+
+// 페이지네이션
 const currentPage = ref(1);
 function setCurrentPage(page) {
   currentPage.value = page;
 }
-const taskData = data;
-const totalPage = Object.keys(data).length;
 
-const currentTasks = computed(() => {
-  return taskData[currentPage.value] || [];
+const handleCurrentPageUpdate = (newPage) => {
+  setCurrentPage(newPage);
+  takeData(newPage);
+};
+
+const takeData = (currentPage) => {
+  const rawParams = {
+    areaId: store2.areaId,
+    start: formatDate(dateRange.value.start),
+    end: formatDate(dateRange.value.end),
+    status: selectedStatus.value,
+    word: inputValue.value,
+    page: currentPage,
+  };
+
+  const queryParams = Object.fromEntries(
+    Object.entries(rawParams).filter(
+      ([key, value]) => value !== "" && value != null
+    )
+  );
+
+  getTaskList(
+    accessToken.value,
+    queryParams,
+    (res) => {
+      console.log(res);
+      if (res.data.status == "SUCCESS") {
+        console.log(res.data.message);
+        currentData.value = res.data.data.content;
+        totalPage.value = res.data.data.totalPages;
+      } else {
+        console.log(res.data.message);
+      }
+    },
+    (error) => {
+      console.log(error);
+      console.log(error.response.data.message);
+    }
+  );
+};
+
+onMounted(() => {
+  takeData(0);
+  
 });
 </script>
 

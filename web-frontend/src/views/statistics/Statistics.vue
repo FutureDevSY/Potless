@@ -39,12 +39,99 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import IncidentGraph from "./components/IncidentGraph.vue";
 import IncidentReport from "./components/IncidentReport.vue";
 import RoadTypeIncidentsGraphVue from "./components/RoadTypeIncidentsGraph.vue";
 import TownTypeIncidentsGraph from "./components/TownTypeIncidentsGraph.vue";
 import WorkChart from "./components/WorkChart.vue";
+import { useAuthStore } from "@/stores/user";
+import { storeToRefs } from "pinia";
+import {
+  getGuList,
+  getDongList,
+  getTotalDongList,
+  getDongDetail,
+} from "../../api/statistics/statistics";
+
+const store = useAuthStore();
+const { accessToken, areaId } = storeToRefs(store);
+
+// 대전 시 전체 구 데이터
+const GuData = ref(null);
+
+// 포트홀 구에 속한 동에 대한 통계 조회 (구 1개, 동 여러개)
+const DongListData = ref(null);
+
+// 구 별로 상관없이 모든 동의 전체 통계 출력
+const TotalDongListData = ref(null);
+
+// 동 이름 검색하면 해당 동의 통계 출력
+const DongDetailData = ref(null);
+
+const TakeStatistics = () => {
+  getGuList(
+    accessToken.value,
+    (res) => {
+      console.log("구 전체 리스트 요청", res);
+      if (res.data.status == "SUCCESS") {
+        console.log(res.data.message);
+        GuData.value = res.data.data;
+      }
+    },
+    (error) => {
+      console.log(error);
+      console.log(error.response.data.message);
+    }
+  );
+
+  getDongList(
+    accessToken.value,
+    areaId.value,
+    (res) => {
+      console.log("동 리스트 요청", res);
+      if (res.data.status == "SUCCESS") {
+        console.log(res.data.message);
+        DongListData.value = res.data.data;
+      }
+    },
+    (error) => {
+      console.log(error);
+      console.log(error.response.data.message);
+    }
+  );
+
+  getTotalDongList(
+    accessToken.value,
+    (res) => {
+      console.log("동 전체 정보", res);
+      if (res.data.status == "SUCCESS") {
+        console.log(res.data.message);
+        TotalDongListData.value = res.data.data;
+      }
+    },
+    (error) => {
+      console.log(error);
+      console.log(error.response.data.message);
+    }
+  );
+
+  // 동 쿼리 검색인데 쿼리 검색 뭐로 해야할지 안정해져있음
+  // getDongDetail(
+  //   accessToken.value,
+  //   (res) => {
+  //     console.log(res);
+  //     if (res.data.status == "SUCCESS") {
+  //       console.log(res.data.message);
+  //       DongDetailData.value = res.data.data;
+  //     }
+  //   },
+  //   (error) => {
+  //     console.log(error);
+  //     console.log(error.response.data.message);
+  //   }
+  // );
+};
 
 const dataItems = [
   { title: "오늘", number: "250", subtitle: "전날 대비", percent: "+30%" },
@@ -53,6 +140,9 @@ const dataItems = [
 ];
 
 const searchTerm = ref("");
+onMounted(() => {
+  TakeStatistics();
+});
 </script>
 
 <style scoped>

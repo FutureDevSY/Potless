@@ -18,7 +18,7 @@
         <tr
           v-for="porthole in portholes"
           :key="porthole.id"
-          @dblclick="store.movePortholeDetail(porthole.damageId)"
+          @click="store.movePortholeDetail(porthole.damageId)"
         >
           <td class="detect-column">
             <div>{{ porthole.createAt.split(" ")[0] }}</div>
@@ -94,20 +94,21 @@ function openModal(img) {
 
 <style scoped>
 .danger-column {
-  display: flex;
-  justify-content: center;
+  text-align: center;
+  vertical-align: middle;
   padding: 20px 0px;
-  border-bottom: none;
 }
 
 .danger-type {
-  align-content: center;
+  display: inline-block;
   width: 42px;
   height: 42px;
-  border-radius: 100px;
+  border-radius: 100%;
   color: #ffffff;
   font-size: 19px;
   font-weight: bold;
+  line-height: 42px;
+  background-color: inherit;
 }
 
 .serious {

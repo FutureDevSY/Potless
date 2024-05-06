@@ -7,7 +7,7 @@ const getTaskList = async (accessToken, queryParams, success, fail) => {
   await local
     .get(`/project`, {
       params: {
-        queryParams,
+        ...queryParams,
         size: 10,
       },
       headers: {

@@ -1,35 +1,13 @@
 <template>
   <div class="map-container">
-    <div v-html="svgContent" @click="handleClick" class="map"></div>
+    <div v-html="svgContent" class="map"></div>
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from "vue";
-import { useRouter } from "vue-router";
-import { useDistrictStore } from "../../../stores/district";
 
 const svgContent = ref("");
-const router = useRouter();
-const districtStore = useDistrictStore();
-
-const handleClick = (event) => {
-  const target = event.target;
-  if (target.classList.contains("cls-5")) {
-    districtStore.setMyValue("유성구");
-  } else if (target.classList.contains("cls-3")) {
-    districtStore.setMyValue("중구");
-  } else if (target.classList.contains("cls-6")) {
-    districtStore.setMyValue("동구");
-  } else if (target.classList.contains("cls-4")) {
-    districtStore.setMyValue("서구");
-  } else if (target.classList.contains("cls-2")) {
-    districtStore.setMyValue("대덕구");
-  }
-  if (event.target.closest("g")) {
-    router.push("/porthole");
-  }
-};
 
 onMounted(async () => {
   try {
@@ -56,22 +34,22 @@ onMounted(async () => {
 }
 
 .map {
-  width: 180vh;
+  width: 175vh;
   height: auto;
-  /* margin-top: 15vh; */
+  margin-top: 2vh;
 }
 
 .map svg g g g {
-  /* transition: transform 0.5s ease; */
-  cursor: pointer;
-  /* transform-origin: center; */
-  fill: #f3f3f3;
+  transition: transform 0.5s ease;
+  transform-origin: center;
+  fill: #fcfcfc;
 }
 
 .map svg g g g:hover {
-  /* fill: #a5c5b7;
-  transform: scale(1.04) translateZ(30px);
-  filter: drop-shadow(3px 7px rgb(71, 71, 71));
-  color: white; */
+  fill: #f1f1f9;
+  /* transform: scale(1.04) translateZ(30px); */
+  transform: scale(1.04);
+  filter: drop-shadow(2px 4px rgb(116, 116, 116));
+  color: white;
 }
 </style>

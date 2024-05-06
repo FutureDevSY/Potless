@@ -3,7 +3,7 @@
     <div class="dropdown-display">{{ selected || defaultText }}</div>
     <img src="../../../assets/icon/select.png" alt="#" />
     <transition name="fade">
-      <ul v-show="showDropdown" class="dropdown-list">
+      <ul v-show="showDropdown" class="dropdown-list" @click.stop>
         <li v-for="option in options" :key="option" @click="selectOption(option, $event)">
           {{ option }}
         </li>
@@ -13,15 +13,17 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted, onUnmounted } from "vue";
 
 const props = defineProps({
   options: Array,
   defaultText: String,
 });
 
+const emit = defineEmits(["update:selected"]);
 const showDropdown = ref(false);
 const selected = ref("");
+const selectedText = ref("");
 
 const toggleDropdown = () => {
   showDropdown.value = !showDropdown.value;
@@ -29,9 +31,30 @@ const toggleDropdown = () => {
 
 const selectOption = (option, event) => {
   event.stopPropagation();
-  selected.value = option;
+  if (selected.value !== option) {
+    selected.value = option;
+    selectedText.value = option;
+  } else {
+    selected.value = "";
+    selectedText.value = "";
+  }
   showDropdown.value = false;
+  emit("update:selected", selected.value);
 };
+
+const handleGlobalClick = (event) => {
+  if (!event.target.closest(".dropdown-container")) {
+    showDropdown.value = false;
+  }
+};
+
+onMounted(() => {
+  document.addEventListener("click", handleGlobalClick);
+});
+
+onUnmounted(() => {
+  document.removeEventListener("click", handleGlobalClick);
+});
 </script>
 
 <style scoped>
@@ -39,9 +62,9 @@ const selectOption = (option, event) => {
   position: relative;
   border: 1px solid #ccc;
   display: flex;
-  width: 100px;
+  width: 120px;
   align-items: center;
-  padding: 8px;
+  padding: 1.15vh;
   background-color: white;
   cursor: pointer;
   justify-content: space-between;
@@ -50,7 +73,7 @@ const selectOption = (option, event) => {
 
 .dropdown-display {
   margin: 0 5px;
-  font-size: 12px;
+  font-size: 16px;
 }
 
 .dropdown-icon {
@@ -90,7 +113,7 @@ const selectOption = (option, event) => {
 .dropdown-list li {
   padding: 8px;
   border-bottom: 1px solid #eee;
-  font-size: 12px;
+  font-size: 16px;
 }
 
 .dropdown-list li:hover {

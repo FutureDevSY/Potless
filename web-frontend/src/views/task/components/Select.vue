@@ -4,8 +4,8 @@
     <img src="../../../assets/icon/select.png" alt="#" />
     <transition name="fade">
       <ul v-show="showDropdown" class="dropdown-list">
-        <li @click="selectOption('작업 미완료', $event)">작업 미완료</li>
-        <li @click="selectOption('작업 완료', $event)">작업 완료</li>
+        <li @click="selectOption('작업전', $event)">작업전</li>
+        <li @click="selectOption('작업완료', $event)">작업완료</li>
       </ul>
     </transition>
   </div>
@@ -14,6 +14,7 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from "vue";
 
+const emit = defineEmits(["statusSelected"]);
 const showDropdown = ref(false);
 const selectedStatus = ref("");
 const dropdownRef = ref(null);
@@ -28,6 +29,7 @@ const selectOption = (status, event) => {
     selectedStatus.value = "";
   } else {
     selectedStatus.value = status;
+    emit("statusSelected", status);
   }
   showDropdown.value = false;
 };

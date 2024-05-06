@@ -58,4 +58,34 @@ const router = createRouter({
   ],
 });
 
+import { useAuthStore } from "../stores/user";
+
+router.beforeEach((to, from) => {
+  const store = useAuthStore();
+  if (to.name === "PortholeList" && !store.isLoggedIn) {
+    window.alert("로그인이 필요합니다.");
+    return { name: "Login" };
+  }
+  if (to.name === "PortholeDetail" && !store.isLoggedIn) {
+    window.alert("로그인이 필요합니다.");
+    return { name: "Login" };
+  }
+  if (to.name === "Statistics" && !store.isLoggedIn) {
+    window.alert("로그인이 필요합니다.");
+    return { name: "Login" };
+  }
+  if (to.name === "TaskInfo" && !store.isLoggedIn) {
+    window.alert("로그인이 필요합니다.");
+    return { name: "Login" };
+  }
+  if (to.name === "TaskInfoDetail" && !store.isLoggedIn) {
+    window.alert("로그인이 필요합니다.");
+    return { name: "Login" };
+  }
+  if (to.name === "Login" && store.isLoggedIn) {
+    window.alert("이미 로그인 했습니다.");
+    return { name: "Home" };
+  }
+});
+
 export default router;
