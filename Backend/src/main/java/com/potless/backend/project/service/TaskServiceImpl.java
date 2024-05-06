@@ -50,7 +50,6 @@ public class TaskServiceImpl implements TaskService {
     public List<Long> addTaskToProject(TaskAddRequestDto taskAddRequestDto) {
         ProjectEntity project = projectRepository.findById(taskAddRequestDto.getProjectId())
                 .orElseThrow(ProjectNotFoundException::new);
-        log.info("project.getId() = {}", project.getId());
 
         List<Long> taskIds = new ArrayList<>();
 
@@ -103,9 +102,6 @@ public class TaskServiceImpl implements TaskService {
             return projectRepository.findProjectAndTaskByTeamId(teamIdList);
         }
 
-
-
     }
-
 
 }
