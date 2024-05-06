@@ -46,12 +46,16 @@ import { useMoveStore } from "@/stores/move";
 import { useAuthStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
 import { getGuList } from "../../api/statistics/statistics";
+import { getWeatherInfo } from "../../api/weather/weather";
 
 const store = useMoveStore();
 const store2 = useAuthStore();
 const { accessToken } = storeToRefs(store2);
 // 여기에 통계 정보 들어감
-const taskData = ref(null);
+const currentWeather = ref(null);
+const hourlyWeather = ref([]);
+
+const weatherData = () => {};
 
 const takeData = () => {
   getGuList(
