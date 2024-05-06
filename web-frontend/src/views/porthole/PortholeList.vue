@@ -9,11 +9,7 @@
           defaultText="위험성"
           @update:selected="handleSeverity"
         />
-        <Select
-          :options="['POTHOLE', 'CRACK']"
-          defaultText="종류"
-          @update:selected="handleType"
-        />
+        <Select :options="['POTHOLE', 'CRACK']" defaultText="종류" @update:selected="handleType" />
         <Select
           :options="['작업전', '작업완료']"
           defaultText="작업 상태"
@@ -26,21 +22,12 @@
 
     <div class="container">
       <div class="left">
-        <List
-          :current-data="currentData"
-          @updateMapLocation="handleMapUpdate"
-        />
-        <Pagination
-          :total-page="totalPage"
-          @update:current-page="handleCurrentPageUpdate"
-        />
+        <List :current-data="currentData" @updateMapLocation="handleMapUpdate" />
+        <Pagination :total-page="totalPage" @update:current-page="handleCurrentPageUpdate" />
       </div>
 
       <div class="right">
-        <PotholeLocationMap
-          :pothole-dirx="potholeInfo.dirY"
-          :pothole-diry="potholeInfo.dirX"
-        />
+        <PotholeLocationMap :pothole-dirx="potholeInfo.dirY" :pothole-diry="potholeInfo.dirX" />
       </div>
     </div>
   </div>
@@ -81,9 +68,7 @@ const takeData = (currentPage) => {
   };
 
   const queryParams = Object.fromEntries(
-    Object.entries(rawParams).filter(
-      ([key, value]) => value !== "" && value != null
-    )
+    Object.entries(rawParams).filter(([key, value]) => value !== "" && value != null)
   );
 
   getPotholeList(
@@ -276,7 +261,7 @@ onMounted(() => {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 3vh;
+  margin-top: -0.82vh;
   /* position: fixed;
   bottom: 2vh;
   width: calc(100% * 0.563);
@@ -284,11 +269,11 @@ onMounted(() => {
 }
 
 .search-button {
-  padding: 10px 15px;
+  padding: 1.2vh 15px;
   background-color: #151c62;
   border: none;
   color: white;
-  font-size: 16px;
+  font-size: 1.8vh;
   border-radius: 4px;
   cursor: pointer;
 }

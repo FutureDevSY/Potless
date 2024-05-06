@@ -5,11 +5,7 @@
       <thead>
         <tr>
           <th class="work-column">
-            <button
-              class="button"
-              :disabled="!hasSelected"
-              @click="openModal('add')"
-            >
+            <button class="add-button" :disabled="!hasSelected" @click="openModal('add')">
               작업추가
             </button>
           </th>
@@ -25,10 +21,9 @@
           v-for="pothole in potholes"
           :key="pothole.id"
           @mouseover="updateMapLocation(pothole.dirX, pothole.dirY)"
-          @click="toggleSelect(pothole)"
-          @dblclick="store.movePortholeDetail(pothole.id)"
+          @click="handleRowClick(pothole)"
         >
-          <td class="select-column">
+          <td class="select-column" @click.stop="toggleSelect(pothole)">
             <div class="checkbox">
               <div v-if="pothole.isSelected" class="checkmark"></div>
             </div>
@@ -38,7 +33,7 @@
           </td> -->
           <td class="dangers-column">
             <div class="danger-type" :class="dangerClass(pothole.severity)">
-              {{ pothole.severity }}
+              <p>{{ pothole.severity }}</p>
             </div>
           </td>
           <td>{{ pothole.dtype }}</td>
@@ -49,13 +44,8 @@
     </table>
   </div>
 
-  <button class="button list-button" @click="openModal('list')">
-    작업 지시서 리스트
-  </button>
-  <div
-    v-if="isModalOpen && (modalMode === 'list' || modalMode === 'add')"
-    class="modal"
-  >
+  <button class="button list-button" @click="openModal('list')">작업 지시서 리스트</button>
+  <div v-if="isModalOpen && (modalMode === 'list' || modalMode === 'add')" class="modal">
     <div class="modal-content">
       <TaskList
         :is-adding-tasks="modalMode === 'add'"
@@ -64,7 +54,7 @@
       />
     </div>
   </div>
-  <button class="button list-button" @click="openModal('team')">팀 추가</button>
+  <button class="button team-button" @click="openModal('team')">팀 추가</button>
   <div v-if="isModalOpen && modalMode === 'team'" class="modal">
     <div class="modal-content">
       <TeamModal :toggle-modal="toggleModal" />
@@ -94,6 +84,12 @@ const potholes = computed(() => {
     isSelected: selectedIds.value.has(item.id),
   }));
 });
+
+function handleRowClick(pothole) {
+  if (!pothole.isSelected) {
+    store.movePortholeDetail(pothole.id);
+  }
+}
 
 // 위험성 필터링
 const dangerClass = (danger) => {
@@ -150,37 +146,40 @@ const updateMapLocation = (dirX, dirY) => {
 } */
 
 .checkbox {
-  width: 24px;
-  height: 24px;
+  width: 2.8vh;
+  height: 2.8vh;
   border: 2px solid #ccc;
   background: white;
   display: inline-block;
+  z-index: -2;
+  position: relative;
 }
 
 .checkmark {
-  width: 18px;
-  height: 8px;
+  width: 2.2vh;
+  height: 1vh;
+  z-index: -1;
+  position: relative;
   border-bottom: 4px solid #151c62;
   border-left: 4px solid #151c62;
   transform: translateX(9px) translateY(8px) rotate(-45deg);
   transform-origin: left bottom;
 }
 
+p {
+  margin: -3px;
+}
+
 .danger-type {
   display: inline-block;
-  width: 42px;
-  height: 42px;
+  width: 35px;
+  height: 35px;
   border-radius: 100%;
   color: #ffffff;
-  font-size: 19px;
+  font-size: 16px;
   font-weight: bold;
   line-height: 42px;
   background-color: inherit;
-}
-
-.dangers-column {
-  text-align: center;
-  vertical-align: middle;
 }
 
 .serious {
@@ -227,8 +226,8 @@ thead th {
   position: sticky;
   top: 0;
   background-color: #d3d5ed;
-  z-index: 10;
-  padding: 1.3vh 1vh;
+  z-index: 0;
+  padding: 1vh 1vh;
   font-size: 1.7vh;
   color: #6c6c6c;
 }
@@ -308,26 +307,54 @@ tbody tr:hover {
   cursor: pointer;
 }
 
-.button {
+.add-button {
   padding: 5px 15px;
+  font-size: 1.55vh;
   background-color: #f8f8fc;
   border-radius: 5px;
   cursor: pointer;
-  height: 37.78px;
+  height: 4.4vh;
   color: #4f58b5;
   border: 1px solid #4f58b5;
   transition: background-color 0.4s;
 }
 
-.button:hover {
+.add-button:hover {
   background-color: #e6e6f6;
 }
 
-.button:disabled {
+.add-button:disabled {
   color: #a0a0a0;
   cursor: default;
   background-color: #f0f0f0;
   border-color: #d0d0d0;
+}
+
+.button {
+  padding: 5px 15px;
+  height: 4.4vh;
+  font-size: 1.55vh;
+  cursor: pointer;
+  border: none;
+  background-color: #f8f8f8;
+  border-radius: 5px;
+  color: #373737;
+  border: 1px solid #acacac;
+  transition: background-color 0.3s;
+}
+
+.button:hover {
+  background-color: #d8d8d8;
+}
+
+.list-button {
+  margin-top: 1.3vh;
+  margin-left: 30px;
+}
+
+.team-button {
+  margin-top: 1.3vh;
+  margin-left: 8px;
 }
 
 .button:disabled:hover {
@@ -344,8 +371,10 @@ tbody tr:hover {
 
 .list-overflow {
   overflow-y: auto;
-  height: 65vh;
+  height: 62vh;
   margin-right: 6px;
+  margin-left: 30px;
+  border: 2px solid rgb(223, 223, 223);
 }
 
 .list-overflow::-webkit-scrollbar {
