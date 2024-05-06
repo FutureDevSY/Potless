@@ -26,7 +26,7 @@ public class TeamEntity extends BaseEntity {
     @JoinColumn(name = "manager_id")
     private ManagerEntity managerEntity;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, mappedBy = "teamEntity")
+    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST}, mappedBy = "teamEntity")
     private List<WorkerEntity> workerEntities = new ArrayList<>();
 
     @OneToMany(mappedBy = "teamEntity", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST})
