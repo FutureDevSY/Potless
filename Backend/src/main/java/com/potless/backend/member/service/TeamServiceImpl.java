@@ -238,10 +238,37 @@ public class TeamServiceImpl implements TeamService{
         List<WorkerEntity> workerList = workerRepository.findAllByteamId(teamId);
         for(WorkerEntity worker : workerList){
             worker.setTeamNull();
+            // memberId가 존재하면서 다른 팀에 할당되어있는 worker의 경우 중복되지 않도록 삭제
+            if(worker.getMemberEntity() != null
+                    && workerRepository.checkByMemberIdWhereTeamIsExist(worker.getMemberEntity().getId())){
+                workerRepository.delete(worker);
+            }
         }
 
         teamRepository.deleteById(teamId);
+        duplicatedWorkerCheck();
 
         return teamId;
     }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    // 팀 삭제 후 중복된 memberId를 가진 팀이 없는 작업자가 생겼다면 하나만 남도록 확인
+    public void duplicatedWorkerCheck(){
+        List<Long> duplicatedIdList = workerRepository.findMemberIdsWithDuplicatesWhereTeamIsNull();
+
+        if(duplicatedIdList != null || !duplicatedIdList.isEmpty()) {
+            for (Long memberId : duplicatedIdList) {
+                List<WorkerEntity> workers = workerRepository.findAllByMemberId(memberId);
+
+                // 첫 번째 엔티티를 제외하고 삭제
+                if (!workers.isEmpty()) {
+                    workers.remove(0); // 첫 번째 엔티티는 유지
+                    workerRepository.deleteAll(workers); // 나머지는 삭제
+                    log.info("duplicated worker deleted. worker memberId = {}", memberId);
+                }
+            }
+        }
+    }
+
 }
