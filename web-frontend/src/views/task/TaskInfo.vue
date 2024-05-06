@@ -48,12 +48,16 @@ import { useMoveStore } from "../../stores/move.js";
 import { useAuthStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
 import { getTaskList } from "../../api/task/taskList";
+import { getTeamList } from "../../api/team/team";
 
 const store = useMoveStore();
 const store2 = useAuthStore();
-const { accessToken } = storeToRefs(store2);
+const { accessToken, areaName } = storeToRefs(store2);
 const currentData = ref(null);
 const totalPage = ref(null);
+
+
+
 
 // 상태 검색
 const selectedStatus = ref("작업전");
@@ -127,6 +131,7 @@ const takeData = (currentPage) => {
 
 onMounted(() => {
   takeData(0);
+  
 });
 </script>
 

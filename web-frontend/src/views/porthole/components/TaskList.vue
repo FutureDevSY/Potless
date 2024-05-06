@@ -30,7 +30,7 @@
     <div class="detail-controls">
       <button class="button back" @click="closeDetail">뒤로가기</button>
       <select v-model="selectedTeamId" class="team-select">
-        <option v-for="(team, id) in teamlist" :key="id" :value="id">
+        <option v-for="(team, id) in teamList" :key="id" :value="id">
           {{ team.teamName }}
         </option>
       </select>
@@ -47,9 +47,28 @@ import { postTaskCreate, postPothole } from "../../../api/task/taskDetail";
 import { getTaskList } from "../../../api/task/taskList";
 import { useAuthStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
+import { getTeamList } from "../../../api/team/team";
 
 const store2 = useAuthStore();
-const { accessToken } = storeToRefs(store2);
+const { accessToken, areaName } = storeToRefs(store2);
+const teamList = ref(null);
+
+const takeTeamList = () => {
+  getTeamList(
+    accessToken.value,
+    areaName.value,
+    (res) => {
+      if (res.data.status == "SUCCESS") {
+        console.log(res.data.message);
+        teamList.value = res.data.data;
+      }
+    },
+    (error) => {
+      console.log(error);
+      console.log(error.response.data.message);
+    }
+  );
+};
 
 const props = defineProps({
   isAddingTasks: Boolean,
@@ -119,11 +138,19 @@ const assignPothole = (taskId) => {
   const potholeData = ref({
     projectId: taskId,
     damageId: damageIdsArray,
+    origin: {
+      y: 36.3556033,
+      x: 127.2985515,
+    },
   });
 
   postPothole(
-    potholeData,
+    accessToken.value,
+    potholeData.value,
     (res) => {
+      console.log(res);
+      console.log(accessToken.value);
+      console.log(potholeData.value);
       if (res.data.status == "SUCCESS") {
         console.log(res.data.message);
       }
@@ -150,7 +177,6 @@ const takeData = () => {
     accessToken.value,
     queryParams,
     (res) => {
-      console.log(res);
       if (res.data.status == "SUCCESS") {
         console.log(res.data.message);
         taskData.value = res.data.data.content;
@@ -167,6 +193,7 @@ const takeData = () => {
 
 onMounted(() => {
   takeData();
+  takeTeamList();
 });
 </script>
 

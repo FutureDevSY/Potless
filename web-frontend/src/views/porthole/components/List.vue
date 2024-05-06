@@ -115,7 +115,6 @@ function toggleSelect(porthole) {
   }
   selectedIds.value = new Set(selectedIds.value);
 }
-const selectedCount = computed(() => selectedIds.value.size);
 
 const hasSelected = computed(() => {
   return selectedIds.value.size > 0;
