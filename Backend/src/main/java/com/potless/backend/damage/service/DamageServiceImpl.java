@@ -1,13 +1,13 @@
 package com.potless.backend.damage.service;
 
+import com.potless.backend.damage.dto.controller.request.AreaDamageCountForDateRequestDTO;
 import com.potless.backend.damage.dto.controller.request.DamageSearchRequestDTO;
 import com.potless.backend.damage.dto.controller.request.DamageVerificationRequestDTO;
 import com.potless.backend.damage.dto.controller.response.DamageResponseDTO;
 import com.potless.backend.damage.dto.controller.response.ImagesResponseDTO;
+import com.potless.backend.damage.dto.service.request.AreaDamageCountForMonthServiceRequestDTO;
 import com.potless.backend.damage.dto.service.request.DamageSetRequestServiceDTO;
-import com.potless.backend.damage.dto.service.response.StatisticCountResponseDTO;
-import com.potless.backend.damage.dto.service.response.StatisticListResponseDTO;
-import com.potless.backend.damage.dto.service.response.StatisticLocationCountResponseDTO;
+import com.potless.backend.damage.dto.service.response.*;
 import com.potless.backend.damage.entity.area.AreaEntity;
 import com.potless.backend.damage.entity.area.LocationEntity;
 import com.potless.backend.damage.entity.enums.Status;
@@ -29,7 +29,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @Service
@@ -162,6 +161,16 @@ public class DamageServiceImpl implements IDamageService {
     public void setWorkDone(Long damageId) {
         DamageEntity damageEntity = damageRepository.findById(damageId).orElseThrow(PotholeNotFoundException::new);
         damageEntity.changeStatus(Status.작업완료);
+    }
+
+    @Override
+    public AreaForDateListResponseDTO getAreaDamageCountForDate(AreaDamageCountForDateRequestDTO areaDamageCountForDateRequestDTO) {
+        return damageRepository.getAreaDamageCountForDate(areaDamageCountForDateRequestDTO);
+    }
+
+    @Override
+    public AreaForMonthListResponseDTO getAreaDamageCountForMonth(AreaDamageCountForMonthServiceRequestDTO areaDamageCountForMonthServiceRequestDTO) {
+        return damageRepository.getAreaDamageCountForMonth(areaDamageCountForMonthServiceRequestDTO);
     }
 
     //    @Override

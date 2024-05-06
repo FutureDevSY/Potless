@@ -45,4 +45,8 @@ public class ManagerEntity extends BaseEntity {
         this.teamEntities = teamEntities;
         this.projectEntities = projectEntities;
     }
+
+    public void changeArea(AreaEntity area){
+        this.areaEntity = area;
+    }
 }

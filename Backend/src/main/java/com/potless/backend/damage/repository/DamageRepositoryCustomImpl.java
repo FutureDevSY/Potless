@@ -1,25 +1,24 @@
 package com.potless.backend.damage.repository;
 
+import com.potless.backend.damage.dto.controller.request.AreaDamageCountForDateRequestDTO;
 import com.potless.backend.damage.dto.controller.request.DamageSearchRequestDTO;
 import com.potless.backend.damage.dto.controller.request.DamageVerificationRequestDTO;
 import com.potless.backend.damage.dto.controller.response.DamageResponseDTO;
 import com.potless.backend.damage.dto.controller.response.ImagesResponseDTO;
-import com.potless.backend.damage.dto.service.response.StatisticCountResponseDTO;
-import com.potless.backend.damage.dto.service.response.StatisticListResponseDTO;
-import com.potless.backend.damage.dto.service.response.StatisticLocationCountResponseDTO;
+import com.potless.backend.damage.dto.service.request.AreaDamageCountForMonthServiceRequestDTO;
+import com.potless.backend.damage.dto.service.response.*;
+import com.potless.backend.damage.dto.service.response.count.AreaDamageCountForDateListResponseDTO;
+import com.potless.backend.damage.dto.service.response.count.AreaDamageCountForDateResponseDTO;
+import com.potless.backend.damage.dto.service.response.count.AreaDamageCountForMonthListResponseDTO;
+import com.potless.backend.damage.dto.service.response.count.AreaDamageCountForMonthResponseDTO;
 import com.potless.backend.damage.entity.area.AreaEntity;
-import com.potless.backend.damage.entity.area.QLocationEntity;
 import com.potless.backend.damage.entity.area.QAreaEntity;
+import com.potless.backend.damage.entity.area.QLocationEntity;
 import com.potless.backend.damage.entity.enums.Status;
 import com.potless.backend.damage.entity.road.QCrackEntity;
 import com.potless.backend.damage.entity.road.QDamageEntity;
 import com.potless.backend.damage.entity.road.QImageEntity;
 import com.potless.backend.damage.entity.road.QPotholeEntity;
-import com.potless.backend.member.entity.QMemberEntity;
-import com.potless.backend.member.entity.QTeamEntity;
-import com.potless.backend.member.entity.QWorkerEntity;
-import com.potless.backend.project.entity.QProjectEntity;
-import com.potless.backend.project.entity.QTaskEntity;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
@@ -34,9 +33,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.time.YearMonth;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -81,6 +79,131 @@ public class DamageRepositoryCustomImpl implements DamageRepositoryCustom {
 //                .innerJoin(area.en)
 //
 //    }
+
+
+    @Override
+    public AreaForDateListResponseDTO getAreaDamageCountForDate(AreaDamageCountForDateRequestDTO requestDTO) {
+        LocalDate startDate = requestDTO.getStart();
+        LocalDate endDate = requestDTO.getEnd() != null ? requestDTO.getEnd() : startDate;
+
+        QDamageEntity damage = QDamageEntity.damageEntity;
+        QAreaEntity area = QAreaEntity.areaEntity;
+
+        // 모든 '구' 목록을 가져오기
+        List<String> allAreas = queryFactory.select(area.areaGu)
+                .from(area)
+                .fetch();
+
+        Map<String, Map<LocalDate, Long>> areaMap = new LinkedHashMap<>();
+
+        // 모든 '구'에 대해 날짜별로 초기화
+        for (String areaGu : allAreas) {
+            TreeMap<LocalDate, Long> dateCounts = new TreeMap<>();
+            for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
+                dateCounts.put(date, 0L);
+            }
+            areaMap.put(areaGu, dateCounts);
+        }
+
+        // 실제 데이터로 업데이트
+        List<Tuple> rawResults = queryFactory
+                .select(area.areaGu,
+                        damage.createdDateTime.year(),
+                        damage.createdDateTime.month(),
+                        damage.createdDateTime.dayOfMonth(),
+                        damage.count())
+                .from(damage)
+                .join(damage.areaEntity, area)
+                .where(damage.createdDateTime.between(
+                        startDate.atStartOfDay(), endDate.plusDays(1).atStartOfDay().minusSeconds(1)
+                ))
+                .groupBy(area.areaGu, damage.createdDateTime.year(), damage.createdDateTime.month(), damage.createdDateTime.dayOfMonth())
+                .fetch();
+
+        // 쿼리 결과 처리
+        rawResults.forEach(tuple -> {
+            String areaGu = tuple.get(area.areaGu);
+            Optional<Integer> year = Optional.ofNullable(tuple.get(damage.createdDateTime.year()));
+            Optional<Integer> month = Optional.ofNullable(tuple.get(damage.createdDateTime.month()));
+            Optional<Integer> day = Optional.ofNullable(tuple.get(damage.createdDateTime.dayOfMonth()));
+
+            // 모든 날짜 컴포넌트가 있는 경우에만 날짜를 생성하고 맵 업데이트
+            if (year.isPresent() && month.isPresent() && day.isPresent()) {
+                LocalDate date = LocalDate.of(year.get(), month.get(), day.get());
+                Long count = tuple.get(damage.count());
+                areaMap.get(areaGu).put(date, count);
+            }
+        });
+
+        // 최종 결과 리스트 생성
+        List<AreaDamageCountForDateListResponseDTO> resultList = areaMap.entrySet().stream()
+                .map(entry -> new AreaDamageCountForDateListResponseDTO(entry.getKey(), entry.getValue().entrySet().stream()
+                        .map(e -> AreaDamageCountForDateResponseDTO.builder().date(e.getKey()).count(e.getValue()).build())
+                        .collect(Collectors.toList())))
+                .collect(Collectors.toList());
+
+        return new AreaForDateListResponseDTO(resultList);
+    }
+
+    @Override
+    public AreaForMonthListResponseDTO getAreaDamageCountForMonth(AreaDamageCountForMonthServiceRequestDTO requestDTO) {
+        YearMonth startMonth = requestDTO.getStart();
+        YearMonth endMonth = requestDTO.getEndOrStart(); // 종료 월이 없으면 시작 월을 사용
+
+        QDamageEntity damage = QDamageEntity.damageEntity;
+        QAreaEntity area = QAreaEntity.areaEntity;
+
+        // 모든 '구' 목록을 가져오기
+        List<String> allAreas = queryFactory.select(area.areaGu)
+                .from(area)
+                .fetch();
+
+        Map<String, Map<YearMonth, Long>> areaMap = new LinkedHashMap<>();
+
+        // 모든 '구'에 대해 월별로 초기화
+        for (String areaGu : allAreas) {
+            Map<YearMonth, Long> monthCounts = new HashMap<>();
+            for (YearMonth month = startMonth; !month.isAfter(endMonth); month = month.plusMonths(1)) {
+                monthCounts.put(month, 0L);
+            }
+            areaMap.put(areaGu, monthCounts);
+        }
+
+        // 실제 데이터로 업데이트
+        List<Tuple> rawResults = queryFactory
+                .select(area.areaGu,
+                        damage.createdDateTime.year(),
+                        damage.createdDateTime.month(),
+                        damage.count())
+                .from(damage)
+                .join(damage.areaEntity, area)
+                .where(damage.createdDateTime.year().eq(startMonth.getYear())
+                        .and(damage.createdDateTime.month().between(startMonth.getMonthValue(), endMonth.getMonthValue())))
+                .groupBy(area.areaGu, damage.createdDateTime.year(), damage.createdDateTime.month())
+                .fetch();
+
+        rawResults.forEach(tuple -> {
+            String areaGu = tuple.get(area.areaGu);
+            Optional<Integer> year = Optional.ofNullable(tuple.get(damage.createdDateTime.year()));
+            Optional<Integer> month = Optional.ofNullable(tuple.get(damage.createdDateTime.month()));
+
+            // 모든 날짜 컴포넌트가 있는 경우에만 날짜를 생성하고 맵 업데이트
+            if (year.isPresent() && month.isPresent()) {
+                YearMonth yearMonth = YearMonth.of(year.get(), month.get());
+                Long count = tuple.get(damage.count());
+                areaMap.get(areaGu).put(yearMonth, count);
+            }
+        });
+
+        // 최종 결과 리스트 생성
+        List<AreaDamageCountForMonthListResponseDTO> resultList = areaMap.entrySet().stream()
+                .map(entry -> new AreaDamageCountForMonthListResponseDTO(entry.getKey(), entry.getValue().entrySet().stream()
+                        .map(e -> new AreaDamageCountForMonthResponseDTO(e.getKey(), e.getValue()))
+                        .collect(Collectors.toList())))
+                .collect(Collectors.toList());
+
+        return new AreaForMonthListResponseDTO(resultList);
+    }
 
 
     @Override

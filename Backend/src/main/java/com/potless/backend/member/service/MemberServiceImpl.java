@@ -1,12 +1,15 @@
 package com.potless.backend.member.service;
 
 
+import com.potless.backend.damage.entity.area.AreaEntity;
+import com.potless.backend.damage.repository.AreaRepository;
 import com.potless.backend.global.exception.member.*;
 import com.potless.backend.damage.dto.controller.response.DamageResponseDTO;
 import com.potless.backend.global.exception.member.DuplicateEmailException;
 import com.potless.backend.global.exception.member.EmailNotFoundException;
 import com.potless.backend.global.exception.member.InvalidLoginAttemptException;
 import com.potless.backend.global.exception.member.PasswordMismatchException;
+import com.potless.backend.global.exception.project.AreaNotFoundException;
 import com.potless.backend.global.jwt.TokenInfo;
 import com.potless.backend.global.jwt.provider.TokenProvider;
 import com.potless.backend.global.jwt.repository.RefreshTokenRepository;
@@ -37,6 +40,7 @@ public class MemberServiceImpl implements MemberService {
     private final TokenProvider tokenProvider;
     private final TokenService tokenService;
     private final CookieUtil cookieUtil;
+    private final AreaRepository areaRepository;
 
     @Override
     @Transactional
@@ -52,7 +56,9 @@ public class MemberServiceImpl implements MemberService {
                         }
                 );
 
-        MemberEntity newMember = MemberEntity.of(requestDto,
+        AreaEntity area = areaRepository.findById(requestDto.getRegion())
+                                        .orElseThrow(AreaNotFoundException::new);
+        MemberEntity newMember = MemberEntity.of(requestDto, area,
                                                 passwordEncoder.encode(requestDto.getPassword()));
         memberRepository.save(newMember);
 
