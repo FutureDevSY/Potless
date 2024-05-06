@@ -18,7 +18,7 @@
         <tr
           v-for="porthole in portholes"
           :key="porthole.id"
-          @dblclick="store.movePortholeDetail(porthole.damageId)"
+          @click="store.movePortholeDetail(porthole.damageId)"
         >
           <td class="detect-column">
             <div>{{ porthole.createAt.split(" ")[0] }}</div>

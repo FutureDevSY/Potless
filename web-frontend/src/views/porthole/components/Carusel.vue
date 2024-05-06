@@ -8,9 +8,4 @@ const props = defineProps({
 });
 </script>
 
-<style scoped>
-.image {
-  width: 38vw;
-  height: 45vh;
-}
-</style>
+<style scoped></style>

@@ -46,18 +46,11 @@ function initializeMap() {
 }
 
 function updateMapLocation() {
-  if (
-    !map ||
-    potholeDirx.value === undefined ||
-    potholeDiry.value === undefined
-  ) {
+  if (!map || potholeDirx.value === undefined || potholeDiry.value === undefined) {
     console.log("Map or coordinates not ready");
     return;
   }
-  const newCenterPoint = new window.kakao.maps.LatLng(
-    potholeDirx.value,
-    potholeDiry.value
-  );
+  const newCenterPoint = new window.kakao.maps.LatLng(potholeDirx.value, potholeDiry.value);
   map.setCenter(newCenterPoint);
   marker.setPosition(newCenterPoint);
 }
@@ -65,7 +58,13 @@ function updateMapLocation() {
 
 <style scoped>
 .map {
-  width: 40.5vw;
-  height: 73.5vh;
+  width: 40.3vw;
+  height: 70.5vh;
+  margin-top: 0px;
+  border: 2px solid rgb(223, 223, 223);
+}
+
+.map[data-v-de50b345] {
+  padding-top: 0px;
 }
 </style>
