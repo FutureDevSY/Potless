@@ -107,6 +107,9 @@ public class ProjectServiceImpl implements ProjectService {
             }
         }
 
+        log.info("teamEntity = {}",teamEntity);
+        log.info("projectEntity={}",projectEntity);
+
         return saveProjectEntity.getId();
     }
 
