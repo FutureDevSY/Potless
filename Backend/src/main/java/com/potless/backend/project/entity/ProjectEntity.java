@@ -10,6 +10,8 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -63,5 +65,9 @@ public class ProjectEntity extends BaseEntity {
     public void changeStatus(Status status) {
         this.status = status;
     }
+
+    public void setTeam(TeamEntity team){
+        this.teamEntity = team;
+    };
 }
 
