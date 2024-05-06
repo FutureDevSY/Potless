@@ -1,5 +1,6 @@
 package com.potless.backend.damage.service;
 
+import com.potless.backend.aws.service.AwsService;
 import com.potless.backend.damage.dto.controller.request.AreaDamageCountForDateRequestDTO;
 import com.potless.backend.damage.dto.controller.request.DamageSearchRequestDTO;
 import com.potless.backend.damage.dto.controller.request.DamageVerificationRequestDTO;
@@ -40,6 +41,7 @@ public class DamageServiceImpl implements IDamageService {
     private final AreaRepository areaRepository;
     private final LocationRepository locationRepository;
     private final ImageRepository imageRepository;
+    private final AwsService awsService;
 
     @Override
     public Page<DamageResponseDTO> getDamages(DamageSearchRequestDTO damageSearchRequestDTO, Pageable pageable) {
@@ -118,6 +120,11 @@ public class DamageServiceImpl implements IDamageService {
     public void deleteDamage(Long damageId) {
         DamageEntity damageEntity = damageRepository.findById(damageId).orElseThrow(PotholeNotFoundException::new);
         damageEntity.getAreaEntity().minusCount();
+
+        for (ImageEntity image : damageEntity.getImageEntities()) {
+            awsService.deleteFile(image.getUrl());
+        }
+
         damageRepository.deleteById(damageId);
     }
 
