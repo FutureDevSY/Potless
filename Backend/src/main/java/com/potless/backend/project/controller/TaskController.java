@@ -7,12 +7,14 @@ import com.potless.backend.project.dto.request.TaskAddRequestDto;
 import com.potless.backend.project.dto.request.TaskDeleteRequestDto;
 import com.potless.backend.project.service.TaskService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -31,7 +33,9 @@ public class TaskController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "task 입력 성공", content = @Content(schema = @Schema(implementation = Long.class)))
     })
     @PostMapping
-    public ResponseEntity<?> addTaskToProject(@RequestBody TaskAddRequestDto taskAddRequestDto) {
+    public ResponseEntity<?> addTaskToProject(
+            @Parameter(hidden = true) Authentication authentication,
+            @RequestBody TaskAddRequestDto taskAddRequestDto) {
         List<Long> result = taskService.addTaskToProject(taskAddRequestDto);
         pathService.updateOptimalOrder(result, taskAddRequestDto.getOrigin());
         return response.success(ResponseCode.TASK_DETECTED, result);
