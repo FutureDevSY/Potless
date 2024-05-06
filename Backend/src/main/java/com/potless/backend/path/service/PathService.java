@@ -103,19 +103,8 @@ public class PathService {
         return path;
     }
 
-    public void updateOptimalOrder(List<Long> taskIdList, Location origin) {
-        List<TaskEntity> taskEntityList = new ArrayList<>();
-        for (Long taskId : taskIdList) {
-            TaskEntity taskEntity = taskRepository.findById(taskId)
-                    .orElseThrow(TaskNotFoundException::new);
-            taskEntityList.add(taskEntity);
-        }
-        updateOrder(origin, taskEntityList);
-    }
-
     public void updateOptimalOrder(Long projectId, Location origin) {
         List<TaskEntity> taskEntityList = taskRepository.findTasksByProjectId(projectId);
-        System.out.println(taskEntityList.size());
         if (!taskEntityList.isEmpty()) updateOrder(origin, taskEntityList);
     }
 

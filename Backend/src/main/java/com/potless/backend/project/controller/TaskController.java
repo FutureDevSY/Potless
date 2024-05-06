@@ -35,7 +35,7 @@ public class TaskController {
     @PostMapping
     public ResponseEntity<?> addTaskToProject(@Parameter(hidden = true) Authentication authentication, @RequestBody TaskAddRequestDto taskAddRequestDto) {
         List<Long> result = taskService.addTaskToProject(taskAddRequestDto);
-        pathService.updateOptimalOrder(result, taskAddRequestDto.getOrigin());
+        pathService.updateOptimalOrder(taskAddRequestDto.getProjectId(), taskAddRequestDto.getOrigin());
         return response.success(ResponseCode.TASK_DETECTED, result);
     }
 
