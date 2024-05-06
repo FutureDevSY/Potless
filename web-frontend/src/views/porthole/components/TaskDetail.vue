@@ -2,148 +2,153 @@
   <table>
     <thead>
       <tr>
-        <th class="detect-column">탐지 일시</th>
+        <th class="delete-column"></th>
+        <th>종류</th>
         <th>위험성</th>
         <th>행정동</th>
         <th>도로명</th>
-        <th class="delete-column"></th>
       </tr>
     </thead>
     <tbody>
       <tr v-for="taskDetail in taskDetails" :key="taskDetail.id">
-        <td>
-          <div>{{ taskDetail.detect.split(' ')[0] }}</div> <!-- 날짜 -->
-          <div>{{ taskDetail.detect.split(' ')[1] }}</div> <!-- 시간 -->
+        <td class="close-cursor" @click="removeTask(taskDetail.id)">
+          <span class="close-button">&times;</span>
         </td>
-        <td :class="dangerClass(taskDetail.danger)">{{ taskDetail.danger }}</td>
+        <td>
+          {{ taskDetail.detect }}
+        </td>
+        <td class="dangers-column">
+          <div class="danger-type" :class="dangerClass(taskDetail.danger)">
+            <p>{{ taskDetail.danger }}</p>
+          </div>
+        </td>
         <td>{{ taskDetail.city }}</td>
         <td>{{ taskDetail.road }}</td>
-        <td class="remove-button" @click="removeTask(taskDetail.id)">⛔</td>
       </tr>
     </tbody>
   </table>
 </template>
-  
+
 <script setup>
-  import { reactive } from 'vue';
-  
-  const props = defineProps({
-    task: Object
-  });
+import { reactive } from "vue";
 
-  // 모달창 작업 지시서 디테일: 더미데이터
-  const taskDetails = reactive(
-    [
-    { "id": 1,
-      "detect": "2023-01-04 14:22:33",
-      "danger": "심각",
-      "type": "포트홀",
-      "city": "가양동",
-      "road": "계족로"
-    },
-    { "id": 2,
-      "detect": "2023-01-05 14:22:33",
-      "danger": "주의",
-      "type": "포트홀",
-      "city": "자양동",
-      "road": "우암로"
-    },
-    {"id": 3,
-      "detect": "2023-01-06 14:22:33",
-      "danger": "양호",
-      "type": "도로파손",
-      "city": "가양동",
-      "road": "우암로"
-    },
-    {"id": 4,
-      "detect": "2023-01-07 14:22:33",
-      "danger": "심각",
-      "type": "포트홀",
-      "city": "가양동",
-      "road": "우암로"
-    },
-    {"id": 5,
-      "detect": "2023-01-08 14:22:33",
-      "danger": "심각",
-      "type": "포트홀",
-      "city": "가양동",
-      "road": "계족로"
-    },
-    {"id": 6,
-      "detect": "2023-01-09 14:22:33",
-      "danger": "양호",
-      "type": "포트홀",
-      "city": "자양동",
-      "road": "우암로"
-    },
-    {"id": 7,
-      "detect": "2023-01-10 14:22:33",
-      "danger": "심각",
-      "type": "포트홀",
-      "city": "가양동",
-      "road": "계족로"
-    },
-    {"id": 8,
-      "detect": "2023-01-11 14:22:33",
-      "danger": "주의",
-      "type": "도로파손",
-      "city": "가양동",
-      "road": "계족로"
-    },
-    {"id": 9,
-      "detect": "2023-01-12 14:22:33",
-      "danger": "양호",
-      "type": "도로파손",
-      "city": "자양동",
-      "road": "계족로"
-    },
-    {"id": 10,
-      "detect": "2023-01-13 14:22:33",
-      "danger": "심각",
-      "type": "포트홀",
-      "city": "가양동",
-      "road": "계족로"
-    }
-  ]
-  );
+const props = defineProps({
+  task: Object,
+});
 
+// 모달창 작업 지시서 디테일: 더미데이터
+const taskDetails = reactive([
+  {
+    id: 1,
+    detect: "POTHOLE",
+    danger: 3,
+    type: "포트홀",
+    city: "가양동",
+    road: "계족로",
+  },
+  {
+    id: 2,
+    detect: "POTHOLE",
+    danger: 2,
+    type: "포트홀",
+    city: "자양동",
+    road: "우암로",
+  },
+  {
+    id: 3,
+    detect: "POTHOLE",
+    danger: 1,
+    type: "도로파손",
+    city: "가양동",
+    road: "우암로",
+  },
+  {
+    id: 4,
+    detect: "POTHOLE",
+    danger: 3,
+    type: "포트홀",
+    city: "가양동",
+    road: "우암로",
+  },
+  {
+    id: 5,
+    detect: "POTHOLE",
+    danger: 3,
+    type: "포트홀",
+    city: "가양동",
+    road: "계족로",
+  },
+  {
+    id: 6,
+    detect: "POTHOLE",
+    danger: 1,
+    type: "포트홀",
+    city: "자양동",
+    road: "우암로",
+  },
+  {
+    id: 7,
+    detect: "POTHOLE",
+    danger: 3,
+    type: "포트홀",
+    city: "가양동",
+    road: "계족로",
+  },
+  {
+    id: 8,
+    detect: "POTHOLE",
+    danger: 2,
+    type: "도로파손",
+    city: "가양동",
+    road: "계족로",
+  },
+  {
+    id: 9,
+    detect: "POTHOLE",
+    danger: 1,
+    type: "도로파손",
+    city: "자양동",
+    road: "계족로",
+  },
+  {
+    id: 10,
+    detect: "POTHOLE",
+    danger: 3,
+    type: "포트홀",
+    city: "가양동",
+    road: "계족로",
+  },
+]);
 
-  // 위험성 필터링
+// 위험성 필터링
 const dangerClass = (danger) => {
   switch (danger) {
-    case "심각":
+    case 3:
       return "serious";
-    case "주의":
+    case 2:
       return "cautious";
-    case "양호":
+    case 1:
       return "safe";
     default:
       return "";
   }
 };
 
-
 // 작업 리스트 삭제
-const removeTask = (id) => {
-  const index = taskDetails.findIndex(detail => detail.id === id);
-  if (index !== -1) {
-    taskDetails.splice(index, 1);
-  }
-};
-
+const removeTask = (id) => {};
 </script>
-  
+
 <style scoped>
 .serious {
-  color: #f5172d;
+  background-color: #f5172d;
 }
 
 .cautious {
-  color: #FFB800;
+  background-color: #ffb700bf;
 }
 
 .safe {
-  color: #047c02;
+  background-color: #008a1e75;
 }
 
 table {
@@ -152,26 +157,58 @@ table {
   table-layout: fixed;
 }
 
-th,
 td {
-  border: 1px solid #ddd;
+  border-top: 1px solid #dddddda1;
+  border-bottom: 1px solid #dddddda1;
+  border-left: none;
+  border-right: none;
   text-align: center;
-  padding: 15px;
+  padding: 1.7vh;
+  font-size: 1.9vh;
+  color: #373737;
+  background-color: #f1f1f170;
 }
 
-thead {
-  background-color: #f9f9f9;
+thead th {
+  position: sticky;
+  top: 0;
+  background-color: #d3d5ed;
+  z-index: 0;
+  padding: 1vh 1vh;
+  font-size: 1.7vh;
+  color: #6c6c6c;
 }
 
-tr:nth-child(even) {
-  background-color: #f2f2f2;
+tbody tr:hover {
+  background-color: #dddddd44;
+}
+
+.danger-column {
+  width: 5vw;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.danger-type {
+  display: inline-block;
+  width: 35px;
+  height: 35px;
+  border-radius: 100%;
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: bold;
+  line-height: 42px;
+}
+
+p {
+  margin: -3px;
 }
 
 .delete-column {
-  width: 70px; 
+  width: 50px;
   min-width: 50px;
   text-align: center;
-  white-space: nowrap; 
+  white-space: nowrap;
 }
 
 .button {
@@ -190,5 +227,18 @@ tr:nth-child(even) {
 .remove-button {
   cursor: pointer;
 }
+
+.close-button {
+  color: #cd0404;
+  font-weight: bold;
+  font-size: 2.8vh;
+}
+
+.close-button:hover {
+  color: #8f0000;
+}
+
+.close-cursor {
+  cursor: pointer;
+}
 </style>
-  
