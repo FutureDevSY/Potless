@@ -2,15 +2,11 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:camera/camera.dart'; // 카메라 플러그인
-import 'package:external_path/external_path.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:http/http.dart';
-import 'package:intl/intl.dart';
 import 'package:porthole24/API/api_request.dart';
 import 'package:porthole24/main.dart';
 import 'package:porthole24/models/detected.dart';
-import 'package:porthole24/screens/Record/ImagePreview.dart';
 import 'package:porthole24/widgets/functions/geolocator.dart';
 import 'package:porthole24/widgets/tflite/bbox.dart';
 import 'package:porthole24/widgets/tflite/detector.dart';
@@ -40,7 +36,6 @@ class _VideoPageState extends State<VideoPage> with WidgetsBindingObserver {
   List<double> scores = [];
 
   List<XFile> imageSaveQueue = [];
-  final bool _isSaving = false;
 
   int? resultIndex;
 
@@ -62,28 +57,30 @@ class _VideoPageState extends State<VideoPage> with WidgetsBindingObserver {
     }
   }
 
-  Future<void> createTodayFolder() async {
-    String formattedDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
-    final String baseDir = await ExternalPath.getExternalStoragePublicDirectory(
-        ExternalPath.DIRECTORY_DCIM);
-    final Directory todayDir = Directory('$baseDir/$formattedDate');
+// 사진을 로컬에 저장 하기 위해 사용하던 코드
+// 자동으로 오늘 날짜에 찍힌 사진을 저장할 폴더를 생성한다.
+  // Future<void> createTodayFolder() async {
+  //   String formattedDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
+  //   final String baseDir = await ExternalPath.getExternalStoragePublicDirectory(
+  //       ExternalPath.DIRECTORY_DCIM);
+  //   final Directory todayDir = Directory('$baseDir/$formattedDate');
 
-    debugPrint(todayDir.path);
-    if (!await todayDir.exists()) {
-      await todayDir.create(recursive: true);
-      debugPrint("폴더 생성함 55: ${todayDir.path}");
-    } else {
-      debugPrint("폴더 이미 있음 57: ${todayDir.path}");
-    }
-  }
+  //   debugPrint(todayDir.path);
+  //   if (!await todayDir.exists()) {
+  //     await todayDir.create(recursive: true);
+  //     debugPrint("폴더 생성함 55: ${todayDir.path}");
+  //   } else {
+  //     debugPrint("폴더 이미 있음 57: ${todayDir.path}");
+  //   }
+  // }
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     _initStateAsync();
-    createTodayFolder();
     _uploadStreamController.stream.listen(_uploadImage);
+    // createTodayFolder();
   }
 
   void _initStateAsync() async {
@@ -107,7 +104,7 @@ class _VideoPageState extends State<VideoPage> with WidgetsBindingObserver {
   Future<void> _initializeCamera() async {
     _cameraController = CameraController(
       cameras[0],
-      ResolutionPreset.veryHigh,
+      ResolutionPreset.high,
       enableAudio: false,
     )..initialize().then((_) async {
         await _controller.startImageStream(onLatestImageAvailable);
@@ -191,11 +188,10 @@ class _VideoPageState extends State<VideoPage> with WidgetsBindingObserver {
     super.dispose();
   }
 
-  // UI 구성
   @override
   Widget build(BuildContext context) {
     if (_cameraController == null || !_controller.value.isInitialized) {
-      return const SizedBox.shrink(); // 카메라가 초기화되지 않은 경우 빈 위젯 반환
+      return const SizedBox.shrink();
     }
     var aspect = 1 / _controller.value.aspectRatio;
     return Scaffold(
@@ -209,11 +205,11 @@ class _VideoPageState extends State<VideoPage> with WidgetsBindingObserver {
         children: [
           AspectRatio(
             aspectRatio: aspect,
-            child: CameraPreview(_controller), // 카메라 미리보기
+            child: CameraPreview(_controller),
           ),
           AspectRatio(
             aspectRatio: aspect,
-            child: _boundingBoxes(), // 경계 상자 위젯
+            child: _boundingBoxes(),
           ),
           Column(
             mainAxisAlignment: MainAxisAlignment.end,
@@ -226,28 +222,13 @@ class _VideoPageState extends State<VideoPage> with WidgetsBindingObserver {
                     width: UIhelper.deviceWidth(context) * 0.1,
                     height: UIhelper.deviceWidth(context) * 0.1,
                     child: _isCapturing
-                        ? const CircularProgressIndicator() // Shown when capturing
-                        : const Icon(Icons
-                            .camera_alt), // Empty container or any other widget when not capturing
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(20),
-                    child: FloatingActionButton(
-                      heroTag: "openFolderButton",
-                      onPressed: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => const ImagePreviewScreen(),
-                          ),
-                        );
-                      },
-                      child: const Icon(Icons.folder_open),
-                    ),
+                        ? const CircularProgressIndicator()
+                        : const Icon(Icons.camera_alt),
                   ),
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: Colors.black54, // Semi-transparent black
+                      color: Colors.black54,
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Text(
