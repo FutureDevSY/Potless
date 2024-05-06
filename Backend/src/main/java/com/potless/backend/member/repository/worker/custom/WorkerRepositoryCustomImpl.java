@@ -69,14 +69,39 @@ public class WorkerRepositoryCustomImpl implements WorkerRepositoryCustom {
     }
 
     @Override
+    public List<WorkerEntity> findAllByMemberId(Long memberId) {
+        return query.selectFrom(workerEntity)
+                    .where(workerEntity.memberEntity.Id.eq(memberId))
+                    .fetch();
+    }
+
+    @Override
      public Optional<WorkerEntity> findByMemberIdAndAreaWhereTeamIsEmpty(Long memberId, Long areaId) {
         return Optional.ofNullable(query.select(workerEntity)
                                         .from(workerEntity)
                                         .where(workerEntity.memberEntity.Id.eq(memberId)
-                                            .and(workerEntity.areaEntity.id.eq(areaId)))
+                                               .and(workerEntity.areaEntity.id.eq(areaId))
+                                               .and(workerEntity.teamEntity.isNull()))
                                         .fetchFirst());
     }
 
+    @Override
+    public List<Long> findMemberIdsWithDuplicatesWhereTeamIsNull() {
+        return query.select(workerEntity.memberEntity.Id)
+                    .from(workerEntity)
+                    .where(workerEntity.teamEntity.id.isNull())
+                    .groupBy(workerEntity.memberEntity.Id)
+                    .having(workerEntity.memberEntity.Id.count().gt(1))
+                    .fetch();
+    }
+
+    @Override
+    public boolean checkByMemberIdWhereTeamIsExist(Long memberId) {
+        return query.selectOne()
+                    .from(workerEntity)
+                    .where(workerEntity.memberEntity.Id.eq(memberId).and(workerEntity.teamEntity.isNotNull()))
+                    .fetchFirst() != null;
+    }
 
 
 }
