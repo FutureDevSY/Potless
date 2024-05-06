@@ -44,7 +44,7 @@
     </table>
   </div>
 
-  <button class="button list-button" @click="openModal('list')">작업 지시서 리스트</button>
+  <button class="button list-button" @click="openModal('list')">작업지시서</button>
   <div v-if="isModalOpen && (modalMode === 'list' || modalMode === 'add')" class="modal">
     <div class="modal-content">
       <TaskList
@@ -54,7 +54,7 @@
       />
     </div>
   </div>
-  <button class="button team-button" @click="openModal('team')">팀 추가</button>
+  <button class="button team-button" @click="openModal('team')">작업팀</button>
   <div v-if="isModalOpen && modalMode === 'team'" class="modal">
     <div class="modal-content">
       <TeamModal :toggle-modal="toggleModal" />
@@ -286,11 +286,11 @@ tbody tr:hover {
 
 .modal-content {
   background-color: white;
-  margin: 15% auto;
-  padding: 20px;
-  border: 1px solid #888;
+  margin: 10% auto;
+  padding: 0vh 1.8vw 6vh 1.8vw;
+  border: 1px solid #dddddda1;
   width: 40vw;
-  height: 50vh;
+  height: 65vh;
 }
 
 .close {
