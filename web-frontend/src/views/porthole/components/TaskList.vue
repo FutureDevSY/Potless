@@ -4,13 +4,14 @@
     <button class="button new_button" @click="addNewTask">새 작업</button>
     <table>
       <tr v-for="task in currentTasks" :key="task.id" @click="showDetail(task)">
-        <td>{{ task.id }}</td>
-        <td>{{ task.serviceSubCategory }}</td>
-        <td>{{ task.projectEnd }} 건</td>
+        <td>No. {{ task.projectId }}</td>
+        <td>{{ task.projectName }}</td>
+        <td>{{ task.projectDate }}</td>
+        <td>{{ task.projectSize }} 건</td>
         <td
           class="add-column"
           v-if="isAddingTasks"
-          @click.stop="incrementProjectEnd(task, $event)"
+          @click="assignPothole(task.projectId)"
         >
           추가✅
         </td>
@@ -19,9 +20,9 @@
   </div>
   <div v-if="isDetailOpen">
     <div class="task-info">
-      <div class="info-font">{{ selectedTask.id }}</div>
-      <div class="info-font">{{ selectedTask.serviceSubCategory }}</div>
-      <div class="manager">관리자: {{ selectedTask.sinceConstruction }}</div>
+      <div class="info-font">{{ selectedTask.projectDate }}</div>
+      <div class="info-font">{{ selectedTask.projectName }}</div>
+      <div class="manager">관리자: {{ selectedTask.managerName }}</div>
     </div>
     <div class="detail-list">
       <TaskDetail :task="selectedTask" @close="isDetailOpen = false" />
@@ -29,7 +30,7 @@
     <div class="detail-controls">
       <button class="button back" @click="closeDetail">뒤로가기</button>
       <select v-model="selectedTeamId" class="team-select">
-        <option v-for="(team, id) in teamlist" :key="id" :value="id">
+        <option v-for="(team, id) in teamList" :key="id" :value="id">
           {{ team.teamName }}
         </option>
       </select>
@@ -39,56 +40,79 @@
 </template>
 
 <script setup>
-import { ref, computed, reactive } from "vue";
+import { ref, computed, onMounted } from "vue";
 import TaskDetail from "./TaskDetail.vue";
 import Teamlist from "./teamData.json";
+import { postTaskCreate, postPothole } from "../../../api/task/taskDetail";
+import { getTaskList } from "../../../api/task/taskList";
+import { useAuthStore } from "@/stores/user";
+import { storeToRefs } from "pinia";
+import { getTeamList } from "../../../api/team/team";
+
+const store2 = useAuthStore();
+const { accessToken, areaName } = storeToRefs(store2);
+const teamList = ref(null);
+
+const takeTeamList = () => {
+  getTeamList(
+    accessToken.value,
+    areaName.value,
+    (res) => {
+      if (res.data.status == "SUCCESS") {
+        console.log(res.data.message);
+        teamList.value = res.data.data;
+      }
+    },
+    (error) => {
+      console.log(error);
+      console.log(error.response.data.message);
+    }
+  );
+};
 
 const props = defineProps({
   isAddingTasks: Boolean,
   toggleModal: Function,
-  selectedCount: Number,
+  selectedIds: Array,
 });
 
 const teamlist = ref(Teamlist);
 const selectedTeamId = ref(null);
 // 모달창 작업 지시서 리스트 + 더미데이터
-const taskData = reactive({
-  1: [
-    {
-      id: 113,
-      serviceSubCategory: "도로 부속 작업 보고서",
-      projectEnd: 10,
-      sinceConstruction: "정휘원",
-      workOrder: "2024-04-23",
-      registrationTime: "2024-04-21",
-    },
-    {
-      id: 114,
-      serviceSubCategory: "도로 부속 작업 보고서",
-      projectEnd: 10,
-      sinceConstruction: "정휘원",
-      workOrder: "2024-04-23",
-      registrationTime: "2024-04-21",
-    },
-  ],
-});
-const currentPage2 = ref(1);
+const taskData = ref([]);
 const currentTasks = computed(() => {
-  return taskData[currentPage2.value] || [];
+  return taskData.value || [];
 });
 
 // 새 작업(작업 지시서 새로 만들기)
 function addNewTask() {
-  const newTask = {
-    id: Math.max(...currentTasks.value.map((task) => task.id)) + 1,
-    serviceSubCategory: "도로 부속 작업 보고서",
-    projectEnd: 0,
-    sinceConstruction: "정휘원",
-    workOrder: "2024-04-23",
-    registrationTime: "2024-04-21",
-  };
+  const newData = ref({
+    teamId: null,
+    title: "도로 부속 작업 보고서",
+    projectDate: "2024-05-02",
+    areaId: store2.areaId,
+    damageNums: [],
+  });
 
-  taskData[currentPage2.value].push(newTask);
+  postTaskCreate(
+    accessToken.value,
+    newData.value,
+    (res) => {
+      console.log(res);
+      if (res.data.status == "SUCCESS") {
+        console.log(res.data.message);
+        console.log(res);
+        taskData.value = res.data.data;
+        takeData();
+      } else {
+        console.log(res.data.message);
+      }
+    },
+    (error) => {
+      console.log(error);
+      console.log(error.data.message);
+    }
+  );
 }
 
 // 작업 보고서 디테일
@@ -109,10 +133,68 @@ function saveDetail() {
 }
 
 // 작업 보고서 추가
-function incrementProjectEnd(task, event) {
-  event.stopPropagation();
-  task.projectEnd += props.selectedCount;
-}
+const assignPothole = (taskId) => {
+  const damageIdsArray = Array.from(props.selectedIds);
+  const potholeData = ref({
+    projectId: taskId,
+    damageId: damageIdsArray,
+    origin: {
+      y: 36.3556033,
+      x: 127.2985515,
+    },
+  });
+
+  postPothole(
+    accessToken.value,
+    potholeData.value,
+    (res) => {
+      console.log(res);
+      console.log(accessToken.value);
+      console.log(potholeData.value);
+      if (res.data.status == "SUCCESS") {
+        console.log(res.data.message);
+      }
+    },
+    (error) => {
+      console.log(error);
+    }
+  );
+};
+
+const takeData = () => {
+  const rawParams = {
+    areaId: store2.areaId,
+    status: "작업전",
+  };
+
+  const queryParams = Object.fromEntries(
+    Object.entries(rawParams).filter(
+      ([key, value]) => value !== "" && value != null
+    )
+  );
+
+  getTaskList(
+    accessToken.value,
+    queryParams,
+    (res) => {
+      if (res.data.status == "SUCCESS") {
+        console.log(res.data.message);
+        taskData.value = res.data.data.content;
+      } else {
+        console.log(res.data.message);
+      }
+    },
+    (error) => {
+      console.log(error);
+      console.log(error.response.data.message);
+    }
+  );
+};
+
+onMounted(() => {
+  takeData();
+  takeTeamList();
+});
 </script>
 
 <style scoped>

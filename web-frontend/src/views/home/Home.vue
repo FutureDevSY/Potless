@@ -1,7 +1,10 @@
 <template>
   <div class="map-container">
-    <p class="logo">POTLESS</p>
-    <SVG />
+    <div class="header">
+      <img class="logo" src="../../assets/icon/weblogo.png" alt="#" />
+      <button class="login-btn" @click="store.moveLogin">로그인</button>
+    </div>
+    <SVG></SVG>
     <Chart
       class="chart chart1"
       :options="chartOptions"
@@ -38,6 +41,37 @@
 <script setup>
 import SVG from "./components/SVG.vue";
 import Chart from "./components/Chart.vue";
+import { ref, onMounted } from "vue";
+import { useMoveStore } from "@/stores/move";
+import { useAuthStore } from "@/stores/user";
+import { storeToRefs } from "pinia";
+import { getGuList } from "../../api/statistics/statistics";
+import { getWeatherInfo } from "../../api/weather/weather";
+
+const store = useMoveStore();
+const store2 = useAuthStore();
+const { accessToken } = storeToRefs(store2);
+// 여기에 통계 정보 들어감
+const currentWeather = ref(null);
+const hourlyWeather = ref([]);
+
+const weatherData = () => {};
+
+const takeData = () => {
+  getGuList(
+    accessToken.value,
+    (res) => {
+      if (res.data.status == "SUCCESS") {
+        console.log(res.data.message);
+        taskData.value = res.data.data;
+      }
+    },
+    (error) => {
+      console.log(error);
+      console.log(error.response.data.message);
+    }
+  );
+};
 
 const chartOptions = {
   chart: {
@@ -66,7 +100,7 @@ const chartOptions = {
       },
     },
   ],
-  colors: ["#273a86", "#4f5e9d6f"],
+  colors: ["#232EA3", "#A7ABDA"],
   tooltip: {
     y: {
       formatter: (value) => `${value}%`,
@@ -80,9 +114,19 @@ const chart3Series = [20, 80];
 const chart4Series = [10, 90];
 const chart5Series = [50, 50];
 const section = ["유성구", "대덕구", "중구", "서구", "동구"];
+
+onMounted(() => {
+  takeData();
+});
 </script>
 
 <style scoped>
+.header {
+  display: flex;
+  margin-left: auto;
+  align-items: center;
+}
+
 .et {
   color: #4f5e9d6f;
 }
@@ -94,10 +138,9 @@ const section = ["유성구", "대덕구", "중구", "서구", "동구"];
 }
 
 .logo {
-  font-size: 55px;
-  color: #373737;
-  font-weight: bold;
-  margin: 4.5vh 0px 0px 0px;
+  margin-top: 3.5vh;
+  width: 40vh;
+  margin-right: 27vw;
 }
 
 .chart {
@@ -134,5 +177,25 @@ const section = ["유성구", "대덕구", "중구", "서구", "동구"];
 .chart5 {
   top: 47vh;
   right: 1vw;
+}
+
+.login-btn {
+  background-color: #151c62;
+  width: 9vw;
+  height: 5.5vh;
+  cursor: pointer;
+  border-radius: 8px;
+  font-size: 18px;
+  position: relative;
+  overflow: hidden;
+  color: rgb(255, 255, 255);
+  font-weight: bold;
+  transition: all 0.3s;
+  margin-top: 3vh;
+  margin-right: 4vw;
+}
+
+.login-btn:hover {
+  background-color: #0e1241;
 }
 </style>
