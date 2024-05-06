@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:porthole24/screens/Record/PotLess.dart';
-import 'package:porthole24/screens/Record/RecordingMode2.dart';
 import 'package:porthole24/screens/Works/WorkList.dart';
 import 'package:porthole24/widgets/UI/ScreenSize.dart';
 import 'package:porthole24/widgets/buttons/main_button.dart';
@@ -23,9 +22,15 @@ class HomeScreen extends StatelessWidget {
               ),
               const Text(
                 'POTLESS',
-                style: TextStyle(fontSize: 32),
+                style: TextStyle(
+                  fontSize: 38,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-              const Text('도로파손 통합 관리 시스템'),
+              const Text(
+                '도로파손 통합 관리 시스템',
+                style: TextStyle(fontSize: 16),
+              ),
               SizedBox(
                 height: UIhelper.deviceHeight(context) * 0.2,
               ),
@@ -36,20 +41,6 @@ class HomeScreen extends StatelessWidget {
                     context,
                     MaterialPageRoute(
                       builder: (context) => const VideoPage(),
-                    ),
-                  );
-                },
-              ),
-              SizedBox(
-                height: UIhelper.deviceHeight(context) * 0.02,
-              ),
-              MainLarge(
-                label: '주행모드',
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const CameraScreen(),
                     ),
                   );
                 },

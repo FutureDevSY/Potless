@@ -36,7 +36,6 @@ class _WorkDetailScreenState extends State<WorkDetailScreen> {
   List<dynamic> imageFiles = [
     'assets/pothole/porthole1.jpg',
   ];
-  late KakaoMapController _mapController;
   Set<Marker> markers = {};
 
   void _onMapCreated(KakaoMapController controller) {
@@ -255,10 +254,11 @@ class _WorkDetailScreenState extends State<WorkDetailScreen> {
                   child: KakaoMap(
                     onMapCreated: _onMapCreated,
                     markers: markers.toList(),
-                    center: LatLng(widget.placeLatitude, widget.placeLongitude),
+                    center: LatLng(
+                      widget.placeLatitude,
+                      widget.placeLongitude,
+                    ),
                     currentLevel: 4,
-                    // mapTypeControl: true,
-                    // mapTypeControlPosition: ControlPosition.topRight,
                   ),
                 ),
               ),
