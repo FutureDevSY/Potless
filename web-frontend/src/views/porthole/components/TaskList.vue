@@ -53,18 +53,37 @@
 import { ref, computed, onMounted } from "vue";
 import TaskDetail from "./TaskDetail.vue";
 import Teamlist from "./teamData.json";
-import { postTaskCreate } from "../../../api/task/taskDetail";
+import { postTaskCreate, postPothole } from "../../../api/task/taskDetail";
 import { getTaskList } from "../../../api/task/taskList";
 import { useAuthStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
+import { getTeamList } from "../../../api/team/team";
 
 const store2 = useAuthStore();
-const { accessToken } = storeToRefs(store2);
+const { accessToken, areaName } = storeToRefs(store2);
+const teamList = ref(null);
+
+const takeTeamList = () => {
+  getTeamList(
+    accessToken.value,
+    areaName.value,
+    (res) => {
+      if (res.data.status == "SUCCESS") {
+        console.log(res.data.message);
+        teamList.value = res.data.data;
+      }
+    },
+    (error) => {
+      console.log(error);
+      console.log(error.response.data.message);
+    }
+  );
+};
 
 const props = defineProps({
   isAddingTasks: Boolean,
   toggleModal: Function,
-  selectedCount: Number,
+  selectedIds: Array,
 });
 
 const teamlist = ref(Teamlist);
@@ -124,10 +143,33 @@ function saveDetail() {
 }
 
 // 작업 보고서 추가
-function incrementProjectEnd(task, event) {
-  event.stopPropagation();
-  task.projectEnd += props.selectedCount;
-}
+const assignPothole = (taskId) => {
+  const damageIdsArray = Array.from(props.selectedIds);
+  const potholeData = ref({
+    projectId: taskId,
+    damageId: damageIdsArray,
+    origin: {
+      y: 36.3556033,
+      x: 127.2985515,
+    },
+  });
+
+  postPothole(
+    accessToken.value,
+    potholeData.value,
+    (res) => {
+      console.log(res);
+      console.log(accessToken.value);
+      console.log(potholeData.value);
+      if (res.data.status == "SUCCESS") {
+        console.log(res.data.message);
+      }
+    },
+    (error) => {
+      console.log(error);
+    }
+  );
+};
 
 const takeData = () => {
   const rawParams = {
@@ -143,7 +185,6 @@ const takeData = () => {
     accessToken.value,
     queryParams,
     (res) => {
-      console.log(res);
       if (res.data.status == "SUCCESS") {
         console.log(res.data.message);
         taskData.value = res.data.data.content;
@@ -160,6 +201,7 @@ const takeData = () => {
 
 onMounted(() => {
   takeData();
+  takeTeamList();
 });
 </script>
 

@@ -50,7 +50,7 @@
       <TaskList
         :is-adding-tasks="modalMode === 'add'"
         :toggle-modal="toggleModal"
-        :selected-count="selectedCount"
+        :selected-Ids="selectedIds"
       />
     </div>
   </div>
@@ -76,24 +76,7 @@ const props = defineProps({
   currentData: Object,
 });
 
-const assignPothole = (taskId) => {
-  const potholeData = ref({
-    projectId: taskId,
-    damageId: 1,
-  });
 
-  postPothole(
-    potholeData,
-    (res) => {
-      if (res.data.status == "SUCCESS") {
-        console.log(res.data.message);
-      }
-    },
-    (error) => {
-      console.log(error);
-    }
-  );
-};
 
 const potholes = computed(() => {
   return (props.currentData || []).map((item) => ({
@@ -132,7 +115,6 @@ function toggleSelect(porthole) {
   }
   selectedIds.value = new Set(selectedIds.value);
 }
-const selectedCount = computed(() => selectedIds.value.size);
 
 const hasSelected = computed(() => {
   return selectedIds.value.size > 0;
