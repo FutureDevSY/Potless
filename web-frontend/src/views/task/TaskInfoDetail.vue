@@ -76,7 +76,6 @@ const showDetail = () => {
     accessToken.value,
     route.params.id,
     (res) => {
-      console.log(res);
       if (res.data.status == "SUCCESS") {
         console.log(res.data.message);
         taskHeader.value = res.data.data;
