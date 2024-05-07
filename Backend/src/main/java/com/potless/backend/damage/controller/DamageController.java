@@ -141,15 +141,6 @@ public class DamageController {
         return response.success(ResponseCode.POTHOLE_STATISTIC_COUNT, statistic);
     }
 
-    @Operation(summary = "단일 구의 동별 Damage 통계 조회", description = "단일 구의 동별 Damage 통계를 조회합니다.", responses = {
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "단일 구의 동별 Damage 통계 조회 성공", content = @Content(schema = @Schema(implementation = StatisticListResponseDTO.class)))
-    })
-    @GetMapping("statistic/severity/{areaId}")
-    public ResponseEntity<?> getStatisticSeverity(Authentication authentication, @PathVariable Long areaId) {
-        StatisticSeverityResponseDTO statistic = iDamageService.getStatisticSeverity(areaId);
-        return response.success(ResponseCode.POTHOLE_STATISTIC_COUNT, statistic);
-    }
-
     @Operation(summary = "단일 동의 Damage 통계 조회", description = "단일 동의 Damage 통계를 조회합니다.", responses = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "단일 동의 Damage 통계 조회 성공", content = @Content(schema = @Schema(implementation = StatisticLocationCountResponseDTO.class)))
     })

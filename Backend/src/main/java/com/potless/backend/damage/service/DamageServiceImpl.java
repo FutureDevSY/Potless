@@ -180,10 +180,6 @@ public class DamageServiceImpl implements IDamageService {
         return damageRepository.getAreaDamageCountForMonth(areaDamageCountForMonthServiceRequestDTO);
     }
 
-    @Override
-    public StatisticSeverityResponseDTO getStatisticSeverity(Long areaId) {
-        return null;
-    }
 
     //    @Override
 //    public List<DamageResponseDTO> getWorkDamage(Long memberId) {
