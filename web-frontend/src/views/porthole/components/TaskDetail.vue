@@ -6,7 +6,7 @@
         <th>종류</th>
         <th>위험성</th>
         <th>행정동</th>
-        <th>지번</th>
+        <th class="address-column">지번</th>
       </tr>
     </thead>
     <tbody>
@@ -133,6 +133,12 @@ tbody tr:hover {
 
 .danger-column {
   width: 5vw;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.address-column {
+  width: 14vw;
   text-align: center;
   white-space: nowrap;
 }
