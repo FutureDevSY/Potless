@@ -54,13 +54,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public Page<ProjectListResponseDto> getProjectAll(String email, ProjectListRequestDto projectListRequestDto, Pageable pageable) {
-        Long memberId = memberRepository.searchByEmail(email)
-                .orElseThrow(MemberNotFoundException::new).getId();
-
-        Long managerId = managerRepository.findByMemberId(memberId)
-                .orElseThrow(ManagerNotFoundException::new).getId();
-
-        return projectRepository.findProjectAll(managerId, projectListRequestDto, pageable);
+        return projectRepository.findProjectAll(projectListRequestDto, pageable);
     }
 
     @Override
@@ -106,6 +100,9 @@ public class ProjectServiceImpl implements ProjectService {
                 taskRepository.save(taskEntity);
             }
         }
+
+        log.info("teamEntity = {}",teamEntity);
+        log.info("projectEntity={}",projectEntity);
 
         return saveProjectEntity.getId();
     }
