@@ -9,6 +9,7 @@ import com.potless.backend.project.dto.request.ProjectListRequestDto;
 import com.potless.backend.project.dto.response.GetTaskResponseDto;
 import com.potless.backend.project.dto.response.ProjectDetailResponseDto;
 import com.potless.backend.project.dto.response.ProjectListResponseDto;
+import com.potless.backend.project.dto.response.TaskDetailDto;
 import com.potless.backend.project.entity.ProjectEntity;
 import com.potless.backend.project.entity.QProjectEntity;
 import com.potless.backend.project.entity.QTaskEntity;
@@ -89,11 +90,20 @@ public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
             damageResponseDTO.setImagesResponseDTOS(imagesForDamage);
         }
 
+        List<TaskDetailDto> taskResponses = queryFactory
+                .select(Projections.constructor(TaskDetailDto.class,
+                        task.id,
+                        task.damageEntity.id))
+                .from(task)
+                .where(task.projectEntity.id.eq(projectId))
+                .fetch();
+
         return new ProjectDetailResponseDto(
                 projectEntity.getProjectName(),
                 projectEntity.getManagerEntity().getMemberEntity().getMemberName(),
                 projectEntity.getProjectSize(),
-                damageResponses
+                damageResponses,
+                taskResponses
         );
     }
 
