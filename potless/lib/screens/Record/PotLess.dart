@@ -2,7 +2,9 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:camera/camera.dart'; // 카메라 플러그인
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:porthole24/API/api_request.dart';
 import 'package:porthole24/main.dart';
@@ -30,6 +32,8 @@ class _VideoPageState extends State<VideoPage> with WidgetsBindingObserver {
       CameraLensDirection.back;
   final bool _isCapturing = false;
   final ApiService _apiService = ApiService();
+  bool _previewOn = false;
+  int imageTaken = 0;
 
   List<String> classes = [];
   List<List<double>> bboxes = [];
@@ -104,13 +108,20 @@ class _VideoPageState extends State<VideoPage> with WidgetsBindingObserver {
   Future<void> _initializeCamera() async {
     _cameraController = CameraController(
       cameras[0],
-      ResolutionPreset.high,
+      ResolutionPreset.medium,
       enableAudio: false,
-    )..initialize().then((_) async {
-        await _controller.startImageStream(onLatestImageAvailable);
-        setState(() {});
+    );
+
+    try {
+      await _cameraController!.initialize();
+      await _cameraController!.setFlashMode(FlashMode.off);
+      await _controller.startImageStream(onLatestImageAvailable);
+      setState(() {
         ScreenParams.previewSize = _controller.value.previewSize!;
       });
+    } catch (e) {
+      debugPrint('Error initializing camera: $e');
+    }
   }
 
   void onLatestImageAvailable(CameraImage cameraImage) async {
@@ -135,6 +146,7 @@ class _VideoPageState extends State<VideoPage> with WidgetsBindingObserver {
           Position position = await Geolocator.getCurrentPosition(
               desiredAccuracy: LocationAccuracy.high);
           _uploadStreamController.add(QueuedImage(picture, position));
+          imageTaken = imageTaken + 1;
         } catch (e) {
           debugPrint("Error capturing image: $e");
         }
@@ -196,53 +208,105 @@ class _VideoPageState extends State<VideoPage> with WidgetsBindingObserver {
     var aspect = 1 / _controller.value.aspectRatio;
     return Scaffold(
       appBar: const CustomAppBar(
-        title: '하이',
+        title: '주행모드',
       ),
       extendBodyBehindAppBar: true,
       extendBody: true,
       body: Stack(
         fit: StackFit.expand,
         children: [
-          AspectRatio(
-            aspectRatio: aspect,
-            child: CameraPreview(_controller),
-          ),
-          AspectRatio(
-            aspectRatio: aspect,
-            child: _boundingBoxes(),
-          ),
+          if (_previewOn) ...[
+            AspectRatio(
+              aspectRatio: aspect,
+              child: CameraPreview(_controller),
+            ),
+            AspectRatio(
+              aspectRatio: aspect,
+              child: _boundingBoxes(),
+            ),
+          ] else ...[
+            Container(
+              color: const Color(0xffffffff),
+              height: UIhelper.deviceHeight(context),
+              width: UIhelper.deviceWidth(context),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  const Text('AI 촬영의 성능을 위해 카메라 화면을 꺼두는 모드입니다.'),
+                  SizedBox(
+                    height: UIhelper.deviceHeight(context) * 0.3,
+                  ),
+                ],
+              ),
+            ),
+          ],
           Column(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Container(
-                    color: Colors.white,
-                    width: UIhelper.deviceWidth(context) * 0.1,
-                    height: UIhelper.deviceWidth(context) * 0.1,
-                    child: _isCapturing
-                        ? const CircularProgressIndicator()
-                        : const Icon(Icons.camera_alt),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: Colors.black54,
-                      borderRadius: BorderRadius.circular(10),
+              Container(
+                color: const Color(0xff151c62),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    // SizedBox(
+                    //   width: UIhelper.deviceWidth(context) * 0.1,
+                    //   height: UIhelper.deviceWidth(context) * 0.1,
+                    //   child: _isCapturing
+                    //       ? const CircularProgressIndicator(
+                    //           color: Color(0xffffffff),
+                    //         )
+                    //       : const Icon(
+                    //           Icons.camera_alt,
+                    //           color: Color(0xffffffff),
+                    //         ),
+                    // ),
+
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      height: UIhelper.deviceWidth(context) * 0.1,
+                      child: Text(
+                        '촬영 개수: ${imageTaken.toString()}',
+                        style: const TextStyle(
+                          color: Color(0xffffffff),
+                        ),
+                      ),
                     ),
-                    child: Text(
-                      '저장 중: ${imageSaveQueue.length}',
-                      style: const TextStyle(
-                          color: Colors.white, fontWeight: FontWeight.bold),
+                    SizedBox(
+                      width: UIhelper.deviceWidth(context) * 0.1,
+                      height: UIhelper.deviceWidth(context) * 0.1,
+                      child: IconButton(
+                        icon: Icon(
+                          _previewOn ? Icons.visibility_off : Icons.visibility,
+                          color: const Color(0xffffffff),
+                        ),
+                        onPressed: togglePreview,
+                      ),
                     ),
-                  ),
-                ],
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Colors.black54,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Text(
+                        '저장 중: ${imageSaveQueue.length}',
+                        style: const TextStyle(
+                            color: Colors.white, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
         ],
       ),
     );
+  }
+
+  void togglePreview() {
+    setState(() {
+      _previewOn = !_previewOn;
+    });
   }
 }

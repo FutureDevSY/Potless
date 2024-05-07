@@ -5,18 +5,18 @@ import 'package:porthole24/screens/Works/WorkDetail.dart';
 import 'package:porthole24/widgets/UI/ScreenSize.dart';
 
 class WorkBlock extends StatelessWidget {
-  final int potholeId, status, severity;
-  final double x, y, length;
-  final String address, roadName, field;
+  final int potholeId, severity;
+  final double x, y, width;
+  final String address, roadName, field, status;
   final Image? image;
   const WorkBlock({
     super.key,
     this.potholeId = 0,
-    this.status = 1,
+    this.status = '작업 전',
     this.severity = 1,
     this.x = 0,
     this.y = 0,
-    this.length = 0,
+    this.width = 0,
     this.address = '예제',
     this.roadName = '예제',
     this.field = '예제',
@@ -40,14 +40,14 @@ class WorkBlock extends StatelessWidget {
               roadName: roadName,
               status: status,
               severity: severity,
-              length: length,
+              width: width,
             ),
           ),
         );
       },
       child: Container(
         decoration: BoxDecoration(
-            color: status == 0 ? Colors.white : Colors.grey,
+            color: status == '작업전' ? Colors.white : Colors.grey,
             borderRadius: BorderRadius.circular(10),
             border: Border.all()),
         padding: const EdgeInsets.all(15),
