@@ -9,9 +9,9 @@ import 'package:porthole24/widgets/UI/AppBar.dart';
 import 'package:porthole24/widgets/UI/ScreenSize.dart';
 
 class WorkDetailScreen extends StatefulWidget {
-  final double placeLatitude, placeLongitude, length;
-  final int potholeId, status, severity;
-  final String address, roadName, field;
+  final double placeLatitude, placeLongitude, width;
+  final int potholeId, severity;
+  final String address, roadName, status, field;
   final Image? image;
 
   const WorkDetailScreen({
@@ -19,9 +19,9 @@ class WorkDetailScreen extends StatefulWidget {
     this.placeLatitude = 36.3504567,
     this.placeLongitude = 127.3848187,
     this.potholeId = 0,
-    this.status = 1,
+    this.status = '작업 전',
     this.severity = 1,
-    this.length = 0,
+    this.width = 0,
     this.address = '예제',
     this.roadName = '예제',
     this.field = '예제',

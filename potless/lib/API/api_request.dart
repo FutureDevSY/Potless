@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart' as mime;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:porthole24/API/login.dart';
+import 'package:porthole24/models/pothole.dart';
 
 class ApiService {
   static const String _baseUrl = "https://api.potless.co.kr/api";
@@ -70,6 +71,33 @@ class ApiService {
     }
   }
 
+  Future<bool> logout() async {
+    String? token = await _storageService.getToken();
+    if (token == null) return false;
+
+    try {
+      var response = await http.post(
+        Uri.parse('$_baseUrl/member/logout-app'),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({}),
+      );
+      debugPrint((response.body));
+      debugPrint((response.statusCode.toString()));
+
+      if (response.statusCode == 200) {
+        await _storageService.deleteToken();
+        return true;
+      }
+      return false;
+    } catch (e) {
+      debugPrint('APIservice 62: $e');
+      return false;
+    }
+  }
+
   Future<bool> damageSet(String dtype, double x, double y, File image) async {
     try {
       String? token = await _storageService.getToken();
@@ -112,6 +140,155 @@ class ApiService {
     } catch (e) {
       debugPrint('APIservice 100: $e');
       return false;
+    }
+  }
+
+  Future<bool> damageDuring(String damageId, File image) async {
+    try {
+      String? token = await _storageService.getToken();
+
+      if (token == null) {
+        debugPrint('No token found in secure storage.');
+        return false;
+      }
+
+      var request = http.MultipartRequest(
+          'POST', Uri.parse('$_baseUrl/damage/set/during'))
+        ..headers['Authorization'] = 'Bearer $token';
+
+      request.fields['damageId'] = damageId;
+
+      List<File> files = [image];
+
+      for (File file in files) {
+        request.files.add(
+          await http.MultipartFile.fromPath(
+            'files',
+            file.path,
+            contentType: mime.MediaType('image', 'jpg'),
+          ),
+        );
+      }
+
+      var response = await request.send();
+      var res = await http.Response.fromStream(response);
+
+      if (res.statusCode == 200) {
+        return true;
+      } else {
+        debugPrint(res.statusCode.toString());
+        debugPrint("APIservice 96: ${res.body}");
+      }
+      return false;
+    } catch (e) {
+      debugPrint('APIservice 100: $e');
+      return false;
+    }
+  }
+
+  Future<bool> damageAfter(String damageId, File image) async {
+    try {
+      String? token = await _storageService.getToken();
+
+      if (token == null) {
+        debugPrint('No token found in secure storage.');
+        return false;
+      }
+
+      var request =
+          http.MultipartRequest('POST', Uri.parse('$_baseUrl/damage/set/after'))
+            ..headers['Authorization'] = 'Bearer $token';
+
+      request.fields['damageId'] = damageId;
+
+      List<File> files = [image];
+
+      for (File file in files) {
+        request.files.add(
+          await http.MultipartFile.fromPath(
+            'files',
+            file.path,
+            contentType: mime.MediaType('image', 'jpg'),
+          ),
+        );
+      }
+
+      var response = await request.send();
+      var res = await http.Response.fromStream(response);
+
+      if (res.statusCode == 200) {
+        return true;
+      } else {
+        debugPrint(res.statusCode.toString());
+        debugPrint("APIservice 96: ${res.body}");
+      }
+      return false;
+    } catch (e) {
+      debugPrint('APIservice 100: $e');
+      return false;
+    }
+  }
+
+  Future<bool> workDone(String damageId) async {
+    String? token = await _storageService.getToken();
+
+    if (token == null) {
+      debugPrint('No token found in secure storage.');
+      return false;
+    }
+
+    try {
+      var response = await http.post(
+        Uri.parse('$_baseUrl/damage/workDone'),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({"damageId": damageId}),
+      );
+
+      if (response.statusCode == 200) {
+        return true;
+      }
+      return false;
+    } catch (e) {
+      debugPrint('APIservice 62: $e');
+      return false;
+    }
+  }
+
+  Future<List<DamageResponse>> fetchProject() async {
+    String? token = await _storageService.getToken();
+
+    if (token == null) {
+      debugPrint('No token found in secure storage.');
+      return [];
+    }
+
+    try {
+      var res = await http.get(
+        Uri.parse('$_baseUrl/member/task'),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (res.statusCode == 200) {
+        var data = json.decode(res.body) as Map<String, dynamic>;
+
+        var damageList = data['damangeResponseDtoList'] as List<dynamic>;
+
+        return damageList
+            .map((jsonItem) => DamageResponse.fromJson(jsonItem))
+            .toList();
+      } else {
+        debugPrint(jsonDecode(res.body));
+        return [];
+      }
+    } catch (e) {
+      debugPrint('$e');
+      return [];
     }
   }
 }

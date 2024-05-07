@@ -46,7 +46,14 @@ class _LoadingScreenState extends State<LoadingScreen> {
           SizedBox(
             height: UIhelper.deviceHeight(context) * 0.3,
           ),
-          const SizedBox(child: Text('포트홀 24')),
+          const SizedBox(
+              child: Text(
+            '포트홀 24',
+            style: TextStyle(
+              fontFamily: 'Pretendard',
+              color: Color(0xff000000),
+            ),
+          )),
           Lottie.asset('assets/lottie/loading_truck.json')
         ],
       ),
