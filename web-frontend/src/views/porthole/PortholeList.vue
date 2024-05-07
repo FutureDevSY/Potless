@@ -9,7 +9,11 @@
           defaultText="위험성"
           @update:selected="handleSeverity"
         />
-        <Select :options="['POTHOLE', 'CRACK']" defaultText="종류" @update:selected="handleType" />
+        <Select
+          :options="['POTHOLE', 'CRACK']"
+          defaultText="종류"
+          @update:selected="handleType"
+        />
         <Select
           :options="['작업전', '작업완료']"
           defaultText="작업 상태"
@@ -22,12 +26,22 @@
 
     <div class="container">
       <div class="left">
-        <List :current-data="currentData" @updateMapLocation="handleMapUpdate" />
-        <Pagination :total-page="totalPage" @update:current-page="handleCurrentPageUpdate" />
+        <List
+          :current-data="currentData"
+          :selected-status="selectedStatus"
+          @updateMapLocation="handleMapUpdate"
+        />
+        <Pagination
+          :total-page="totalPage"
+          @update:current-page="handleCurrentPageUpdate"
+        />
       </div>
 
       <div class="right">
-        <PotholeLocationMap :pothole-dirx="potholeInfo.dirY" :pothole-diry="potholeInfo.dirX" />
+        <PotholeLocationMap
+          :pothole-dirx="potholeInfo.dirY"
+          :pothole-diry="potholeInfo.dirX"
+        />
       </div>
     </div>
   </div>
@@ -68,7 +82,9 @@ const takeData = (currentPage) => {
   };
 
   const queryParams = Object.fromEntries(
-    Object.entries(rawParams).filter(([key, value]) => value !== "" && value != null)
+    Object.entries(rawParams).filter(
+      ([key, value]) => value !== "" && value != null
+    )
   );
 
   getPotholeList(

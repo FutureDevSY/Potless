@@ -137,10 +137,10 @@ const assignPothole = (taskId) => {
   const damageIdsArray = Array.from(props.selectedIds);
   const potholeData = ref({
     projectId: taskId,
-    damageId: damageIdsArray,
+    damageIds: damageIdsArray,
     origin: {
-      y: 36.3556033,
-      x: 127.2985515,
+      x: 36.3556033,
+      y: 127.2985515,
     },
   });
 
