@@ -15,19 +15,29 @@
           <th>작업 관리자</th>
           <th>작업 예정 일자</th>
           <th>등록 시점</th>
+          <th>삭제</th>
         </tr>
       </thead>
       <tbody>
         <tr
           v-for="task in currentData"
-          :key="task.id"
-          @click="store.moveTaskDetail(task.id)"
+          :key="task.projectId"
+          @click="store.moveTaskDetail(task.projectId)"
         >
           <td>{{ task.projectName }}</td>
           <td>{{ task.projectSize }} 건</td>
           <td>{{ task.managerName }}</td>
           <td>{{ task.projectDate }}</td>
           <td>{{ task.createdDate }}</td>
+          <td class="delete-column">
+            <button class="delete-btn" @click.stop="deleteTask(task.projectId)">
+              <img
+                class="delete-img"
+                src="../../assets/icon/delete.png"
+                alt="delete"
+              />
+            </button>
+          </td>
         </tr>
       </tbody>
     </table>
@@ -48,16 +58,13 @@ import { useMoveStore } from "../../stores/move.js";
 import { useAuthStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
 import { getTaskList } from "../../api/task/taskList";
-import { getTeamList } from "../../api/team/team";
+import { deleteTaskDetail } from "../../api/task/taskDetail";
 
 const store = useMoveStore();
 const store2 = useAuthStore();
 const { accessToken, areaName } = storeToRefs(store2);
 const currentData = ref(null);
 const totalPage = ref(null);
-
-
-
 
 // 상태 검색
 const selectedStatus = ref("작업전");
@@ -93,6 +100,28 @@ const handleCurrentPageUpdate = (newPage) => {
   takeData(newPage);
 };
 
+// 작업 지시서 삭제
+const deleteTask = (projectId) => {
+  deleteTaskDetail(
+    accessToken.value,
+    projectId,
+    (res) => {
+      console.log(res);
+      if (res.data.status == "SUCCESS") {
+        console.log(res.data.message);
+        takeData(0);
+      } else {
+        console.log(res.data.message);
+      }
+    },
+    (error) => {
+      console.log(error);
+      console.log(error.response.data.message);
+    }
+  );
+};
+
+// 작업지시서 리스트 조회
 const takeData = (currentPage) => {
   const rawParams = {
     areaId: store2.areaId,
@@ -131,7 +160,6 @@ const takeData = (currentPage) => {
 
 onMounted(() => {
   takeData(0);
-  
 });
 </script>
 
@@ -194,5 +222,28 @@ thead {
 tbody tr:hover {
   background-color: #dddddd44;
   cursor: pointer;
+}
+
+.delete-column {
+  padding: 0px;
+}
+
+.delete-img {
+  width: auto;
+  height: 30px;
+  cursor: pointer;
+}
+
+.delete-btn {
+  border-radius: 100px;
+  margin-right: 20px;
+  border: none;
+  background-color: white;
+  padding: 8px 10px;
+  transition: background-color 0.3s;
+}
+
+.delete-btn:hover {
+  background-color: #fbd6d8;
 }
 </style>

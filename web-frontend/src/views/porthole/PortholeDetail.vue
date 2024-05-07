@@ -51,7 +51,9 @@
         <!-- 버튼 -->
         <div class="button-container">
           <button class="back-btn" @click="store.moveBack">뒤로가기</button>
-          <button class="delete-btn" @click="deleteData(pothole_info.id)">삭제하기</button>
+          <button class="delete-btn" @click="deleteData(pothole_info.id)">
+            삭제하기
+          </button>
         </div>
       </div>
     </div>
@@ -79,7 +81,7 @@ const takeData = (potholeId) => {
     accessToken.value,
     potholeId,
     (res) => {
-      // console.log(res);
+      console.log(res);
       if (res.data.status == "SUCCESS") {
         console.log(res.data.message);
         pothole_info.value = res.data.data;
@@ -111,7 +113,10 @@ const deleteData = (potholeId) => {
 };
 
 const caruselImage = computed(() => {
-  if (pothole_info.value.imagesResponseDTOS && pothole_info.value.imagesResponseDTOS.length > 0) {
+  if (
+    pothole_info.value.imagesResponseDTOS &&
+    pothole_info.value.imagesResponseDTOS.length > 0
+  ) {
     return pothole_info.value.imagesResponseDTOS[0].url;
   } else {
     return "../../assets/image/default.PNG";

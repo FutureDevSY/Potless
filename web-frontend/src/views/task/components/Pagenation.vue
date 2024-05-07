@@ -27,13 +27,16 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from "vue";
+import { ref, computed, watch, watchEffect } from "vue";
 
 const props = defineProps({
-  totalpage: Number,
+  totalPage: Number,
 });
 
-const totalPages = props.totalpage;
+const totalPages = ref(props.totalPage);
+watchEffect(() => {
+  totalPages.value = props.totalPage;
+});
 const currentPage = ref(1);
 const visiblePages = 5;
 const emit = defineEmits(["update:current-page"]);
@@ -41,8 +44,9 @@ const emit = defineEmits(["update:current-page"]);
 const pageNumbers = computed(() => {
   let start = Math.floor((currentPage.value - 1) / visiblePages) * visiblePages;
   return Array.from({ length: visiblePages }, (_, i) => start + i + 1).filter(
-    (page) => page <= totalPages
+    (page) => page <= totalPages.value
   );
+  return numbers;
 });
 
 function setCurrentPage(page) {
@@ -53,15 +57,19 @@ function setCurrentPage(page) {
   } else {
     currentPage.value = page;
   }
-  emit("update:current-page", currentPage.value);
+  emit("update:current-page", currentPage.value - 1);
 }
 
 const isPrevGroupDisabled = computed(() => currentPage.value <= visiblePages);
-const isNextGroupDisabled = computed(() => currentPage.value > totalPages - visiblePages);
+const isNextGroupDisabled = computed(
+  () => currentPage.value > totalPages - visiblePages
+);
 
 watch(currentPage, (newValue) => {
   if (!pageNumbers.value.includes(newValue)) {
-    setCurrentPage(Math.floor((newValue - 1) / visiblePages) * visiblePages + 1);
+    setCurrentPage(
+      Math.floor((newValue - 1) / visiblePages) * visiblePages + 1
+    );
   }
 });
 </script>
