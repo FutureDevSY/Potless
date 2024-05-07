@@ -44,6 +44,7 @@ public class ProjectEntity extends BaseEntity {
     @Column(name = "project_date", nullable = false)
     private LocalDate projectDate;
 
+    @Setter
     @Column(name = "project_size", nullable = false)
     private Integer projectSize;
 
