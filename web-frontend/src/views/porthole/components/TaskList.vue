@@ -82,7 +82,6 @@ const props = defineProps({
 });
 
 const selectedTeamId = ref(null);
-// 모달창 작업 지시서 리스트 + 더미데이터
 const taskData = ref([]);
 const currentTasks = computed(() => {
   return taskData.value || [];
@@ -121,7 +120,6 @@ function addNewTask() {
 const selectedTask = ref(null);
 const isDetailOpen = ref(false);
 const propData = ref(null);
-
 function showDetail(task) {
   selectedTask.value = task;
   isDetailOpen.value = true;
@@ -145,10 +143,12 @@ function showDetail(task) {
   );
 }
 
+// 디테일 닫기
 function closeDetail() {
   isDetailOpen.value = false;
 }
 
+// 팀 할당
 function saveDetail() {
   isDetailOpen.value = false;
   const assignData = ref({
@@ -174,7 +174,7 @@ function saveDetail() {
   );
 }
 
-// 작업 보고서 추가
+// 작업 보고서에 포트홀 할당
 const assignPothole = (taskId) => {
   const damageIdsArray = Array.from(props.selectedIds);
   const potholeData = ref({
@@ -202,6 +202,7 @@ const assignPothole = (taskId) => {
   );
 };
 
+// 작업 보고서 리스트 조회
 const takeData = () => {
   const rawParams = {
     areaId: store2.areaId,
