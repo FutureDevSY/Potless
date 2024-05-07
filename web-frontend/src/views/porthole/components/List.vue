@@ -5,7 +5,11 @@
       <thead>
         <tr>
           <th class="work-column">
-            <button class="add-button" :disabled="!hasSelected" @click="openModal('add')">
+            <button
+              class="add-button"
+              :disabled="!hasSelected"
+              @click="openModal('add')"
+            >
               작업추가
             </button>
           </th>
@@ -24,7 +28,14 @@
           @click="handleRowClick(pothole)"
         >
           <td class="select-column" @click.stop="toggleSelect(pothole)">
-            <div class="checkbox">
+            <div
+              class="checkbox"
+              :class="{
+                disabled:
+                  props.selectedStatus === '작업 완료' ||
+                  props.selectedStatus === null,
+              }"
+            >
               <div v-if="pothole.isSelected" class="checkmark"></div>
             </div>
           </td>
@@ -69,14 +80,12 @@ import { ref, computed } from "vue";
 import { useMoveStore } from "../../../stores/move";
 import TaskList from "./TaskList.vue";
 import TeamModal from "./AddTeamModal.vue";
-import { postPothole } from "../../../api/task/taskDetail";
 
 const store = useMoveStore();
 const props = defineProps({
   currentData: Object,
+  selectedStatus: String,
 });
-
-
 
 const potholes = computed(() => {
   return (props.currentData || []).map((item) => ({
@@ -152,6 +161,11 @@ const updateMapLocation = (dirX, dirY) => {
   display: inline-block;
   z-index: -2;
   position: relative;
+}
+
+.checkbox.disabled {
+  opacity: 0.5;
+  pointer-events: none;
 }
 
 .checkmark {
