@@ -63,12 +63,9 @@ class DamageResponse {
 }
 
 class Project {
-  final int teamId;
-  final int projectId;
+  final int teamId, projectId, projectSize;
   final String projectName;
-  final DateTime projectDate;
-  final int projectSize;
-  final DateTime createdDate;
+  final DateTime projectDate, createdDate;
   final List<DamageResponse> damages;
 
   Project({

@@ -1,14 +1,15 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:porthole24/screens/Works/WorkDetail.dart';
+import 'package:porthole24/models/pothole.dart';
+import 'package:porthole24/screens/Works/WorkDetail2.dart';
 import 'package:porthole24/widgets/UI/ScreenSize.dart';
 
 class WorkBlock extends StatelessWidget {
   final int potholeId, severity;
   final double x, y, width;
-  final String address, roadName, field, status;
-  final Image? image;
+  final String address, roadName, field, status, dType;
+  final DateTime createdAt;
+  final List<DamageImage> images;
+
   const WorkBlock({
     super.key,
     this.potholeId = 0,
@@ -20,20 +21,26 @@ class WorkBlock extends StatelessWidget {
     this.address = '예제',
     this.roadName = '예제',
     this.field = '예제',
-    this.image,
+    required this.images,
+    required this.dType,
+    required this.createdAt,
   });
+
+  Image? get primaryImage {
+    final primaryImg = images.firstWhere((img) => img.order == 1);
+    return Image.network(primaryImg.url, fit: BoxFit.cover);
+  }
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        debugPrint('click');
         Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => WorkDetailScreen(
-              placeLatitude: x,
-              placeLongitude: y,
+              placeLatitude: y,
+              placeLongitude: x,
               potholeId: potholeId,
               field: field,
               address: address,
@@ -41,15 +48,19 @@ class WorkBlock extends StatelessWidget {
               status: status,
               severity: severity,
               width: width,
+              images: images,
+              dType: dType,
+              createdAt: createdAt,
             ),
           ),
         );
       },
       child: Container(
         decoration: BoxDecoration(
-            color: status == '작업전' ? Colors.white : Colors.grey,
-            borderRadius: BorderRadius.circular(10),
-            border: Border.all()),
+          color: status == '작업중' ? Colors.white : Colors.grey,
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(),
+        ),
         padding: const EdgeInsets.all(15),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -61,53 +72,52 @@ class WorkBlock extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(field),
+                      Text('파손번호: ${potholeId.toString()}'),
                       Text(roadName),
                     ],
                   ),
                   SizedBox(height: UIhelper.deviceHeight(context) * 0.02),
                   Row(
-                    children: [
-                      Text(address),
-                    ],
+                    children: [Text(address)],
                   )
                 ],
               ),
             ),
-            Stack(children: [
-              Container(
-                margin: const EdgeInsets.fromLTRB(10, 0, 0, 0),
-                decoration: BoxDecoration(
-                  border: Border.all(),
-                  borderRadius: BorderRadius.circular(5),
-                ),
-                height: 100,
-                width: 150,
-                child: image,
-              ),
-              Positioned(
-                bottom: 0,
-                right: 0,
-                child: Container(
-                  padding: const EdgeInsets.all(5),
+            Stack(
+              children: [
+                Container(
+                  margin: const EdgeInsets.fromLTRB(10, 0, 0, 0),
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(5),
                     border: Border.all(),
-                    // Change the color based on the severity
-                    color: severity == 1
-                        ? Colors.green
-                        : (severity == 2 ? Colors.orange : Colors.red),
+                    borderRadius: BorderRadius.circular(5),
                   ),
-                  child: Text(
-                    // Change the text based on the severity
-                    severity == 1 ? '양호' : (severity == 2 ? '중간' : '심각'),
-                    style: const TextStyle(
-                      color: Color(0xFFFFFFFF), // White color for text
+                  height: 100,
+                  width: 150,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(5),
+                    child: primaryImage,
+                  ),
+                ),
+                Positioned(
+                  bottom: 0,
+                  right: 0,
+                  child: Container(
+                    padding: const EdgeInsets.all(5),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5),
+                      border: Border.all(),
+                      color: severity == 1
+                          ? Colors.green
+                          : (severity == 2 ? Colors.orange : Colors.red),
+                    ),
+                    child: Text(
+                      severity == 1 ? '양호' : (severity == 2 ? '중간' : '심각'),
+                      style: const TextStyle(color: Color(0xFFFFFFFF)),
                     ),
                   ),
                 ),
-              ),
-            ])
+              ],
+            ),
           ],
         ),
       ),

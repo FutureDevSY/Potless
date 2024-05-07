@@ -68,7 +68,6 @@ class _VideoPageState extends State<VideoPage> with WidgetsBindingObserver {
   //   final String baseDir = await ExternalPath.getExternalStoragePublicDirectory(
   //       ExternalPath.DIRECTORY_DCIM);
   //   final Directory todayDir = Directory('$baseDir/$formattedDate');
-
   //   debugPrint(todayDir.path);
   //   if (!await todayDir.exists()) {
   //     await todayDir.create(recursive: true);
