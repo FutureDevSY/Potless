@@ -15,7 +15,7 @@
           @update:selected="handleType"
         />
         <Select
-          :options="['작업전', '작업완료']"
+          :options="['작업전', '작업중', '작업완료']"
           defaultText="작업 상태"
           @update:selected="handleStatus"
         />
@@ -129,7 +129,7 @@ const handleType = (option) => {
 };
 
 // 현재 상황
-const selectedStatus = ref("");
+const selectedStatus = ref("작업전");
 const handleStatus = (option) => {
   selectedStatus.value = option;
 };

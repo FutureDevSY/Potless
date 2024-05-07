@@ -2,7 +2,11 @@
   <div class="create-team-container">
     <div class="add-team-form">
       <div class="input-container">
-        <input v-model="newTeamName" type="text" placeholder="팀 이름을 입력해주세요" />
+        <input
+          v-model="newTeamName"
+          type="text"
+          placeholder="팀 이름을 입력해주세요"
+        />
       </div>
 
       <!-- <div v-for="index in 5" :key="index">
@@ -22,9 +26,15 @@
     </div>
     <div class="team-list">
       <div>
-        <input type="text" placeholder="새로운 작업자 이름" v-model="newworker" />
+        <input
+          type="text"
+          placeholder="새로운 작업자 이름"
+          v-model="newworker"
+        />
         <div class="button-container">
-          <button class="add-button" @click="addNewWorker()">작업자 추가</button>
+          <button class="add-button" @click="addNewWorker()">
+            작업자 추가
+          </button>
         </div>
       </div>
       <div v-for="worker in datas">
@@ -88,11 +98,7 @@ const removeMember = (index) => {
   teamMembers.value.splice(index, 1);
 };
 
-const emit = defineEmits(["update:isAddingTeam"], ["backToModal"]);
-
-const goBack = () => {
-  emit("backToModal");
-};
+const emit = defineEmits(["teamAdded"], ["backToModal"]);
 
 function addTeam() {
   const reqBody = ref({
@@ -109,6 +115,7 @@ function addTeam() {
       console.log(res);
       if (res.data.status == "SUCCESS") {
         console.log(res.data.message);
+        emit("teamAdded", true);
       }
     },
     (error) => {
@@ -117,7 +124,7 @@ function addTeam() {
     }
   );
   // 모달을 닫기 위한 이벤트를 발생시킵니다.
-  emit("update:isAddingTeam", false);
+  emit("teamAdded", false);
 }
 
 onMounted(() => {

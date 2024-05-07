@@ -32,8 +32,8 @@
               class="checkbox"
               :class="{
                 disabled:
-                  props.selectedStatus === '작업 완료' ||
-                  props.selectedStatus === null,
+                  props.selectedStatus === '작업완료' ||
+                  props.selectedStatus === '작업중',
               }"
             >
               <div v-if="pothole.isSelected" class="checkmark"></div>
@@ -55,8 +55,13 @@
     </table>
   </div>
 
-  <button class="button list-button" @click="openModal('list')">작업지시서</button>
-  <div v-if="isModalOpen && (modalMode === 'list' || modalMode === 'add')" class="modal">
+  <button class="button list-button" @click="openModal('list')">
+    작업지시서
+  </button>
+  <div
+    v-if="isModalOpen && (modalMode === 'list' || modalMode === 'add')"
+    class="modal"
+  >
     <div class="modal-content">
       <TaskList
         :is-adding-tasks="modalMode === 'add'"
