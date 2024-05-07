@@ -28,6 +28,7 @@ class ApiService {
       if (response.statusCode == 200) {
         var res = jsonDecode(response.body);
         await _storageService.saveToken(res['data']['token']);
+        debugPrint('login 31 ${res['data']['token']}');
         return true;
       } else {
         debugPrint('APIservice 31: ${response.body}');
@@ -257,7 +258,7 @@ class ApiService {
     }
   }
 
-  Future<List<DamageResponse>> fetchProject() async {
+  Future<List<Project>> fetchProject() async {
     String? token = await _storageService.getToken();
 
     if (token == null) {
@@ -275,19 +276,22 @@ class ApiService {
       );
 
       if (res.statusCode == 200) {
-        var data = json.decode(res.body) as Map<String, dynamic>;
+        var resBody = utf8.decode(res.bodyBytes);
+        var data = json.decode(resBody) as Map<String, dynamic>;
 
-        var damageList = data['damangeResponseDtoList'] as List<dynamic>;
-
-        return damageList
-            .map((jsonItem) => DamageResponse.fromJson(jsonItem))
+        // Correct access to the list
+        List<dynamic> projectsJson = data['data'];
+        List<Project> projects = projectsJson
+            .map((projectsJson) => Project.fromJson(projectsJson))
             .toList();
+
+        return projects;
       } else {
-        debugPrint(jsonDecode(res.body));
+        debugPrint('Failed to load data: ${res.statusCode}');
         return [];
       }
     } catch (e) {
-      debugPrint('$e');
+      debugPrint('APIservice 290: $e');
       return [];
     }
   }
