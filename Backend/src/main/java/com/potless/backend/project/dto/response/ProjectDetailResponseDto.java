@@ -22,12 +22,16 @@ public class ProjectDetailResponseDto {
     private Integer projectSize;
     @Schema(description = "작업할 포트홀 리스트")
     private List<DamageResponseDTO> damageResponseDTOS;
+    @Schema(description = "Task ID정보")
+    private List<TaskDetailDto> taskResponses;
 
     @Builder
-    public ProjectDetailResponseDto(String projectName, String managerName, Integer projectSize, List<DamageResponseDTO> damageResponseDTOS) {
+
+    public ProjectDetailResponseDto(String projectName, String managerName, Integer projectSize, List<DamageResponseDTO> damageResponseDTOS, List<TaskDetailDto> taskResponses) {
         this.projectName = projectName;
         this.managerName = managerName;
         this.projectSize = projectSize;
         this.damageResponseDTOS = damageResponseDTOS;
+        this.taskResponses = taskResponses;
     }
 }

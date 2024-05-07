@@ -70,22 +70,24 @@ public class TaskServiceImpl implements TaskService {
             taskIds.add(task.getId());
         }
 
-//        updateProjectSize(project);
+        project.setProjectSize(project.getProjectSize() + taskAddRequestDto.getDamageIds().size());
+        projectRepository.save(project);
 
         return taskIds;
     }
 
     @Override
+    @Transactional
     public Long deleteTask(Long taskId) {
         TaskEntity taskEntity = taskRepository.findById(taskId)
                 .orElseThrow(TaskNotFoundException::new);
         ProjectEntity project = taskEntity.getProjectEntity();
-        taskEntity.softDelet();
-        taskRepository.save(taskEntity);
+        project.setProjectSize(project.getProjectSize() - 1);
+        projectRepository.save(project);
 
-//        updateProjectSize(project);
+        taskRepository.delete(taskEntity);
 
-        return taskEntity.getProjectEntity().getId();
+        return project.getId();
     }
 
     @Override
@@ -112,11 +114,5 @@ public class TaskServiceImpl implements TaskService {
         }
 
     }
-
-//    private void updateProjectSize(ProjectEntity project) {
-//        int size = project.getProjectSize();
-//        project.setProjectSize(size);
-//        projectRepository.save(project);
-//    }
 
 }
