@@ -1,5 +1,6 @@
 package com.potless.backend.project.service;
 
+import com.potless.backend.damage.entity.enums.Status;
 import com.potless.backend.damage.entity.road.DamageEntity;
 import com.potless.backend.damage.repository.DamageRepository;
 import com.potless.backend.global.exception.member.InvalidLoginAuthException;
@@ -56,6 +57,8 @@ public class TaskServiceImpl implements TaskService {
         for (Long damageId : taskAddRequestDto.getDamageIds()) {
             DamageEntity damage = damageRepository.findById(damageId)
                     .orElseThrow(PotholeNotFoundException::new);
+
+            damage.changeStatus(Status.작업중);
 
             TaskEntity task = TaskEntity.builder()
                     .projectEntity(project)
