@@ -53,15 +53,11 @@ public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
                 .where(project.id.eq(projectId))
                 .fetchOne();
 
-        log.info("projectEntity = {}", projectEntity);
-
         List<Long> damageIds = queryFactory
                 .select(task.damageEntity.id)
                 .from(task)
                 .where(task.projectEntity.id.eq(projectId))
                 .fetch();
-
-        log.info("damageIds = {}", damageIds);
 
         List<DamageResponseDTO> damageResponses = queryFactory
                 .select(Projections.constructor(DamageResponseDTO.class,
@@ -80,7 +76,7 @@ public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
                 .from(damage)
                 .where(damage.id.in(damageIds))
                 .fetch();
-        log.info("damageResponses = {}", damageResponses);
+
         for (DamageResponseDTO damageResponseDTO : damageResponses) {
             List<ImagesResponseDTO> imagesForDamage = queryFactory
                     .select(Projections.constructor(ImagesResponseDTO.class,
@@ -102,13 +98,12 @@ public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
     }
 
     @Override
-    public Page<ProjectListResponseDto> findProjectAll(Long managerId, ProjectListRequestDto projectListRequestDto, Pageable pageable) {
+    public Page<ProjectListResponseDto> findProjectAll(ProjectListRequestDto projectListRequestDto, Pageable pageable) {
         QProjectEntity project = projectEntity;
         BooleanBuilder builder = new BooleanBuilder();
 
 
-        builder.and(managerIdEquals(project, managerId))
-                .and(betweenDates(project, projectListRequestDto.getStart(), projectListRequestDto.getEnd()))
+        builder.and(betweenDates(project, projectListRequestDto.getStart(), projectListRequestDto.getEnd()))
                 .and(equalToStatus(project, projectListRequestDto.getStatus()))
                 .and(containsSearchWord(project, projectListRequestDto.getWord()))
                 .and(areaGuEquals(project, projectListRequestDto.getAreaId()))
