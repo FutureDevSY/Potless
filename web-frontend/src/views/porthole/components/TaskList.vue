@@ -5,26 +5,16 @@
     <span class="close" @click="toggleModal">&times;</span>
   </div>
   <div v-if="!isDetailOpen">
-    <button class="primary-btn new-work-btn" @click="addNewTask">
-      새 작업
-    </button>
+    <button class="primary-btn new-work-btn" @click="addNewTask">새 작업</button>
     <div class="work-list-container">
       <table>
-        <tr
-          v-for="task in currentTasks"
-          :key="task.id"
-          @click="showDetail(task)"
-        >
-          <td>No. {{ task.projectId }}</td>
-          <td>{{ task.projectName }}</td>
-          <td>{{ task.projectDate }}</td>
-          <td>{{ task.projectSize }} 건</td>
-          <td
-            class="add-column"
-            v-if="isAddingTasks"
-            @click="assignPothole(task.projectId)"
-          >
-            추가✅
+        <tr v-for="task in currentTasks" :key="task.id">
+          <td class="cursor" @click="showDetail(task)">No. {{ task.projectId }}</td>
+          <td class="cursor name-col" @click="showDetail(task)">{{ task.projectName }}</td>
+          <td class="cursor" @click="showDetail(task)">{{ task.projectDate }}</td>
+          <td class="cursor" @click="showDetail(task)">{{ task.projectSize }} 건</td>
+          <td class="add-column" v-if="isAddingTasks">
+            <button class="add-button" @click.stop="assignPothole(task.projectId)">작업추가</button>
           </td>
         </tr>
       </table>
@@ -32,9 +22,7 @@
   </div>
   <div v-if="isDetailOpen">
     <div class="info-details">
-      <div class="info-font">
-        No.{{ selectedTask.projectId }} {{ selectedTask.projectName }}
-      </div>
+      <div class="info-font">No.{{ selectedTask.projectId }} {{ selectedTask.projectName }}</div>
       <div class="manager-section">
         <div class="manager">관리자: {{ selectedTask.managerName }}</div>
         <div class="manager">{{ selectedTask.projectDate }}</div>
@@ -47,12 +35,7 @@
       <div class="control-right">
         <select v-model="selectedTeamId" class="team-select">
           <option value="null" disabled>작업팀 배정</option>
-          <option
-            class="teams"
-            v-for="(team, id) in teamList"
-            :key="id"
-            :value="team.teamId"
-          >
+          <option class="teams" v-for="(team, id) in teamList" :key="id" :value="team.teamId">
             {{ team.teamName }}
           </option>
         </select>
@@ -65,12 +48,7 @@
 <script setup>
 import { ref, computed, onMounted } from "vue";
 import TaskDetail from "./TaskDetail.vue";
-import {
-  postTaskCreate,
-  postPothole,
-  getTaskDetail,
-  postTeam,
-} from "../../../api/task/taskDetail";
+import { postTaskCreate, postPothole, getTaskDetail, postTeam } from "../../../api/task/taskDetail";
 import { getTaskList } from "../../../api/task/taskList";
 import { useAuthStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
@@ -232,9 +210,7 @@ const takeData = () => {
   };
 
   const queryParams = Object.fromEntries(
-    Object.entries(rawParams).filter(
-      ([key, value]) => value !== "" && value != null
-    )
+    Object.entries(rawParams).filter(([key, value]) => value !== "" && value != null)
   );
 
   getTaskList(
@@ -265,31 +241,34 @@ onMounted(() => {
 .work-list-container {
   overflow-y: auto;
   height: 55vh;
-  border-left: 1px solid #ddd;
 }
 
 table {
   width: 100%;
   border-collapse: collapse;
   table-layout: fixed;
+  border: 1px solid #ddd;
 }
 
 th,
 td {
-  border-top: 1px solid #ddd;
-  border-bottom: 1px solid #ddd;
+  border-left: none; /* 왼쪽 경계 없앰 */
+  border-right: none; /* 오른쪽 경계 없앰 */
+  border-top: 1px solid #ddd; /* 상단 경계 설정 */
+  border-bottom: 1px solid #ddd; /* 하단 경계 설정 */
   text-align: center;
-  padding: 1.7vh;
+  padding: 2.7vh;
   color: #373737;
 }
 
-tr:nth-child(even) {
-  background-color: #f2f2f2;
+tr:hover,
+tr:nth-child(odd):hover {
+  background-color: #e7e9fb;
+  /* cursor: pointer; */
 }
 
-tr:hover {
-  background-color: #d2d5ef;
-  cursor: pointer;
+tr:nth-child(odd) {
+  background-color: #f2f2f2;
 }
 
 .close {
@@ -350,6 +329,13 @@ tr:hover {
 }
 /* --- */
 
+.name-col {
+  width: 160px;
+  min-width: 150px;
+  text-align: center;
+  white-space: nowrap;
+}
+
 .add-column {
   width: 100px;
   min-width: 150px;
@@ -398,6 +384,10 @@ tr:hover {
   font-size: 1.55vh;
 }
 
+.cursor {
+  cursor: pointer;
+}
+
 .detail-controls {
   display: flex;
   justify-content: space-between;
@@ -436,5 +426,21 @@ tr:hover {
 
 .primary-btn:hover {
   background-color: #0e1241;
+}
+
+.add-button {
+  padding: 5px 15px;
+  font-size: 1.55vh;
+  background-color: #f8f8fc;
+  border-radius: 5px;
+  cursor: pointer;
+  height: 4.4vh;
+  color: #4f58b5;
+  border: 1px solid #4f58b5;
+  transition: background-color 0.4s;
+}
+
+.add-button:hover {
+  background-color: #e6e6f6;
 }
 </style>
