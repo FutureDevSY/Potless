@@ -15,7 +15,7 @@
           <th>작업 관리자</th>
           <th>작업 예정 일자</th>
           <th>등록 시점</th>
-          <th>삭제</th>
+          <th class="delete-column"></th>
         </tr>
       </thead>
       <tbody>
@@ -29,22 +29,15 @@
           <td>{{ task.managerName }}</td>
           <td>{{ task.projectDate }}</td>
           <td>{{ task.createdDate }}</td>
-          <td class="delete-column">
+          <td class="delete-div">
             <button class="delete-btn" @click.stop="deleteTask(task.projectId)">
-              <img
-                class="delete-img"
-                src="../../assets/icon/delete.png"
-                alt="delete"
-              />
+              <img class="delete-img" src="../../assets/icon/delete.png" alt="delete" />
             </button>
           </td>
         </tr>
       </tbody>
     </table>
-    <Pagenation
-      :total-page="totalPage"
-      @update:current-page="handleCurrentPageUpdate"
-    />
+    <Pagenation :total-page="totalPage" @update:current-page="handleCurrentPageUpdate" />
   </div>
 </template>
 
@@ -133,9 +126,7 @@ const takeData = (currentPage) => {
   };
 
   const queryParams = Object.fromEntries(
-    Object.entries(rawParams).filter(
-      ([key, value]) => value !== "" && value != null
-    )
+    Object.entries(rawParams).filter(([key, value]) => value !== "" && value != null)
   );
 
   getTaskList(
@@ -225,6 +216,13 @@ tbody tr:hover {
 }
 
 .delete-column {
+  width: 60px;
+  min-width: 150px;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.delete-div {
   padding: 0px;
 }
 
