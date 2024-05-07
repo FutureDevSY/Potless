@@ -61,11 +61,15 @@ function setCurrentPage(page) {
 }
 
 const isPrevGroupDisabled = computed(() => currentPage.value <= visiblePages);
-const isNextGroupDisabled = computed(() => currentPage.value > totalPages - visiblePages);
+const isNextGroupDisabled = computed(
+  () => currentPage.value > totalPages - visiblePages
+);
 
 watch(currentPage, (newValue) => {
   if (!pageNumbers.value.includes(newValue)) {
-    setCurrentPage(Math.floor((newValue - 1) / visiblePages) * visiblePages + 1);
+    setCurrentPage(
+      Math.floor((newValue - 1) / visiblePages) * visiblePages + 1
+    );
   }
 });
 </script>

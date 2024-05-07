@@ -4,7 +4,7 @@
       <div class="pothole-info">
         <div class="title">위험물 정보</div>
         <div class="info-i">
-          위험물 No. <span class="numebr">{{ props.pothole.damageId }}</span>
+          위험물 No. <span class="numebr">{{ props.pothole.id }}</span>
         </div>
         <div class="info">
           <div>위험물 유형:</div>
@@ -46,8 +46,8 @@
       <div class="direct info">
         <div>위경도 좌표:</div>
         <div class="coordinates">
-          <div>x: {{ props.pothole.dir_x }}</div>
-          <div>y: {{ props.pothole.dir_y }}</div>
+          <div>x: {{ props.pothole.dirX }}</div>
+          <div>y: {{ props.pothole.dirY }}</div>
         </div>
       </div>
       <div class="info">
@@ -101,7 +101,7 @@ function preloadImage(url) {
 onMounted(() => {
   const map = L.map(mapContainer.value, {
     zoomControl: false,
-  }).setView([props.pothole.dir_x, props.pothole.dir_y], 16);
+  }).setView([props.pothole.dirY, props.pothole.dirX], 16);
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
     attribution: "© OpenStreetMap contributors",
     maxZoom: 19,
@@ -113,7 +113,7 @@ onMounted(() => {
     iconAnchor: [16, 16],
   });
 
-  L.marker([props.pothole.dir_x, props.pothole.dir_y], { icon }).addTo(map);
+  L.marker([props.pothole.dirY, props.pothole.dirX], { icon }).addTo(map);
 
   map.whenReady(() => {
     leafletImage(map, function (err, canvas) {

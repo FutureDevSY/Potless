@@ -7,11 +7,11 @@
           <th>위험성</th>
           <th>종류</th>
           <th>행정동</th>
-          <th>도로명</th>
+          <th>지번</th>
           <th>너비(mm)</th>
           <th>사진</th>
           <th>작업 상태</th>
-          <th></th>
+          <th>삭제</th>
         </tr>
       </thead>
       <tbody>
@@ -21,8 +21,8 @@
           @click="store.movePortholeDetail(porthole.damageId)"
         >
           <td class="detect-column">
-            <div>{{ porthole.createAt.split(" ")[0] }}</div>
-            <div>{{ porthole.createAt.split(" ")[1] }}</div>
+            <div>{{ porthole.createdDateTime.split(" ")[0] }}</div>
+            <div>{{ porthole.createdDateTime.split(" ")[1] }}</div>
           </td>
           <td class="danger-column">
             <div class="danger-type" :class="dangerClass(porthole.severity)">
@@ -30,16 +30,22 @@
             </div>
           </td>
           <td>{{ porthole.dtype }}</td>
-          <td>{{ porthole.area }}</td>
-          <td>{{ porthole.roadName }}</td>
+          <td>{{ porthole.location }}</td>
+          <td>{{ porthole.address }}</td>
           <td>{{ porthole.width }}</td>
           <td>
-            <button class="list-button" @click="openModal(porthole.imgUrl)">확인하기</button>
+            <button class="list-button" @click="openModal(porthole.imgUrl)">
+              확인하기
+            </button>
           </td>
           <td>{{ porthole.status }}</td>
           <td class="delete-column">
             <button class="delete-btn">
-              <img class="delete-img" src="../../../assets/icon/delete.png" alt="delete" />
+              <img
+                class="delete-img"
+                src="../../../assets/icon/delete.png"
+                alt="delete"
+              />
             </button>
           </td>
         </tr>
@@ -55,7 +61,7 @@
 
 <script setup>
 import { useMoveStore } from "../../../stores/move";
-import { ref, watch, onMounted } from "vue";
+import { ref } from "vue";
 import CaruselModal from "../components/CaruselModal.vue";
 
 const store = useMoveStore();

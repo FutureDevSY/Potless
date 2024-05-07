@@ -5,10 +5,16 @@
     <span class="close" @click="toggleModal">&times;</span>
   </div>
   <div v-if="!isDetailOpen">
-    <button class="primary-btn new-work-btn" @click="addNewTask">새 작업</button>
+    <button class="primary-btn new-work-btn" @click="addNewTask">
+      새 작업
+    </button>
     <div class="work-list-container">
       <table>
-        <tr v-for="task in currentTasks" :key="task.id" @click="showDetail(task)">
+        <tr
+          v-for="task in currentTasks"
+          :key="task.id"
+          @click="showDetail(task)"
+        >
           <td>No. {{ task.projectId }}</td>
           <td>{{ task.projectName }}</td>
           <td>{{ task.projectDate }}</td>
@@ -16,7 +22,7 @@
           <td
             class="add-column"
             v-if="isAddingTasks"
-            @click.stop="incrementProjectEnd(task, $event)"
+            @click="assignPothole(task.projectId)"
           >
             추가✅
           </td>
@@ -26,20 +32,27 @@
   </div>
   <div v-if="isDetailOpen">
     <div class="info-details">
-      <div class="info-font">No.{{ selectedTask.projectId }} {{ selectedTask.projectName }}</div>
+      <div class="info-font">
+        No.{{ selectedTask.projectId }} {{ selectedTask.projectName }}
+      </div>
       <div class="manager-section">
         <div class="manager">관리자: {{ selectedTask.managerName }}</div>
         <div class="manager">{{ selectedTask.projectDate }}</div>
       </div>
     </div>
     <div class="detail-list">
-      <TaskDetail :task="selectedTask" @close="isDetailOpen = false" />
+      <TaskDetail :task="propData" @close="isDetailOpen = false" />
     </div>
     <div class="detail-controls">
       <div class="control-right">
         <select v-model="selectedTeamId" class="team-select">
           <option value="null" disabled>작업팀 배정</option>
-          <option class="teams" v-for="(team, id) in teamlist" :key="id" :value="id">
+          <option
+            class="teams"
+            v-for="(team, id) in teamList"
+            :key="id"
+            :value="team.teamId"
+          >
             {{ team.teamName }}
           </option>
         </select>
@@ -52,8 +65,12 @@
 <script setup>
 import { ref, computed, onMounted } from "vue";
 import TaskDetail from "./TaskDetail.vue";
-import Teamlist from "./teamData.json";
-import { postTaskCreate, postPothole } from "../../../api/task/taskDetail";
+import {
+  postTaskCreate,
+  postPothole,
+  getTaskDetail,
+  postTeam,
+} from "../../../api/task/taskDetail";
 import { getTaskList } from "../../../api/task/taskList";
 import { useAuthStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
@@ -86,7 +103,6 @@ const props = defineProps({
   selectedIds: Array,
 });
 
-const teamlist = ref(Teamlist);
 const selectedTeamId = ref(null);
 // 모달창 작업 지시서 리스트 + 더미데이터
 const taskData = ref([]);
@@ -108,10 +124,8 @@ function addNewTask() {
     accessToken.value,
     newData.value,
     (res) => {
-      console.log(res);
       if (res.data.status == "SUCCESS") {
         console.log(res.data.message);
-        console.log(res);
         taskData.value = res.data.data;
         takeData();
       } else {
@@ -128,10 +142,29 @@ function addNewTask() {
 // 작업 보고서 디테일
 const selectedTask = ref(null);
 const isDetailOpen = ref(false);
+const propData = ref(null);
 
 function showDetail(task) {
   selectedTask.value = task;
   isDetailOpen.value = true;
+
+  getTaskDetail(
+    accessToken.value,
+    task.projectId,
+    (res) => {
+      console.log(res);
+      if (res.data.status == "SUCCESS") {
+        console.log(res.data.message);
+        propData.value = res.data.data.damageResponseDTOS;
+      } else {
+        console.log(res.data.message);
+      }
+    },
+    (error) => {
+      console.log(error);
+      console.log(error.data.message);
+    }
+  );
 }
 
 function closeDetail() {
@@ -140,6 +173,27 @@ function closeDetail() {
 
 function saveDetail() {
   isDetailOpen.value = false;
+  const assignData = ref({
+    projectId: selectedTask.value.projectId,
+    teamId: selectedTeamId,
+  });
+
+  postTeam(
+    accessToken.value,
+    assignData.value,
+    (res) => {
+      console.log(res);
+      if (res.data.status == "SUCCESS") {
+        console.log(res.data.message);
+      } else {
+        console.log(res.data.message);
+      }
+    },
+    (error) => {
+      console.log(error);
+      console.log(error.data.message);
+    }
+  );
 }
 
 // 작업 보고서 추가
@@ -149,8 +203,8 @@ const assignPothole = (taskId) => {
     projectId: taskId,
     damageIds: damageIdsArray,
     origin: {
-      x: 36.3556033,
-      y: 127.2985515,
+      x: 127.2985515,
+      y: 36.3556033,
     },
   });
 
@@ -158,9 +212,8 @@ const assignPothole = (taskId) => {
     accessToken.value,
     potholeData.value,
     (res) => {
-      console.log(res);
-      console.log(accessToken.value);
       console.log(potholeData.value);
+      console.log(res);
       if (res.data.status == "SUCCESS") {
         console.log(res.data.message);
       }
@@ -175,10 +228,13 @@ const takeData = () => {
   const rawParams = {
     areaId: store2.areaId,
     status: "작업전",
+    size: 20,
   };
 
   const queryParams = Object.fromEntries(
-    Object.entries(rawParams).filter(([key, value]) => value !== "" && value != null)
+    Object.entries(rawParams).filter(
+      ([key, value]) => value !== "" && value != null
+    )
   );
 
   getTaskList(

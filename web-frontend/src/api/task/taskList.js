@@ -8,7 +8,6 @@ const getTaskList = async (accessToken, queryParams, success, fail) => {
     .get(`/project`, {
       params: {
         ...queryParams,
-        size: 10,
       },
       headers: {
         Authorization: `Bearer ${accessToken}`,
