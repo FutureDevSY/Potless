@@ -18,21 +18,28 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="task in currentData" :key="task.id" @click="store.moveTaskDetail(task.id)">
+        <tr
+          v-for="task in currentData"
+          :key="task.id"
+          @click="store.moveTaskDetail(task.id)"
+        >
           <td>{{ task.projectName }}</td>
           <td>{{ task.projectSize }} 건</td>
           <td>{{ task.managerName }}</td>
           <td>{{ task.projectDate }}</td>
-          <td>{{ task.registrationTime }}</td>
+          <td>{{ task.createdDate }}</td>
         </tr>
       </tbody>
     </table>
-    <Pagenation :total-page="totalPage" @update:current-page="handleCurrentPageUpdate" />
+    <Pagenation
+      :total-page="totalPage"
+      @update:current-page="handleCurrentPageUpdate"
+    />
   </div>
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import Calendar from "./components/Calendar.vue";
 import Select from "./components/Select.vue";
 import Input from "./components/Input.vue";
@@ -41,12 +48,16 @@ import { useMoveStore } from "../../stores/move.js";
 import { useAuthStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
 import { getTaskList } from "../../api/task/taskList";
+import { getTeamList } from "../../api/team/team";
 
 const store = useMoveStore();
 const store2 = useAuthStore();
-const { accessToken } = storeToRefs(store2);
+const { accessToken, areaName } = storeToRefs(store2);
 const currentData = ref(null);
 const totalPage = ref(null);
+
+
+
 
 // 상태 검색
 const selectedStatus = ref("작업전");
@@ -93,7 +104,9 @@ const takeData = (currentPage) => {
   };
 
   const queryParams = Object.fromEntries(
-    Object.entries(rawParams).filter(([key, value]) => value !== "" && value != null)
+    Object.entries(rawParams).filter(
+      ([key, value]) => value !== "" && value != null
+    )
   );
 
   getTaskList(
@@ -115,6 +128,11 @@ const takeData = (currentPage) => {
     }
   );
 };
+
+onMounted(() => {
+  takeData(0);
+  
+});
 </script>
 
 <style scoped>
