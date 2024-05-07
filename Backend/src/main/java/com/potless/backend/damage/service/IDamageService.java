@@ -39,5 +39,6 @@ public interface IDamageService {
 
     AreaForMonthListResponseDTO getAreaDamageCountForMonth(AreaDamageCountForMonthServiceRequestDTO areaDamageCountForMonthServiceRequestDTO);
 
+
 //    List<DamageResponseDTO> getWorkDamage(Long memberId);
 }
