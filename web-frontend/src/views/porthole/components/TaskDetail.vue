@@ -6,119 +6,65 @@
         <th>종류</th>
         <th>위험성</th>
         <th>행정동</th>
-        <th>도로명</th>
+        <th>지번</th>
       </tr>
     </thead>
     <tbody>
-      <tr v-for="taskDetail in taskDetails" :key="taskDetail.id">
+      <tr v-for="taskDetail in props.task" :key="taskDetail.id">
         <td class="close-cursor" @click="removeTask(taskDetail.id)">
           <span class="close-button">&times;</span>
         </td>
         <td>
-          {{ taskDetail.detect }}
+          {{ taskDetail.status }}
         </td>
         <td class="dangers-column">
-          <div class="danger-type" :class="dangerClass(taskDetail.danger)">
-            <p>{{ taskDetail.danger }}</p>
+          <div class="danger-type" :class="dangerClass(taskDetail.severity)">
+            <p>{{ taskDetail.severity }}</p>
           </div>
         </td>
-        <td>{{ taskDetail.city }}</td>
-        <td>{{ taskDetail.road }}</td>
+        <td>{{ taskDetail.location }}</td>
+        <td>{{ taskDetail.address }}</td>
       </tr>
     </tbody>
   </table>
 </template>
 
 <script setup>
-import { reactive } from "vue";
+import { ref } from "vue";
+import { patchPothole } from "../../../api/task/taskDetail";
+import { useAuthStore } from "@/stores/user";
+import { storeToRefs } from "pinia";
+
+const store2 = useAuthStore();
+const { accessToken } = storeToRefs(store2);
 
 const props = defineProps({
   task: Object,
 });
 
-// 모달창 작업 지시서 디테일: 더미데이터
-const taskDetails = reactive([
-  {
-    id: 1,
-    detect: "POTHOLE",
-    danger: 3,
-    type: "포트홀",
-    city: "가양동",
-    road: "계족로",
-  },
-  {
-    id: 2,
-    detect: "POTHOLE",
-    danger: 2,
-    type: "포트홀",
-    city: "자양동",
-    road: "우암로",
-  },
-  {
-    id: 3,
-    detect: "POTHOLE",
-    danger: 1,
-    type: "도로파손",
-    city: "가양동",
-    road: "우암로",
-  },
-  {
-    id: 4,
-    detect: "POTHOLE",
-    danger: 3,
-    type: "포트홀",
-    city: "가양동",
-    road: "우암로",
-  },
-  {
-    id: 5,
-    detect: "POTHOLE",
-    danger: 3,
-    type: "포트홀",
-    city: "가양동",
-    road: "계족로",
-  },
-  {
-    id: 6,
-    detect: "POTHOLE",
-    danger: 1,
-    type: "포트홀",
-    city: "자양동",
-    road: "우암로",
-  },
-  {
-    id: 7,
-    detect: "POTHOLE",
-    danger: 3,
-    type: "포트홀",
-    city: "가양동",
-    road: "계족로",
-  },
-  {
-    id: 8,
-    detect: "POTHOLE",
-    danger: 2,
-    type: "도로파손",
-    city: "가양동",
-    road: "계족로",
-  },
-  {
-    id: 9,
-    detect: "POTHOLE",
-    danger: 1,
-    type: "도로파손",
-    city: "자양동",
-    road: "계족로",
-  },
-  {
-    id: 10,
-    detect: "POTHOLE",
-    danger: 3,
-    type: "포트홀",
-    city: "가양동",
-    road: "계족로",
-  },
-]);
+const deletePothole = (potholeId) => {
+  const potholeData = ref({
+    damageId: potholeId,
+    origin: {
+      x: 127.2985515,
+      y: 36.3556033,
+    },
+  });
+
+  patchPothole(
+    accessToken.value,
+    potholeData.value,
+    (res) => {
+      console.log(res);
+      if (res.data.status == "SUCCESS") {
+        console.log(res.data.message);
+      }
+    },
+    (error) => {
+      console.log(error);
+    }
+  );
+};
 
 // 위험성 필터링
 const dangerClass = (danger) => {
@@ -135,7 +81,9 @@ const dangerClass = (danger) => {
 };
 
 // 작업 리스트 삭제
-const removeTask = (id) => {};
+const removeTask = (id) => {
+  deletePothole(id);
+};
 </script>
 
 <style scoped>

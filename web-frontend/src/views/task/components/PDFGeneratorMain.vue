@@ -1,6 +1,6 @@
 <template>
   <div class="pdf-container">
-    <div class="number">{{ props.taskHeader.projectId }}</div>
+    <div class="number">{{ props.taskNumber }}</div>
     <div class="pdf-middle">
       <div class="title">{{ props.taskHeader.projectName }}</div>
       <div class="team">- 유성구 1팀 -</div>
@@ -15,6 +15,7 @@
 <script setup>
 const props = defineProps({
   taskHeader: Object,
+  taskNumber: Number,
 });
 </script>
 
