@@ -392,6 +392,13 @@ public class DamageRepositoryCustomImpl implements DamageRepositoryCustom {
         QLocationEntity location = QLocationEntity.locationEntity;
         QAreaEntity area = QAreaEntity.areaEntity;
 
+        Long severityCount = Optional.ofNullable(queryFactory
+                .select(damage.count())
+                .from(damage)
+                .where(damage.areaEntity.id.eq(areaId)
+                        .and(damage.severity.eq(3)))
+                .fetchOne()).orElse(0L);
+
         List<Tuple> rawResults = queryFactory
                 .select(location.id, location.locationName, damage.status, damage.count())
                 .from(location)
@@ -402,10 +409,11 @@ public class DamageRepositoryCustomImpl implements DamageRepositoryCustom {
 
         List<StatisticLocationCountResponseDTO> results = rawResults.stream()
                 .collect(Collectors.groupingBy(
-                        tuple -> tuple.get(location.id),
+                        tuple -> Optional.ofNullable(tuple.get(location.id)).orElse(-1L), // Handling potential null ID
                         Collectors.mapping(tuple -> new StatisticLocationCountResponseDTO(
-                                        tuple.get(location.locationName),
+                                        Optional.ofNullable(tuple.get(location.locationName)).orElse("Unknown"),
                                         tuple.get(damage.status) == Status.작업전 ? tuple.get(damage.count()) : 0L,
+                                        tuple.get(damage.status) == Status.작업중 ? tuple.get(damage.count()) : 0L,
                                         tuple.get(damage.status) == Status.작업완료 ? tuple.get(damage.count()) : 0L
                                 ),
                                 Collectors.toList()
@@ -416,14 +424,14 @@ public class DamageRepositoryCustomImpl implements DamageRepositoryCustom {
                 .flatMap(list -> list.stream().reduce((dto1, dto2) -> new StatisticLocationCountResponseDTO(
                         dto1.getLocationName(),
                         dto1.getCountDamageBefore() + dto2.getCountDamageBefore(),
+                        dto1.getCountDamageDuring() + dto2.getCountDamageDuring(),
                         dto1.getCountDamageDone() + dto2.getCountDamageDone()
                 )).stream())
                 .collect(Collectors.toList());
 
         String areaGu = em.find(AreaEntity.class, areaId).getAreaGu();
-        return new StatisticListResponseDTO(areaGu, results);
+        return new StatisticListResponseDTO(areaGu, results, severityCount);
     }
-
 
     @Override
     public List<StatisticCountResponseDTO> getStatistics() {
@@ -453,6 +461,7 @@ public class DamageRepositoryCustomImpl implements DamageRepositoryCustom {
                 .map(entry -> new StatisticCountResponseDTO(
                         entry.getKey(),
                         entry.getValue().getOrDefault(Status.작업전, 0L),
+                        entry.getValue().getOrDefault(Status.작업중, 0L),
                         entry.getValue().getOrDefault(Status.작업완료, 0L)
                 ))
                 .collect(Collectors.toList());
@@ -521,6 +530,7 @@ public class DamageRepositoryCustomImpl implements DamageRepositoryCustom {
                 .map(entry -> new StatisticLocationCountResponseDTO(
                         entry.getKey(),
                         entry.getValue().getOrDefault(Status.작업전, 0L),
+                        entry.getValue().getOrDefault(Status.작업중, 0L),
                         entry.getValue().getOrDefault(Status.작업완료, 0L)
                 ))
                 .collect(Collectors.toList());

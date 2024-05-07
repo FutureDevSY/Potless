@@ -16,10 +16,19 @@ public class StatisticListResponseDTO {
     public String areaGu;
     @Schema(description = "동별 통계 DTO")
     public List<StatisticLocationCountResponseDTO> list = new ArrayList<>();
+    @Schema(description = "심각도 3 개수")
+    public Long severityCount;
 
     @Builder
     public StatisticListResponseDTO(String areaGu, List<StatisticLocationCountResponseDTO> list) {
         this.areaGu = areaGu;
         this.list = list;
+    }
+
+    @Builder
+    public StatisticListResponseDTO(String areaGu, List<StatisticLocationCountResponseDTO> list, Long severityCount) {
+        this.areaGu = areaGu;
+        this.list = list;
+        this.severityCount = severityCount;
     }
 }
