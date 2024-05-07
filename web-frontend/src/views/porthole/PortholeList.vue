@@ -76,7 +76,7 @@ const takeData = (currentPage) => {
     type: selectedType.value,
     status: selectedStatus.value,
     severity: selectedSeverity.value,
-    area: store2.areaName,
+    area: store2.areaName,  
     searchWord: inputValue.value,
     page: currentPage,
   };
