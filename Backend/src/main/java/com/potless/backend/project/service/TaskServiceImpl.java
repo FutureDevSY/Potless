@@ -70,6 +70,8 @@ public class TaskServiceImpl implements TaskService {
             taskIds.add(task.getId());
         }
 
+//        updateProjectSize(project);
+
         return taskIds;
     }
 
@@ -77,8 +79,12 @@ public class TaskServiceImpl implements TaskService {
     public Long deleteTask(Long taskId) {
         TaskEntity taskEntity = taskRepository.findById(taskId)
                 .orElseThrow(TaskNotFoundException::new);
+        ProjectEntity project = taskEntity.getProjectEntity();
         taskEntity.softDelet();
         taskRepository.save(taskEntity);
+
+//        updateProjectSize(project);
+
         return taskEntity.getProjectEntity().getId();
     }
 
@@ -106,5 +112,11 @@ public class TaskServiceImpl implements TaskService {
         }
 
     }
+
+//    private void updateProjectSize(ProjectEntity project) {
+//        int size = project.getProjectSize();
+//        project.setProjectSize(size);
+//        projectRepository.save(project);
+//    }
 
 }
