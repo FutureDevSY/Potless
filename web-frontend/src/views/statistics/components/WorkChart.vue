@@ -4,12 +4,15 @@
       <apexchart type="donut" :options="chartOptions" :series="series" />
     </div>
     <div class="data-display">
-      <Inquire
-        v-for="(item, index) in dataItems"
-        :key="index"
-        :title="item.title"
-        :number="item.number"
-      />
+      <transition-group name="incident-report" tag="div" class="data-list">
+        <Inquire
+          v-for="(item, index) in dataItems"
+          :key="index"
+          :title="item.title"
+          :number="item.number"
+          class="infos"
+        />
+      </transition-group>
     </div>
   </div>
 </template>
@@ -75,15 +78,32 @@ const dataItems = [
 
 <style scoped>
 .data-display {
-  width: 80%;
   border-left: 1px solid #ccc;
+  height: 200px;
+}
+/* slide animation 효과 -> 오른쪽에서 왼쪽으로 이동 */
+@keyframes slideIn {
+  from {
+    transform: translateX(-30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0px);
+    opacity: 1;
+  }
+}
+.incident-report-enter-active {
+  animation: slideIn 0.6s ease-out forwards;
+}
+.incident-report-enter {
+  opacity: 0;
 }
 .chart {
   width: 100%;
 }
 .chart-container {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 5fr 7fr;
 }
 .data-total {
   display: flex;

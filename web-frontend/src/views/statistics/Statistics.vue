@@ -1,81 +1,88 @@
 <template>
   <div class="statics-container">
     <div class="left-box">
-      <p class="incident-title">위험물 발생 현황</p>
-      <div class="incident-report">
-        <IncidentReport
-          v-for="(item, index) in reportData"
-          :key="index"
-          :title="item.title"
-          :number="item.number"
-          :subtitle="item.subtitle"
-          :percent="item.percent"
-          :diff="item.diff"
-        />
+      <div class="incident-box">
+        <p class="incident-title">위험물 발생 현황</p>
+        <transition-group name="incident-report" tag="div" class="incident-report">
+          <IncidentReport
+            v-for="(item, index) in IncidentData"
+            :key="index"
+            :title="item.title"
+            :number="item.number"
+            :subtitle="item.subtitle"
+            :percent="item.percent"
+            :diff="item.diff"
+          />
+        </transition-group>
       </div>
-      <p class="totalincident-title">위험물 누적 탐지 건수</p>
-      <div class="incident-graph">
-        <IncidentGraph />
-      </div>
-      <div class="title-input">
-        <p class="road-title">도로별 km당 발생 건수</p>
-        <input
-          type="text"
-          v-model="searchTerm"
-          placeholder="도로명을 입력해주세요."
-          @input="updateChart"
-        />
-      </div>
-      <div class="road-graph">
+
+      <div class="danger-box">
+        <div class="title-input">
+          <p class="road-title">도로별 km당 발생 건수</p>
+          <input
+            type="text"
+            v-model="searchTerm"
+            placeholder="도로명을 입력해주세요."
+            @input="updateChart"
+          />
+        </div>
         <RoadTypeIncidentsGraphVue :search-term="searchTerm" />
       </div>
     </div>
     <div class="right-box">
-      <p class="town-title">지역별 발생 현황</p>
-      <TownTypeIncidentsGraph />
-      <p class="work-title">보수 공사 현황</p>
-      <WorkChart class="work-chart" />
+      <div class="total-box">
+        <p class="totalincident-title">위험물 누적 탐지 건수</p>
+        <div class="incident-graph">
+          <IncidentGraph />
+        </div>
+      </div>
+
+      <div class="work-box">
+        <p class="work-title">보수 공사 현황</p>
+        <WorkChart class="work-chart" />
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted } from "vue";
 import IncidentGraph from "./components/IncidentGraph.vue";
 import IncidentReport from "./components/IncidentReport.vue";
 import RoadTypeIncidentsGraphVue from "./components/RoadTypeIncidentsGraph.vue";
 import TownTypeIncidentsGraph from "./components/TownTypeIncidentsGraph.vue";
 import WorkChart from "./components/WorkChart.vue";
-import { format, subDays } from 'date-fns';
+import { format, addMonths, subYears, subDays } from "date-fns";
 import { useAuthStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
 import {
+  getAreaDetails,
   getGuList,
   getDongList,
   getTotalDongList,
   getDongDetail,
-  getDongPerDate
+  getDongMonthly,
+  getDongPerDate,
 } from "../../api/statistics/statistics";
-
 
 const store = useAuthStore();
 const { accessToken, areaId } = storeToRefs(store);
 const searchTerm = ref("");
 
-// 대전 시 전체 구 데이터
-// const GuData = ref(null);
+// ** 로그인 한 지역의 areaGu를 호출
+const areaDetails = ref(null); // 지역 이름 저장할
 
-// 포트홀 구에 속한 동에 대한 통계 조회 (구 1개, 동 여러개)
-// const DongListData = ref(null);
+const fetchAreaDetails = async () => {
+  const response = await getAreaDetails(accessToken.value, areaId.value);
+  if (response && response.status === "SUCCESS") {
+    areaDetails.value = response.data;
+  } else {
+    console.error("Failed to fetch area details");
+  }
+};
 
-// 구 별로 상관없이 모든 동의 전체 통계 출력
-// const TotalDongListData = ref(null);
-
-// 동 이름 검색하면 해당 동의 통계 출력
-// const DongDetailData = ref(null);
-
-// 구 별로 지정한 월별 발생한 통계 출력
-const reportData = ref([]) // 데이터set을 담을 변수
+// ** 위험물 발생 현황: 구 별로 지정한 월별 발생한 통계 출력
+const IncidentData = ref([]); // 데이터set을 담을 변수
 const today = new Date(); // 오늘 날짜
 const yesterday = subDays(today, 1); // 어제 날짜
 const thisWeekStart = subDays(today, 6); // 이번주 시작 날짜
@@ -87,132 +94,14 @@ const lastMonthStart = subDays(lastMonthEnd, 29); // 저번달 시작 날짜
 
 const formatDate = (date) => format(date, "yyyy-MM-dd"); // 날짜 형식 변경
 
-function calculatePercentChange(current, previous) { // 증감률 계산 함수
-  if (previous === 0) return "N/A";  // 0으로 나누면 "N/A"을 반환하고 IncidentReport에서 메세지 처리
-  return ((current - previous) / previous * 100).toFixed(1) + "%";
+function calculatePercentChange(current, previous) {
+  // 증감률 계산 함수
+  if (previous === 0) return "N/A"; // 0으로 나누면 "N/A"을 반환하고 IncidentReport에서 메세지 처리
+  return (((current - previous) / previous) * 100).toFixed(1) + "%";
 }
 
-
-// 해당 함수를 호출하는 예시 코드
-// const startDate = "2024-01-14";
-// const endDate = "2024-03-14";
-
-const TakeStatistics = async () => {
-  // getGuList(
-  //   accessToken.value,
-  //   (res) => {
-  //     console.log("구 전체 리스트 요청", res);
-  //     if (res.data.status == "SUCCESS") {
-  //       console.log(res.data.message);
-  //       GuData.value = res.data.data;
-  //     }
-  //   },
-  //   (error) => {
-  //     console.log(error);
-  //     console.log(error.response.data.message);
-  //   }
-  // );
-
-  // getDongList(
-  //   accessToken.value,
-  //   areaId.value,
-  //   (res) => {
-  //     console.log("동 리스트 요청", res);
-  //     if (res.data.status == "SUCCESS") {
-  //       console.log(res.data.message);
-  //       DongListData.value = res.data.data;
-  //     }
-  //   },
-  //   (error) => {
-  //     console.log(error);
-  //     console.log(error.response.data.message);
-  //   }
-  // );
-
-  // getTotalDongList(
-  //   accessToken.value,
-  //   (res) => {
-  //     console.log("동 전체 정보", res);
-  //     if (res.data.status == "SUCCESS") {
-  //       console.log(res.data.message);
-  //       TotalDongListData.value = res.data.data;
-  //     }
-  //   },
-  //   (error) => {
-  //     console.log(error);
-  //     console.log(error.response.data.message);
-  //   }
-  // );
-
-  // getTotalDongList(
-  //   accessToken.value,
-  //   (res) => {
-  //     console.log("동 전체 정보", res);
-  //     if (res.data.status == "SUCCESS") {
-  //       console.log(res.data.message);
-  //       TotalDongListData.value = res.data.data;
-  //     }
-  //   },
-  //   (error) => {
-  //     console.log(error);
-  //     console.log(error.response.data.message);
-  //   }
-  // );
-
-  // 동 이름 검색하면 해당 동의 통계 출력
-  // getDongDetail(
-  //   accessToken.value,
-  //   (res) => {
-  //     console.log(res);
-  //     if (res.data.status == "SUCCESS") {
-  //       console.log(res.data.message);
-  //       DongDetailData.value = res.data.data;
-  //     }
-  //   },
-  //   (error) => {
-  //     console.log(error);
-  //     console.log(error.response.data.message);
-  //   }
-  // );
-
-  
-  // 구 별로 지정한 월별 발생한 통계 출력
-  // getDongMonthly(
-  //   accessToken.value,
-  //   (res) => {
-  //     console.log(res);
-  //     if (res.data.status == "SUCCESS") {
-  //       console.log(res.data.message);
-  //       getDongMonthlyData.value = res.data.data;
-  //     }
-  //   },
-  //   (error) => {
-  //     console.log(error);
-  //     console.log(error.response.data.message);
-  //   }
-  // );
-
- // 구 별로 지정한 날짜별 발생한 통계 출력
-  // getDongPerDate(
-  //   accessToken.value,
-  //   startDate,
-  //   endDate,
-  //   (res) => {
-  //     console.log("동 날짜별 정보", res);
-  //     if (res.data.status == "SUCCESS") {
-  //       console.log(res.data.message);
-  //       getDongPerDateData.value = res.data.data;
-  //     }
-  //   },
-  //   (error) => {
-  //     console.log(error);
-  //     console.log(error.response.data.message);
-  //   }
-  // );
-};
-
 // API 호출을 위한 일반화된 함수
-async function fetchDataForPeriod(start, end, title) {
+async function secondDataForPeriod(start, end, title) {
   return new Promise((resolve, reject) => {
     getDongPerDate(
       accessToken.value,
@@ -220,10 +109,9 @@ async function fetchDataForPeriod(start, end, title) {
       formatDate(end),
       (res) => {
         if (res.data && res.data.status === "SUCCESS") {
-          console.log(res.data.message);
           const data = res.data.data.list;
-          const yuseongData = data.find(d => d.areaGu === "유성구");
-          const counts = yuseongData.list.map(item => item.count);
+          const areaData = data.find((d) => d.areaGu === areaDetails.value.areaGu); // areaGu 동적 사용
+          const counts = areaData.list.map((item) => item.count);
           const total = counts.reduce((acc, current) => acc + current, 0);
           resolve({ title: title, number: total });
         }
@@ -236,15 +124,15 @@ async function fetchDataForPeriod(start, end, title) {
   });
 }
 
-const calculateData = async () => {
+const firstData = async () => {
   try {
     // 데이터 가져오기
-    const todayData = await fetchDataForPeriod(today, today, "오늘");
-    const yesterdayData = await fetchDataForPeriod(yesterday, yesterday, "어제");
-    const thisWeekData = await fetchDataForPeriod(thisWeekStart, today, "최근 1주일");
-    const lastWeekData = await fetchDataForPeriod(lastWeekStart, lastWeekEnd, "지난 1주일");
-    const thisMonthData = await fetchDataForPeriod(thisMonthStart, today, "최근 1달");
-    const lastMonthData = await fetchDataForPeriod(lastMonthStart, lastMonthEnd, "지난 1달");
+    const todayData = await secondDataForPeriod(today, today, "오늘");
+    const yesterdayData = await secondDataForPeriod(yesterday, yesterday, "어제");
+    const thisWeekData = await secondDataForPeriod(thisWeekStart, today, "최근 1주일");
+    const lastWeekData = await secondDataForPeriod(lastWeekStart, lastWeekEnd, "지난 1주일");
+    const thisMonthData = await secondDataForPeriod(thisMonthStart, today, "최근 1달");
+    const lastMonthData = await secondDataForPeriod(lastMonthStart, lastMonthEnd, "지난 1달");
 
     // 증감률 계산
     const dailyChangePercent = calculatePercentChange(todayData.number, yesterdayData.number);
@@ -252,20 +140,39 @@ const calculateData = async () => {
     const monthlyChangePercent = calculatePercentChange(thisMonthData.number, lastMonthData.number);
 
     // 데이터셋 저장
-    reportData.value = [
-      { title: "오늘", number: todayData.number, subtitle: "전날 대비",  diff: yesterdayData.number, percent: dailyChangePercent },
-      { title: "최근 1주일", number: thisWeekData.number, subtitle: "전주 대비", diff: lastWeekData.number, percent: weeklyChangePercent },
-      { title: "최근 1달", number: thisMonthData.number, subtitle: "전달 대비", diff: lastMonthData.number, percent: monthlyChangePercent }
+    IncidentData.value = [
+      {
+        title: "오늘",
+        number: todayData.number,
+        subtitle: "전날 대비",
+        diff: yesterdayData.number,
+        percent: dailyChangePercent,
+      },
+      {
+        title: "최근 1주일",
+        number: thisWeekData.number,
+        subtitle: "전주 대비",
+        diff: lastWeekData.number,
+        percent: weeklyChangePercent,
+      },
+      {
+        title: "최근 1달",
+        number: thisMonthData.number,
+        subtitle: "전달 대비",
+        diff: lastMonthData.number,
+        percent: monthlyChangePercent,
+      },
     ];
-    console.log("데이터:", reportData.value)
+    // console.log("위험물 발생 현황:", IncidentData.value);
   } catch (error) {
     console.error("Failed to fetch data:", error);
   }
 };
 
 onMounted(() => {
-  // TakeStatistics();
-  calculateData();
+  fetchAreaDetails().then(() => {
+    firstData();
+  });
 });
 </script>
 
@@ -281,12 +188,7 @@ onMounted(() => {
 .right-box {
   display: flex;
   flex-direction: column;
-  padding: 20px 15px;
-}
-.incident-report {
-  display: grid;
-  margin-bottom: 20px;
-  grid-template-columns: 1fr 1fr 1fr;
+  padding: 3.1vh 15px;
 }
 
 .totalincident-title,
@@ -299,40 +201,59 @@ onMounted(() => {
   color: #373737;
 }
 
+/* ***** */
+/* 위험물 발생 현황 */
+.incident-box {
+  background-color: rgba(241, 241, 241, 0.641);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.255);
+  border-radius: 10px;
+  padding: 1.2vh 5px 20px 5px;
+  height: 177px;
+  margin-bottom: 3.4vh;
+}
 .incident-title {
-  margin: 10px 0px 10px 10px;
+  margin: 1vh 0px 1.8vh 10px;
+}
+.incident-report {
+  display: grid;
+  margin-bottom: 20px;
+  grid-template-columns: 1fr 1fr 1fr;
+}
+/* slide animation 효과 -> 왼쪽에서 오른쪽으로 이동 */
+@keyframes slideIn {
+  from {
+    transform: translateX(-30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0px);
+    opacity: 1;
+  }
+}
+.incident-report-enter-active {
+  animation: slideIn 0.6s ease-out forwards;
+}
+.incident-report-enter {
+  opacity: 0;
 }
 
-.totalincident-title {
-  margin: 20px 0px 0px 10px;
+/* ***** */
+/* 동별 포트홀 + 심각한 포트홀 현황 */
+.danger-box {
+  background-color: rgba(241, 241, 241, 0.641);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.255);
+  border-radius: 10px;
+  padding: 1.2vh 0px 0px 5px;
 }
-
-.town-title {
-  margin: 10px 0px 15px 0px;
-}
-
-.work-title {
-  margin: 75px 0px 15px 0px;
-}
-
-.road-title {
-  margin: 25px 0px 0px 10px;
-  padding-bottom: 15px;
-}
-
-.incident-graph {
-  width: 100%;
-}
-.work-chart {
-  width: 100%;
-}
-
 .title-input {
   display: flex;
   align-items: center;
-  margin: 40px 0px 0px 20px;
+  margin: 1vh 0px 0px 0px;
 }
-
+.road-title {
+  margin: 0px 0px 0px 10px;
+  padding-bottom: 15px;
+}
 input {
   width: 30%;
   padding: 10px;
@@ -344,15 +265,43 @@ input {
   transition: border 0.4s ease;
   font-size: 16px;
   color: #373737;
+  background-color: white;
   margin-left: 20px;
 }
-
 input:focus {
   outline: 0;
-  border-color: #1f2993;
+  border-color: #696969;
 }
 
-.road-title {
-  margin: 0;
+/* ***** */
+/* 위험물 누적 탐지 건수 */
+.total-box {
+  background-color: rgba(241, 241, 241, 0.641);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.255);
+  border-radius: 10px;
+  padding: 1.2vh 5px 0px 5px;
+  height: 360px;
+  margin-bottom: 3.4vh;
+}
+.totalincident-title {
+  margin: 1vh 0px 0px 10px;
+}
+.incident-graph {
+  width: 93%;
+}
+
+/* 보수 공사 현황 */
+.work-box {
+  background-color: rgba(241, 241, 241, 0.641);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.255);
+  border-radius: 10px;
+  padding: 1.2vh 5px 0px 5px;
+  height: 273.5px;
+}
+.work-title {
+  margin: 1vh 0px 1vh 10px;
+}
+.work-chart {
+  width: 100%;
 }
 </style>
