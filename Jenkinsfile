@@ -54,7 +54,7 @@ pipeline {
                     }
                     // Frontend 이미지 빌드
                     dir('web-frontend') {
-                        sh 'docker build -t ${DOCKER_HUB_USER}/${BUILD_ID}-frontend .'
+                        sh 'docker build --build-arg VITE_SERVICE_URL=${VITE_SERVICE_URL} --build-arg VITE_KAKAO_APP_KEY=${VITE_KAKAO_APP_KEY} -t ${DOCKER_HUB_USER}/${BUILD_ID}-frontend .'
                         sh 'docker push ${DOCKER_HUB_USER}/${BUILD_ID}-frontend'
                     }
                 }
