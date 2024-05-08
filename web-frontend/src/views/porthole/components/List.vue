@@ -5,7 +5,11 @@
       <thead>
         <tr>
           <th class="work-column">
-            <button class="add-button" :disabled="!hasSelected" @click="openModal('add')">
+            <button
+              class="add-button"
+              :disabled="!hasSelected"
+              @click="openModal('add')"
+            >
               작업추가
             </button>
           </th>
@@ -24,7 +28,14 @@
           @click="handleRowClick(pothole)"
         >
           <td class="select-column" @click.stop="toggleSelect(pothole)">
-            <div class="checkbox">
+            <div
+              class="checkbox"
+              :class="{
+                disabled:
+                  props.selectedStatus === '작업완료' ||
+                  props.selectedStatus === '작업중',
+              }"
+            >
               <div v-if="pothole.isSelected" class="checkmark"></div>
             </div>
           </td>
@@ -44,8 +55,13 @@
     </table>
   </div>
 
-  <button class="button list-button" @click="openModal('list')">작업지시서</button>
-  <div v-if="isModalOpen && (modalMode === 'list' || modalMode === 'add')" class="modal">
+  <button class="button list-button" @click="openModal('list')">
+    작업지시서
+  </button>
+  <div
+    v-if="isModalOpen && (modalMode === 'list' || modalMode === 'add')"
+    class="modal"
+  >
     <div class="modal-content">
       <TaskList
         :is-adding-tasks="modalMode === 'add'"
@@ -69,14 +85,12 @@ import { ref, computed } from "vue";
 import { useMoveStore } from "../../../stores/move";
 import TaskList from "./TaskList.vue";
 import TeamModal from "./AddTeamModal.vue";
-import { postPothole } from "../../../api/task/taskDetail";
 
 const store = useMoveStore();
 const props = defineProps({
   currentData: Object,
+  selectedStatus: String,
 });
-
-
 
 const potholes = computed(() => {
   return (props.currentData || []).map((item) => ({
@@ -152,6 +166,11 @@ const updateMapLocation = (dirX, dirY) => {
   display: inline-block;
   z-index: -2;
   position: relative;
+}
+
+.checkbox.disabled {
+  opacity: 0.5;
+  pointer-events: none;
 }
 
 .checkmark {
@@ -285,7 +304,7 @@ tbody tr:hover {
 
 .modal-content {
   background-color: white;
-  margin: 10% auto;
+  margin: 16vh auto;
   padding: 0vh 1.8vw 6vh 1.8vw;
   border: 1px solid #dddddda1;
   width: 40vw;

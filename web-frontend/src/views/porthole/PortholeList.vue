@@ -9,9 +9,13 @@
           defaultText="위험성"
           @update:selected="handleSeverity"
         />
-        <Select :options="['POTHOLE', 'CRACK']" defaultText="종류" @update:selected="handleType" />
         <Select
-          :options="['작업전', '작업완료']"
+          :options="['POTHOLE', 'CRACK']"
+          defaultText="종류"
+          @update:selected="handleType"
+        />
+        <Select
+          :options="['작업전', '작업중', '작업완료']"
           defaultText="작업 상태"
           @update:selected="handleStatus"
         />
@@ -22,12 +26,22 @@
 
     <div class="container">
       <div class="left">
-        <List :current-data="currentData" @updateMapLocation="handleMapUpdate" />
-        <Pagination :total-page="totalPage" @update:current-page="handleCurrentPageUpdate" />
+        <List
+          :current-data="currentData"
+          :selected-status="selectedStatus"
+          @updateMapLocation="handleMapUpdate"
+        />
+        <Pagination
+          :total-page="totalPage"
+          @update:current-page="handleCurrentPageUpdate"
+        />
       </div>
 
       <div class="right">
-        <PotholeLocationMap :pothole-dirx="potholeInfo.dirY" :pothole-diry="potholeInfo.dirX" />
+        <PotholeLocationMap
+          :pothole-dirx="potholeInfo.dirY"
+          :pothole-diry="potholeInfo.dirX"
+        />
       </div>
     </div>
   </div>
@@ -62,13 +76,15 @@ const takeData = (currentPage) => {
     type: selectedType.value,
     status: selectedStatus.value,
     severity: selectedSeverity.value,
-    area: store2.areaName,
+    area: store2.areaName,  
     searchWord: inputValue.value,
     page: currentPage,
   };
 
   const queryParams = Object.fromEntries(
-    Object.entries(rawParams).filter(([key, value]) => value !== "" && value != null)
+    Object.entries(rawParams).filter(
+      ([key, value]) => value !== "" && value != null
+    )
   );
 
   getPotholeList(
@@ -113,7 +129,7 @@ const handleType = (option) => {
 };
 
 // 현재 상황
-const selectedStatus = ref("");
+const selectedStatus = ref("작업전");
 const handleStatus = (option) => {
   selectedStatus.value = option;
 };
