@@ -5,11 +5,10 @@ import com.potless.backend.damage.dto.controller.response.ImagesResponseDTO;
 import com.potless.backend.damage.entity.enums.Status;
 import com.potless.backend.damage.entity.road.QDamageEntity;
 import com.potless.backend.damage.entity.road.QImageEntity;
+import com.potless.backend.member.entity.QTeamEntity;
+import com.potless.backend.member.entity.TeamEntity;
 import com.potless.backend.project.dto.request.ProjectListRequestDto;
-import com.potless.backend.project.dto.response.GetTaskResponseDto;
-import com.potless.backend.project.dto.response.ProjectDetailResponseDto;
-import com.potless.backend.project.dto.response.ProjectListResponseDto;
-import com.potless.backend.project.dto.response.TaskDetailDto;
+import com.potless.backend.project.dto.response.*;
 import com.potless.backend.project.entity.ProjectEntity;
 import com.potless.backend.project.entity.QProjectEntity;
 import com.potless.backend.project.entity.QTaskEntity;
@@ -48,11 +47,15 @@ public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
         QDamageEntity damage = damageEntity;
         QImageEntity image = imageEntity;
         QTaskEntity task = taskEntity;
+        QTeamEntity team = teamEntity;
 
         ProjectEntity projectEntity = queryFactory
                 .selectFrom(project)
+                .leftJoin(project.teamEntity, team)
                 .where(project.id.eq(projectId))
                 .fetchOne();
+
+        String teamName = (projectEntity.getTeamEntity() != null) ? projectEntity.getTeamEntity().getTeamName() : null;
 
         List<Long> damageIds = queryFactory
                 .select(task.damageEntity.id)
@@ -60,9 +63,10 @@ public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
                 .where(task.projectEntity.id.eq(projectId))
                 .fetch();
 
-        List<DamageResponseDTO> damageResponses = queryFactory
-                .select(Projections.constructor(DamageResponseDTO.class,
+        List<DamageDetailToProjectDto> damageResponses = queryFactory
+                .select(Projections.constructor(DamageDetailToProjectDto.class,
                         damage.id,
+                        task.id,
                         damage.severity,
                         damage.dirX,
                         damage.dirY,
@@ -75,19 +79,20 @@ public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
                         damage.createdDateTime
                 ))
                 .from(damage)
-                .where(damage.id.in(damageIds))
+                .join(task).on(task.damageEntity.id.eq(damage.id))
+                .where(task.projectEntity.id.eq(projectId))
                 .fetch();
 
-        for (DamageResponseDTO damageResponseDTO : damageResponses) {
+        for (DamageDetailToProjectDto damageDetailToProjectDto : damageResponses) {
             List<ImagesResponseDTO> imagesForDamage = queryFactory
                     .select(Projections.constructor(ImagesResponseDTO.class,
                             image.id,
                             image.url,
                             image.order))
                     .from(image)
-                    .where(image.damageEntity.id.eq(damageResponseDTO.getId()))
+                    .where(image.damageEntity.id.eq(damageDetailToProjectDto.getDamageId()))
                     .fetch();
-            damageResponseDTO.setImagesResponseDTOS(imagesForDamage);
+            damageDetailToProjectDto.setImagesResponseDTOS(imagesForDamage);
         }
 
         List<TaskDetailDto> taskResponses = queryFactory
@@ -101,9 +106,9 @@ public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
         return new ProjectDetailResponseDto(
                 projectEntity.getProjectName(),
                 projectEntity.getManagerEntity().getMemberEntity().getMemberName(),
+                teamName,
                 projectEntity.getProjectSize(),
-                damageResponses,
-                taskResponses
+                damageResponses
         );
     }
 
