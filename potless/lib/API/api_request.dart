@@ -5,8 +5,8 @@ import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart' as mime;
 import 'package:permission_handler/permission_handler.dart';
-import 'package:porthole24/API/login.dart';
-import 'package:porthole24/models/pothole.dart';
+import 'package:potless/API/login.dart';
+import 'package:potless/models/pothole.dart';
 
 class ApiService {
   static const String _baseUrl = "https://api.potless.co.kr/api";

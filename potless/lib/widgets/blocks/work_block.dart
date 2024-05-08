@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:porthole24/models/pothole.dart';
-import 'package:porthole24/screens/Works/WorkDetail2.dart';
-import 'package:porthole24/widgets/UI/ScreenSize.dart';
+import 'package:potless/models/pothole.dart';
+import 'package:potless/screens/Works/WorkDetail2.dart';
+import 'package:potless/widgets/UI/ScreenSize.dart';
 
 class WorkBlock extends StatelessWidget {
   final int potholeId, severity;

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:porthole24/API/api_request.dart';
-import 'package:porthole24/screens/Home/HomeScreen.dart';
-import 'package:porthole24/screens/Login/Login.dart';
-import 'package:porthole24/widgets/UI/ScreenSize.dart';
+import 'package:potless/API/api_request.dart';
+import 'package:potless/screens/Home/HomeScreen.dart';
+import 'package:potless/screens/Login/Login.dart';
+import 'package:potless/widgets/UI/ScreenSize.dart';
 import 'package:lottie/lottie.dart';
 
 class LoadingScreen extends StatefulWidget {

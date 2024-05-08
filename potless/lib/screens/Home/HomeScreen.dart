@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:porthole24/API/api_request.dart';
-import 'package:porthole24/screens/Login/Login.dart';
-import 'package:porthole24/screens/Record/PotLess.dart';
-import 'package:porthole24/screens/Works/ProjectList.dart';
-// import 'package:porthole24/screens/Works/WorkList.dart';
-import 'package:porthole24/widgets/UI/ScreenSize.dart';
-import 'package:porthole24/widgets/buttons/main_button.dart';
+import 'package:potless/API/api_request.dart';
+import 'package:potless/screens/Login/Login.dart';
+import 'package:potless/screens/Record/PotLess.dart';
+import 'package:potless/screens/Record/RecordingScreen.dart';
+import 'package:potless/screens/Works/ProjectList.dart';
+// import 'package:potless/screens/Works/WorkList.dart';
+import 'package:potless/widgets/UI/ScreenSize.dart';
+import 'package:potless/widgets/buttons/main_button.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -53,6 +54,20 @@ class _HomeScreenState extends State<HomeScreen> {
                         context,
                         MaterialPageRoute(
                           builder: (context) => const VideoPage(),
+                        ),
+                      );
+                    },
+                  ),
+                  SizedBox(
+                    height: UIhelper.deviceHeight(context) * 0.02,
+                  ),
+                  MainLarge(
+                    label: '영상촬영',
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const CameraScreen(),
                         ),
                       );
                     },

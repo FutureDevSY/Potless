@@ -4,10 +4,10 @@ import 'package:image_picker/image_picker.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:intl/intl.dart';
 import 'package:kakao_map_plugin/kakao_map_plugin.dart';
-import 'package:porthole24/models/pothole.dart';
-import 'package:porthole24/widgets/UI/AppBar.dart';
-import 'package:porthole24/widgets/UI/ScreenSize.dart';
-import 'package:porthole24/widgets/blocks/carousel_block.dart'; // Assuming your model is set up correctly
+import 'package:potless/models/pothole.dart';
+import 'package:potless/widgets/UI/AppBar.dart';
+import 'package:potless/widgets/UI/ScreenSize.dart';
+import 'package:potless/widgets/blocks/carousel_block.dart'; // Assuming your model is set up correctly
 
 class WorkDetailScreen extends StatefulWidget {
   final double placeLatitude, placeLongitude, width;

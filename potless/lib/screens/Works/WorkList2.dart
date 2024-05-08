@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:porthole24/API/api_request.dart';
-import 'package:porthole24/models/pothole.dart';
-import 'package:porthole24/widgets/UI/AppBar.dart';
-import 'package:porthole24/widgets/UI/ScreenSize.dart';
-import 'package:porthole24/widgets/blocks/work_block.dart';
+import 'package:potless/API/api_request.dart';
+import 'package:potless/models/pothole.dart';
+import 'package:potless/widgets/UI/AppBar.dart';
+import 'package:potless/widgets/UI/ScreenSize.dart';
+import 'package:potless/widgets/blocks/work_block.dart';
 
 class WorkListScreen extends StatefulWidget {
   final List<DamageResponse> damages;
