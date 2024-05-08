@@ -3,13 +3,16 @@ package com.potless.backend.damage.controller;
 
 import com.potless.backend.aws.service.AwsService;
 import com.potless.backend.damage.dto.controller.request.*;
+import com.potless.backend.damage.dto.controller.response.AreaResponseDTO;
 import com.potless.backend.damage.dto.controller.response.DamageResponseDTO;
+import com.potless.backend.damage.dto.controller.response.LocationResponseDTO;
 import com.potless.backend.damage.dto.service.request.AreaDamageCountForMonthServiceRequestDTO;
 import com.potless.backend.damage.dto.service.request.DamageSetRequestServiceDTO;
 import com.potless.backend.damage.dto.service.response.*;
 import com.potless.backend.damage.dto.service.response.kakao.Address;
 import com.potless.backend.damage.dto.service.response.kakao.RoadAddress;
 import com.potless.backend.damage.entity.enums.Status;
+import com.potless.backend.damage.service.IAreaLocationService;
 import com.potless.backend.damage.service.IDamageService;
 import com.potless.backend.damage.service.IVerificationService;
 import com.potless.backend.damage.service.KakaoService;
@@ -53,6 +56,49 @@ public class DamageController {
     private final ApiResponse response;
     private final IVerificationService iVerificationService;
     private final AwsService awsService;
+    private final IAreaLocationService iAreaLocationService;
+
+    @Operation(summary = "Area 리스트 가져오기", description = "Area 리스트 가져오기", responses = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = AreaResponseDTO.class)))
+    })
+    @GetMapping("area")
+    public ResponseEntity<?> getAreaList(Authentication authentication) {
+        List<AreaResponseDTO> list = iAreaLocationService.getAreaList();
+        return response.success(ResponseCode.AREA_LIST_FETCHED, list);
+    }
+
+    @Operation(summary = "Area 가져오기", description = "Area 가져오기", responses = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = AreaResponseDTO.class)))
+    })
+    @GetMapping("area/{areaId}")
+    public ResponseEntity<?> getArea(
+            Authentication authentication,
+            @PathVariable Long areaId
+    ) {
+        AreaResponseDTO areaResponseDTO = iAreaLocationService.getAreaById(areaId);
+        return response.success(ResponseCode.AREA_FETCHED, areaResponseDTO);
+    }
+
+    @Operation(summary = "Location 리스트 가져오기", description = "Location 리스트 가져오기", responses = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = LocationResponseDTO.class)))
+    })
+    @GetMapping("location")
+    public ResponseEntity<?> getLocationList(Authentication authentication) {
+        List<LocationResponseDTO> list = iAreaLocationService.getLocationList();
+        return response.success(ResponseCode.LOCATION_LIST_FETCHED, list);
+    }
+
+    @Operation(summary = "Location 가져오기", description = "Location 가져오기", responses = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = LocationResponseDTO.class)))
+    })
+    @GetMapping("location/{locationId}")
+    public ResponseEntity<?> getLocation(
+            Authentication authentication,
+            @PathVariable Long locationId
+    ) {
+        LocationResponseDTO locationResponseDTO = iAreaLocationService.getLocationById(locationId);
+        return response.success(ResponseCode.LOCATION_FETCHED, locationResponseDTO);
+    }
 
     @Operation(summary = "구별 월별 지정 발생한 도로 파손", description = "구별 월별 지정 발생한 도로 파손  (START 만 입력시 단일 조회 START, END 입력시 START ~ END 조회)", responses = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "포트홀 구별 통계 조회 성공", content = @Content(schema = @Schema(implementation = AreaForMonthListResponseDTO.class)))
@@ -62,7 +108,6 @@ public class DamageController {
             Authentication authentication,
             @ModelAttribute AreaDamageCountForMonthRequestDTO areaDamageCountForMonthRequestDTO
     ) {
-        log.info("areaDamageCountForMonthRequestDTO = {}", areaDamageCountForMonthRequestDTO);
 
         // DTO 변환 로직
         YearMonth startMonth = YearMonth.parse(areaDamageCountForMonthRequestDTO.getStart(), DateTimeFormatter.ofPattern("yyyy-MM"));
@@ -280,7 +325,6 @@ public class DamageController {
         kakaoService.fetchKakaoData(damageSetRequestDTO.getX(), damageSetRequestDTO.getY())
                 .thenAcceptAsync(data -> {
                     try {
-                        log.info("data = {}", data);
                         RoadAddress roadAddress = data.getDocuments().get(0).getRoad_address();
                         Address address = data.getDocuments().get(0).getAddress();
 
@@ -297,8 +341,6 @@ public class DamageController {
                                 .build();
 
                         List<DamageResponseDTO> damageVerification = iDamageService.getDamageVerification(verificationRequestDTO);
-                        log.info("damageVerification = {}", damageVerification);
-                        log.info("boolean = {}", iVerificationService.verificationDamage(damageVerification));
                         if (iVerificationService.verificationDamage(damageVerification)) {
                             // 이미지 위치 옮기기
                             List<String> newUrls = fileUrlsAndKeys.keySet().stream()
@@ -317,7 +359,6 @@ public class DamageController {
                                     .location(location)
                                     .images(newUrls)
                                     .build();
-                            log.info("serviceDTO = {}", serviceDTO);
                             iDamageService.setDamage(serviceDTO);
                         }
                     } catch (Exception e) {
