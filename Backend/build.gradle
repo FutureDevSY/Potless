@@ -106,3 +106,4 @@ clean {
     delete file('src/main/generated')
 }
 
+
