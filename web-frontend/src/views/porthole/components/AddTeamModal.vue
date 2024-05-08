@@ -4,22 +4,31 @@
     <span v-else class="placeholder"></span>
     <span class="close" @click="toggleModal">&times;</span>
   </div>
-  <button class="new-team-btn" @click="isAddingTeam = true" v-if="!isAddingTeam">
+  <button
+    class="new-team-btn"
+    @click="isAddingTeam = true"
+    v-if="!isAddingTeam"
+  >
     새로운 팀 추가
   </button>
   <div class="add-team-modal">
     <div class="content-container">
       <div v-if="isAddingTeam">
-        <AddTeam :is-adding-team="isAddingTeam" @update:isAddingTeam="updateIsAddingTeam" />
+        <AddTeam :is-adding-team="isAddingTeam" @teamAdded="handleTeamAdded" />
       </div>
       <div class="list-container" v-else>
         <div class="team-list" v-for="team in datas">
           <div class="team-name">{{ team.teamName }}</div>
           <div class="person" v-for="worker in team.workerList">
-            <li>작업자 번호: {{ worker.memberId }} / 작업자 이름: {{ worker.workerName }}</li>
+            <li>
+              작업자 번호: {{ worker.memberId }} / 작업자 이름:
+              {{ worker.workerName }}
+            </li>
           </div>
           <div class="button-wrapper">
-            <button class="delete-btn" @click="deleteTeamEvent(team.teamId)">팀 삭제</button>
+            <button class="delete-btn" @click="deleteTeamEvent(team.teamId)">
+              팀 삭제
+            </button>
           </div>
         </div>
       </div>
@@ -47,7 +56,6 @@ const takeTeamList = () => {
     accessToken.value,
     areaName.value,
     (res) => {
-      console.log(res);
       if (res.data.status == "SUCCESS") {
         console.log(res.data.message);
         datas.value = res.data.data;
@@ -65,7 +73,6 @@ const deleteTeamEvent = (projectId) => {
     accessToken.value,
     projectId,
     (res) => {
-      console.log(res);
       if (res.data.status == "SUCCESS") {
         console.log(res.data.message);
         takeTeamList();
@@ -78,9 +85,11 @@ const deleteTeamEvent = (projectId) => {
   );
 };
 
-function updateIsAddingTeam(value) {
-  isAddingTeam.value = value;
-  takeTeamList();
+function handleTeamAdded(success) {
+  if (success) {
+    takeTeamList(); // 팀 목록 새로고침
+    props.toggleModal(); // 모달 닫기
+  }
 }
 
 const goBack = () => {

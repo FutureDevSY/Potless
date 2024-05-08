@@ -1,5 +1,6 @@
 import { ref } from "vue";
 import { defineStore } from "pinia";
+import locations from "../views/porthole/components/location.json";
 
 export const useAuthStore = defineStore(
   "authStore",
@@ -10,6 +11,15 @@ export const useAuthStore = defineStore(
     const areaId = ref(null);
     const areaName = ref("");
     const userId = ref(null);
+    const coordinates = ref({ x: null, y: null });
+
+    const areaIdToName = {
+      1: "대덕구",
+      2: "동구",
+      3: "중구",
+      4: "유성구",
+      5: "서구",
+    };
 
     const login = (userData, userToken) => {
       isLoggedIn.value = true;
@@ -17,16 +27,13 @@ export const useAuthStore = defineStore(
       username.value = userData.data.memberInfo.memberName;
       areaId.value = userData.data.memberInfo.region;
       userId.value = userData.data.memberInfo.id;
-
-      const areaIdToName = {
-        1: "대덕구",
-        2: "동구",
-        3: "중구",
-        4: "유성구",
-        5: "서구",
-      };
-
       areaName.value = areaIdToName[areaId.value];
+
+      // 좌표 설정
+      const location = locations.find((loc) => loc.areaId === areaId.value);
+      if (location) {
+        coordinates.value = { x: location.x, y: location.y };
+      }
     };
 
     const logoutfc = () => {
@@ -36,6 +43,7 @@ export const useAuthStore = defineStore(
       userId.value = null;
       username.value = "";
       areaName.value = "";
+      coordinates.value = { x: null, y: null };
     };
 
     return {
@@ -45,6 +53,7 @@ export const useAuthStore = defineStore(
       areaId,
       areaName,
       userId,
+      coordinates,
       login,
       logoutfc,
     };
@@ -62,6 +71,7 @@ export const useAuthStore = defineStore(
             "areaId",
             "areaName",
             "userId",
+            "coordinates",
           ],
         },
       ],

@@ -2,22 +2,53 @@
   <div class="task-detail-container">
     <div class="header">
       <div class="report-container">
-        <div class="report-num">{{ taskHeader.projectId }}</div>
+        <div class="report-num">{{ route.params.id }}</div>
         <div class="report-info">
-          <div class="report-name">{{ taskHeader.projectName }}</div>
-          <div class="report-total">(총 {{ taskHeader.projectSize }}건)</div>
+          <div class="report-name">
+            {{ taskHeader ? taskHeader.projectName : "Loading..." }}
+          </div>
+          <div class="report-total" v-if="taskHeader">
+            (총 {{ taskHeader.projectSize }}건)
+          </div>
         </div>
         <div class="report-work">
-          <div class="report-worker">담당자 : {{ taskHeader.managerName }}</div>
-          <div class="report-date">작업 일자: {{ taskHeader.projectDate }}</div>
+          <div class="report-worker">
+            담당자 : {{ taskHeader ? taskHeader.managerName : "Loading..." }}
+          </div>
+          <div>
+            팀이름 : {{ taskHeader?.teamName ? taskHeader.teamName : "미정" }}
+          </div>
         </div>
       </div>
-
-      <button class="pdf-button" @click="generatePdf">PDF로 변환하기</button>
+      <div>
+        <button class="pdf-button" @click="showPath">최적 경로 찾기</button>
+        <button
+          class="pdf-button"
+          @click="generatePdf"
+          v-if="taskData && taskData.length"
+        >
+          PDF로 변환하기
+        </button>
+      </div>
     </div>
-    <List :data="taskData" />
-    <div id="pdf" class="report-pdf">
-      <PDFGeneratorMain :task-header="taskHeader" ref="documentRef" class="pdf" id="pdf" />
+    <List :data="taskData" v-if="taskData && !loading" />
+    <PathModal
+      v-if="isModalVisible"
+      :pathData="modalData"
+      :wayPoint="wayPoint"
+      @close="closeModal"
+    />
+
+    <div v-if="loading">로딩 중...</div>
+    <div v-if="error">{{ errorMessage }}</div>
+    <div id="pdf" class="report-pdf" v-if="taskData && taskData.length">
+      <PDFGeneratorMain
+        :task-number="taskNumber"
+        :task-header="taskHeader"
+        ref="documentRef"
+        class="pdf"
+        id="pdf"
+      />
       <div v-for="pothole in taskData" :key="pothole.id">
         <PDFGeneratorDetail :pothole="pothole" ref="documentRef" class="pdf" />
       </div>
@@ -28,24 +59,83 @@
 <script setup>
 import html2pdf from "html2pdf.js";
 import { ref, onMounted } from "vue";
+import { useRoute } from "vue-router";
 import List from "./components/List.vue";
-import data from "./DummyData.json";
 import PDFGeneratorMain from "./components/PDFGeneratorMain.vue";
 import PDFGeneratorDetail from "./components/PDFGeneratorDetail.vue";
+import { getTaskDetail, postOptimal } from "../../api/task/taskDetail";
+import { useAuthStore } from "@/stores/user";
+import { storeToRefs } from "pinia";
+import PathModal from "./components/PathModal.vue";
 
-const taskHeader = ref(data.projectResponse);
-const taskData = ref(data.projectDetailResponse);
+const route = useRoute();
+const store2 = useAuthStore();
+const { accessToken, coordinates } = storeToRefs(store2);
 const documentRef = ref(null);
 
 onMounted(() => {
-  onMounted(() => {
-    if (documentRef.value) {
-      console.log("Document ref is available:", documentRef.value);
-    } else {
-      console.error("Document ref is not available");
-    }
-  });
+  showDetail();
+  if (documentRef.value) {
+    console.log("Document ref is available:", documentRef.value);
+  } else {
+    console.error("Document ref is not available");
+  }
 });
+
+const taskNumber = ref(route.params.id);
+const taskHeader = ref(null);
+const taskData = ref(null);
+const showDetail = () => {
+  getTaskDetail(
+    accessToken.value,
+    route.params.id,
+    (res) => {
+      console.log(res);
+      if (res.data.status == "SUCCESS") {
+        console.log(res.data.message);
+        taskHeader.value = res.data.data;
+        taskData.value = res.data.data.damageDetailToProjectDtos;
+      } else {
+        console.log(res.data.message);
+      }
+    },
+    (error) => {
+      console.log(error);
+      console.log(error.data.message);
+    }
+  );
+};
+
+const modalData = ref(null);
+const isModalVisible = ref(false);
+const wayPoint = ref(null);
+const showPath = () => {
+  const pathBody = ref({
+    projectId: taskNumber.value,
+    origin: coordinates.value,
+  });
+
+  postOptimal(
+    accessToken.value,
+    pathBody.value,
+    (res) => {
+      if (res.data.status == "SUCCESS") {
+        console.log(res.data.message);
+        console.log(res.data.data);
+        modalData.value = res.data.data.routes[0].sections;
+        wayPoint.value = res.data.data.routes[0].summary.waypoints;
+        isModalVisible.value = true;
+      }
+    },
+    (error) => {
+      console.log(error);
+    }
+  );
+};
+
+const closeModal = () => {
+  isModalVisible.value = false;
+};
 
 function generatePdf() {
   const pdfArea = document.getElementById("pdf");

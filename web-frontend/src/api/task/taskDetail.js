@@ -17,7 +17,7 @@ const getTaskDetail = async (accessToken, projectId, success, fail) => {
 // 작업 정보 지시서 삭제
 const deleteTaskDetail = async (accessToken, projectId, success, fail) => {
   await local
-    .put(`/project/${projectId}`, {
+    .delete(`/project/${projectId}`, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
@@ -62,10 +62,21 @@ const postPothole = async (accessToken, assignPothole, success, fail) => {
     .catch(fail);
 };
 
-// 길찾기 api
-const postOptimal = async (accessToken, success, fail) => {
+const patchPothole = async (accessToken, assignPothole, success, fail) => {
   await local
-    .get(`/project/optimal`, {
+    .patch(`/task`, assignPothole, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    })
+    .then(success)
+    .catch(fail);
+};
+
+// 길찾기 api
+const postOptimal = async (accessToken, projectBody, success, fail) => {
+  await local
+    .post(`/path/optimal`, projectBody, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
@@ -80,5 +91,6 @@ export {
   deleteTaskDetail,
   postTeam,
   postPothole,
+  patchPothole,
   postTaskCreate,
 };
