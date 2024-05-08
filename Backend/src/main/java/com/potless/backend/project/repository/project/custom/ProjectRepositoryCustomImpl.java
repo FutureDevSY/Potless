@@ -17,9 +17,7 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.EntityManager;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -33,7 +31,6 @@ import static com.potless.backend.member.entity.QTeamEntity.teamEntity;
 import static com.potless.backend.project.entity.QProjectEntity.projectEntity;
 import static com.potless.backend.project.entity.QTaskEntity.taskEntity;
 
-@Slf4j
 public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
 
     private final JPAQueryFactory queryFactory;
@@ -149,26 +146,26 @@ public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
     public List<GetTaskResponseDto> findProjectAndTaskByTeamId(List<Long> teamIdList) {
         List<GetTaskResponseDto> responseDtoList =
                 queryFactory.select(Projections.constructor(GetTaskResponseDto.class,
-                            projectEntity.teamEntity.id,
-                            projectEntity.id,
-                            projectEntity.projectName,
-                            projectEntity.projectDate,
-                            projectEntity.projectSize,
-                            projectEntity.createdDateTime
-                ))
-                .from(projectEntity)
-                .join(teamEntity).on(teamEntity.id.eq(projectEntity.teamEntity.id))
-                .where(projectEntity.teamEntity.id.in(teamIdList))
-                .fetch();
+                                projectEntity.teamEntity.id,
+                                projectEntity.id,
+                                projectEntity.projectName,
+                                projectEntity.projectDate,
+                                projectEntity.projectSize,
+                                projectEntity.createdDateTime
+                        ))
+                        .from(projectEntity)
+                        .join(teamEntity).on(teamEntity.id.eq(projectEntity.teamEntity.id))
+                        .where(projectEntity.teamEntity.id.in(teamIdList))
+                        .fetch();
 
-        for(GetTaskResponseDto dto : responseDtoList){
+        for (GetTaskResponseDto dto : responseDtoList) {
             List<DamageResponseDTO> damageList =
                     queryFactory.select(Projections.constructor(DamageResponseDTO.class, damageEntity))
-                                .from(taskEntity)
-                                .join(damageEntity).on(taskEntity.damageEntity.id.eq(damageEntity.id))
-                                .where(taskEntity.projectEntity.id.eq(dto.getProjectId()))
-                                .orderBy(taskEntity.taskOrder.asc())
-                                .fetch();
+                            .from(taskEntity)
+                            .join(damageEntity).on(taskEntity.damageEntity.id.eq(damageEntity.id))
+                            .where(taskEntity.projectEntity.id.eq(dto.getProjectId()))
+                            .orderBy(taskEntity.taskOrder.asc())
+                            .fetch();
 
             for (DamageResponseDTO damageResponseDTO : damageList) {
                 List<ImagesResponseDTO> imagesForDamage = queryFactory

@@ -4,32 +4,25 @@ package com.potless.backend.member.service;
 import com.potless.backend.damage.entity.area.AreaEntity;
 import com.potless.backend.damage.repository.AreaRepository;
 import com.potless.backend.global.exception.member.*;
-import com.potless.backend.damage.dto.controller.response.DamageResponseDTO;
-import com.potless.backend.global.exception.member.DuplicateEmailException;
-import com.potless.backend.global.exception.member.EmailNotFoundException;
-import com.potless.backend.global.exception.member.InvalidLoginAttemptException;
-import com.potless.backend.global.exception.member.PasswordMismatchException;
 import com.potless.backend.global.exception.project.AreaNotFoundException;
 import com.potless.backend.global.jwt.TokenInfo;
 import com.potless.backend.global.jwt.provider.TokenProvider;
 import com.potless.backend.global.jwt.repository.RefreshTokenRepository;
 import com.potless.backend.global.jwt.service.TokenService;
 import com.potless.backend.global.util.CookieUtil;
-import com.potless.backend.member.dto.*;
+import com.potless.backend.member.dto.LoginRequestDto;
+import com.potless.backend.member.dto.LoginResponseDto;
+import com.potless.backend.member.dto.MemberInfo;
+import com.potless.backend.member.dto.SignupRequestDto;
 import com.potless.backend.member.entity.MemberEntity;
 import com.potless.backend.member.repository.member.MemberRepository;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.lang.reflect.Member;
-import java.util.List;
-
-@Log4j2
 @Service
 @RequiredArgsConstructor
 public class MemberServiceImpl implements MemberService {
@@ -57,9 +50,9 @@ public class MemberServiceImpl implements MemberService {
                 );
 
         AreaEntity area = areaRepository.findById(requestDto.getRegion())
-                                        .orElseThrow(AreaNotFoundException::new);
+                .orElseThrow(AreaNotFoundException::new);
         MemberEntity newMember = MemberEntity.of(requestDto, area,
-                                                passwordEncoder.encode(requestDto.getPassword()));
+                passwordEncoder.encode(requestDto.getPassword()));
         memberRepository.save(newMember);
 
         return newMember.getId();
@@ -68,12 +61,11 @@ public class MemberServiceImpl implements MemberService {
     @Override
     @Transactional
     public LoginResponseDto login(LoginRequestDto requestDto, HttpServletResponse response, int identify) {
-        log.info("event=LoginAttempt, email={}", requestDto.getEmail());
 
         MemberEntity member = memberRepository.searchByEmail(requestDto.getEmail())
-                                              .orElseThrow(EmailNotFoundException::new);
+                .orElseThrow(EmailNotFoundException::new);
         //앱 로그인 경우에서 작업자 이외의 로그인 시도 또는 웹 로그인 경우에서 관리자 이외의 로그인 시도시 에러
-        if((identify == 1 && member.getRole() != 1) || (identify == 0 && member.getRole() != 0)){
+        if ((identify == 1 && member.getRole() != 1) || (identify == 0 && member.getRole() != 0)) {
             throw new InvalidLoginAuthException();
         }
 
@@ -91,13 +83,13 @@ public class MemberServiceImpl implements MemberService {
         return LoginResponseDto.builder()
                 .token(tokenInfo.getAccessToken())
                 .memberInfo(MemberInfo.builder()
-                                      .Id(member.getId())
-                                      .memberName(member.getMemberName())
-                                      .role(member.getRole())
-                                      .email(member.getEmail())
-                                      .phone(member.getPhone())
-                                      .region(member.getRegion())
-                                      .build())
+                        .Id(member.getId())
+                        .memberName(member.getMemberName())
+                        .role(member.getRole())
+                        .email(member.getEmail())
+                        .phone(member.getPhone())
+                        .region(member.getRegion())
+                        .build())
                 .build();
     }
 
@@ -106,7 +98,7 @@ public class MemberServiceImpl implements MemberService {
     public String logout(String email, HttpServletResponse servletResponse, int identify) {
         if (identify == 0) cookieUtil.removeCookie("RefreshToken", servletResponse);
         refreshTokenRepository.findById(email)
-                              .ifPresent(refreshTokenRepository::delete);
+                .ifPresent(refreshTokenRepository::delete);
         return email;
     }
 
@@ -143,6 +135,5 @@ public class MemberServiceImpl implements MemberService {
     private void removeOldRefreshToken(String email, MemberEntity member) {
         refreshTokenRepository.findById(email)
                 .ifPresent(refreshTokenRepository::delete);
-        log.info("event=DeleteExistingRefreshToken, email={}", email);
     }
 }

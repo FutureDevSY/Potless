@@ -23,23 +23,20 @@ import com.potless.backend.project.dto.request.WorkerRequestDto;
 import com.potless.backend.project.entity.ProjectEntity;
 import com.potless.backend.project.repository.project.ProjectRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.awt.geom.Area;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-@Log4j2
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class TeamServiceImpl implements TeamService{
+public class TeamServiceImpl implements TeamService {
 
     private final ProjectRepository projectRepository;
     private final TeamRepository teamRepository;
@@ -72,27 +69,24 @@ public class TeamServiceImpl implements TeamService{
         AreaEntity area = areaRepository.findByAreaGu(createTeamRequestDto.getArea()).orElseThrow(AreaNotFoundException::new);
         ManagerEntity manager = managerRepository.findByMemberId(member.getId()).orElse(null);
 
-        log.info("areaId = {}", area.getId());
-        log.info("manager areaId = {}", manager.getAreaEntity().getId());
-
         //매니저 아이디가 이미 있는데 매니저의 지역구과 생성하려는 팀의 지역구가 일치하지 않는경우
-        if(manager != null){
-            if(!area.getId().equals(manager.getAreaEntity().getId())){
+        if (manager != null) {
+            if (!area.getId().equals(manager.getAreaEntity().getId())) {
                 throw new InvalidCreateTeamAuthException();
             }
-        }else{
+        } else {
             // 기존에 매니저 정보가 없는경우 새로 생성
             manager = ManagerEntity.builder()
-                                   .areaEntity(area)
-                                   .memberEntity(member)
-                                   .build();
+                    .areaEntity(area)
+                    .memberEntity(member)
+                    .build();
         }
 
         TeamEntity newTeam =
                 TeamEntity.builder()
-                          .managerEntity(manager)
-                          .teamName(createTeamRequestDto.getTeamName())
-                          .build();
+                        .managerEntity(manager)
+                        .teamName(createTeamRequestDto.getTeamName())
+                        .build();
 
         teamRepository.save(newTeam);
 
@@ -102,50 +96,50 @@ public class TeamServiceImpl implements TeamService{
                 .getWorkerList()
                 .stream()
                 .flatMap(workerInfoDto -> {
-                        MemberEntity workerMember = null;
-                        WorkerEntity emptyTeamWorker = null;
-                        Long workerMemberId = null;
+                    MemberEntity workerMember = null;
+                    WorkerEntity emptyTeamWorker = null;
+                    Long workerMemberId = null;
 
-                        if(workerInfoDto.getMemberId() != null) {
-                            workerMemberId = workerInfoDto.getMemberId();
-                            emptyTeamWorker = workerRepository.findByMemberIdAndAreaWhereTeamIsEmpty(workerMemberId, area.getId())
-                                                              .orElse(null);
+                    if (workerInfoDto.getMemberId() != null) {
+                        workerMemberId = workerInfoDto.getMemberId();
+                        emptyTeamWorker = workerRepository.findByMemberIdAndAreaWhereTeamIsEmpty(workerMemberId, area.getId())
+                                .orElse(null);
+                    }
+
+                    // 작업자의 memberId가 존재하는경우
+                    if (workerMemberId != null) {
+                        workerMember = memberRepository.findById(workerMemberId)
+                                .orElseThrow(MemberNotFoundException::new);
+
+                        // worker로 등록되어있지만 team이 할당되지 않은경우 수정, team 할당
+                        if (emptyTeamWorker != null) {
+                            emptyTeamWorker.changeTeam(newTeam);
+                            return Stream.of(emptyTeamWorker);
+
                         }
-
-                        // 작업자의 memberId가 존재하는경우
-                        if(workerMemberId != null){
-                            workerMember = memberRepository.findById(workerMemberId)
-                                                           .orElseThrow(MemberNotFoundException::new);
-
-                            // worker로 등록되어있지만 team이 할당되지 않은경우 수정, team 할당
-                            if(emptyTeamWorker != null){
-                                emptyTeamWorker.changeTeam(newTeam);
-                                return Stream.of(emptyTeamWorker);
-
-                            }
-                            // worker로 등록되어있지만 team이 할당되어 있는 경우 새로 생성
-                            else{
-                                WorkerEntity newWorker = WorkerEntity.builder()
-                                                                     .teamEntity(newTeam)
-                                                                     .workerName(workerInfoDto.getWorkerName())
-                                                                     // null 혹은 memberId 참조
-                                                                     .memberEntity(workerMember)
-                                                                     .areaEntity(area)
-                                                                     .build();
-                                return Stream.of(newWorker);
-                            }
-
-                        // 작업자의 memberId값이 비어있는경우는 새로 생성
-                        }else {
+                        // worker로 등록되어있지만 team이 할당되어 있는 경우 새로 생성
+                        else {
                             WorkerEntity newWorker = WorkerEntity.builder()
-                                                                 .teamEntity(newTeam)
-                                                                 .workerName(workerInfoDto.getWorkerName())
-                                                                 // null 혹은 memberId 참조
-                                                                 .memberEntity(workerMember)
-                                                                 .areaEntity(area)
-                                                                 .build();
+                                    .teamEntity(newTeam)
+                                    .workerName(workerInfoDto.getWorkerName())
+                                    // null 혹은 memberId 참조
+                                    .memberEntity(workerMember)
+                                    .areaEntity(area)
+                                    .build();
                             return Stream.of(newWorker);
                         }
+
+                        // 작업자의 memberId값이 비어있는경우는 새로 생성
+                    } else {
+                        WorkerEntity newWorker = WorkerEntity.builder()
+                                .teamEntity(newTeam)
+                                .workerName(workerInfoDto.getWorkerName())
+                                // null 혹은 memberId 참조
+                                .memberEntity(workerMember)
+                                .areaEntity(area)
+                                .build();
+                        return Stream.of(newWorker);
+                    }
 
                 }).collect(Collectors.toList());
 
@@ -158,7 +152,7 @@ public class TeamServiceImpl implements TeamService{
     public Long addWorker(Authentication authentication, WorkerRequestDto createTeamRequestDto) {
 
         TeamEntity team = teamRepository.findById(createTeamRequestDto.getTeamId())
-                                        .orElseThrow(TeamNotFoundException::new);
+                .orElseThrow(TeamNotFoundException::new);
 
         AreaEntity area = team.getManagerEntity().getAreaEntity();
 
@@ -167,13 +161,13 @@ public class TeamServiceImpl implements TeamService{
                 .getWorkerList()
                 .stream()
                 .map(workerInfoDto -> WorkerEntity.builder()
-                                                  .teamEntity(team)
-                                                  .workerName(workerInfoDto.getWorkerName())
-                                                  //memberId가 없는경우 가입된 작업자가 아님, null할당
-                                                  .memberEntity(workerInfoDto.getMemberId() != null ? memberRepository.findById(workerInfoDto.getMemberId())
-                                                                                                                      .orElseThrow(MemberNotFoundException::new) : null)
-                                                  .areaEntity(area)
-                                                  .build())
+                        .teamEntity(team)
+                        .workerName(workerInfoDto.getWorkerName())
+                        //memberId가 없는경우 가입된 작업자가 아님, null할당
+                        .memberEntity(workerInfoDto.getMemberId() != null ? memberRepository.findById(workerInfoDto.getMemberId())
+                                .orElseThrow(MemberNotFoundException::new) : null)
+                        .areaEntity(area)
+                        .build())
 
                 .toList();
 
@@ -186,7 +180,7 @@ public class TeamServiceImpl implements TeamService{
     public Long deleteWorker(Authentication authentication, WorkerRequestDto deleteTeamRequestDto) {
 
         TeamEntity team = teamRepository.findById(deleteTeamRequestDto.getTeamId())
-                                        .orElseThrow(TeamNotFoundException::new);
+                .orElseThrow(TeamNotFoundException::new);
 
         //리스트에 해당되는 사용자 이름이 없을경우 예외 처리 로직 추가 필요
 
@@ -197,11 +191,9 @@ public class TeamServiceImpl implements TeamService{
     @Override
     public List<GetTeamResponseDto> getTeam(String area) {
         Long areaId = teamRepository.getAreaIdByAreaGu(area).orElseThrow(AreaNotFoundException::new);
-        log.info("areaId = {}", areaId);
         List<GetTeamResponseDto> teamList = teamRepository.getTeamListByArea(areaId);
 
-        for(GetTeamResponseDto dto : teamList){
-            log.info("teamId = {}", dto.getTeamId());
+        for (GetTeamResponseDto dto : teamList) {
             dto.setWorkerList(teamRepository.getWorkerListByTeamId(dto.getTeamId()));
         }
 
@@ -212,20 +204,18 @@ public class TeamServiceImpl implements TeamService{
     public List<GetWorkerResponseDto> getWorker(String area) {
         AreaEntity areaEntity = areaRepository.findByAreaGu(area).orElseThrow(AreaNotFoundException::new);
         List<WorkerEntity> workerList = workerRepository.findAllByAreaId(areaEntity.getId());
-        log.info("workerListSize = {}", workerList.size());
-
-        if(!workerList.isEmpty()) {
+        if (!workerList.isEmpty()) {
             return workerList.stream()
-                                .map(workerEntity -> GetWorkerResponseDto.builder()
-                                                                         .memberId(Optional.ofNullable(workerEntity.getMemberEntity())
-                                                                                           .map(MemberEntity::getId)
-                                                                                           .orElse(null))
-                                                                         .workerName(workerEntity.getWorkerName())
-                                                                         .teamId(Optional.ofNullable(workerEntity.getTeamEntity())
-                                                                                           .map(TeamEntity::getId)
-                                                                                           .orElse(null))
-                                                                         .build())
-                                .toList();
+                    .map(workerEntity -> GetWorkerResponseDto.builder()
+                            .memberId(Optional.ofNullable(workerEntity.getMemberEntity())
+                                    .map(MemberEntity::getId)
+                                    .orElse(null))
+                            .workerName(workerEntity.getWorkerName())
+                            .teamId(Optional.ofNullable(workerEntity.getTeamEntity())
+                                    .map(TeamEntity::getId)
+                                    .orElse(null))
+                            .build())
+                    .toList();
 
         } else return new ArrayList<GetWorkerResponseDto>();
 
@@ -236,11 +226,11 @@ public class TeamServiceImpl implements TeamService{
 
         // 해당 team에 해당되는 작업자의 team 필드를 null로 변경
         List<WorkerEntity> workerList = workerRepository.findAllByteamId(teamId);
-        for(WorkerEntity worker : workerList){
+        for (WorkerEntity worker : workerList) {
             worker.setTeamNull();
             // memberId가 존재하면서 다른 팀에 할당되어있는 worker의 경우 중복되지 않도록 삭제
-            if(worker.getMemberEntity() != null
-                    && workerRepository.checkByMemberIdWhereTeamIsExist(worker.getMemberEntity().getId())){
+            if (worker.getMemberEntity() != null
+                    && workerRepository.checkByMemberIdWhereTeamIsExist(worker.getMemberEntity().getId())) {
                 workerRepository.delete(worker);
             }
         }
@@ -254,10 +244,10 @@ public class TeamServiceImpl implements TeamService{
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // 팀 삭제 후 중복된 memberId를 가진 팀이 없는 작업자가 생겼다면 하나만 남도록 확인
-    public void duplicatedWorkerCheck(){
+    public void duplicatedWorkerCheck() {
         List<Long> duplicatedIdList = workerRepository.findMemberIdsWithDuplicatesWhereTeamIsNull();
 
-        if(duplicatedIdList != null || !duplicatedIdList.isEmpty()) {
+        if (duplicatedIdList != null || !duplicatedIdList.isEmpty()) {
             for (Long memberId : duplicatedIdList) {
                 List<WorkerEntity> workers = workerRepository.findAllByMemberId(memberId);
 
@@ -265,7 +255,6 @@ public class TeamServiceImpl implements TeamService{
                 if (!workers.isEmpty()) {
                     workers.remove(0); // 첫 번째 엔티티는 유지
                     workerRepository.deleteAll(workers); // 나머지는 삭제
-                    log.info("duplicated worker deleted. worker memberId = {}", memberId);
                 }
             }
         }

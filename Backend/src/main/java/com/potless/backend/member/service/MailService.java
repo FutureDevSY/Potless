@@ -8,7 +8,6 @@ import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -17,7 +16,6 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 
-@Log4j2
 @Service
 @RequiredArgsConstructor
 public class MailService {
