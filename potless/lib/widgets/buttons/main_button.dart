@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:porthole24/widgets/UI/ScreenSize.dart';
+import 'package:potless/widgets/UI/ScreenSize.dart';
 
 class MainLarge extends StatefulWidget {
   final String label;

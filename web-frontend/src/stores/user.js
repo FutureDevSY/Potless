@@ -71,6 +71,7 @@ export const useAuthStore = defineStore(
             "areaId",
             "areaName",
             "userId",
+            "coordinates",
           ],
         },
       ],

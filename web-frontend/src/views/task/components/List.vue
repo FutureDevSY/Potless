@@ -18,7 +18,7 @@
         <tr
           v-for="porthole in portholes"
           :key="porthole.id"
-          @click="store.movePortholeDetail(porthole.id)"
+          @click="store.movePortholeDetail(porthole.damageId)"
         >
           <td class="detect-column">
             <div>{{ formatDate(porthole.createdDateTime) }}</div>
@@ -34,12 +34,18 @@
           <td>{{ porthole.address }}</td>
           <td>{{ porthole.width }}</td>
           <td>
-            <button class="list-button" @click="openModal(porthole.imgUrl)">확인하기</button>
+            <button class="list-button" @click="openModal(porthole.imgUrl)">
+              확인하기
+            </button>
           </td>
           <td>{{ porthole.status }}</td>
           <td class="delete-column">
             <button class="delete-btn">
-              <img class="delete-img" src="../../../assets/icon/delete.png" alt="delete" />
+              <img
+                class="delete-img"
+                src="../../../assets/icon/delete.png"
+                alt="delete"
+              />
             </button>
           </td>
         </tr>

@@ -11,7 +11,7 @@
     </thead>
     <tbody>
       <tr v-for="taskDetail in props.task" :key="taskDetail.id">
-        <td class="close-cursor" @click="removeTask(taskDetail.id)">
+        <td class="close-cursor" @click="removeTask(taskDetail.taskId)">
           <span class="close-button">&times;</span>
         </td>
         <td>
@@ -36,19 +36,17 @@ import { useAuthStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
 
 const store2 = useAuthStore();
-const { accessToken } = storeToRefs(store2);
+const { accessToken, coordinates } = storeToRefs(store2);
 
 const props = defineProps({
   task: Object,
 });
+const emit = defineEmits(["updateDetail"]);
 
 const deletePothole = (potholeId) => {
   const potholeData = ref({
-    damageId: potholeId,
-    origin: {
-      x: 127.2985515,
-      y: 36.3556033,
-    },
+    taskId: potholeId,
+    origin: coordinates.value,
   });
 
   patchPothole(
@@ -58,6 +56,7 @@ const deletePothole = (potholeId) => {
       console.log(res);
       if (res.data.status == "SUCCESS") {
         console.log(res.data.message);
+        emit("updateDetail");
       }
     },
     (error) => {
