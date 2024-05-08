@@ -31,18 +31,27 @@
           <td>{{ task.createdDate }}</td>
           <td class="delete-div">
             <button class="delete-btn" @click.stop="deleteTask(task.projectId)">
-              <img class="delete-img" src="../../assets/icon/delete.png" alt="delete" />
+              <img
+                class="delete-img"
+                src="../../assets/icon/delete.png"
+                alt="delete"
+              />
             </button>
           </td>
         </tr>
       </tbody>
     </table>
-    <Pagenation :total-page="totalPage" @update:current-page="handleCurrentPageUpdate" />
+    <Pagenation
+      :total-page="totalPage"
+      @update:current-page="handleCurrentPageUpdate"
+      :page-info="currentPage"
+    />
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from "vue";
+import { useRouter, useRoute } from "vue-router";
 import Calendar from "./components/Calendar.vue";
 import Select from "./components/Select.vue";
 import Input from "./components/Input.vue";
@@ -53,6 +62,8 @@ import { storeToRefs } from "pinia";
 import { getTaskList } from "../../api/task/taskList";
 import { deleteTaskDetail } from "../../api/task/taskDetail";
 
+const router = useRouter();
+const route = useRoute();
 const store = useMoveStore();
 const store2 = useAuthStore();
 const { accessToken, areaName } = storeToRefs(store2);
@@ -91,6 +102,7 @@ function setCurrentPage(page) {
 const handleCurrentPageUpdate = (newPage) => {
   setCurrentPage(newPage);
   takeData(newPage);
+  router.replace({ query: { ...route.query, page: newPage } });
 };
 
 // 작업 지시서 삭제
@@ -99,7 +111,6 @@ const deleteTask = (projectId) => {
     accessToken.value,
     projectId,
     (res) => {
-      console.log(res);
       if (res.data.status == "SUCCESS") {
         console.log(res.data.message);
         takeData(0);
@@ -123,17 +134,19 @@ const takeData = (currentPage) => {
     status: selectedStatus.value,
     word: inputValue.value,
     page: currentPage,
+    size: 10,
   };
 
   const queryParams = Object.fromEntries(
-    Object.entries(rawParams).filter(([key, value]) => value !== "" && value != null)
+    Object.entries(rawParams).filter(
+      ([key, value]) => value !== "" && value != null
+    )
   );
 
   getTaskList(
     accessToken.value,
     queryParams,
     (res) => {
-      console.log(res);
       if (res.data.status == "SUCCESS") {
         console.log(res.data.message);
         currentData.value = res.data.data.content;
@@ -150,7 +163,8 @@ const takeData = (currentPage) => {
 };
 
 onMounted(() => {
-  takeData(0);
+  const page = parseInt(route.query.page) || 0;
+  takeData(page);
 });
 </script>
 

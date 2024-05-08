@@ -15,17 +15,30 @@
           <div class="report-worker">
             담당자 : {{ taskHeader ? taskHeader.managerName : "Loading..." }}
           </div>
+          <div>
+            팀이름 : {{ taskHeader?.teamName ? taskHeader.teamName : "미정" }}
+          </div>
         </div>
       </div>
-      <button
-        class="pdf-button"
-        @click="generatePdf"
-        v-if="taskData && taskData.length"
-      >
-        PDF로 변환하기
-      </button>
+      <div>
+        <button class="pdf-button" @click="showPath">최적 경로 찾기</button>
+        <button
+          class="pdf-button"
+          @click="generatePdf"
+          v-if="taskData && taskData.length"
+        >
+          PDF로 변환하기
+        </button>
+      </div>
     </div>
     <List :data="taskData" v-if="taskData && !loading" />
+    <PathModal
+      v-if="isModalVisible"
+      :pathData="modalData"
+      :wayPoint="wayPoint"
+      @close="closeModal"
+    />
+
     <div v-if="loading">로딩 중...</div>
     <div v-if="error">{{ errorMessage }}</div>
     <div id="pdf" class="report-pdf" v-if="taskData && taskData.length">
@@ -50,13 +63,14 @@ import { useRoute } from "vue-router";
 import List from "./components/List.vue";
 import PDFGeneratorMain from "./components/PDFGeneratorMain.vue";
 import PDFGeneratorDetail from "./components/PDFGeneratorDetail.vue";
-import { getTaskDetail } from "../../api/task/taskDetail";
+import { getTaskDetail, postOptimal } from "../../api/task/taskDetail";
 import { useAuthStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
+import PathModal from "./components/PathModal.vue";
 
 const route = useRoute();
 const store2 = useAuthStore();
-const { accessToken } = storeToRefs(store2);
+const { accessToken, coordinates } = storeToRefs(store2);
 const documentRef = ref(null);
 
 onMounted(() => {
@@ -76,10 +90,11 @@ const showDetail = () => {
     accessToken.value,
     route.params.id,
     (res) => {
+      console.log(res);
       if (res.data.status == "SUCCESS") {
         console.log(res.data.message);
         taskHeader.value = res.data.data;
-        taskData.value = res.data.data.damageResponseDTOS;
+        taskData.value = res.data.data.damageDetailToProjectDtos;
       } else {
         console.log(res.data.message);
       }
@@ -89,6 +104,37 @@ const showDetail = () => {
       console.log(error.data.message);
     }
   );
+};
+
+const modalData = ref(null);
+const isModalVisible = ref(false);
+const wayPoint = ref(null);
+const showPath = () => {
+  const pathBody = ref({
+    projectId: taskNumber.value,
+    origin: coordinates.value,
+  });
+
+  postOptimal(
+    accessToken.value,
+    pathBody.value,
+    (res) => {
+      if (res.data.status == "SUCCESS") {
+        console.log(res.data.message);
+        console.log(res.data.data);
+        modalData.value = res.data.data.routes[0].sections;
+        wayPoint.value = res.data.data.routes[0].summary.waypoints;
+        isModalVisible.value = true;
+      }
+    },
+    (error) => {
+      console.log(error);
+    }
+  );
+};
+
+const closeModal = () => {
+  isModalVisible.value = false;
 };
 
 function generatePdf() {
