@@ -42,6 +42,8 @@ pipeline {
         stage('Build Docker Images') {
             steps {
                 script {
+                    echo "VITE_SERVICE_URL: ${VITE_SERVICE_URL}"
+                    echo "VITE_KAKAO_APP_KEY: ${VITE_KAKAO_APP_KEY}"
                     // Backend 이미지 빌드
                     dir('Backend') {
                         sh 'chmod +x ./gradlew'
