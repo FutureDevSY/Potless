@@ -15,6 +15,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -29,27 +30,30 @@ public class AwsService {
     @Value("${aws.s3-bucket-name}")
     private String bucketName;
 
+
     public void downloadFile(String keyName) throws IOException {
         S3Object s3object = s3Client.getObject(bucketName, keyName);
-        S3ObjectInputStream inputStream = s3object.getObjectContent();
-        FileOutputStream outputStream = new FileOutputStream(new File(keyName));
-        byte[] read_buf = new byte[1024];
-        int read_len = 0;
-        while ((read_len = inputStream.read(read_buf)) > 0) {
-            outputStream.write(read_buf, 0, read_len);
+        try (S3ObjectInputStream inputStream = s3object.getObjectContent();
+             FileOutputStream outputStream = new FileOutputStream(new File(keyName))) {
+            byte[] readBuf = new byte[1024];
+            int readLen;
+            while ((readLen = inputStream.read(readBuf)) > 0) {
+                outputStream.write(readBuf, 0, readLen);
+            }
         }
-        outputStream.close();
-        inputStream.close();
     }
+
 
     public Map<String, String> uploadFileToS3(MultipartFile file, String fileName) throws IOException {
         File localFile = convertMultiPartToFile(file);
         s3Client.putObject(new PutObjectRequest(bucketName, fileName, localFile));
-        if (!localFile.delete()) {
-            log.error("Failed to delete temporary file: {}", localFile.getPath());
-        } else {
+        try {
+            Files.delete(localFile.toPath());
             log.info("Temporary file deleted successfully: {}", localFile.getPath());
+        } catch (IOException e) {
+            log.error("Failed to delete temporary file: {}", localFile.getPath(), e);
         }
+
         String fileUrl = s3Client.getUrl(bucketName, fileName).toString();
         Map<String, String> fileData = new HashMap<>();
         fileData.put(fileName, fileUrl);
@@ -72,11 +76,12 @@ public class AwsService {
 
     private File convertMultiPartToFile(MultipartFile file) throws IOException {
         File convFile = new File(Objects.requireNonNull(file.getOriginalFilename()));
-        FileOutputStream fos = new FileOutputStream(convFile);
-        fos.write(file.getBytes());
-        fos.close();
+        try (FileOutputStream fos = new FileOutputStream(convFile)) {
+            fos.write(file.getBytes());
+        }
         return convFile;
     }
+
 
     public void deleteFile(String sourceKey) {
         try {
