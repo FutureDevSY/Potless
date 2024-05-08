@@ -33,15 +33,12 @@ const getGuList = async (accessToken, success, fail) => {
 // 포트홀 구에 속한 동에 대한 통계 조회 (구 1개, 동 여러개)
 // ex) 대덕구
 // 갈전동 미완료, 완료 / 대화동 미완료, 완료 ...
-const getDongList = async (accessToken, areaId, success, fail) => {
-  await local
-    .get(`/damage/statistic/${areaId}`, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    })
-    .then(success)
-    .catch(fail);
+const getDongList = async (accessToken, areaId) => {
+  return local.get(`/damage/statistic/${areaId}`, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
 };
 
 // 구 별로 상관없이 모든 동의 전체 통계 출력
