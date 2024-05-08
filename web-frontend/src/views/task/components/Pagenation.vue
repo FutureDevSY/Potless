@@ -27,46 +27,66 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, watchEffect } from "vue";
+import { ref, computed, watch, watchEffect, onMounted } from "vue";
+import { useRouter, useRoute } from "vue-router";
+
+const router = useRouter();
+const route = useRoute();
 
 const props = defineProps({
   totalPage: Number,
+  pageInfo: Number,
 });
 
 const totalPages = ref(props.totalPage);
 watchEffect(() => {
-  totalPages.value = props.totalPage;
+  if (props.totalPage != null) {
+    totalPages.value = props.totalPage;
+  }
 });
-const currentPage = ref(1);
+
+const currentPage = ref(props.pageInfo || 1);
 const visiblePages = 5;
 const emit = defineEmits(["update:current-page"]);
 
 const pageNumbers = computed(() => {
-  let start = Math.floor((currentPage.value - 1) / visiblePages) * visiblePages;
-  return Array.from({ length: visiblePages }, (_, i) => start + i + 1).filter(
-    (page) => page <= totalPages.value
-  );
-  return numbers;
+  if (totalPages.value) {
+    let start =
+      Math.floor((currentPage.value - 1) / visiblePages) * visiblePages;
+    return Array.from({ length: visiblePages }, (_, i) => start + i + 1).filter(
+      (page) => page <= totalPages.value
+    );
+  }
+  return [];
 });
 
 function setCurrentPage(page) {
-  if (page < 1) {
-    currentPage.value = 1;
-  } else if (page > totalPages) {
-    currentPage.value = totalPages;
-  } else {
+  if (page != null && !isNaN(page)) {
+    page = Math.max(1, Math.min(page, totalPages.value || 1));
     currentPage.value = page;
+    if (router && page !== parseInt(route.query.page)) {
+      router.push({ query: { ...route.query, page: page.toString() } });
+    }
+    emit("update:current-page", page - 1);
   }
-  emit("update:current-page", currentPage.value - 1);
 }
 
 const isPrevGroupDisabled = computed(() => currentPage.value <= visiblePages);
-const isNextGroupDisabled = computed(() => currentPage.value > totalPages - visiblePages);
+const isNextGroupDisabled = computed(
+  () => currentPage.value > totalPages.value - visiblePages
+);
 
 watch(currentPage, (newValue) => {
-  if (!pageNumbers.value.includes(newValue)) {
-    setCurrentPage(Math.floor((newValue - 1) / visiblePages) * visiblePages + 1);
+  if (!pageNumbers.value.includes(newValue) && totalPages.value) {
+    setCurrentPage(
+      Math.floor((newValue - 1) / visiblePages) * visiblePages + 1
+    );
   }
+});
+
+onMounted(() => {
+  const pageFromQuery = parseInt(route.query.page) || props.pageInfo || 1;
+  setCurrentPage(pageFromQuery);
 });
 </script>
 
