@@ -46,25 +46,27 @@ pipeline {
                 withSonarQubeEnv('SonarQube') {
                     script {
                         dir('Backend') {
+                            // Ensure the executable permission for gradlew
+                            sh 'chmod +x ./gradlew'
                             sh """
-                            ./gradlew sonarqube \
-                            -Dsonar.projectKey=${SONAR_PROJECT_KEY} \
-                            -Dsonar.sources=src \
-                            -Dsonar.exclusions=**/build/**,**/test/** \
-                            -Dsonar.host.url=http://localhost:9000 \
-                            -Dsonar.login=${SONAR_TOKEN}
+                            ./gradlew sonarqube \\
+                            -Dsonar.projectKey=${env.SONAR_PROJECT_KEY} \\
+                            -Dsonar.sources=src \\
+                            -Dsonar.exclusions=**/build/**,**/test/** \\
+                            -Dsonar.host.url=http://15.165.76.184:9000 \\
+                            -Dsonar.login=${env.SONAR_TOKEN}
                             """
                         }
                         dir('web-frontend') {
                             sh """
-                            sonar-scanner \
-                            -Dsonar.projectKey=${SONAR_PROJECT_KEY} \
-                            -Dsonar.sources=src \
-                            -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/*.spec.js \
-                            -Dsonar.test.inclusions=**/*.spec.js \
-                            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info \
-                            -Dsonar.host.url=http://localhost:9000 \
-                            -Dsonar.login=${SONAR_TOKEN}
+                            sonar-scanner \\
+                            -Dsonar.projectKey=${env.SONAR_PROJECT_KEY} \\
+                            -Dsonar.sources=src \\
+                            -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/*.spec.js \\
+                            -Dsonar.test.inclusions=**/*.spec.js \\
+                            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info \\
+                            -Dsonar.host.url=http://15.165.76.184:9000 \\
+                            -Dsonar.login=${env.SONAR_TOKEN}
                             """
                         }
                     }
@@ -76,10 +78,9 @@ pipeline {
                 script {
                     // Backend 이미지 빌드
                     dir('Backend') {
+                        // Ensure the executable permission for gradlew
                         sh 'chmod +x ./gradlew'
-                        // Gradle을 사용하여 Spring Boot 애플리케이션 빌드
                         sh './gradlew clean bootJar'
-                        // Docker 이미지 빌드
                         sh 'docker build -t ${DOCKER_HUB_USER}/${BUILD_ID}-backend .'
                         sh 'docker login -u ${DOCKER_HUB_USER} -p ${DOCKER_HUB_PASS}'
                         sh 'docker push ${DOCKER_HUB_USER}/${BUILD_ID}-backend'
