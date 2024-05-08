@@ -42,27 +42,29 @@ const getDongList = async (accessToken, areaId) => {
 };
 
 // 구 별로 상관없이 모든 동의 전체 통계 출력
-const getTotalDongList = async (accessToken, success, fail) => {
-  await local
-    .get(`/damage/statistic/location`, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    })
-    .then(success)
-    .catch(fail);
+const getTotalDongList = async (accessToken) => {
+  try {
+    const response = await local.get(`/damage/statistic/location`, {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching total dong list:", error);
+    throw error;
+  }
 };
 
 // 동 이름 검색하면 해당 동의 통계 출력
-const getDongDetail = async (accessToken, locationName, success, fail) => {
-  await local
-    .get(`/damage/statistic/location/${locationName}`, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    })
-    .then(success)
-    .catch(fail);
+const getDongDetail = async (accessToken, locationName) => {
+  try {
+    const response = await local.get(`/damage/statistic/location/${locationName}`, {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching dong detail:", error);
+    throw error;
+  }
 };
 
 // 구 별로 지정한 월별 발생한 통계 출력
