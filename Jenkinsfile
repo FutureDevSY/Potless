@@ -48,12 +48,11 @@ pipeline {
             steps {
                 withSonarQubeEnv('SonarQube') {
                     script {
-                        sh "${scannerHome}/bin/sonar-scanner --version"
                         dir('Backend') {
                             sh 'chmod +x ./gradlew' 
                             sh """
                             ./gradlew sonarqube \\
-                            -Dsonar.projectKey=${env.SONAR_PROJECT_KEY} \\
+                            -Dsonar.projectKey=S10P31B106_Backend \\
                             -Dsonar.sources=src \\
                             -Dsonar.exclusions=**/build/**,**/test/** \\
                             -Dsonar.host.url=http://15.165.76.184:9000 \\
@@ -63,7 +62,7 @@ pipeline {
                         dir('web-frontend') {
                             sh """
                             ${scannerHome}/bin/sonar-scanner \\
-                            -Dsonar.projectKey=${env.SONAR_PROJECT_KEY} \\
+                            -Dsonar.projectKey=S10P31B106_Frontend \\
                             -Dsonar.sources=src \\
                             -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/*.spec.js \\
                             -Dsonar.test.inclusions=**/*.spec.js \\
