@@ -42,10 +42,13 @@ pipeline {
             }
         }
         stage('SonarQube analysis') {
+            environment {
+                scannerHome = tool name: 'SonarQube Scanner'
+            }
             steps {
                 withSonarQubeEnv('SonarQube') {
                     script {
-                        sh 'sonar-scanner --version'
+                        sh "${scannerHome}/bin/sonar-scanner --version"
                         dir('Backend') {
                             sh 'chmod +x ./gradlew' 
                             sh """
@@ -59,7 +62,7 @@ pipeline {
                         }
                         dir('web-frontend') {
                             sh """
-                            sonar-scanner \\
+                            ${scannerHome}/bin/sonar-scanner \\
                             -Dsonar.projectKey=${env.SONAR_PROJECT_KEY} \\
                             -Dsonar.sources=src \\
                             -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/*.spec.js \\
