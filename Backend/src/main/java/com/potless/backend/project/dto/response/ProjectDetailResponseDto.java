@@ -1,6 +1,5 @@
 package com.potless.backend.project.dto.response;
 
-import com.potless.backend.damage.dto.controller.response.DamageResponseDTO;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,20 +17,20 @@ public class ProjectDetailResponseDto {
     private String projectName;
     @Schema(description = "관리자명")
     private String managerName;
+    @Schema(description = "팀이름")
+    private String teamName;
     @Schema(description = "작업할 포트홀 개수")
     private Integer projectSize;
     @Schema(description = "작업할 포트홀 리스트")
-    private List<DamageResponseDTO> damageResponseDTOS;
-    @Schema(description = "Task ID정보")
-    private List<TaskDetailDto> taskResponses;
+    private List<DamageDetailToProjectDto> DamageDetailToProjectDtos;
 
     @Builder
-
-    public ProjectDetailResponseDto(String projectName, String managerName, Integer projectSize, List<DamageResponseDTO> damageResponseDTOS, List<TaskDetailDto> taskResponses) {
+    public ProjectDetailResponseDto(String projectName, String managerName, String teamName, Integer projectSize, List<DamageDetailToProjectDto> damageDetailToProjectDtos) {
         this.projectName = projectName;
         this.managerName = managerName;
+        this.teamName = teamName;
         this.projectSize = projectSize;
-        this.damageResponseDTOS = damageResponseDTOS;
-        this.taskResponses = taskResponses;
+        DamageDetailToProjectDtos = damageDetailToProjectDtos;
     }
 }
+

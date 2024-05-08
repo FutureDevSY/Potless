@@ -49,38 +49,6 @@ public class DamageRepositoryCustomImpl implements DamageRepositoryCustom {
         this.queryFactory = new JPAQueryFactory(entityManager);
     }
 
-//    @Override
-//    public List<DamageResponseDTO> findDamagesByWorker(Long memberId) {
-//        QDamageEntity damage = QDamageEntity.damageEntity;
-//        QImageEntity image = QImageEntity.imageEntity;
-//        QTeamEntity team = QTeamEntity.teamEntity;
-//        QWorkerEntity worker = QWorkerEntity.workerEntity;
-//        QTaskEntity task = QTaskEntity.taskEntity;
-//        QMemberEntity member = QMemberEntity.memberEntity;
-//        QProjectEntity project = QProjectEntity.projectEntity;
-//        QAreaEntity area = QAreaEntity.areaEntity;
-//
-//        List<DamageResponseDTO> results = queryFactory
-//                .select(Projections.constructor(DamageResponseDTO.class,
-//                        damage.id,
-//                        damage.severity,
-//                        damage.dirX,
-//                        damage.dirY,
-//                        damage.address,
-//                        damage.roadName,
-//                        damage.width,
-//                        damage.status,
-//                        damage.areaEntity.areaGu,
-//                        damage.locationEntity.locationName,
-//                        damage.dtype
-//                ))
-//                .from(damage)
-//                .innerJoin(damage.en)
-//                .innerJoin(area.en)
-//
-//    }
-
-
     @Override
     public AreaForDateListResponseDTO getAreaDamageCountForDate(AreaDamageCountForDateRequestDTO requestDTO) {
         LocalDate startDate = requestDTO.getStart();
