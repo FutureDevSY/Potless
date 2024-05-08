@@ -22,13 +22,7 @@
       </div>
       <div>
         <button class="pdf-button" @click="showPath">최적 경로 찾기</button>
-        <button
-          class="pdf-button"
-          @click="generatePdf"
-          v-if="taskData && taskData.length"
-        >
-          PDF로 변환하기
-        </button>
+        <button class="pdf-button" @click="openPdf">PDF 미리보기</button>
       </div>
     </div>
     <List :data="taskData" v-if="taskData && !loading" />
@@ -41,16 +35,30 @@
 
     <div v-if="loading">로딩 중...</div>
     <div v-if="error">{{ errorMessage }}</div>
-    <div id="pdf" class="report-pdf" v-if="taskData && taskData.length">
-      <PDFGeneratorMain
-        :task-number="taskNumber"
-        :task-header="taskHeader"
-        ref="documentRef"
-        class="pdf"
-        id="pdf"
-      />
-      <div v-for="pothole in taskData" :key="pothole.id">
-        <PDFGeneratorDetail :pothole="pothole" ref="documentRef" class="pdf" />
+    <div v-if="isPdfModalVisible" class="pdf-modal">
+      <div id="pdf" class="report-pdf" v-if="taskData && taskData.length">
+        <button
+          class="pdf-button"
+          @click="generatePdf"
+          v-if="taskData && taskData.length"
+        >
+          PDF로 변환하기
+        </button>
+        <PDFGeneratorMain
+          :task-number="taskNumber"
+          :task-header="taskHeader"
+          ref="documentRef"
+          class="pdf"
+          id="pdf"
+        />
+        <div v-for="pothole in taskData" :key="pothole.id">
+          <PDFGeneratorDetail
+            :pothole="pothole"
+            ref="documentRef"
+            class="pdf"
+          />
+        </div>
+        <button @click="closePdfModal">Close</button>
       </div>
     </div>
   </div>
@@ -135,6 +143,15 @@ const showPath = () => {
 
 const closeModal = () => {
   isModalVisible.value = false;
+};
+
+const isPdfModalVisible = ref(false);
+function openPdf() {
+  isPdfModalVisible.value = true;
+}
+
+const closePdfModal = () => {
+  isPdfModalVisible.value = false;
 };
 
 function generatePdf() {
@@ -248,5 +265,18 @@ function generatePdf() {
 
 .pdf-button:hover {
   background-color: #0e1241;
+}
+
+.pdf-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 </style>
