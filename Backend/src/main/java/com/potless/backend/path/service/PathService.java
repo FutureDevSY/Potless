@@ -5,16 +5,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.potless.backend.damage.entity.road.DamageEntity;
 import com.potless.backend.damage.repository.DamageRepository;
 import com.potless.backend.global.exception.pothole.PotholeNotFoundException;
-import com.potless.backend.global.exception.project.ProjectNotFoundException;
-import com.potless.backend.global.exception.task.TaskNotFoundException;
 import com.potless.backend.path.dto.*;
-import com.potless.backend.project.entity.ProjectEntity;
 import com.potless.backend.project.entity.TaskEntity;
-import com.potless.backend.project.repository.project.ProjectRepository;
 import com.potless.backend.project.repository.task.TaskRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -27,7 +22,6 @@ import reactor.core.publisher.Mono;
 import java.util.ArrayList;
 import java.util.List;
 
-@Slf4j
 @Service
 @Component
 @Transactional
