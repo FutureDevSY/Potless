@@ -22,6 +22,7 @@ onMounted(() => {
   script.onload = () => {
     window.kakao.maps.load(initializeMap);
   };
+  console.log(KAKAO_APP_KEY);
   script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${KAKAO_APP_KEY}&autoload=false`;
   document.head.appendChild(script);
 });
@@ -46,11 +47,18 @@ function initializeMap() {
 }
 
 function updateMapLocation() {
-  if (!map || potholeDirx.value === undefined || potholeDiry.value === undefined) {
+  if (
+    !map ||
+    potholeDirx.value === undefined ||
+    potholeDiry.value === undefined
+  ) {
     console.log("Map or coordinates not ready");
     return;
   }
-  const newCenterPoint = new window.kakao.maps.LatLng(potholeDirx.value, potholeDiry.value);
+  const newCenterPoint = new window.kakao.maps.LatLng(
+    potholeDirx.value,
+    potholeDiry.value
+  );
   map.setCenter(newCenterPoint);
   marker.setPosition(newCenterPoint);
 }
