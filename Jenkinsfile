@@ -7,6 +7,8 @@ pipeline {
         VITE_KAKAO_APP_KEY = credentials('VITE_KAKAO_APP_KEY')
         VITE_SERVICE_URL = credentials('VITE_SERVICE_URL')
         BUILD_ID = credentials('BUILD_ID')
+        SONAR_PROJECT_KEY = credentials('SONAR_PROJECT_KEY')
+        SONAR_TOKEN = credentials('SONAR_TOKEN')
     }
     stages {
         stage('Checkout') {
@@ -39,11 +41,39 @@ pipeline {
                 }
             }
         }
+        stage('SonarQube analysis') {
+            steps {
+                withSonarQubeEnv('SonarQube') {
+                    script {
+                        dir('Backend') {
+                            sh """
+                            ./gradlew sonarqube \
+                            -Dsonar.projectKey=${SONAR_PROJECT_KEY} \
+                            -Dsonar.sources=src \
+                            -Dsonar.exclusions=**/build/**,**/test/** \
+                            -Dsonar.host.url=http://localhost:9000 \
+                            -Dsonar.login=${SONAR_TOKEN}
+                            """
+                        }
+                        dir('web-frontend') {
+                            sh """
+                            sonar-scanner \
+                            -Dsonar.projectKey=${SONAR_PROJECT_KEY} \
+                            -Dsonar.sources=src \
+                            -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/*.spec.js \
+                            -Dsonar.test.inclusions=**/*.spec.js \
+                            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info \
+                            -Dsonar.host.url=http://localhost:9000 \
+                            -Dsonar.login=${SONAR_TOKEN}
+                            """
+                        }
+                    }
+                }
+            }
+        }
         stage('Build Docker Images') {
             steps {
                 script {
-                    echo "VITE_SERVICE_URL: ${VITE_SERVICE_URL}"
-                    echo "VITE_KAKAO_APP_KEY: ${VITE_KAKAO_APP_KEY}"
                     // Backend 이미지 빌드
                     dir('Backend') {
                         sh 'chmod +x ./gradlew'
