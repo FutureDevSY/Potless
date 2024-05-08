@@ -5,8 +5,10 @@ pipeline {
         DOCKER_HUB_USER = 'mine0702'
         DOCKER_HUB_PASS = credentials('DOCKER_HUB_PASS')
         VITE_KAKAO_APP_KEY = credentials('VITE_KAKAO_APP_KEY')
-        SERVICE_URL = credentials('SERVICE_URL')
+        VITE_SERVICE_URL = credentials('VITE_SERVICE_URL')
         BUILD_ID = credentials('BUILD_ID')
+        SONAR_PROJECT_KEY = credentials('SONAR_PROJECT_KEY')
+        SONAR_TOKEN = credentials('SONAR_TOKEN')
     }
     stages {
         stage('Checkout') {
@@ -39,22 +41,55 @@ pipeline {
                 }
             }
         }
+        stage('SonarQube analysis') {
+            environment {
+                scannerHome = tool name: 'SonarQube Scanner'
+            }
+            steps {
+                withSonarQubeEnv('SonarQube') {
+                    script {
+                        dir('Backend') {
+                            sh 'chmod +x ./gradlew' 
+                            sh """
+                            ./gradlew sonarqube \\
+                            -Dsonar.projectKey=S10P31B106_Backend \\
+                            -Dsonar.sources=src \\
+                            -Dsonar.exclusions=**/build/**,**/test/** \\
+                            -Dsonar.host.url=http://15.165.76.184:9000 \\
+                            -Dsonar.login=${env.SONAR_TOKEN}
+                            """
+                        }
+                        dir('web-frontend') {
+                            sh """
+                            ${scannerHome}/bin/sonar-scanner \\
+                            -Dsonar.projectKey=S10P31B106_Frontend \\
+                            -Dsonar.sources=src \\
+                            -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/*.spec.js \\
+                            -Dsonar.test.inclusions=**/*.spec.js \\
+                            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info \\
+                            -Dsonar.host.url=http://15.165.76.184:9000 \\
+                            -Dsonar.login=${env.SONAR_TOKEN}
+                            """
+                        }
+                    }
+                }
+            }
+        }
         stage('Build Docker Images') {
             steps {
                 script {
                     // Backend 이미지 빌드
                     dir('Backend') {
+                        // Ensure the executable permission for gradlew
                         sh 'chmod +x ./gradlew'
-                        // Gradle을 사용하여 Spring Boot 애플리케이션 빌드
                         sh './gradlew clean bootJar'
-                        // Docker 이미지 빌드
                         sh 'docker build -t ${DOCKER_HUB_USER}/${BUILD_ID}-backend .'
                         sh 'docker login -u ${DOCKER_HUB_USER} -p ${DOCKER_HUB_PASS}'
                         sh 'docker push ${DOCKER_HUB_USER}/${BUILD_ID}-backend'
                     }
                     // Frontend 이미지 빌드
                     dir('web-frontend') {
-                        sh 'docker build -t ${DOCKER_HUB_USER}/${BUILD_ID}-frontend .'
+                        sh 'docker build --build-arg VITE_SERVICE_URL=${VITE_SERVICE_URL} --build-arg VITE_KAKAO_APP_KEY=${VITE_KAKAO_APP_KEY} -t ${DOCKER_HUB_USER}/${BUILD_ID}-frontend .'
                         sh 'docker push ${DOCKER_HUB_USER}/${BUILD_ID}-frontend'
                     }
                 }
@@ -71,3 +106,4 @@ pipeline {
         }
     }
 }
+

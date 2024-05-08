@@ -150,6 +150,8 @@ public class DamageRepositoryCustomImpl implements DamageRepositoryCustom {
         YearMonth startMonth = requestDTO.getStart();
         YearMonth endMonth = requestDTO.getEndOrStart(); // 종료 월이 없으면 시작 월을 사용
 
+        log.info("startMonth = {}", startMonth);
+        log.info("endMonth = {}", endMonth);
         QDamageEntity damage = QDamageEntity.damageEntity;
         QAreaEntity area = QAreaEntity.areaEntity;
 
@@ -177,10 +179,13 @@ public class DamageRepositoryCustomImpl implements DamageRepositoryCustom {
                         damage.count())
                 .from(damage)
                 .join(damage.areaEntity, area)
-                .where(damage.createdDateTime.year().eq(startMonth.getYear())
-                        .and(damage.createdDateTime.month().between(startMonth.getMonthValue(), endMonth.getMonthValue())))
+                .where(damage.createdDateTime.year().goe(startMonth.getYear())
+                        .and(damage.createdDateTime.month().goe(startMonth.getMonthValue()).or(damage.createdDateTime.year().gt(startMonth.getYear())))
+                        .and(damage.createdDateTime.year().loe(endMonth.getYear())
+                                .and(damage.createdDateTime.month().loe(endMonth.getMonthValue()).or(damage.createdDateTime.year().lt(endMonth.getYear())))))
                 .groupBy(area.areaGu, damage.createdDateTime.year(), damage.createdDateTime.month())
                 .fetch();
+
 
         rawResults.forEach(tuple -> {
             String areaGu = tuple.get(area.areaGu);
