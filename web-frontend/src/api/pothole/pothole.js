@@ -42,4 +42,16 @@ const deletePothole = async (accessToken, damageId, success, fail) => {
     .catch(fail);
 };
 
-export { getPotholeList, getPotholeDetail, deletePothole };
+// 포트홀 추가
+const postPotholeAdd = async (accessToken, potholeInfo, success, fail) => {
+  await local
+    .post(`/damage/set`, potholeInfo, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    })
+    .then(success)
+    .catch(fail);
+};
+
+export { getPotholeList, getPotholeDetail, deletePothole, postPotholeAdd };

@@ -4,6 +4,7 @@ import Login from "../views/auth/Login.vue";
 
 import PortholeList from "../views/porthole/PortholeList.vue";
 import PortholeDetail from "../views/porthole/PortholeDetail.vue";
+import SelfRegister from "../views/porthole/SelfRegister.vue";
 
 import Statistics from "../views/statistics/Statistics.vue";
 
@@ -38,6 +39,12 @@ const router = createRouter({
       props: true,
     },
     {
+      path: "/porthole/register",
+      name: "SelfRegister",
+      component: SelfRegister,
+      props: true,
+    },
+    {
       path: "/statistics",
       name: "Statistics",
       component: Statistics,
@@ -67,6 +74,10 @@ router.beforeEach((to, from) => {
     return { name: "Login" };
   }
   if (to.name === "PortholeDetail" && !store.isLoggedIn) {
+    window.alert("로그인이 필요합니다.");
+    return { name: "Login" };
+  }
+  if (to.name === "SelfRegister" && !store.isLoggedIn) {
     window.alert("로그인이 필요합니다.");
     return { name: "Login" };
   }
