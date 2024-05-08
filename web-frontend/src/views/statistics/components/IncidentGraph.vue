@@ -5,11 +5,57 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, computed, defineProps, onMounted } from "vue";
+import { getAreaDetails, getDongMonthly } from "../../../api/statistics/statistics";
+import { useAuthStore } from "@/stores/user";
+import { storeToRefs } from "pinia";
+import { format, addMonths, subYears } from "date-fns";
 
-const chartOptions = ref({
+const store = useAuthStore();
+const { accessToken, areaId } = storeToRefs(store);
+
+// ** 로그인 한 지역의 areaGu를 호출
+const areaDetails = ref(null); // 지역 이름 저장할
+
+const fetchAreaDetails = async () => {
+  const response = await getAreaDetails(accessToken.value, areaId.value);
+  if (response && response.status === "SUCCESS") {
+    areaDetails.value = response.data;
+  } else {
+    console.error("Failed to fetch area details");
+  }
+};
+
+// ** 위험물 발생 현황: 동 이름 검색하면 해당 동의 통계 출력
+const cumulateData = ref([]);
+
+const startYear = format(addMonths(subYears(new Date(), 1), 1), "yyyy-MM"); // 작년 2023-06
+const currentMonth = format(new Date(), "yyyy-MM"); // 올해 2024-05
+
+const secondData = async () => {
+  const response = await getDongMonthly(accessToken.value, startYear, currentMonth);
+  if (response && response.status === "SUCCESS") {
+    const data = response.data.list;
+    const areaData = data.find((d) => d.areaGu === areaDetails.value.areaGu); // areaGu 동적 사용
+    cumulateData.value = areaData.list.map((monthData) => ({
+      month: monthData.month,
+      count: monthData.count,
+    }));
+    // console.log("위험물 누적 탐지 건수:", cumulateData.value);
+  } else {
+    console.error("Failed to fetch data");
+  }
+};
+
+onMounted(() => {
+  fetchAreaDetails().then(() => {
+    secondData();
+  });
+});
+
+const chartOptions = computed(() => ({
   chart: {
-    height: 300,
+    height: "320px",
     type: "line",
     stacked: false,
     toolbar: {
@@ -27,7 +73,7 @@ const chartOptions = ref({
     },
   },
   stroke: {
-    width: [4, 4],
+    width: [3, 3],
   },
   dataLabels: {
     enabled: false,
@@ -42,9 +88,8 @@ const chartOptions = ref({
       sizeOffset: 2,
     },
   },
-  labels: ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"],
   xaxis: {
-    type: "month",
+    categories: cumulateData.value.map((item) => item.month), // X축 레이블 업데이트
   },
   yaxis: [
     {
@@ -69,18 +114,29 @@ const chartOptions = ref({
     position: "top",
   },
   colors: ["#d8d8d8", "#151c62"],
-});
+  states: {
+    hover: {
+      filter: {
+        type: "darken",
+        value: 0.85,
+      },
+    },
+  },
+}));
 
-const series = ref([
+const series = computed(() => [
   {
     name: "월별 탐지건수",
     type: "column",
-    data: [3131, 5432, 2145, 4212, 6703, 3300, 3244, 5482, 2234, 6680, 3605, 5210],
+    data: cumulateData.value.map((item) => item.count),
   },
   {
     name: "누적 탐지건수",
     type: "line",
-    data: [3131, 8563, 10708, 14920, 21623, 24923, 28167, 33679, 35913, 42593, 46198, 51408],
+    data: cumulateData.value.reduce(
+      (acc, cur) => [...acc, acc.length ? acc[acc.length - 1] + cur.count : cur.count],
+      []
+    ),
   },
 ]);
 </script>
