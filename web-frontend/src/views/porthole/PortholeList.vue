@@ -3,6 +3,9 @@
     <div class="filter">
       <!-- 필터 -->
       <div class="search-tab">
+        <button class="register" @click="store.moveSelfRegister">
+          수동 신고
+        </button>
         <Calendar @update:dateRange="handleDateRangeUpdate" />
         <Select
           :options="['심각', '주의', '양호']"
@@ -56,9 +59,11 @@ import PotholeLocationMap from "./components/PotholeLocationMap.vue";
 import { ref, onMounted } from "vue";
 import { getPotholeList } from "../../api/pothole/pothole.js";
 import { useAuthStore } from "@/stores/user";
+import { useMoveStore } from "@/stores/move";
 import Pagination from "./components/Pagination.vue";
 import { storeToRefs } from "pinia";
 
+const store = useMoveStore();
 const store2 = useAuthStore();
 const { accessToken } = storeToRefs(store2);
 const currentData = ref(null);
@@ -76,7 +81,7 @@ const takeData = (currentPage) => {
     type: selectedType.value,
     status: selectedStatus.value,
     severity: selectedSeverity.value,
-    area: store2.areaName,  
+    area: store2.areaName,
     searchWord: inputValue.value,
     page: currentPage,
   };
@@ -296,5 +301,9 @@ onMounted(() => {
 
 .search-button:hover {
   background-color: #0e1241;
+}
+
+.register {
+  margin-right: 670px;
 }
 </style>
