@@ -18,15 +18,15 @@
 
       <div class="danger-box">
         <div class="title-input">
-          <p class="road-title">도로별 km당 발생 건수</p>
+          <p class="road-title">지역별 발생 건수</p>
           <input
             type="text"
             v-model="searchTerm"
-            placeholder="도로명을 입력해주세요."
+            placeholder="동을 입력해주세요."
             @input="updateChart"
           />
         </div>
-        <RoadTypeIncidentsGraphVue :search-term="searchTerm" />
+        <RoadTypeIncidentsGraphVue :search-term="searchTerm" :road-data="roadIncidentData" />
       </div>
     </div>
     <div class="right-box">
@@ -178,15 +178,22 @@ const firstData = async () => {
   }
 };
 
+// ** 지역별 발생 건수: 포트홀 구에 속한 동에 대한 통계 조회
 // ** 보수 공사 현황: 포트홀 구에 속한 동에 대한 통계 조회
 const workChartData = ref([]);
+const roadIncidentData = ref([]);
 
-const fourthData = async () => {
+const secondfourthData = async () => {
   try {
     const response = await getDongList(accessToken.value, areaId.value);
     if (response && response.data && response.data.data && response.data.data.list) {
       const { list } = response.data.data; 
       let countDone = 0, countDuring = 0, countBefore = 0;
+
+      roadIncidentData.value = list.map(dong => ({
+        dong: dong.locationName,
+        potholes: dong.countDamageBefore + dong.countDamageDuring + dong.countDamageDone
+      }));
 
       list.forEach(item => {
         countDone += item.countDamageDone;
@@ -199,7 +206,8 @@ const fourthData = async () => {
         { title: "보수중", number: countDuring.toString() },
         { title: "완료", number: countDone.toString() },
       ];
-      console.log("보수 공사 현황:", workChartData.value);
+      console.log("도로별 포트홀 현황:", roadIncidentData.value);
+      // console.log("보수 공사 현황:", workChartData.value);
     } else {
       console.error("Invalid or empty data received from the API");
     }
@@ -211,7 +219,7 @@ const fourthData = async () => {
 onMounted(() => {
   fetchAreaDetails().then(() => {
     firstData();
-    fourthData();
+    secondfourthData();
   });
 });
 </script>
@@ -295,7 +303,7 @@ onMounted(() => {
   padding-bottom: 15px;
 }
 input {
-  width: 30%;
+  width: 25%;
   padding: 10px;
   position: relative;
   overflow: hidden;

@@ -5,7 +5,7 @@
 </template>
 
 <script setup>
-import { ref, computed, defineProps, onMounted } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { getAreaDetails, getDongMonthly } from "../../../api/statistics/statistics";
 import { useAuthStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
