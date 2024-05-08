@@ -37,10 +37,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -282,6 +279,50 @@ public class DamageController {
     public ResponseEntity<?> setWorkDone(Authentication authentication, @RequestPart("damageId") Long damageId) {
         iDamageService.setWorkDone(damageId);
         return response.success(ResponseCode.POTHOLE_DONE_WORK);
+    }
+
+    @Operation(summary = "Damage 수동 삽입", description = "Damage를 삽입합니다.", responses = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Damage 삽입 성공", content = @Content(schema = @Schema(implementation = String.class)))
+    })
+    @PostMapping(value = "setManual", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<?> setManualDamage(
+            Authentication authentication,
+            @ModelAttribute DamageManualRequestDTO request
+
+    ) {
+
+        // 비동기로 처리하고 바로 응답 반환 검증
+        kakaoService.fetchAdressKakaoData(request.getAddress())
+                .thenAcceptAsync(data -> {
+
+                    String location = (data.getDocuments().get(0).getAddress().getRegion_3depth_name() != null) ? data.getDocuments().get(0).getAddress().getRegion_3depth_name() : data.getDocuments().get(0).getAddress().getRegion_3depth_h_name();
+
+                    DamageSetRequestDTO damageSetRequestDTO = DamageSetRequestDTO.builder()
+                            .dtype(request.getType())
+                            .x(Double.valueOf(data.getDocuments().get(0).getX()))
+                            .y(Double.valueOf(data.getDocuments().get(0).getY()))
+                            .build();
+
+                    damageSetRequestDTO.setImages(Collections.singletonList("https://mine702-amazon-s3.s3.ap-northeast-2.amazonaws.com/Default/default.jpg"));
+
+                    DamageSetRequestServiceDTO serviceDTO = DamageSetRequestServiceDTO.builder()
+                            .dirX(damageSetRequestDTO.getX())
+                            .dirY(damageSetRequestDTO.getY())
+                            .dtype(damageSetRequestDTO.getDtype())
+                            .width(0.0)
+                            .address(data.getDocuments().get(0).getAddress().getAddress_name())
+                            .severity(1)
+                            .status(Status.작업전)
+                            .area(data.getDocuments().get(0).getAddress().getRegion_2depth_name())
+                            .location(location)
+                            .images(damageSetRequestDTO.getImages())
+                            .build();
+
+                    iDamageService.setDamage(serviceDTO);
+
+                });
+
+        return response.success(ResponseCode.POTHOLE_DETECTED);
     }
 
     @Operation(summary = "Damage 삽입", description = "Damage를 삽입합니다.", responses = {
