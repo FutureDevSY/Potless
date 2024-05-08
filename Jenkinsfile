@@ -45,9 +45,9 @@ pipeline {
             steps {
                 withSonarQubeEnv('SonarQube') {
                     script {
+                        sh 'sonar-scanner --version'
                         dir('Backend') {
-                            // Ensure the executable permission for gradlew
-                            sh 'chmod +x ./gradlew'
+                            sh 'chmod +x ./gradlew' 
                             sh """
                             ./gradlew sonarqube \\
                             -Dsonar.projectKey=${env.SONAR_PROJECT_KEY} \\
