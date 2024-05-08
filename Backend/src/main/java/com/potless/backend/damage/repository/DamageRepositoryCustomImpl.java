@@ -150,8 +150,6 @@ public class DamageRepositoryCustomImpl implements DamageRepositoryCustom {
         YearMonth startMonth = requestDTO.getStart();
         YearMonth endMonth = requestDTO.getEndOrStart(); // 종료 월이 없으면 시작 월을 사용
 
-        log.info("startMonth = {}", startMonth);
-        log.info("endMonth = {}", endMonth);
         QDamageEntity damage = QDamageEntity.damageEntity;
         QAreaEntity area = QAreaEntity.areaEntity;
 

@@ -90,7 +90,6 @@ public class AwsService {
             String path = uri.getPath();
             String key = path.substring(path.indexOf('/') + 1); // 첫 번째 '/' 이후의 문자열이 키
 
-            log.info("Extracted key for deletion: {}", key);
             DeleteObjectRequest deleteObjRequest = new DeleteObjectRequest(bucketName, key);
             s3Client.deleteObject(deleteObjRequest);
         } catch (URISyntaxException e) {

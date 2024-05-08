@@ -23,7 +23,6 @@ import com.potless.backend.damage.repository.LocationRepository;
 import com.potless.backend.global.exception.pothole.PotholeLocationNotFoundException;
 import com.potless.backend.global.exception.pothole.PotholeNotFoundException;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -31,7 +30,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -71,7 +69,6 @@ public class DamageServiceImpl implements IDamageService {
                 .orElseThrow(PotholeLocationNotFoundException::new);
 
         DamageEntity damageEntity;
-        log.info("data = {}", data);
         if (data.getDtype().equals("CRACK")) {
             damageEntity = CrackEntity.builder()
                     .dirX(data.getDirX())
