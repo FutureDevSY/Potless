@@ -22,7 +22,6 @@ onMounted(() => {
   script.onload = () => {
     window.kakao.maps.load(initializeMap);
   };
-  console.log(KAKAO_APP_KEY);
   script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${KAKAO_APP_KEY}&autoload=false`;
   document.head.appendChild(script);
 });
