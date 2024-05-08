@@ -32,7 +32,7 @@ const cumulateData = ref([]);
 const startYear = format(addMonths(subYears(new Date(), 1), 1), "yyyy-MM"); // 작년 2023-06
 const currentMonth = format(new Date(), "yyyy-MM"); // 올해 2024-05
 
-const secondData = async () => {
+const thirdData = async () => {
   const response = await getDongMonthly(accessToken.value, startYear, currentMonth);
   if (response && response.status === "SUCCESS") {
     const data = response.data.list;
@@ -49,7 +49,7 @@ const secondData = async () => {
 
 onMounted(() => {
   fetchAreaDetails().then(() => {
-    secondData();
+    thirdData();
   });
 });
 
