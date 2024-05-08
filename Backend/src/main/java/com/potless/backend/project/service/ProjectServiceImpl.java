@@ -11,18 +11,13 @@ import com.potless.backend.global.exception.member.MemberNotFoundException;
 import com.potless.backend.global.exception.pothole.PotholeNotFoundException;
 import com.potless.backend.global.exception.project.AreaNotFoundException;
 import com.potless.backend.global.exception.project.ProjectNotFoundException;
-import com.potless.backend.global.exception.project.TeamNotFoundException;
 import com.potless.backend.member.entity.ManagerEntity;
-import com.potless.backend.member.entity.MemberEntity;
 import com.potless.backend.member.entity.TeamEntity;
-import com.potless.backend.member.entity.WorkerEntity;
 import com.potless.backend.member.repository.manager.ManagerRepository;
 import com.potless.backend.member.repository.member.MemberRepository;
 import com.potless.backend.member.repository.team.TeamRepository;
-import com.potless.backend.member.repository.worker.WorkerRepository;
-import com.potless.backend.member.service.MemberService;
-import com.potless.backend.path.service.PathService;
-import com.potless.backend.project.dto.request.*;
+import com.potless.backend.project.dto.request.ProjectListRequestDto;
+import com.potless.backend.project.dto.request.ProjectSaveRequestDto;
 import com.potless.backend.project.dto.response.ProjectDetailResponseDto;
 import com.potless.backend.project.dto.response.ProjectListResponseDto;
 import com.potless.backend.project.entity.ProjectEntity;
@@ -30,16 +25,11 @@ import com.potless.backend.project.entity.TaskEntity;
 import com.potless.backend.project.repository.project.ProjectRepository;
 import com.potless.backend.project.repository.task.TaskRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
-@Log4j2
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -60,12 +50,12 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public Long createProject(String email, ProjectSaveRequestDto projectSaveRequestDto, int[] order) {
         Long memberId = memberRepository.searchByEmail(email)
-                .orElseThrow(MemberNotFoundException::new).getId();;
+                .orElseThrow(MemberNotFoundException::new).getId();
         ManagerEntity managerEntity = managerRepository.findByMemberId(memberId)
                 .orElseThrow(ProjectNotFoundException::new);
 
         TeamEntity teamEntity = null;
-        
+
         if (projectSaveRequestDto.getTeamId().isPresent()) {
             teamEntity = teamRepository.findById(projectSaveRequestDto.getTeamId().get())
                     .orElseThrow(ManagerNotFoundException::new);
@@ -87,7 +77,7 @@ public class ProjectServiceImpl implements ProjectService {
 
         ProjectEntity saveProjectEntity = projectRepository.save(projectEntity);
 
-        if(projectSaveRequestDto.getDamageNums() != null && !projectSaveRequestDto.getDamageNums().isEmpty()){
+        if (projectSaveRequestDto.getDamageNums() != null && !projectSaveRequestDto.getDamageNums().isEmpty()) {
             for (int i = 1; i < order.length - 1; i++) {
                 long damageId = projectSaveRequestDto.getDamageNums().get(order[i] - 1);
                 DamageEntity damageEntity = damageRepository.findById(damageId)
@@ -100,9 +90,6 @@ public class ProjectServiceImpl implements ProjectService {
                 taskRepository.save(taskEntity);
             }
         }
-
-        log.info("teamEntity = {}",teamEntity);
-        log.info("projectEntity={}",projectEntity);
 
         return saveProjectEntity.getId();
     }

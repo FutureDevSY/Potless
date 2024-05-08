@@ -2,23 +2,18 @@ package com.potless.backend.project.controller;
 
 import com.potless.backend.global.format.code.ApiResponse;
 import com.potless.backend.global.format.response.ResponseCode;
-import com.potless.backend.path.dto.KakaoWaypointResponse;
 import com.potless.backend.path.service.PathService;
-import com.potless.backend.project.dto.request.WorkerRequestDto;
-import com.potless.backend.project.dto.request.CreateTeamRequestDto;
 import com.potless.backend.project.dto.request.ProjectListRequestDto;
 import com.potless.backend.project.dto.request.ProjectSaveRequestDto;
 import com.potless.backend.project.dto.response.ProjectDetailResponseDto;
 import com.potless.backend.project.dto.response.ProjectListResponseDto;
 import com.potless.backend.project.service.ProjectService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -27,7 +22,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-@Log4j2
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("api/project")
@@ -63,7 +57,6 @@ public class ProjectController {
     public ResponseEntity<?> getProjectDetail(
             @PathVariable Long projectId
     ) {
-        log.info("projectId = {}", projectId);
         ProjectDetailResponseDto projectDetailResponseDto = projectService.getProjectDetail(projectId);
         return response.success(ResponseCode.PROJECT_FETCHED, projectDetailResponseDto);
     }
@@ -75,7 +68,7 @@ public class ProjectController {
     public ResponseEntity<?> createProject(
             @Parameter(hidden = true) Authentication authentication,
             @RequestBody ProjectSaveRequestDto projectSaveRequestDto
-    ){
+    ) {
         int[] order;
         if (projectSaveRequestDto.getDamageNums() != null && !projectSaveRequestDto.getDamageNums().isEmpty()) {
             order = pathService.getOptimalOrder(projectSaveRequestDto.getOrigin(), projectSaveRequestDto.getDamageNums());
@@ -90,7 +83,7 @@ public class ProjectController {
     @DeleteMapping("{projectId}")
     public ResponseEntity<?> deleteProject(
             @PathVariable Long projectId
-    ){
+    ) {
         projectService.deleteProject(projectId);
         return response.success(ResponseCode.PROJECT_DELETED);
     }
