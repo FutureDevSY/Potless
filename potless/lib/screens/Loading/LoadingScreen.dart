@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:porthole24/API/api_request.dart';
-import 'package:porthole24/screens/Home/HomeScreen.dart';
-import 'package:porthole24/screens/Login/Login.dart';
-import 'package:porthole24/widgets/UI/ScreenSize.dart';
+import 'package:potless/API/api_request.dart';
+import 'package:potless/screens/Home/HomeScreen.dart';
+import 'package:potless/screens/Login/Login.dart';
+import 'package:potless/widgets/UI/ScreenSize.dart';
 import 'package:lottie/lottie.dart';
 
 class LoadingScreen extends StatefulWidget {
@@ -46,7 +46,14 @@ class _LoadingScreenState extends State<LoadingScreen> {
           SizedBox(
             height: UIhelper.deviceHeight(context) * 0.3,
           ),
-          const SizedBox(child: Text('포트홀 24')),
+          const SizedBox(
+              child: Text(
+            '포트홀 24',
+            style: TextStyle(
+              fontFamily: 'Pretendard',
+              color: Color(0xff000000),
+            ),
+          )),
           Lottie.asset('assets/lottie/loading_truck.json')
         ],
       ),
