@@ -5,7 +5,7 @@ pipeline {
         DOCKER_HUB_USER = 'mine0702'
         DOCKER_HUB_PASS = credentials('DOCKER_HUB_PASS')
         VITE_KAKAO_APP_KEY = credentials('VITE_KAKAO_APP_KEY')
-        SERVICE_URL = credentials('SERVICE_URL')
+        VITE_SERVICE_URL = credentials('VITE_SERVICE_URL')
         BUILD_ID = credentials('BUILD_ID')
     }
     stages {
