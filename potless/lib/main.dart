@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:kakao_map_plugin/kakao_map_plugin.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:porthole24/screens/Loading/LoadingScreen.dart';
-import 'package:porthole24/screens/Login/Login.dart';
+import 'package:potless/screens/Loading/LoadingScreen.dart';
 
 late List<CameraDescription> cameras;
 
@@ -11,9 +10,10 @@ Future<void> main() async {
   AuthRepository.initialize(appKey: '97b4e3e8c18f71505423fdd035c848ab');
 
   WidgetsFlutterBinding.ensureInitialized();
+
   cameras = await availableCameras();
-  // await requestStoragePermission();
   await requestPermissions();
+
   runApp(const MyApp());
 }
 
@@ -29,6 +29,8 @@ Future<void> requestPermissions() async {
   await [
     Permission.camera,
     Permission.storage,
+    // Permission.locationAlways,
+    Permission.location,
     // Add other permissions as needed
   ].request();
 }
@@ -36,7 +38,6 @@ Future<void> requestPermissions() async {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
