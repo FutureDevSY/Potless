@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:porthole24/widgets/tflite/screen.dart';
+import 'package:potless/widgets/tflite/screen.dart';
 
 class Bbox extends StatelessWidget {
   const Bbox({

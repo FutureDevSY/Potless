@@ -2,21 +2,20 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:camera/camera.dart'; // 카메라 플러그인
-import 'package:external_path/external_path.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:http/http.dart';
-import 'package:intl/intl.dart';
-import 'package:porthole24/API/api_request.dart';
-import 'package:porthole24/main.dart';
-import 'package:porthole24/models/detected.dart';
-import 'package:porthole24/screens/Record/ImagePreview.dart';
-import 'package:porthole24/widgets/functions/geolocator.dart';
-import 'package:porthole24/widgets/tflite/bbox.dart';
-import 'package:porthole24/widgets/tflite/detector.dart';
-import 'package:porthole24/widgets/tflite/screen.dart';
-import 'package:porthole24/widgets/UI/AppBar.dart';
-import 'package:porthole24/widgets/UI/ScreenSize.dart';
+import 'package:potless/API/api_request.dart';
+import 'package:potless/main.dart';
+import 'package:potless/models/detected.dart';
+import 'package:potless/widgets/functions/frame_rate.dart';
+import 'package:potless/widgets/functions/geolocator.dart';
+import 'package:potless/widgets/tflite/bbox.dart';
+import 'package:potless/widgets/tflite/detector.dart';
+import 'package:potless/widgets/tflite/screen.dart';
+import 'package:potless/widgets/UI/AppBar.dart';
+import 'package:potless/widgets/UI/ScreenSize.dart';
 
 class VideoPage extends StatefulWidget {
   const VideoPage({super.key});
@@ -32,18 +31,18 @@ class _VideoPageState extends State<VideoPage> with WidgetsBindingObserver {
   StreamSubscription? _subscription;
   final CameraLensDirection initialCameraLensDirection =
       CameraLensDirection.back;
-  final bool _isCapturing = false;
-  final ApiService _apiService = ApiService();
 
+  bool _previewOn = false;
+  int imageTaken = 0;
+  int? resultIndex;
   List<String> classes = [];
   List<List<double>> bboxes = [];
   List<double> scores = [];
-
   List<XFile> imageSaveQueue = [];
-  final bool _isSaving = false;
 
-  int? resultIndex;
-
+  final ApiService _apiService = ApiService();
+  final FrameRateTester _frameRateTester = FrameRateTester();
+  bool _isTestingFrameRate = false;
   final StreamController<QueuedImage> _uploadStreamController =
       StreamController<QueuedImage>();
 
@@ -62,27 +61,11 @@ class _VideoPageState extends State<VideoPage> with WidgetsBindingObserver {
     }
   }
 
-  Future<void> createTodayFolder() async {
-    String formattedDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
-    final String baseDir = await ExternalPath.getExternalStoragePublicDirectory(
-        ExternalPath.DIRECTORY_DCIM);
-    final Directory todayDir = Directory('$baseDir/$formattedDate');
-
-    debugPrint(todayDir.path);
-    if (!await todayDir.exists()) {
-      await todayDir.create(recursive: true);
-      debugPrint("폴더 생성함 55: ${todayDir.path}");
-    } else {
-      debugPrint("폴더 이미 있음 57: ${todayDir.path}");
-    }
-  }
-
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     _initStateAsync();
-    createTodayFolder();
     _uploadStreamController.stream.listen(_uploadImage);
   }
 
@@ -107,17 +90,37 @@ class _VideoPageState extends State<VideoPage> with WidgetsBindingObserver {
   Future<void> _initializeCamera() async {
     _cameraController = CameraController(
       cameras[0],
-      ResolutionPreset.veryHigh,
+      ResolutionPreset.medium,
       enableAudio: false,
-    )..initialize().then((_) async {
-        await _controller.startImageStream(onLatestImageAvailable);
-        setState(() {});
+    );
+
+    try {
+      await _cameraController!.initialize();
+      await _cameraController!.setFlashMode(FlashMode.off);
+      await _controller.startImageStream(onLatestImageAvailable);
+      setState(() {
         ScreenParams.previewSize = _controller.value.previewSize!;
       });
+    } catch (e) {
+      debugPrint('Error initializing camera: $e');
+    }
   }
 
+  int frameCounter = 0;
+  int skipFactor = 5;
+
   void onLatestImageAvailable(CameraImage cameraImage) async {
-    _detector?.processFrame(cameraImage);
+    if (_isTestingFrameRate) {
+      _frameRateTester.countFrame();
+    }
+    if (frameCounter % (skipFactor + 1) == 0) {
+      _detector?.processFrame(cameraImage);
+    }
+    frameCounter++;
+
+    if (frameCounter > 1000) {
+      frameCounter = 0;
+    }
   }
 
   void _handleDetectionResults() {
@@ -138,6 +141,7 @@ class _VideoPageState extends State<VideoPage> with WidgetsBindingObserver {
           Position position = await Geolocator.getCurrentPosition(
               desiredAccuracy: LocationAccuracy.high);
           _uploadStreamController.add(QueuedImage(picture, position));
+          imageTaken = imageTaken + 1;
         } catch (e) {
           debugPrint("Error capturing image: $e");
         }
@@ -166,7 +170,6 @@ class _VideoPageState extends State<VideoPage> with WidgetsBindingObserver {
     }
   }
 
-  // 감지된 객체 주위에 경계 상자를 그리는 위젯
   Widget _boundingBoxes() {
     List<Bbox> bboxesWidgets = [];
     for (int i = 0; i < bboxes.length; i++) {
@@ -178,7 +181,7 @@ class _VideoPageState extends State<VideoPage> with WidgetsBindingObserver {
         ),
       );
     }
-    return Stack(children: bboxesWidgets); // 경계 상자 위젯을 스택으로 묶어 반환
+    return Stack(children: bboxesWidgets);
   }
 
   @override
@@ -191,77 +194,115 @@ class _VideoPageState extends State<VideoPage> with WidgetsBindingObserver {
     super.dispose();
   }
 
-  // UI 구성
   @override
   Widget build(BuildContext context) {
     if (_cameraController == null || !_controller.value.isInitialized) {
-      return const SizedBox.shrink(); // 카메라가 초기화되지 않은 경우 빈 위젯 반환
+      return const SizedBox.shrink();
     }
     var aspect = 1 / _controller.value.aspectRatio;
     return Scaffold(
       appBar: const CustomAppBar(
-        title: '하이',
+        title: '주행모드',
       ),
       extendBodyBehindAppBar: true,
       extendBody: true,
       body: Stack(
         fit: StackFit.expand,
         children: [
-          AspectRatio(
-            aspectRatio: aspect,
-            child: CameraPreview(_controller), // 카메라 미리보기
-          ),
-          AspectRatio(
-            aspectRatio: aspect,
-            child: _boundingBoxes(), // 경계 상자 위젯
-          ),
+          if (_previewOn) ...[
+            AspectRatio(
+              aspectRatio: aspect,
+              child: CameraPreview(_controller),
+            ),
+            AspectRatio(
+              aspectRatio: aspect,
+              child: _boundingBoxes(),
+            ),
+          ] else ...[
+            Container(
+              color: const Color(0xffffffff),
+              height: UIhelper.deviceHeight(context),
+              width: UIhelper.deviceWidth(context),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  const Text('AI 촬영의 성능을 위해 카메라 화면을 꺼두는 모드입니다.'),
+                  SizedBox(
+                    height: UIhelper.deviceHeight(context) * 0.3,
+                  ),
+                ],
+              ),
+            ),
+          ],
           Column(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Container(
-                    color: Colors.white,
-                    width: UIhelper.deviceWidth(context) * 0.1,
-                    height: UIhelper.deviceWidth(context) * 0.1,
-                    child: _isCapturing
-                        ? const CircularProgressIndicator() // Shown when capturing
-                        : const Icon(Icons
-                            .camera_alt), // Empty container or any other widget when not capturing
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(20),
-                    child: FloatingActionButton(
-                      heroTag: "openFolderButton",
-                      onPressed: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => const ImagePreviewScreen(),
-                          ),
-                        );
-                      },
-                      child: const Icon(Icons.folder_open),
+              FloatingActionButton(
+                onPressed: () {
+                  setState(() {
+                    _isTestingFrameRate = !_isTestingFrameRate;
+                    if (_isTestingFrameRate) {
+                      _frameRateTester
+                          .startTesting(() => onLatestImageAvailable);
+                    } else {
+                      _frameRateTester.stopTesting();
+                    }
+                  });
+                },
+                child:
+                    Icon(_isTestingFrameRate ? Icons.stop : Icons.play_arrow),
+              ),
+              Container(
+                color: const Color(0xff151c62),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      height: UIhelper.deviceWidth(context) * 0.1,
+                      child: Text(
+                        '촬영 개수: ${imageTaken.toString()}',
+                        style: const TextStyle(
+                          color: Color(0xffffffff),
+                        ),
+                      ),
                     ),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: Colors.black54, // Semi-transparent black
-                      borderRadius: BorderRadius.circular(10),
+                    SizedBox(
+                      width: UIhelper.deviceWidth(context) * 0.1,
+                      height: UIhelper.deviceWidth(context) * 0.1,
+                      child: IconButton(
+                        icon: Icon(
+                          _previewOn ? Icons.visibility_off : Icons.visibility,
+                          color: const Color(0xffffffff),
+                        ),
+                        onPressed: togglePreview,
+                      ),
                     ),
-                    child: Text(
-                      '저장 중: ${imageSaveQueue.length}',
-                      style: const TextStyle(
-                          color: Colors.white, fontWeight: FontWeight.bold),
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Colors.black54,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Text(
+                        '저장 중: ${imageSaveQueue.length}',
+                        style: const TextStyle(
+                            color: Colors.white, fontWeight: FontWeight.bold),
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ],
           ),
         ],
       ),
     );
+  }
+
+  void togglePreview() {
+    setState(() {
+      _previewOn = !_previewOn;
+    });
   }
 }

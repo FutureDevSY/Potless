@@ -74,9 +74,9 @@ const patchPothole = async (accessToken, assignPothole, success, fail) => {
 };
 
 // 길찾기 api
-const postOptimal = async (accessToken, success, fail) => {
+const postOptimal = async (accessToken, projectBody, success, fail) => {
   await local
-    .get(`/project/optimal`, {
+    .post(`/path/optimal`, projectBody, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },

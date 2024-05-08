@@ -5,8 +5,8 @@ import 'package:camera/camera.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:image/image.dart' as image_lib;
-import 'package:porthole24/widgets/tflite/image.dart';
-import 'package:porthole24/widgets/tflite/nms.dart';
+import 'package:potless/widgets/tflite/image.dart';
+import 'package:potless/widgets/tflite/nms.dart';
 import 'package:tflite_flutter/tflite_flutter.dart';
 
 enum _Codes { init, busy, ready, detect, result }
