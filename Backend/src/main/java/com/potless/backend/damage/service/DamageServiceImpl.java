@@ -119,6 +119,8 @@ public class DamageServiceImpl implements IDamageService {
         damageEntity.getAreaEntity().minusCount();
 
         for (ImageEntity image : damageEntity.getImageEntities()) {
+            if(image.getUrl().equals("https://mine702-amazon-s3.s3.ap-northeast-2.amazonaws.com/Default/default.jpg"))
+                break;
             awsService.deleteFile(image.getUrl());
         }
 

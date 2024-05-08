@@ -1,5 +1,6 @@
 package com.potless.backend.damage.service;
 
+import com.potless.backend.damage.dto.service.response.KakaoMapApiAddressResponseDTO;
 import com.potless.backend.damage.dto.service.response.KakaoMapApiResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,6 +14,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
 
 @Service
 @RequiredArgsConstructor
@@ -43,6 +45,30 @@ public class KakaoService {
                 entity,
                 KakaoMapApiResponseDTO.class,
                 x, y
+        );
+
+        return CompletableFuture.completedFuture(response.getBody());
+    }
+
+    @Async
+    public CompletionStage<KakaoMapApiAddressResponseDTO> fetchAdressKakaoData(String address) {
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "KakaoAK " + KAKAO_API_KEY);
+        // Build the URL
+        String urlTemplate = UriComponentsBuilder.fromHttpUrl("https://dapi.kakao.com/v2/local/search/address.json")
+                .queryParam("query", "{address}")
+                .encode()
+                .toUriString();
+
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+
+        ResponseEntity<KakaoMapApiAddressResponseDTO> response = restTemplate.exchange(
+                urlTemplate,
+                HttpMethod.POST,
+                entity,
+                KakaoMapApiAddressResponseDTO.class,
+                address
         );
 
         return CompletableFuture.completedFuture(response.getBody());
