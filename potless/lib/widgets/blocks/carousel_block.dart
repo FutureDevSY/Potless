@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:porthole24/models/pothole.dart'; // Assuming this is where DamageImage is defined
+import 'package:potless/models/pothole.dart'; // Assuming this is where DamageImage is defined
 
 class CustomCarouselCard extends StatelessWidget {
   final DamageImage image;

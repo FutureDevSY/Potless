@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:kakao_map_plugin/kakao_map_plugin.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:porthole24/screens/Loading/LoadingScreen.dart';
-import 'package:porthole24/screens/Login/Login.dart';
+import 'package:potless/screens/Loading/LoadingScreen.dart';
 
 late List<CameraDescription> cameras;
 
@@ -39,7 +38,6 @@ Future<void> requestPermissions() async {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
