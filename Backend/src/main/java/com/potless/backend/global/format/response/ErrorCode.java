@@ -55,6 +55,8 @@ public enum ErrorCode {
     POTHOLE_LOCATION_NOT_FOUND(HttpStatus.UNAUTHORIZED, "동 정보를 찾을 수 없습니다."),
     POTHOLE_AREA_NOT_FOUND(HttpStatus.UNAUTHORIZED, "지역 정보를 찾을 수 없습니다."),
     POTHOLE_MINUS_NOT_FOUND(HttpStatus.UNAUTHORIZED, "삭제할 포트홀 정보를 찾을 수 없습니다."),
+    AREA_NOT_FOUND(HttpStatus.UNAUTHORIZED, "지역 정보를 찾을 수 없습니다."),
+    LOCATION_NOT_FOUND(HttpStatus.UNAUTHORIZED, "동 정보를 찾을 수 없습니다."),
 
     // 프로젝트 관련 예외 처리
     PROJECT_NOT_FOUND(HttpStatus.UNAUTHORIZED, "관련 프로젝트 정보를 찾을 수 없습니다."),
@@ -62,7 +64,7 @@ public enum ErrorCode {
     PROJECT_AREA_NOT_FOUND(HttpStatus.UNAUTHORIZED, "관련 지역 정보를 찾을 수 없습니다."),
 
     // 작업 관련 예외 처리
-    TASK_NOT_FOUND(HttpStatus.UNAUTHORIZED,"작업 정보를 찾을 수 없습니다."),
+    TASK_NOT_FOUND(HttpStatus.UNAUTHORIZED, "작업 정보를 찾을 수 없습니다."),
     CREATE_TEAM_FAILED(HttpStatus.UNAUTHORIZED, "관리자 본인 해당 지역구의 팀만 생성할 수 있습니다."),
 
     // AWS ERROR
