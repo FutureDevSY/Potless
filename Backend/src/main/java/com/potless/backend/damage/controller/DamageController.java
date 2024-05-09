@@ -298,15 +298,19 @@ public class DamageController {
         }
 
         // 비동기로 처리하고 바로 응답 반환 검증
-        kakaoService.fetchAdressKakaoData(request.getAddress())
+        kakaoService.fetchKakaoData(request.getX(), request.getY())
                 .thenAcceptAsync(data -> {
+                    RoadAddress roadAddress = data.getDocuments().get(0).getRoad_address();
+                    Address address = data.getDocuments().get(0).getAddress();
 
-                    String location = (data.getDocuments().get(0).getAddress().getRegion_3depth_name() != null) ? data.getDocuments().get(0).getAddress().getRegion_3depth_name() : data.getDocuments().get(0).getAddress().getRegion_3depth_h_name();
+                    String addressName = (address != null) ? address.getAddress_name() : roadAddress.getAddress_name();
+                    String location = (address != null) ? address.getRegion_3depth_name() : "정보가 존재하지 않습니다";
+                    String area = (address != null) ? address.getRegion_2depth_name() : roadAddress.getRegion_2depth_name();
 
                     DamageSetRequestDTO damageSetRequestDTO = DamageSetRequestDTO.builder()
                             .dtype(request.getType())
-                            .x(Double.valueOf(data.getDocuments().get(0).getX()))
-                            .y(Double.valueOf(data.getDocuments().get(0).getY()))
+                            .x(request.getX())
+                            .y(request.getY())
                             .build();
 
                     damageSetRequestDTO.setImages(Collections.singletonList("https://mine702-amazon-s3.s3.ap-northeast-2.amazonaws.com/Default/default.jpg"));
@@ -316,16 +320,15 @@ public class DamageController {
                             .dirY(damageSetRequestDTO.getY())
                             .dtype(damageSetRequestDTO.getDtype())
                             .width(0.0)
-                            .address(data.getDocuments().get(0).getAddress().getAddress_name())
+                            .address(addressName)
                             .severity(request.getSeverity())
                             .status(Status.작업전)
-                            .area(data.getDocuments().get(0).getAddress().getRegion_2depth_name())
+                            .area(area)
                             .location(location)
                             .images(damageSetRequestDTO.getImages())
                             .build();
 
                     iDamageService.setDamage(serviceDTO);
-
                 });
 
         return response.success(ResponseCode.POTHOLE_DETECTED);
