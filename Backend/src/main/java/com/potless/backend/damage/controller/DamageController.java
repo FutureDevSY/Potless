@@ -286,7 +286,7 @@ public class DamageController {
     @Operation(summary = "Damage 수동 삽입", description = "Damage를 삽입합니다.", responses = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Damage 삽입 성공", content = @Content(schema = @Schema(implementation = String.class)))
     })
-    @PostMapping(value = "setManual", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PostMapping(value = "setManual")
     public ResponseEntity<?> setManualDamage(
             Authentication authentication,
             @Validated @RequestBody DamageManualRequestDTO request,
