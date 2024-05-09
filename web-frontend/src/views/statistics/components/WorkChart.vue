@@ -1,36 +1,23 @@
 <template>
-  <div class="chart-container">
-    <div class="chart">
-      <apexchart type="donut" :options="chartOptions" :series="series" />
-    </div>
-    <div class="data-display">
-      <transition-group name="incident-report" tag="div" class="data-list">
-        <Inquire
-          v-for="(item, index) in dataItems"
-          :key="index"
-          :title="item.title"
-          :number="item.number"
-          class="infos"
-        />
-      </transition-group>
-    </div>
+  <div class="chart">
+    <apexchart :key="chartKey" type="donut" :options="chartOptions" :series="chartSeries" />
   </div>
 </template>
 
 <script setup>
-import { ref } from "vue";
-import Inquire from "./Inquire.vue";
+import { ref, watch, onMounted, reactive } from 'vue';
 
-const chartOptions = ref({
-  labels: ["미완료", "보수중", "완료"],
-  legend: {
-    position: "bottom",
-  },
+const props = defineProps({
+  data: Array
+});
+
+const chartKey = ref(0);
+const chartOptions = reactive({
+  labels: [],
+  legend: { position: "bottom" },
   dataLabels: {
     enabled: true,
-    formatter: function (val) {
-      return `${val.toFixed(0)}%`;
-    },
+    formatter: val => `${val.toFixed(0)}%`
   },
   plotOptions: {
     pie: {
@@ -40,80 +27,35 @@ const chartOptions = ref({
           total: {
             show: true,
             label: "총계",
-            formatter: function (w) {
-              return w.globals.seriesTotals.reduce((a, b) => {
-                return a + b;
-              }, 0);
-            },
-          },
-        },
-      },
-    },
+            formatter: w => w.globals.seriesTotals.reduce((a, b) => a + b, 0).toLocaleString()
+          }
+        }
+      }
+    }
   },
   colors: ["#7B82C8", "#232EA3", "#151c62"],
-  states: {
-    active: {
-      filter: {
-        type: "none",
-      },
-    },
-  },
+  states: { active: { filter: { type: "none" } } },
   tooltip: {
-    y: {
-      formatter: function (value) {
-        return `${value}%`;
-      },
-    },
-  },
+    y: { formatter: value => `${value}%` }
+  }
 });
 
-const series = [50, 20, 30];
+const chartSeries = ref([]);
 
-const dataItems = [
-  { title: "완료", number: "300" },
-  { title: "보수중", number: "200" },
-  { title: "미완료", number: "500" },
-];
+function updateChartOptions() {
+  if (props.data && props.data.length > 0) {
+    chartOptions.labels = props.data.map(item => item.title);
+    chartSeries.value = props.data.map(item => parseInt(item.number));
+    chartKey.value++;
+  }
+}
+
+watch(() => props.data, updateChartOptions, { immediate: true });
+onMounted(updateChartOptions);
 </script>
 
 <style scoped>
-.data-display {
-  border-left: 1px solid #ccc;
-  height: 200px;
-}
-/* slide animation 효과 -> 오른쪽에서 왼쪽으로 이동 */
-@keyframes slideIn {
-  from {
-    transform: translateX(-30px);
-    opacity: 0;
-  }
-  to {
-    transform: translateX(0px);
-    opacity: 1;
-  }
-}
-.incident-report-enter-active {
-  animation: slideIn 0.6s ease-out forwards;
-}
-.incident-report-enter {
-  opacity: 0;
-}
 .chart {
-  width: 100%;
-}
-.chart-container {
-  display: grid;
-  grid-template-columns: 5fr 7fr;
-}
-.data-total {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  padding: 10px 10px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  background-color: #fff;
-  margin: 20px;
+  width: 90%;
 }
 </style>

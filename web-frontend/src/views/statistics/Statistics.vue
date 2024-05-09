@@ -18,15 +18,15 @@
 
       <div class="danger-box">
         <div class="title-input">
-          <p class="road-title">도로별 km당 발생 건수</p>
+          <p class="road-title">지역별 발생 건수</p>
           <input
             type="text"
             v-model="searchTerm"
-            placeholder="도로명을 입력해주세요."
+            placeholder="동을 입력해주세요."
             @input="updateChart"
           />
         </div>
-        <RoadTypeIncidentsGraphVue :search-term="searchTerm" />
+        <RoadTypeIncidentsGraphVue :search-term="searchTerm" :road-data="roadIncidentData" />
       </div>
     </div>
     <div class="right-box">
@@ -39,7 +39,20 @@
 
       <div class="work-box">
         <p class="work-title">보수 공사 현황</p>
-        <WorkChart class="work-chart" />
+        <div class="chart-and-data">
+          <WorkChart class="work-chart" :data="workChartData" />
+          <div class="data-list">
+            <transition-group name="data-list" tag="div" class="data-entries">
+              <Inquire
+                v-for="(item, index) in workChartData"
+                :key="index"
+                :title="item.title"
+                :number="item.number"
+                class="infos"
+              />
+            </transition-group>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -50,18 +63,14 @@ import { ref, onMounted } from "vue";
 import IncidentGraph from "./components/IncidentGraph.vue";
 import IncidentReport from "./components/IncidentReport.vue";
 import RoadTypeIncidentsGraphVue from "./components/RoadTypeIncidentsGraph.vue";
-import TownTypeIncidentsGraph from "./components/TownTypeIncidentsGraph.vue";
+import Inquire from "./components/Inquire.vue";
 import WorkChart from "./components/WorkChart.vue";
-import { format, addMonths, subYears, subDays } from "date-fns";
+import { format, subDays } from "date-fns";
 import { useAuthStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
 import {
   getAreaDetails,
-  getGuList,
   getDongList,
-  getTotalDongList,
-  getDongDetail,
-  getDongMonthly,
   getDongPerDate,
 } from "../../api/statistics/statistics";
 
@@ -169,9 +178,48 @@ const firstData = async () => {
   }
 };
 
+// ** 지역별 발생 건수: 포트홀 구에 속한 동에 대한 통계 조회
+// ** 보수 공사 현황: 포트홀 구에 속한 동에 대한 통계 조회
+const workChartData = ref([]);
+const roadIncidentData = ref([]);
+
+const secondfourthData = async () => {
+  try {
+    const response = await getDongList(accessToken.value, areaId.value);
+    if (response && response.data && response.data.data && response.data.data.list) {
+      const { list } = response.data.data; 
+      let countDone = 0, countDuring = 0, countBefore = 0;
+
+      roadIncidentData.value = list.map(dong => ({
+        dong: dong.locationName,
+        potholes: dong.countDamageBefore + dong.countDamageDuring + dong.countDamageDone
+      }));
+
+      list.forEach(item => {
+        countDone += item.countDamageDone;
+        countDuring += item.countDamageDuring;
+        countBefore += item.countDamageBefore;
+      });
+
+      workChartData.value = [
+        { title: "미완료", number: countBefore.toString() },
+        { title: "보수중", number: countDuring.toString() },
+        { title: "완료", number: countDone.toString() },
+      ];
+      console.log("도로별 포트홀 현황:", roadIncidentData.value);
+      // console.log("보수 공사 현황:", workChartData.value);
+    } else {
+      console.error("Invalid or empty data received from the API");
+    }
+  } catch (error) {
+    console.error("Error fetching Dong statistics:", error);
+  }
+};
+
 onMounted(() => {
   fetchAreaDetails().then(() => {
     firstData();
+    secondfourthData();
   });
 });
 </script>
@@ -255,7 +303,7 @@ onMounted(() => {
   padding-bottom: 15px;
 }
 input {
-  width: 30%;
+  width: 25%;
   padding: 10px;
   position: relative;
   overflow: hidden;
@@ -301,7 +349,35 @@ input:focus {
 .work-title {
   margin: 1vh 0px 1vh 10px;
 }
+.chart-and-data {
+  display: grid; 
+  grid-template-columns: 5fr 7fr; 
+  height: 100%;
+}
 .work-chart {
-  width: 100%;
+  height: 100%;
+}
+.data-list {
+  border-left: 1px solid #ccc;
+  height: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+@keyframes slideInRightToLeft {
+  from {
+    transform: translateX(30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0px);
+    opacity: 1;
+  }
+}
+.data-list-enter-active {
+  animation: slideInRightToLeft 0.6s ease-out forwards;
+}
+.data-list-enter {
+  opacity: 0;
 }
 </style>
