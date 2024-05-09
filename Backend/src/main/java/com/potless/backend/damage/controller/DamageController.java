@@ -31,6 +31,8 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -287,9 +289,13 @@ public class DamageController {
     @PostMapping(value = "setManual", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<?> setManualDamage(
             Authentication authentication,
-            @ModelAttribute DamageManualRequestDTO request
-
+            @Validated @RequestBody DamageManualRequestDTO request,
+            BindingResult bindingResult
     ) {
+
+        if (bindingResult.hasErrors()) {
+            return response.fail(bindingResult);
+        }
 
         // 비동기로 처리하고 바로 응답 반환 검증
         kakaoService.fetchAdressKakaoData(request.getAddress())
@@ -311,7 +317,7 @@ public class DamageController {
                             .dtype(damageSetRequestDTO.getDtype())
                             .width(0.0)
                             .address(data.getDocuments().get(0).getAddress().getAddress_name())
-                            .severity(1)
+                            .severity(request.getSeverity())
                             .status(Status.작업전)
                             .area(data.getDocuments().get(0).getAddress().getRegion_2depth_name())
                             .location(location)
