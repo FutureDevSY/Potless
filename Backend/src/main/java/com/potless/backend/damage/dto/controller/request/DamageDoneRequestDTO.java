@@ -9,7 +9,7 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class DamageDoneRequestDTO {
 
-    @NotBlank(message = "데미지 ID 는 비어있을 수 없습니다")
+    @NotNull(message = "데미지 ID 는 비어있을 수 없습니다")
     private Long damageId;
 
     @Builder
