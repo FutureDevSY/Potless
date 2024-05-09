@@ -11,6 +11,8 @@ import Statistics from "../views/statistics/Statistics.vue";
 import TaskInfo from "../views/task/TaskInfo.vue";
 import TaskInfoDetail from "../views/task/TaskInfoDetail.vue";
 
+import Test from "../views/home/Home2.vue";
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -60,6 +62,12 @@ const router = createRouter({
       path: "/taskinfo/:id",
       name: "TaskInfoDetail",
       component: TaskInfoDetail,
+      props: true,
+    },
+    {
+      path: "/test/",
+      name: "Test",
+      component: Test,
       props: true,
     },
   ],
