@@ -23,6 +23,9 @@ public class DamageSetRequestDTO {
     private Double y;
 
     @Setter
+    private int severity;
+
+    @Setter
     private List<String> images = new ArrayList<>();
 
     @Builder

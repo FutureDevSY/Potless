@@ -8,14 +8,12 @@ import com.potless.backend.damage.dto.controller.response.DamageResponseDTO;
 import com.potless.backend.damage.dto.controller.response.LocationResponseDTO;
 import com.potless.backend.damage.dto.service.request.AreaDamageCountForMonthServiceRequestDTO;
 import com.potless.backend.damage.dto.service.request.DamageSetRequestServiceDTO;
+import com.potless.backend.damage.dto.service.request.ReDetectionRequestDTO;
 import com.potless.backend.damage.dto.service.response.*;
 import com.potless.backend.damage.dto.service.response.kakao.Address;
 import com.potless.backend.damage.dto.service.response.kakao.RoadAddress;
 import com.potless.backend.damage.entity.enums.Status;
-import com.potless.backend.damage.service.IAreaLocationService;
-import com.potless.backend.damage.service.IDamageService;
-import com.potless.backend.damage.service.IVerificationService;
-import com.potless.backend.damage.service.KakaoService;
+import com.potless.backend.damage.service.*;
 import com.potless.backend.global.exception.pothole.PotholeNotFoundException;
 import com.potless.backend.global.format.code.ApiResponse;
 import com.potless.backend.global.format.response.ResponseCode;
@@ -36,6 +34,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
@@ -56,6 +55,7 @@ public class DamageController {
     private final IVerificationService iVerificationService;
     private final AwsService awsService;
     private final IAreaLocationService iAreaLocationService;
+    private final ReDetectionApiService detectionApiService;
 
     @Operation(summary = "Area 리스트 가져오기", description = "Area 리스트 가져오기", responses = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = AreaResponseDTO.class)))
@@ -343,14 +343,20 @@ public class DamageController {
             @RequestPart("dtype") String dtype,
             @RequestPart("x") String x,
             @RequestPart("y") String y,
-            @RequestPart("files") List<MultipartFile> files
-    ) {
+            @RequestPart("files") List<MultipartFile> files,
+            @RequestPart("label") MultipartFile label
+    ) throws IOException {
         DamageSetRequestDTO damageSetRequestDTO = DamageSetRequestDTO.builder()
                 .dtype(dtype)
                 .x(Double.valueOf(x))
                 .y(Double.valueOf(y))
                 .build();
 
+//        fastApi 2차 탐지 요청 수행 및 결과 반환
+        ReDetectionRequestDTO detectionRequestDTO = new ReDetectionRequestDTO(files.get(0), label);
+        int severityResult = detectionApiService.reDetectionResponse(detectionRequestDTO);
+        log.info("severity = {}", severityResult);
+        damageSetRequestDTO.setSeverity(severityResult);
 
         // 위험도 파악 비동기
         Map<String, String> fileUrlsAndKeys = files.stream()
@@ -403,7 +409,7 @@ public class DamageController {
                                     .dtype(damageSetRequestDTO.getDtype())
                                     .width(10.000)
                                     .address(addressName)
-                                    .severity(1)
+                                    .severity(damageSetRequestDTO.getSeverity())
                                     .status(Status.작업전)
                                     .area(area)
                                     .location(location)
