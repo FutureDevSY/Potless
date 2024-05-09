@@ -4,10 +4,7 @@ import com.potless.backend.global.exception.email.FailedMessageTransmissionExcep
 import com.potless.backend.global.exception.email.InvalidAuthCodeException;
 import com.potless.backend.global.exception.jwt.RefreshTokenNotFoundException;
 import com.potless.backend.global.exception.member.*;
-import com.potless.backend.global.exception.pothole.PotholeAreaNotFoundException;
-import com.potless.backend.global.exception.pothole.PotholeLocationNotFoundException;
-import com.potless.backend.global.exception.pothole.PotholeMinusException;
-import com.potless.backend.global.exception.pothole.PotholeNotFoundException;
+import com.potless.backend.global.exception.pothole.*;
 import com.potless.backend.global.exception.project.AreaNotFoundException;
 import com.potless.backend.global.exception.project.ProjectNotFoundException;
 import com.potless.backend.global.format.code.ApiResponse;
@@ -145,6 +142,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(UnauthorizedRequestException.class)
     protected ResponseEntity<?> handle(UnauthorizedRequestException e) {
         log.error("UnauthorizedRequestException = {}", e.getErrorCode().getMessage());
+        return response.error(e.getErrorCode());
+    }
+    @ExceptionHandler(PotholeDetectionFailException.class)
+    protected ResponseEntity<?> handle(PotholeDetectionFailException e) {
+        log.error("PotholeDetectionFailException = {}", e.getErrorCode().getMessage());
         return response.error(e.getErrorCode());
     }
 

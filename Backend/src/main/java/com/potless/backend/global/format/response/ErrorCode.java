@@ -57,6 +57,7 @@ public enum ErrorCode {
     POTHOLE_MINUS_NOT_FOUND(HttpStatus.UNAUTHORIZED, "삭제할 포트홀 정보를 찾을 수 없습니다."),
     AREA_NOT_FOUND(HttpStatus.UNAUTHORIZED, "지역 정보를 찾을 수 없습니다."),
     LOCATION_NOT_FOUND(HttpStatus.UNAUTHORIZED, "동 정보를 찾을 수 없습니다."),
+    POTHOLE_DETECTION_FAILED(HttpStatus.METHOD_NOT_ALLOWED, "포트홀 2차 탐지 결과 탐지하지 못했습니다."),
 
     // 프로젝트 관련 예외 처리
     PROJECT_NOT_FOUND(HttpStatus.UNAUTHORIZED, "관련 프로젝트 정보를 찾을 수 없습니다."),
