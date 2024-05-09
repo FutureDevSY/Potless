@@ -11,11 +11,17 @@
         </select>
       </div>
       <div class="input-group">
-        <label for="address">주소:</label>
-        <input type="text" id="address" v-model="address" required />
-        <button>주소 변경</button>
+        <label for="district">구:</label>
+        <input type="text" id="district" v-model="district" required />
       </div>
-      <div>위도: {{ location.x }} / 경도: {{ location.y }}</div>
+      <div class="input-group">
+        <label for="subDistrict">동:</label>
+        <input type="text" id="subDistrict" v-model="subDistrict" required />
+      </div>
+      <div class="input-group">
+        <label for="plotNumber">지번:</label>
+        <input type="text" id="plotNumber" v-model="plotNumber" required />
+      </div>
       <button type="submit">신고하기</button>
     </form>
   </div>
@@ -26,31 +32,41 @@ import { ref } from "vue";
 import { postPotholeAdd } from "../../api/pothole/pothole";
 import { useAuthStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
+import { useMoveStore } from "@/stores/move";
 
+const store = useMoveStore();
 const store2 = useAuthStore();
 const { accessToken } = storeToRefs(store2);
 const potholeType = ref("");
-const address = ref("");
-const location = ref({});
+const district = ref("");
+const subDistrict = ref("");
+const plotNumber = ref("");
 
 const submitForm = () => {
-  const potholeInfo = ref({
-    dtype: potholeType.value,
-    x: location.value.x,
-    y: location.value.y,
-  });
+  const address = `${district.value} ${subDistrict.value} ${plotNumber.value}`;
+  const potholeInfo = {
+    type: potholeType.value,
+    address: address,
+  };
 
   postPotholeAdd(
     accessToken.value,
-    potholeInfo.value,
+    potholeInfo,
     (res) => {
       if (res.data.status == "SUCCESS") {
         console.log(res.data.message);
+        alert("포트홀 신고가 성공적으로 완료되었습니다.");
+        store.movePorthole();
+      } else {
+        alert("포트홀 신고에 실패하였습니다. 다시 시도해주세요.");
       }
     },
     (error) => {
       console.log(error);
       console.log(error.response.data.message);
+      alert(
+        `신고 처리 중 오류가 발생하였습니다: ${error.response.data.message}`
+      );
     }
   );
 };
