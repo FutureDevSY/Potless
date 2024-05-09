@@ -2,7 +2,10 @@
   <div class="statics-container">
     <div class="left-box">
       <div class="incident-box">
-        <p class="incident-title">위험물 발생 현황</p>
+        <div class="title-and-lottie">
+          <LottieRadar class="lottie" />
+          <p class="incident-title">위험물 발생 현황</p>
+        </div>
         <transition-group name="incident-report" tag="div" class="incident-report">
           <IncidentReport
             v-for="(item, index) in IncidentData"
@@ -18,6 +21,7 @@
 
       <div class="danger-box">
         <div class="title-input">
+          <LottieDanger class="lottie lottie-danger" />
           <p class="road-title">지역별 위험물 건수</p>
           <input
             type="text"
@@ -31,14 +35,20 @@
     </div>
     <div class="right-box">
       <div class="total-box">
-        <p class="totalincident-title">위험물 누적 탐지 건수</p>
+        <div class="title-and-lottie">
+          <LottieGraph class="lottie" />
+          <p class="totalincident-title">위험물 누적 탐지 건수</p>
+        </div>
         <div class="incident-graph">
           <IncidentGraph />
         </div>
       </div>
 
       <div class="work-box">
-        <p class="work-title">보수 공사 현황</p>
+        <div class="title-and-lottie">
+          <LottieConstruction class="lottie" />
+          <p class="work-title">보수 공사 현황</p>
+        </div>
         <div class="chart-and-data">
           <WorkChart class="work-chart" :data="workChartData" />
           <div class="data-list">
@@ -65,6 +75,10 @@ import IncidentReport from "./components/IncidentReport.vue";
 import RoadTypeIncidentsGraphVue from "./components/RoadTypeIncidentsGraph.vue";
 import Inquire from "./components/Inquire.vue";
 import WorkChart from "./components/WorkChart.vue";
+import LottieRadar from "./components/LottieRadar.vue";
+import LottieDanger from "./components/LottieDanger.vue";
+import LottieGraph from "./components/LottieGraph.vue";
+import LottieConstruction from "./components/LottieConstruction.vue";
 import { format, subDays } from "date-fns";
 import { useAuthStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
@@ -248,6 +262,17 @@ onMounted(() => {
   color: #373737;
 }
 
+.title-and-lottie {
+  display: flex;
+  align-items: center;
+}
+.lottie {
+  margin-left: 10px;
+}
+.lottie-danger {
+  transform: translateY(-5px);
+}
+
 /* ***** */
 /* 위험물 발생 현황 */
 .incident-box {
@@ -259,7 +284,7 @@ onMounted(() => {
   margin-bottom: 3.4vh;
 }
 .incident-title {
-  margin: 1vh 0px 1.8vh 10px;
+  margin: 1vh 0px 1.8vh 0px;
 }
 .incident-report {
   display: grid;
@@ -298,7 +323,7 @@ onMounted(() => {
   margin: 1vh 0px 0px 0px;
 }
 .road-title {
-  margin: 0px 0px 0px 10px;
+  margin: 0px 0px 0px 0px;
   padding-bottom: 15px;
 }
 input {
@@ -331,7 +356,7 @@ input:focus {
   margin-bottom: 3.4vh;
 }
 .totalincident-title {
-  margin: 1vh 0px 0px 10px;
+  margin: 1vh 0px 0px 0px;
 }
 .incident-graph {
   width: 93%;
@@ -346,7 +371,7 @@ input:focus {
   height: 273.5px;
 }
 .work-title {
-  margin: 1vh 0px 1vh 10px;
+  margin: 1vh 0px 1vh 0px;
 }
 .chart-and-data {
   display: grid;
