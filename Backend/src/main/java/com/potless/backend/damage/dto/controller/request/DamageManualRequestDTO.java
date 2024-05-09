@@ -30,3 +30,4 @@ public class DamageManualRequestDTO {
         this.type = type;
     }
 }
+
