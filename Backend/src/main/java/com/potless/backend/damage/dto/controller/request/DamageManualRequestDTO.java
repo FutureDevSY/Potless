@@ -9,8 +9,11 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class DamageManualRequestDTO {
 
-    @NotNull(message = "주소는 비어있을 수 없습니다")
-    private String address;
+    @NotNull(message = "x 값을 입력 해 주세요")
+    private Double x;
+
+    @NotNull(message = "y 값을 입력 해 주세요")
+    private Double y;
 
     @NotNull(message = "심각도는 비어있을 수 없습니다")
     private Integer severity;
@@ -19,9 +22,12 @@ public class DamageManualRequestDTO {
     private String type;
 
     @Builder
-    public DamageManualRequestDTO(String address, Integer severity, String type) {
-        this.address = address;
+
+    public DamageManualRequestDTO(Double x, Double y, Integer severity, String type) {
+        this.x = x;
+        this.y = y;
         this.severity = severity;
         this.type = type;
     }
 }
+
