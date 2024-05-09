@@ -72,11 +72,47 @@ class Detector {
   }
 
   void processFrame(CameraImage cameraImage) {
-    if (_isReady) {
-      _sendPort.send(_Command(_Codes.detect, args: [cameraImage]));
+    try {
+      if (_isReady) {
+        _sendPort.send(_Command(_Codes.detect, args: [cameraImage]));
+      }
+    } catch (E) {
+      print('detector 80: $E');
     }
   }
 
+  // void _handleCommand(_Command command) {
+  //   switch (command.code) {
+  //     case _Codes.init:
+  //       _sendPort = command.args?[0] as SendPort;
+  //       RootIsolateToken rootIsolateToken = RootIsolateToken.instance!;
+  //       _sendPort.send(_Command(_Codes.init,
+  //           args: [rootIsolateToken, _interpreter.address, _labels]));
+  //     case _Codes.ready:
+  //       _isReady = true;
+  //     case _Codes.busy:
+  //       _isReady = false;
+  //     case _Codes.result:
+  //       _isReady = true;
+  //       try {
+  //         if (command.args != null && command.args!.length > 1) {
+  //           CameraImage cameraImage = command.args![1] as CameraImage;
+  //           resultsStream.add({
+  //             'results': command.args?[0] as Map<String, dynamic>,
+  //             'image': cameraImage
+  //           });
+  //         } else {
+  //           resultsStream
+  //               .add({'results': command.args?[0] as Map<String, dynamic>});
+  //         }
+  //       } catch (E) {
+  //         debugPrint('detector 106 : $E');
+  //       }
+
+  //     default:
+  //       debugPrint('Detector unrecognized command: ${command.code}');
+  //   }
+  // }
   void _handleCommand(_Command command) {
     switch (command.code) {
       case _Codes.init:
@@ -84,13 +120,17 @@ class Detector {
         RootIsolateToken rootIsolateToken = RootIsolateToken.instance!;
         _sendPort.send(_Command(_Codes.init,
             args: [rootIsolateToken, _interpreter.address, _labels]));
+        break;
       case _Codes.ready:
         _isReady = true;
+        break;
       case _Codes.busy:
         _isReady = false;
+        break;
       case _Codes.result:
         _isReady = true;
         resultsStream.add(command.args?[0] as Map<String, dynamic>);
+        break;
       default:
         debugPrint('Detector unrecognized command: ${command.code}');
     }
@@ -117,6 +157,7 @@ class _DetectorServer {
       final _Command command = message as _Command;
       await server._handleCommand(command);
     });
+
     sendPort.send(_Command(_Codes.init, args: [receivePort.sendPort]));
   }
 
@@ -149,75 +190,126 @@ class _DetectorServer {
           image = image_lib.copyRotate(image, angle: 90);
         }
 
+        // Perform detection
         final results = analyseImage(image, preConversionTime);
-        _sendPort.send(_Command(_Codes.result, args: [results]));
+        // Assuming results include confidence and we only send high confidence detections
+        if (results['conf'].any((double c) => c > 0.75)) {
+          // Using 0.8 as an example threshold
+          Uint8List jpegImage = image_lib.encodeJpg(image, quality: 85);
+          _sendPort.send(
+            _Command(
+              _Codes.result,
+              args: [
+                results,
+                jpegImage,
+              ],
+            ),
+          ); // Send both image and results
+        } else {
+          _sendPort.send(_Command(_Codes.result, args: [results]));
+        }
       }
     });
   }
 
   Map<String, dynamic> analyseImage(
-      image_lib.Image? image, int preConversionTime) {
-    var conversionElapsedTime =
-        DateTime.now().millisecondsSinceEpoch - preConversionTime;
-    var preProcessStart = DateTime.now().millisecondsSinceEpoch;
+    image_lib.Image? image,
+    int preConversionTime,
+  ) {
+    try {
+      var conversionElapsedTime =
+          DateTime.now().millisecondsSinceEpoch - preConversionTime;
+      var preProcessStart = DateTime.now().millisecondsSinceEpoch;
 
-    final imageInput = image_lib.copyResize(image!,
-        width: mlModelInputSize, height: mlModelInputSize);
+      final imageInput = image_lib.copyResize(image!,
+          width: mlModelInputSize, height: mlModelInputSize);
 
-    final imageMatrix = List.generate(
-      imageInput.height,
-      (y) => List.generate(
-        imageInput.width,
-        (x) {
-          final pixel = imageInput.getPixel(x, y);
-          return [pixel.rNormalized, pixel.gNormalized, pixel.bNormalized];
-        },
-      ),
-    );
+      final imageMatrix = List.generate(
+        imageInput.height,
+        (y) => List.generate(
+          imageInput.width,
+          (x) {
+            final pixel = imageInput.getPixel(x, y);
+            return [pixel.rNormalized, pixel.gNormalized, pixel.bNormalized];
+          },
+        ),
+      );
 
-    var preProcessElapsedTime =
-        DateTime.now().millisecondsSinceEpoch - preProcessStart;
-    var inferenceTimeStart = DateTime.now().millisecondsSinceEpoch;
+      var preProcessElapsedTime =
+          DateTime.now().millisecondsSinceEpoch - preProcessStart;
+      var inferenceTimeStart = DateTime.now().millisecondsSinceEpoch;
 
-    final output = _runInference(imageMatrix);
+      final output = runInference(imageMatrix);
 
-    List<List<double>> rawOutput =
-        (output.first as List).first as List<List<double>>;
+      List<List<double>> rawOutput =
+          (output.first as List).first as List<List<double>>;
 
-    List<int> idx = [];
-    List<String> cls = [];
-    List<List<double>> box = [];
-    List<double> conf = [];
-    // 라벨 수 적용
-    final numOfLabels = _labels?.length ?? 0;
-    final count = numOfLabels + 4;
-    (idx, box, conf) =
-        nms(rawOutput, count, confidenceThreshold: 0.63, iouThreshold: 0.4);
+      List<int> idx = [];
+      List<String> cls = [];
+      List<List<double>> box = [];
+      List<double> conf = [];
+      // 라벨 수 적용
+      final numOfLabels = _labels?.length ?? 0;
+      final count = numOfLabels + 4;
+      (idx, box, conf) =
+          nms(rawOutput, count, confidenceThreshold: 0.63, iouThreshold: 0.4);
+      if (idx.isNotEmpty) {
+        cls = idx.map((e) => _labels![e]).toList();
+      }
 
-    if (idx.isNotEmpty) {
-      cls = idx.map((e) => _labels![e]).toList();
+      var inferenceElapsedTime =
+          DateTime.now().millisecondsSinceEpoch - inferenceTimeStart;
+      var totalElapsedTime =
+          DateTime.now().millisecondsSinceEpoch - preConversionTime;
+
+      bool hasHighConfidenceDetection = conf.any((double c) => c > 0.75);
+
+      if (hasHighConfidenceDetection) {
+        // Convert to JPEG format
+        Uint8List jpegImage =
+            image_lib.encodeJpg(image, quality: 85); // Adjust quality as needed
+        return {
+          "jpegImage": jpegImage,
+          "cls": cls,
+          "box": box,
+          "conf": conf,
+          "stats": {
+            'Conversion time:': conversionElapsedTime.toString(),
+            'Pre-processing time:': preProcessElapsedTime.toString(),
+            'Inference time:': inferenceElapsedTime.toString(),
+            'Total prediction time:': totalElapsedTime.toString(),
+            'Frame': '${image.width} X ${image.height}',
+          }
+        };
+      } else {
+        // Return an empty or a minimal structure if no high confidence detections are found
+        return {
+          "cls": cls,
+          "box": box,
+          "conf": conf,
+          "stats": {
+            'Conversion time:': conversionElapsedTime.toString(),
+            'Pre-processing time:': preProcessElapsedTime.toString(),
+            'Inference time:': inferenceElapsedTime.toString(),
+            'Total prediction time:': totalElapsedTime.toString(),
+            'Frame': '${image.width} X ${image.height}',
+          }
+        };
+      }
+    } catch (E, stackTrace) {
+      debugPrint('detector.dart 270 : $E');
+      debugPrint('detector.dart 271  stackTrace: $stackTrace');
+      return {
+        "error": E.toString(),
+        "stackTrace": stackTrace.toString(),
+        "stats": {
+          'Error detail': 'An error occurred during the image analysis process.'
+        }
+      };
     }
-
-    var inferenceElapsedTime =
-        DateTime.now().millisecondsSinceEpoch - inferenceTimeStart;
-    var totalElapsedTime =
-        DateTime.now().millisecondsSinceEpoch - preConversionTime;
-
-    return {
-      "cls": cls,
-      "box": box,
-      "conf": conf,
-      "stats": <String, String>{
-        'Conversion time:': conversionElapsedTime.toString(),
-        'Pre-processing time:': preProcessElapsedTime.toString(),
-        'Inference time:': inferenceElapsedTime.toString(),
-        'Total prediction time:': totalElapsedTime.toString(),
-        'Frame': '${image.width} X ${image.height}',
-      },
-    };
   }
 
-  List<Object> _runInference(List<List<List<num>>> imageMatrix) {
+  List<Object> runInference(List<List<List<num>>> imageMatrix) {
     final input = [imageMatrix];
     final numOut = _interpreter?.getOutputTensors().first.shape[0] ?? 1;
     final numOut1 = _interpreter?.getOutputTensors().first.shape[1] ?? 1;
