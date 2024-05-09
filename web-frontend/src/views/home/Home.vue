@@ -5,47 +5,15 @@
       <button class="login-btn" @click="store.moveLogin">로그인</button>
     </div>
     <SVG></SVG>
-    <Chart
-      class="chart chart1"
-      :options="chartOptions"
-      :series="chart1Series"
-      :section="section[0]"
-    />
-    <Chart
-      class="chart chart2"
-      :options="chartOptions"
-      :series="chart2Series"
-      :section="section[1]"
-    />
-    <Chart
-      class="chart chart3"
-      :options="chartOptions"
-      :series="chart3Series"
-      :section="section[2]"
-    />
-    <Chart
-      class="chart chart4"
-      :options="chartOptions"
-      :series="chart4Series"
-      :section="section[3]"
-    />
-    <Chart
-      class="chart chart5"
-      :options="chartOptions"
-      :series="chart5Series"
-      :section="section[4]"
-    />
   </div>
 </template>
 
 <script setup>
 import SVG from "./components/SVG.vue";
-import Chart from "./components/Chart.vue";
-import { ref, onMounted } from "vue";
+import { ref } from "vue";
 import { useMoveStore } from "@/stores/move";
 import { useAuthStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
-import { getGuList } from "../../api/statistics/statistics";
 import { getWeatherInfo } from "../../api/weather/weather";
 
 const store = useMoveStore();
@@ -56,68 +24,6 @@ const currentWeather = ref(null);
 const hourlyWeather = ref([]);
 
 const weatherData = () => {};
-
-const takeData = () => {
-  getGuList(
-    accessToken.value,
-    (res) => {
-      if (res.data.status == "SUCCESS") {
-        console.log(res.data.message);
-        taskData.value = res.data.data;
-      }
-    },
-    (error) => {
-      console.log(error);
-      console.log(error.response.data.message);
-    }
-  );
-};
-
-const chartOptions = {
-  chart: {
-    type: "pie",
-    toolbar: {
-      show: true,
-    },
-  },
-  labels: ["완료", "미완료"],
-  legend: {
-    position: "bottom",
-    labels: {
-      colors: ["#373737", "#373737"],
-    },
-  },
-  responsive: [
-    {
-      breakpoint: 480,
-      options: {
-        chart: {
-          width: 100,
-        },
-        legend: {
-          position: "bottom",
-        },
-      },
-    },
-  ],
-  colors: ["#232EA3", "#A7ABDA"],
-  tooltip: {
-    y: {
-      formatter: (value) => `${value}%`,
-    },
-  },
-};
-
-const chart1Series = [40, 60];
-const chart2Series = [30, 70];
-const chart3Series = [20, 80];
-const chart4Series = [10, 90];
-const chart5Series = [50, 50];
-const section = ["유성구", "대덕구", "중구", "서구", "동구"];
-
-onMounted(() => {
-  takeData();
-});
 </script>
 
 <style scoped>
@@ -127,9 +33,6 @@ onMounted(() => {
   align-items: center;
 }
 
-.et {
-  color: #4f5e9d6f;
-}
 .map-container {
   position: relative;
   display: flex;
@@ -138,45 +41,9 @@ onMounted(() => {
 }
 
 .logo {
-  margin-top: 3.5vh;
+  margin-top: 3vh;
   width: 40vh;
   margin-right: 27vw;
-}
-
-.chart {
-  position: absolute;
-  width: 34vh;
-  margin: auto;
-}
-
-/* 유성구 */
-.chart1 {
-  top: 33vh;
-  left: 8vw;
-}
-
-/* 대덕구 */
-.chart2 {
-  top: 15vh;
-  right: 10vw;
-}
-
-/* 중구 */
-.chart3 {
-  top: 70vh;
-  right: 15vw;
-}
-
-/* 서구 */
-.chart4 {
-  top: 70vh;
-  left: 8vw;
-}
-
-/* 동구 */
-.chart5 {
-  top: 47vh;
-  right: 1vw;
 }
 
 .login-btn {
