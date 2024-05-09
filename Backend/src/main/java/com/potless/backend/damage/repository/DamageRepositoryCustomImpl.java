@@ -23,6 +23,7 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
@@ -393,48 +394,45 @@ public class DamageRepositoryCustomImpl implements DamageRepositoryCustom {
     public StatisticListResponseDTO getStatistic(Long areaId) {
         QDamageEntity damage = QDamageEntity.damageEntity;
         QLocationEntity location = QLocationEntity.locationEntity;
-        QAreaEntity area = QAreaEntity.areaEntity;
 
-        Long severityCount = Optional.ofNullable(queryFactory
-                .select(damage.count())
-                .from(damage)
-                .where(damage.areaEntity.id.eq(areaId)
-                        .and(damage.severity.eq(3)))
-                .fetchOne()).orElse(0L);
-
+        // 각 상태 및 심각도 3에 대한 조건부 카운트를 집계하는 쿼리
         List<Tuple> rawResults = queryFactory
-                .select(location.id, location.locationName, damage.status, damage.count())
+                .select(location.id, location.locationName,
+                        new CaseBuilder()
+                                .when(damage.status.eq(Status.작업전))
+                                .then(1).otherwise(0).sum().as("countDamageBefore"),
+                        new CaseBuilder()
+                                .when(damage.status.eq(Status.작업중))
+                                .then(1).otherwise(0).sum().as("countDamageDuring"),
+                        new CaseBuilder()
+                                .when(damage.status.eq(Status.작업완료))
+                                .then(1).otherwise(0).sum().as("countDamageDone"),
+                        new CaseBuilder()
+                                .when(damage.severity.eq(3))
+                                .then(1).otherwise(0).sum().as("severityCount") // 심각도 3 조건 추가
+                )
                 .from(location)
                 .leftJoin(location.damageEntities, damage)
                 .where(location.areaEntity.id.eq(areaId))
-                .groupBy(location.id, damage.status)
+                .groupBy(location.id)
                 .fetch();
 
-        List<StatisticLocationCountResponseDTO> results = rawResults.stream()
-                .collect(Collectors.groupingBy(
-                        tuple -> Optional.ofNullable(tuple.get(location.id)).orElse(-1L), // Handling potential null ID
-                        Collectors.mapping(tuple -> new StatisticLocationCountResponseDTO(
-                                        Optional.ofNullable(tuple.get(location.locationName)).orElse("Unknown"),
-                                        tuple.get(damage.status) == Status.작업전 ? tuple.get(damage.count()) : 0L,
-                                        tuple.get(damage.status) == Status.작업중 ? tuple.get(damage.count()) : 0L,
-                                        tuple.get(damage.status) == Status.작업완료 ? tuple.get(damage.count()) : 0L
-                                ),
-                                Collectors.toList()
-                        )
+        // 결과 처리
+        List<StatisticLocationSeverityCountResponseDTO> results = rawResults.stream()
+                .map(tuple -> new StatisticLocationSeverityCountResponseDTO(
+                        tuple.get(location.locationName),
+                        Optional.ofNullable(tuple.get(Expressions.numberPath(Integer.class, "countDamageBefore"))).orElse(0).longValue(),
+                        Optional.ofNullable(tuple.get(Expressions.numberPath(Integer.class, "countDamageDuring"))).orElse(0).longValue(),
+                        Optional.ofNullable(tuple.get(Expressions.numberPath(Integer.class, "countDamageDone"))).orElse(0).longValue(),
+                        Optional.ofNullable(tuple.get(Expressions.numberPath(Integer.class, "severityCount"))).orElse(0).longValue()
                 ))
-                .values()
-                .stream()
-                .flatMap(list -> list.stream().reduce((dto1, dto2) -> new StatisticLocationCountResponseDTO(
-                        dto1.getLocationName(),
-                        dto1.getCountDamageBefore() + dto2.getCountDamageBefore(),
-                        dto1.getCountDamageDuring() + dto2.getCountDamageDuring(),
-                        dto1.getCountDamageDone() + dto2.getCountDamageDone()
-                )).stream())
                 .collect(Collectors.toList());
 
         String areaGu = em.find(AreaEntity.class, areaId).getAreaGu();
-        return new StatisticListResponseDTO(areaGu, results, severityCount);
+        return new StatisticListResponseDTO(areaGu, results);
     }
+
+
 
     @Override
     public List<StatisticCountResponseDTO> getStatistics() {
