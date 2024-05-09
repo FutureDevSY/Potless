@@ -11,6 +11,15 @@
         </select>
       </div>
       <div class="input-group">
+        <label for="severity">심각도:</label>
+        <select id="severity" v-model="severity" required>
+          <option disabled value="">심각도 선택</option>
+          <option value="3">심각</option>
+          <option value="2">주의</option>
+          <option value="1">양호</option>
+        </select>
+      </div>
+      <div class="input-group">
         <label for="district">구:</label>
         <input type="text" id="district" v-model="district" required />
       </div>
@@ -22,6 +31,7 @@
         <label for="plotNumber">지번:</label>
         <input type="text" id="plotNumber" v-model="plotNumber" required />
       </div>
+
       <button type="submit">신고하기</button>
     </form>
   </div>
@@ -41,12 +51,14 @@ const potholeType = ref("");
 const district = ref("");
 const subDistrict = ref("");
 const plotNumber = ref("");
+const severity = ref(null);
 
 const submitForm = () => {
   const address = `${district.value} ${subDistrict.value} ${plotNumber.value}`;
   const potholeInfo = {
-    type: potholeType.value,
     address: address,
+    severity: Number(severity.value),
+    type: potholeType.value,
   };
 
   postPotholeAdd(
@@ -63,10 +75,8 @@ const submitForm = () => {
     },
     (error) => {
       console.log(error);
-      console.log(error.response.data.message);
-      alert(
-        `신고 처리 중 오류가 발생하였습니다: ${error.response.data.message}`
-      );
+      console.log(error.message);
+      alert(`신고 처리 중 오류가 발생하였습니다: ${error.message}`);
     }
   );
 };
