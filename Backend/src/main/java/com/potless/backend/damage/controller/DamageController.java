@@ -355,7 +355,6 @@ public class DamageController {
                 .y(Double.valueOf(y))
                 .build();
 
-
         // 위험도 파악 비동기
         Map<String, String> fileUrlsAndKeys = files.stream()
                 .map(file -> {
@@ -374,6 +373,8 @@ public class DamageController {
         List<String> fileUrls = new ArrayList<>(fileUrlsAndKeys.values()); // URL 리스트 추출
 
         damageSetRequestDTO.setImages(fileUrls);
+
+        // 중복 처리
 
         // 비동기로 처리하고 바로 응답 반환 검증
         kakaoService.fetchKakaoData(damageSetRequestDTO.getX(), damageSetRequestDTO.getY())
