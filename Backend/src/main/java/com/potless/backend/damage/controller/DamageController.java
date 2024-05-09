@@ -278,7 +278,7 @@ public class DamageController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Damage의 상태 전환 성공", content = @Content(schema = @Schema(implementation = String.class)))
     })
     @PostMapping("workDone")
-    public ResponseEntity<?> setWorkDone(Authentication authentication, @RequestPart("damageId") Long damageId) {
+    public ResponseEntity<?> setWorkDone(Authentication authentication, @RequestBody Long damageId) {
         iDamageService.setWorkDone(damageId);
         return response.success(ResponseCode.POTHOLE_DONE_WORK);
     }
