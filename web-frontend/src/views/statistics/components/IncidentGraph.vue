@@ -58,6 +58,15 @@ const chartOptions = computed(() => ({
     height: "320px",
     type: "line",
     stacked: false,
+    animations: {
+      enabled: true,
+      easing: "easeinout",
+      speed: 500,
+      dynamicAnimation: {
+        enabled: true,
+        speed: 900,
+      },
+    },
     toolbar: {
       tools: {
         selection: false,
@@ -113,7 +122,7 @@ const chartOptions = computed(() => ({
     offsetY: 15,
     position: "top",
   },
-  colors: ["#d8d8d8", "#151c62"],
+  colors: ["#BCF95D", "#151c62"],
   states: {
     hover: {
       filter: {
