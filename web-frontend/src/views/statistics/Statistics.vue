@@ -18,7 +18,7 @@
 
       <div class="danger-box">
         <div class="title-input">
-          <p class="road-title">지역별 발생 건수</p>
+          <p class="road-title">지역별 위험물 건수</p>
           <input
             type="text"
             v-model="searchTerm"
@@ -68,11 +68,7 @@ import WorkChart from "./components/WorkChart.vue";
 import { format, subDays } from "date-fns";
 import { useAuthStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
-import {
-  getAreaDetails,
-  getDongList,
-  getDongPerDate,
-} from "../../api/statistics/statistics";
+import { getAreaDetails, getDongList, getDongPerDate } from "../../api/statistics/statistics";
 
 const store = useAuthStore();
 const { accessToken, areaId } = storeToRefs(store);
@@ -187,15 +183,18 @@ const secondfourthData = async () => {
   try {
     const response = await getDongList(accessToken.value, areaId.value);
     if (response && response.data && response.data.data && response.data.data.list) {
-      const { list } = response.data.data; 
-      let countDone = 0, countDuring = 0, countBefore = 0;
+      const { list } = response.data.data;
+      let countDone = 0,
+        countDuring = 0,
+        countBefore = 0;
 
-      roadIncidentData.value = list.map(dong => ({
+      roadIncidentData.value = list.map((dong) => ({
         dong: dong.locationName,
-        potholes: dong.countDamageBefore + dong.countDamageDuring + dong.countDamageDone
+        potholes: dong.countDamageBefore,
+        severity: dong.severityCount,
       }));
 
-      list.forEach(item => {
+      list.forEach((item) => {
         countDone += item.countDamageDone;
         countDuring += item.countDamageDuring;
         countBefore += item.countDamageBefore;
@@ -255,7 +254,7 @@ onMounted(() => {
   background-color: rgba(241, 241, 241, 0.641);
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.255);
   border-radius: 10px;
-  padding: 1.2vh 5px 20px 5px;
+  padding: 1.2vh 5px 8px 5px;
   height: 177px;
   margin-bottom: 3.4vh;
 }
@@ -270,7 +269,7 @@ onMounted(() => {
 /* slide animation 효과 -> 왼쪽에서 오른쪽으로 이동 */
 @keyframes slideIn {
   from {
-    transform: translateX(-30px);
+    transform: translateX(-40px);
     opacity: 0;
   }
   to {
@@ -279,7 +278,7 @@ onMounted(() => {
   }
 }
 .incident-report-enter-active {
-  animation: slideIn 0.6s ease-out forwards;
+  animation: slideIn 1s ease-out forwards;
 }
 .incident-report-enter {
   opacity: 0;
@@ -304,14 +303,14 @@ onMounted(() => {
 }
 input {
   width: 25%;
-  padding: 10px;
+  padding: 9px;
   position: relative;
   overflow: hidden;
   border-radius: 8px;
   background: none;
   border: 2px solid #a1a1a1;
   transition: border 0.4s ease;
-  font-size: 16px;
+  font-size: 14px;
   color: #373737;
   background-color: white;
   margin-left: 20px;
@@ -350,9 +349,9 @@ input:focus {
   margin: 1vh 0px 1vh 10px;
 }
 .chart-and-data {
-  display: grid; 
-  grid-template-columns: 5fr 7fr; 
-  height: 100%;
+  display: grid;
+  grid-template-columns: 5fr 7fr;
+  height: 90%;
 }
 .work-chart {
   height: 100%;
@@ -366,7 +365,7 @@ input:focus {
 }
 @keyframes slideInRightToLeft {
   from {
-    transform: translateX(30px);
+    transform: translateX(40px);
     opacity: 0;
   }
   to {
@@ -375,7 +374,7 @@ input:focus {
   }
 }
 .data-list-enter-active {
-  animation: slideInRightToLeft 0.6s ease-out forwards;
+  animation: slideInRightToLeft 1s ease-out forwards;
 }
 .data-list-enter {
   opacity: 0;

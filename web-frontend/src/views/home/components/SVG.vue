@@ -34,19 +34,19 @@ onMounted(async () => {
 }
 
 .map {
-  width: 175vh;
+  width: 180vh;
   height: auto;
-  margin-top: 2vh;
+  margin-top: 1vh;
 }
 
 .map svg g g g {
   transition: transform 0.5s ease;
   transform-origin: center;
-  fill: #fcfcfc;
+  fill: #f1f1f9;
 }
 
 .map svg g g g:hover {
-  fill: #f1f1f9;
+  fill: #d3d5ed;
   /* transform: scale(1.04) translateZ(30px); */
   transform: scale(1.04);
   filter: drop-shadow(2px 4px rgb(116, 116, 116));

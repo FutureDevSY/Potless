@@ -100,7 +100,7 @@ const tooltipText = computed(() => {
   justify-content: space-between;
   border: 1px solid #ccc;
   border-radius: 10px;
-  padding: 30px 30px;
+  padding: 25px 30px;
   margin: 0px 10px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   background-color: #fff;
