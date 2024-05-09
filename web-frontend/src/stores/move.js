@@ -12,6 +12,10 @@ export const useMoveStore = defineStore("moveStore", () => {
     router.push(`/porthole/${id}`);
   };
 
+  const moveSelfRegister = () => {
+    router.push("/porthole/register");
+  };
+
   const movePath = () => {
     router.push("/path");
   };
@@ -43,6 +47,7 @@ export const useMoveStore = defineStore("moveStore", () => {
   return {
     movePorthole,
     movePortholeDetail,
+    moveSelfRegister,
     movePath,
     moveTask,
     moveLogin,

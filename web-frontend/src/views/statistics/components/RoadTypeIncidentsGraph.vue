@@ -3,8 +3,8 @@
     <apexchart
       ref="apexChartRef"
       type="bar"
-      width="100%"
-      height="300"
+      width="98%"
+      height="388"
       :options="chartOptions"
       :series="series"
     ></apexchart>
@@ -12,49 +12,33 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from "vue";
+import { ref, computed, watchEffect, onMounted, nextTick } from "vue";
 
 const props = defineProps({
   searchTerm: String,
+  roadData: Array,
 });
 
 const searchTerm = ref("");
 const apexChartRef = ref(null);
 
-const allRoadsData = ref([
-  { road: "대덕대로", potholes: 5, roadlength: 20 },
-  { road: "월드컵대로", potholes: 10, roadlength: 20 },
-  { road: "유성대로", potholes: 15, roadlength: 20 },
-  { road: "현충원로", potholes: 20, roadlength: 20 },
-  { road: "교촌대정로", potholes: 25, roadlength: 20 },
-  { road: "노은로", potholes: 30, roadlength: 20 },
-  { road: "문지로", potholes: 35, roadlength: 20 },
-  { road: "반석서로", potholes: 40, roadlength: 20 },
-  { road: "신성로", potholes: 45, roadlength: 20 },
-  { road: "자운로", potholes: 50, roadlength: 20 },
-  { road: "탑립로", potholes: 55, roadlength: 20 },
-  { road: "봉우로", potholes: 60, roadlength: 20 },
-  { road: "죽동로", potholes: 65, roadlength: 20 },
-  { road: "국제과학로", potholes: 70, roadlength: 20 },
-  { road: "세점길", potholes: 80, roadlength: 20 },
-  { road: "엑스포로", potholes: 85, roadlength: 20 },
-]);
-
-const filteredRoadsData = computed(() => {
-  return allRoadsData.value
-    .filter((road) =>
-      road.road.toLowerCase().includes(props.searchTerm.toLowerCase())
-    )
-    .sort((a, b) => b.potholes - a.potholes)
-    .slice(0, 10);
+// 필터링된 동 데이터와 포트홀 수 계산
+const filteredDongData = computed(() => {
+  return props.roadData
+    .filter((road) => road.dong.toLowerCase().includes(props.searchTerm.toLowerCase()))
+    .sort((a, b) => b.potholes - a.potholes) // 포트홀 수에 따라 정렬
+    .slice(0, 10); // 상위 10개만 선택
 });
 
+// 포트홀 개수, 위험한 포트홀 개수
 const series = computed(() => [
   {
-    name: "1km당 포트홀의 개수",
-    data: filteredRoadsData.value.map(
-      (data) => data.potholes / data.roadlength
-    ),
+    name: "전체 위험물 수",
+    data: filteredDongData.value.map((dong) => dong.potholes),
+  },
+  {
+    name: "심각도-상 위험물 수",
+    data: filteredDongData.value.map((dong) => dong.severity),
   },
 ]);
 
@@ -64,51 +48,55 @@ const chartOptions = computed(() => ({
     toolbar: {
       show: true,
     },
-  },
-  xaxis: {
-    categories: filteredRoadsData.value.map((data) => data.road),
-    labels: {
-      formatter: function (val) {
-        return val.toFixed(1);
+    stacked: false,
+    animations: {
+      enabled: true,
+      easing: "easeinout",
+      speed: 1000,
+      dynamicAnimation: {
+        enabled: true,
+        speed: 600,
       },
     },
+  },
+  colors: ["#4F58B5", "#F23B3B"],
+  xaxis: {
+    categories: filteredDongData.value.map((dong) => dong.dong),
   },
   plotOptions: {
     bar: {
       horizontal: true,
-      distributed: false,
-      colors: {
-        ranges: [
-          {
-            from: 0,
-            to: 100,
-            color: "#D3D5ED",
-          },
-        ],
-        backgroundBarOpacity: 1,
-      },
-    },
-  },
-  states: {
-    hover: {
-      filter: {
-        type: "darken",
-        value: 0.3,
-      },
     },
   },
   dataLabels: {
-    enabled: false,
+    enabled: true,
+    formatter: function (val) {
+      return val;
+    },
+  },
+  tooltip: {
+    y: {
+      formatter: function (val) {
+        return val + " 개"; // 툴팁에 '개' 단위 추가
+      },
+    },
   },
 }));
 
-watch(searchTerm, () => {
-  const newOptions = {
-    xaxis: {
-      categories: filteredRoadsData.value.map((data) => data.road),
-    },
-  };
-  apexChartRef.value.updateOptions(newOptions, true, true);
+onMounted(() => {
+  nextTick(() => {
+    if (apexChartRef.value) {
+      apexChartRef.value.updateOptions(
+        {
+          xaxis: {
+            categories: filteredDongData.value.map((dong) => dong.dong),
+          },
+        },
+        true,
+        true
+      );
+    }
+  });
 });
 </script>
 

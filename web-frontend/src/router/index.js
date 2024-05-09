@@ -4,11 +4,14 @@ import Login from "../views/auth/Login.vue";
 
 import PortholeList from "../views/porthole/PortholeList.vue";
 import PortholeDetail from "../views/porthole/PortholeDetail.vue";
+import SelfRegister from "../views/porthole/SelfRegister.vue";
 
 import Statistics from "../views/statistics/Statistics.vue";
 
 import TaskInfo from "../views/task/TaskInfo.vue";
 import TaskInfoDetail from "../views/task/TaskInfoDetail.vue";
+
+import Test from "../views/home/Test.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -38,6 +41,12 @@ const router = createRouter({
       props: true,
     },
     {
+      path: "/porthole/register",
+      name: "SelfRegister",
+      component: SelfRegister,
+      props: true,
+    },
+    {
       path: "/statistics",
       name: "Statistics",
       component: Statistics,
@@ -55,6 +64,12 @@ const router = createRouter({
       component: TaskInfoDetail,
       props: true,
     },
+    {
+      path: "/test",
+      name: "Test",
+      component: Test,
+      props: true,
+    },
   ],
 });
 
@@ -67,6 +82,10 @@ router.beforeEach((to, from) => {
     return { name: "Login" };
   }
   if (to.name === "PortholeDetail" && !store.isLoggedIn) {
+    window.alert("로그인이 필요합니다.");
+    return { name: "Login" };
+  }
+  if (to.name === "SelfRegister" && !store.isLoggedIn) {
     window.alert("로그인이 필요합니다.");
     return { name: "Login" };
   }

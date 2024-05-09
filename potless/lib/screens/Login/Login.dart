@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
-import 'package:porthole24/API/api_request.dart';
-import 'package:porthole24/screens/Home/HomeScreen.dart';
-import 'package:porthole24/widgets/UI/ScreenSize.dart';
-import 'package:porthole24/widgets/buttons/714_150button.dart';
+import 'package:potless/API/api_request.dart';
+import 'package:potless/screens/Home/HomeScreen.dart';
+import 'package:potless/widgets/UI/ScreenSize.dart';
+import 'package:potless/widgets/buttons/714_150button.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
