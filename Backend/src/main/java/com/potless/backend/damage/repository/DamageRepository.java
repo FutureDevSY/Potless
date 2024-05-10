@@ -20,5 +20,5 @@ public interface DamageRepository extends JpaRepository<DamageEntity, Long>, Dam
             "LEFT JOIN d.locationEntity location " +
             "WHERE d.id = :damageId")
     DamageResponseDTO findDamageDetailsByIdSimple(@Param("damageId") Long damageId);
-    
+
 }
