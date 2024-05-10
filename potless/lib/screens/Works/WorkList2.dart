@@ -7,10 +7,12 @@ import 'package:potless/widgets/blocks/work_block.dart';
 
 class WorkListScreen extends StatefulWidget {
   final List<DamageResponse> damages;
+  final VoidCallback onProjectUpdate;
 
   const WorkListScreen({
     super.key,
     required this.damages,
+    required this.onProjectUpdate,
   });
 
   @override
@@ -20,7 +22,7 @@ class WorkListScreen extends StatefulWidget {
 class _WorkListScreenState extends State<WorkListScreen> {
   List<DamageResponse> allDamages = [];
   List<DamageResponse> filteredDamages = [];
-  String filterStatus = '작업중';
+  String filterStatus = '전체';
   final ApiService _apiService = ApiService();
 
   @override
@@ -33,7 +35,7 @@ class _WorkListScreenState extends State<WorkListScreen> {
 
   void filterDamages(String? status) {
     setState(() {
-      if (status == null) {
+      if (status == '전체') {
         filteredDamages = allDamages;
       } else {
         filteredDamages = allDamages.where((damage) {
@@ -46,56 +48,67 @@ class _WorkListScreenState extends State<WorkListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('파손 목록'),
-      ),
-      body: Column(
-        children: [
-          Container(
-            height: MediaQuery.of(context).size.height * 0.1,
-            decoration: BoxDecoration(border: Border.all()),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                ElevatedButton(
-                  onPressed: () => filterDamages(null),
-                  child: const Text('모든 작업'),
-                ),
-                ElevatedButton(
-                  onPressed: () => filterDamages('작업중'),
-                  child: const Text('작업 전'),
-                ),
-                ElevatedButton(
-                  onPressed: () => filterDamages('작업완료'),
-                  child: const Text('작업 완료'),
-                ),
-                Text('${filteredDamages.length}개')
-              ],
+      appBar: const CustomAppBar(title: '파손 목록'),
+      body: Container(
+        color: const Color(0xffffffff),
+        child: Column(
+          children: [
+            const Divider(),
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.1,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  ElevatedButton(
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all(
+                        const Color(0xff151c62),
+                      ),
+                      foregroundColor: MaterialStateProperty.all(
+                        const Color(0xffffffff),
+                      ),
+                    ),
+                    onPressed: () => filterDamages('전체'),
+                    child: const Text('모든 작업'),
+                  ),
+                  ElevatedButton(
+                    onPressed: () => filterDamages('작업중'),
+                    child: const Text('작업 전'),
+                  ),
+                  ElevatedButton(
+                    onPressed: () => filterDamages('작업완료'),
+                    child: const Text('작업 완료'),
+                  ),
+                  Text('총 ${filteredDamages.length}개')
+                ],
+              ),
             ),
-          ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: filteredDamages.length,
-              itemBuilder: (context, index) {
-                final damage = filteredDamages[index];
-                return WorkBlock(
-                  potholeId: damage.id,
-                  field: damage.area,
-                  address: damage.address,
-                  roadName: damage.location,
-                  x: damage.dirX,
-                  y: damage.dirY,
-                  status: damage.status,
-                  severity: damage.severity,
-                  width: damage.width,
-                  images: damage.images,
-                  dType: damage.dtype,
-                  createdAt: damage.createdDateTime,
-                );
-              },
+            const Divider(),
+            Expanded(
+              child: ListView.builder(
+                itemCount: filteredDamages.length,
+                itemBuilder: (context, index) {
+                  final damage = filteredDamages[index];
+                  return WorkBlock(
+                    potholeId: damage.id,
+                    field: damage.area,
+                    address: damage.address,
+                    roadName: damage.location,
+                    x: damage.dirX,
+                    y: damage.dirY,
+                    status: damage.status,
+                    severity: damage.severity,
+                    width: damage.width,
+                    images: damage.images,
+                    dType: damage.dtype,
+                    createdAt: damage.createdDateTime,
+                    onProjectUpdate: widget.onProjectUpdate,
+                  );
+                },
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

@@ -230,7 +230,7 @@ class ApiService {
     }
   }
 
-  Future<bool> workDone(String damageId) async {
+  Future<bool> workDone(int damageId) async {
     String? token = await _storageService.getToken();
 
     if (token == null) {
@@ -249,11 +249,15 @@ class ApiService {
       );
 
       if (response.statusCode == 200) {
+        debugPrint('api252 : done');
         return true;
+      } else {
+        debugPrint(response.statusCode.toString());
+        debugPrint(response.body);
       }
       return false;
     } catch (e) {
-      debugPrint('APIservice 62: $e');
+      debugPrint('APIservice 256: $e');
       return false;
     }
   }

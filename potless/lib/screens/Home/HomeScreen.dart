@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:potless/API/api_request.dart';
 import 'package:potless/screens/Login/Login.dart';
 import 'package:potless/screens/Record/PotLess.dart';
-import 'package:potless/screens/Record/RecordingScreen.dart';
 import 'package:potless/screens/Works/ProjectList.dart';
-// import 'package:potless/screens/Works/WorkList.dart';
 import 'package:potless/widgets/UI/ScreenSize.dart';
 import 'package:potless/widgets/buttons/main_button.dart';
 
@@ -54,20 +52,6 @@ class _HomeScreenState extends State<HomeScreen> {
                         context,
                         MaterialPageRoute(
                           builder: (context) => const VideoPage(),
-                        ),
-                      );
-                    },
-                  ),
-                  SizedBox(
-                    height: UIhelper.deviceHeight(context) * 0.02,
-                  ),
-                  MainLarge(
-                    label: '영상촬영',
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const CameraScreen(),
                         ),
                       );
                     },
