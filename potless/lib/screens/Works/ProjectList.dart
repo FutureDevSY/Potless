@@ -22,6 +22,12 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
         _fetchProjects(); // Load the projects when the state is initialized
   }
 
+  void _refreshProjects() async {
+    setState(() {
+      _projects = _apiService.fetchProject();
+    });
+  }
+
   Future<List<Project>> _fetchProjects() async {
     return await _apiService.fetchProject();
   }
@@ -30,49 +36,53 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: const CustomAppBar(title: '작업 지시서'),
-      body: FutureBuilder<List<Project>>(
-        future: _projects,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          } else if (snapshot.hasData) {
-            return ListView.builder(
-              itemCount: snapshot.data!.length,
-              itemBuilder: (context, index) {
-                Project project = snapshot.data![index];
-                return ListTile(
-                  title: Text(
-                    project.projectName,
-                    style: const TextStyle(fontSize: 20),
-                  ),
-                  subtitle: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text('${project.projectId}번 지시서'),
-                      const SizedBox(),
-                      Text(
-                          '일시: ${DateFormat('yyyy-MM-dd').format(project.createdDate)}'),
-                      const SizedBox()
-                    ],
-                  ),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            WorkListScreen(damages: project.damages),
-                      ),
-                    );
-                  },
-                );
-              },
-            );
-          } else {
-            return const Center(child: Text('No projects found'));
-          }
-        },
+      body: Container(
+        color: const Color(0xffffffff),
+        child: FutureBuilder<List<Project>>(
+          future: _projects,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return Center(child: Text('Error: ${snapshot.error}'));
+            } else if (snapshot.hasData) {
+              return ListView.builder(
+                itemCount: snapshot.data!.length,
+                itemBuilder: (context, index) {
+                  Project project = snapshot.data![index];
+                  return ListTile(
+                    title: Text(
+                      project.projectName,
+                      style: const TextStyle(fontSize: 20),
+                    ),
+                    subtitle: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text('${project.projectId}번 지시서'),
+                        const SizedBox(),
+                        Text(
+                            '일시: ${DateFormat('yyyy-MM-dd').format(project.createdDate)}'),
+                        const SizedBox()
+                      ],
+                    ),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => WorkListScreen(
+                              damages: project.damages,
+                              onProjectUpdate: () => _refreshProjects()),
+                        ),
+                      );
+                    },
+                  );
+                },
+              );
+            } else {
+              return const Center(child: Text('No projects found'));
+            }
+          },
+        ),
       ),
     );
   }
