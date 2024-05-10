@@ -1,8 +1,8 @@
-import 'package:camera/camera.dart';
+import 'dart:io';
 import 'package:geolocator/geolocator.dart';
 
 class QueuedImage {
-  final XFile imageFile;
+  final File imageFile;
   final Position position;
 
   QueuedImage(
