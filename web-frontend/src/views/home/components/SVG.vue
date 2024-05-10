@@ -34,22 +34,45 @@ onMounted(async () => {
 }
 
 .map {
-  width: 175vh;
+  width: 180vh;
   height: auto;
-  margin-top: 2vh;
+  margin-top: 1vh;
 }
 
 .map svg g g g {
-  transition: transform 0.5s ease;
+  /* transition: transform 0.5s ease; */
   transform-origin: center;
-  fill: #fcfcfc;
+  fill: #f1f1f9;
 }
 
-.map svg g g g:hover {
-  fill: #f1f1f9;
-  /* transform: scale(1.04) translateZ(30px); */
-  transform: scale(1.04);
-  filter: drop-shadow(2px 4px rgb(116, 116, 116));
-  color: white;
+.map svg g g g .cls-6 {
+  animation: moving-gu 15s ease infinite
+}
+.map svg g g g .cls-4 {
+  animation: moving-gu 15s ease 3s infinite
+}
+.map svg g g g .cls-3 {
+  animation: moving-gu 15s ease 6s infinite
+}
+.map svg g g g .cls-2 {
+  animation: moving-gu 15s ease 9s infinite
+}
+.map svg g g g .cls-5 {
+  animation: moving-gu 15s ease 12s infinite
+}
+
+@-webkit-keyframes moving-gu {
+  0% {
+    fill: #f1f1f9;
+  }
+  10% {
+    fill: #d3d5ed;
+    transform: scale(1.05);
+    filter: drop-shadow(2px 4px rgb(116, 116, 116));
+  }
+  20% {
+    fill: #f1f1f9;
+    transform: scale(1);
+  }
 }
 </style>

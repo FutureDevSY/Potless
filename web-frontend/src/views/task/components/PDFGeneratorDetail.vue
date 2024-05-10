@@ -4,7 +4,7 @@
       <div class="pothole-info">
         <div class="title">위험물 정보</div>
         <div class="info-i">
-          위험물 No. <span class="numebr">{{ props.pothole.id }}</span>
+          위험물 No. <span class="numebr">{{ props.pothole.damageId }}</span>
         </div>
         <div class="info">
           <div>위험물 유형:</div>

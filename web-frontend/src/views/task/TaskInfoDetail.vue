@@ -22,13 +22,7 @@
       </div>
       <div>
         <button class="pdf-button" @click="showPath">최적 경로 찾기</button>
-        <button
-          class="pdf-button"
-          @click="generatePdf"
-          v-if="taskData && taskData.length"
-        >
-          PDF로 변환하기
-        </button>
+        <button class="pdf-button" @click="openPdf">PDF 미리보기</button>
       </div>
     </div>
     <List :data="taskData" v-if="taskData && !loading" />
@@ -41,16 +35,34 @@
 
     <div v-if="loading">로딩 중...</div>
     <div v-if="error">{{ errorMessage }}</div>
-    <div id="pdf" class="report-pdf" v-if="taskData && taskData.length">
-      <PDFGeneratorMain
-        :task-number="taskNumber"
-        :task-header="taskHeader"
-        ref="documentRef"
-        class="pdf"
-        id="pdf"
-      />
-      <div v-for="pothole in taskData" :key="pothole.id">
-        <PDFGeneratorDetail :pothole="pothole" ref="documentRef" class="pdf" />
+    <div v-if="isPdfModalVisible" class="pdf-modal">
+      <div class="modal-content">
+        <div class="button-group">
+          <button
+            class="pdf-button"
+            @click="generatePdf"
+            v-if="taskData && taskData.length"
+          >
+            PDF로 변환하기
+          </button>
+          <button @click="closePdfModal" class="pdf-button">닫기</button>
+        </div>
+        <div id="pdf" class="report-pdf" v-if="taskData && taskData.length">
+          <PDFGeneratorMain
+            :task-number="taskNumber"
+            :task-header="taskHeader"
+            ref="documentRef"
+            class="pdf"
+            id="pdf"
+          />
+          <div v-for="pothole in taskData" :key="pothole.id">
+            <PDFGeneratorDetail
+              :pothole="pothole"
+              ref="documentRef"
+              class="pdf"
+            />
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -75,11 +87,6 @@ const documentRef = ref(null);
 
 onMounted(() => {
   showDetail();
-  if (documentRef.value) {
-    console.log("Document ref is available:", documentRef.value);
-  } else {
-    console.error("Document ref is not available");
-  }
 });
 
 const taskNumber = ref(route.params.id);
@@ -137,6 +144,15 @@ const closeModal = () => {
   isModalVisible.value = false;
 };
 
+const isPdfModalVisible = ref(false);
+function openPdf() {
+  isPdfModalVisible.value = true;
+}
+
+const closePdfModal = () => {
+  isPdfModalVisible.value = false;
+};
+
 function generatePdf() {
   const pdfArea = document.getElementById("pdf");
   pdfArea.style.display = "block";
@@ -152,9 +168,11 @@ function generatePdf() {
     .set(options)
     .from(pdfArea)
     .save()
-    .then(() => {
-      pdfArea.style.display = "none";
-    });
+    .then(() => {});
+
+  setTimeout(() => {
+    closePdfModal();
+  }, 3000);
 }
 </script>
 
@@ -179,22 +197,7 @@ function generatePdf() {
   margin: 0%;
   display: block;
   padding: 0%;
-}
-
-.pdf-button {
-  background-color: #151c62;
-  cursor: pointer;
-  border-radius: 8px;
-  font-size: 1.8vh;
-  position: relative;
-  overflow: hidden;
-  color: rgb(255, 255, 255);
-  transition: all 0.3s;
-  padding: 1vh 1.5vh;
-}
-
-.pdf-button:hover {
-  background-color: #0e1241;
+  /* visibility: hidden; */
 }
 
 .report-num,
@@ -236,5 +239,51 @@ function generatePdf() {
 
 .report-worker {
   padding-bottom: 3px;
+}
+
+.pdf-button {
+  background-color: #151c62;
+  /* width: 370px;
+  height: 45px; */
+  cursor: pointer;
+  border-radius: 8px;
+  font-size: 1.8vh;
+  position: relative;
+  overflow: hidden;
+  color: rgb(255, 255, 255);
+  transition: all 0.3s;
+  padding: 1vh 1.5vh;
+}
+
+.pdf-button:hover {
+  background-color: #0e1241;
+}
+
+.pdf-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  width: 45%;
+  max-height: 90vh;
+  overflow-y: auto;
+  background-color: white;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+}
+
+.button-group {
+  display: flex;
+  justify-content: end;
 }
 </style>
