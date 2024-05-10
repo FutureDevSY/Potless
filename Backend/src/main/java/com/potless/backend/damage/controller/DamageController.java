@@ -161,9 +161,10 @@ public class DamageController {
     @Operation(summary = "Damage 삭제", description = "단일 Damage를 삭제합니다.", responses = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "단일 Damage 삭제 성공", content = @Content(schema = @Schema(implementation = String.class)))
     })
-    @DeleteMapping("{damageId}")
-    public ResponseEntity<?> deleteDamage(Authentication authentication, @PathVariable Long damageId) {
-        iDamageService.deleteDamage(damageId);
+    @DeleteMapping
+    public ResponseEntity<?> deleteDamage(Authentication authentication, @RequestBody DamageDeleteRequestDTO requestDTO) {
+        List<String> strings = iDamageService.deleteDamage(requestDTO.getDamageIds());
+        strings.forEach(awsService::deleteFile);
         return response.success(ResponseCode.POTHOLE_DELETED);
     }
 
