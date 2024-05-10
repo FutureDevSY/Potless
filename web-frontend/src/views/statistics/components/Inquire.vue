@@ -22,11 +22,11 @@ const props = defineProps({
   justify-content: space-between;
   border: 1px solid #e0e0e0;
   border-radius: 10px;
-  padding: 30px;
-  margin: 10px;
+  margin: 0px 0px 10px 50px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
   background-color: #fff;
   width: 300px;
+  padding: 14px;
   transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
 }
 

@@ -84,7 +84,7 @@ function drawMap() {
 
       const polyline = new kakao.maps.Polyline({
         path: linePath,
-        strokeWeight: 2,
+        strokeWeight: 3,
         strokeColor: color, // 색상 적용
         strokeOpacity: 0.7,
         strokeStyle: "solid",
