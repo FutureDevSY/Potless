@@ -31,7 +31,7 @@ import static reactor.core.publisher.Mono.just;
 public class ReDetectionApiService {
 
     private final WebClient webClient = WebClient.builder()
-                                                 .baseUrl("https://ai.api.potless.co.kr")
+                                                 .baseUrl("https://ai.potless.co.kr")
                                                  .build();
 
     /*
