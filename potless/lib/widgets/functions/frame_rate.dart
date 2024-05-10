@@ -8,6 +8,8 @@ class FrameRateTester {
   FrameRateTester({this.onUpdate});
 
   void startTesting() {
+    print('프레임 측정 시작');
+    print('FPS: $frameCount');
     timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       onUpdate?.call(frameCount); // Update the UI
       frameCount = 0;

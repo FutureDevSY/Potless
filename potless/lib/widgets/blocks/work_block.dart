@@ -9,6 +9,7 @@ class WorkBlock extends StatelessWidget {
   final String address, roadName, field, status, dType;
   final DateTime createdAt;
   final List<DamageImage> images;
+  final VoidCallback onProjectUpdate;
 
   const WorkBlock({
     super.key,
@@ -24,6 +25,7 @@ class WorkBlock extends StatelessWidget {
     required this.images,
     required this.dType,
     required this.createdAt,
+    required this.onProjectUpdate,
   });
 
   Image? get primaryImage {
@@ -53,6 +55,7 @@ class WorkBlock extends StatelessWidget {
                 images: images,
                 dType: dType,
                 createdAt: createdAt,
+                onProjectUpdate: onProjectUpdate,
               ),
             ),
           );

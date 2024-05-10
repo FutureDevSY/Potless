@@ -122,16 +122,18 @@ class _VideoPageState extends State<VideoPage> with WidgetsBindingObserver {
   int skipFactor = 9;
 
   void onLatestImageAvailable(CameraImage cameraImage) async {
+    // debugPrint('125: FPS 측정좀');
     _frameRateTester.countFrame();
-    if (_isTestingFrameRate) {
-      _frameRateTester.countFrame();
-    }
     if (frameCounter % (skipFactor + 1) == 0) {
+      debugPrint('125: 실제 들어가는 값');
+
       _detector?.processFrame(cameraImage);
     }
     frameCounter++;
 
     if (frameCounter > 1000) {
+      // debugPrint('125: FPS 초기화');
+
       frameCounter = 0;
     }
   }
@@ -235,6 +237,16 @@ class _VideoPageState extends State<VideoPage> with WidgetsBindingObserver {
               Container(
                 color: const Color(0xff151c62),
                 child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    ElevatedButton(onPressed: incFrame, child: const Text('+')),
+                    ElevatedButton(onPressed: decFrame, child: const Text('-')),
+                  ],
+                ),
+              ),
+              Container(
+                color: const Color(0xff151c62),
+                child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Container(
@@ -265,9 +277,11 @@ class _VideoPageState extends State<VideoPage> with WidgetsBindingObserver {
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Text(
-                        '현재 프레임: $_currentFps',
+                        '현재 프레임: $skipFactor',
                         style: const TextStyle(
-                            color: Colors.white, fontWeight: FontWeight.bold),
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ],
@@ -278,6 +292,18 @@ class _VideoPageState extends State<VideoPage> with WidgetsBindingObserver {
         ],
       ),
     );
+  }
+
+  void incFrame() {
+    setState(() {
+      skipFactor++;
+    });
+  }
+
+  void decFrame() {
+    setState(() {
+      skipFactor--;
+    });
   }
 
   void togglePreview() {

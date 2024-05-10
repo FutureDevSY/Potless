@@ -22,6 +22,12 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
         _fetchProjects(); // Load the projects when the state is initialized
   }
 
+  void _refreshProjects() async {
+    setState(() {
+      _projects = _apiService.fetchProject();
+    });
+  }
+
   Future<List<Project>> _fetchProjects() async {
     return await _apiService.fetchProject();
   }
@@ -63,8 +69,9 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) =>
-                              WorkListScreen(damages: project.damages),
+                          builder: (context) => WorkListScreen(
+                              damages: project.damages,
+                              onProjectUpdate: () => _refreshProjects()),
                         ),
                       );
                     },
