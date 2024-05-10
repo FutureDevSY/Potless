@@ -9,7 +9,7 @@
           v-for="(item, index) in navItems"
           :key="index"
           :class="{ 'nav-item': true, active: activeNavItem === index }"
-          @click="setActiveNavItem(index)"
+          @click="() => handleClick(index)"
         >
           <b></b>
           <b></b>
@@ -25,19 +25,27 @@
 
 <script setup>
 import { ref } from "vue";
+import { useMoveStore } from "../../stores/move.js";
 
-const navItems = [
-  { name: "홈", icon: "fa fa-house" },
-  { name: "포트홀 조회", icon: "fa fa-user" },
-  { name: "작업 정보", icon: "fa fa-calendar-check" },
-  { name: "통계 자료", icon: "fa fa-person-running" },
-];
-
+const store = useMoveStore();
 const activeNavItem = ref(0);
 
-const setActiveNavItem = (index) => {
+const navItems = [
+  { name: "홈", icon: "fa fa-house", action: 0 },
+  { name: "포트홀 조회", icon: "fa fa-user", action: store.movePorthole },
+  { name: "작업 정보", icon: "fa fa-calendar-check", action: store.moveTask },
+  { name: "통계 자료", icon: "fa fa-person-running", action: store.moveStatistics },
+];
+
+function setActiveNavItem(index) {
   activeNavItem.value = index;
-};
+}
+
+// 두 함수를 실행하는 래퍼 함수
+function handleClick(index) {
+  setActiveNavItem(index);
+  navItems[index].action();
+}
 </script>
 
 <style scoped>
@@ -60,7 +68,7 @@ nav {
 }
 
 .main-menu {
-  height: 94vh;
+  height: 100%;
   background: #151c62;
   padding-top: 10px;
   border-radius: 15px 0 0 15px;
@@ -80,11 +88,11 @@ nav ul li a {
   display: flex;
   justify-content: center;
   width: 100%;
-  margin: 4vh auto 5vh auto;
+  margin: 4vh auto 4vh auto;
 }
 
 img {
-  width: 88%;
+  width: 90%;
 }
 
 .nav-item {
@@ -99,9 +107,9 @@ img {
   align-items: center;
   justify-content: center;
   color: #fff;
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   font-weight: bold;
-  padding: 2.7vh 0;
+  padding: 2.2vh 0;
   margin-left: 20px;
   border-top-left-radius: 40px;
   border-bottom-left-radius: 40px;
@@ -169,6 +177,6 @@ img {
 
 .nav-text {
   display: block;
-  width: 150px;
+  width: 120px;
 }
 </style>
