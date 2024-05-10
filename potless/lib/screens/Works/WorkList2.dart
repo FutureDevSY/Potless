@@ -7,10 +7,12 @@ import 'package:potless/widgets/blocks/work_block.dart';
 
 class WorkListScreen extends StatefulWidget {
   final List<DamageResponse> damages;
+  final VoidCallback onProjectUpdate;
 
   const WorkListScreen({
     super.key,
     required this.damages,
+    required this.onProjectUpdate,
   });
 
   @override
@@ -20,7 +22,7 @@ class WorkListScreen extends StatefulWidget {
 class _WorkListScreenState extends State<WorkListScreen> {
   List<DamageResponse> allDamages = [];
   List<DamageResponse> filteredDamages = [];
-  String filterStatus = '작업중';
+  String filterStatus = '전체';
   final ApiService _apiService = ApiService();
 
   @override
@@ -33,7 +35,7 @@ class _WorkListScreenState extends State<WorkListScreen> {
 
   void filterDamages(String? status) {
     setState(() {
-      if (status == null) {
+      if (status == '전체') {
         filteredDamages = allDamages;
       } else {
         filteredDamages = allDamages.where((damage) {
@@ -66,7 +68,7 @@ class _WorkListScreenState extends State<WorkListScreen> {
                         const Color(0xffffffff),
                       ),
                     ),
-                    onPressed: () => filterDamages(null),
+                    onPressed: () => filterDamages('전체'),
                     child: const Text('모든 작업'),
                   ),
                   ElevatedButton(
@@ -100,6 +102,7 @@ class _WorkListScreenState extends State<WorkListScreen> {
                     images: damage.images,
                     dType: damage.dtype,
                     createdAt: damage.createdDateTime,
+                    onProjectUpdate: widget.onProjectUpdate,
                   );
                 },
               ),
