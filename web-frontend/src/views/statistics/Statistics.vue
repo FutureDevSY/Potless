@@ -35,8 +35,8 @@
     </div>
     <div class="right-box">
       <div class="total-box">
-        <div class="title-and-lottie">
-          <LottieGraph class="lottie" />
+        <div class="title-and-lottie-cum">
+          <LottieGraph class="lottie lottie-graph" />
           <p class="totalincident-title">위험물 누적 탐지 건수</p>
         </div>
         <div class="incident-graph">
@@ -45,8 +45,8 @@
       </div>
 
       <div class="work-box">
-        <div class="title-and-lottie">
-          <LottieConstruction class="lottie" />
+        <div class="title-and-lottie-cum">
+          <LottieConstruction class="lottie lottie-construction" />
           <p class="work-title">보수 공사 현황</p>
         </div>
         <div class="chart-and-data">
@@ -253,7 +253,7 @@ onMounted(() => {
 
 .right-box {
   display: grid;
-  grid-template-rows: 62.4% 35%;
+  grid-template-rows: 60.4% 37%;
   gap: 25px;
 }
 
@@ -273,6 +273,14 @@ onMounted(() => {
   gap: 10px;
   align-items: center;
 }
+
+.title-and-lottie-cum {
+  display: grid;
+  grid-template-columns: 7% 70.5%;
+  gap: 10px;
+  align-items: center;
+}
+
 .lottie {
   margin-left: 10px;
 }
@@ -281,6 +289,14 @@ onMounted(() => {
 }
 .lottie-radar {
   transform: translateY(-1.5vh);
+}
+
+.lottie-graph {
+  transform: translateY(-0.8vh);
+}
+
+.lottie-construction {
+  transform: translateY(-0.8vh);
 }
 
 /* ***** */
@@ -365,16 +381,13 @@ input:focus {
   background-color: rgba(241, 241, 241, 0.641);
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.255);
   border-radius: 10px;
-  padding: 1.5vh 5px 0vh 0px;
+  padding: 0.5vh 0px 0vh 5px;
   display: grid;
-  grid-template-rows: 25% 65%;
+  grid-template-rows: 15% 65%;
   gap: 1vh;
 }
 .totalincident-title {
-  margin: 1vh 0px 0px 0px;
-}
-.incident-graph {
-  width: 93%;
+  margin: 0px 0px 0px 0px;
 }
 
 /* 보수 공사 현황 */
@@ -382,11 +395,14 @@ input:focus {
   background-color: rgba(241, 241, 241, 0.641);
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.255);
   border-radius: 10px;
-  padding: 1.2vh 5px 0px 5px;
-  flex: 0 0 28.5%;
+  padding: 2vh 0px 0vh 5px;
+  display: grid;
+  grid-template-rows: 15% 85%;
+  gap: 1vh;
 }
 .work-title {
-  margin: 1vh 0px 1vh 0px;
+  margin: 0px 0px 0px 0px;
+  padding-bottom: 15px;
 }
 .chart-and-data {
   display: grid;
@@ -398,7 +414,7 @@ input:focus {
 }
 .data-list {
   border-left: 1px solid #ccc;
-  height: 200px;
+  height: 230px;
   display: flex;
   flex-direction: column;
   justify-content: center;
