@@ -87,7 +87,6 @@ public class AsyncService {
                                 area = "기타";
                             }
 
-
                             DamageSetRequestServiceDTO serviceDTO = DamageSetRequestServiceDTO.builder()
                                     .dirX(damageSetRequestDTO.getX())
                                     .dirY(damageSetRequestDTO.getY())
@@ -101,6 +100,7 @@ public class AsyncService {
                                     .images(damageSetRequestDTO.getImages())
                                     .build();
 
+                            iDamageService.setDamage(serviceDTO);
                         } catch (Exception e) {
                             for (String s : fileUrls)
                                 awsService.deleteFile(s);
