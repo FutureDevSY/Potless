@@ -100,7 +100,8 @@ public class AsyncService {
                                     .location(location)
                                     .images(damageSetRequestDTO.getImages())
                                     .build();
-
+                            
+                            iDamageService.setDamage(serviceDTO);
                         } catch (Exception e) {
                             for (String s : fileUrls)
                                 awsService.deleteFile(s);
