@@ -3,7 +3,6 @@ package com.potless.backend.damage.service;
 import com.potless.backend.aws.service.AwsService;
 import com.potless.backend.damage.dto.controller.request.AreaDamageCountForDateRequestDTO;
 import com.potless.backend.damage.dto.controller.request.DamageSearchRequestDTO;
-import com.potless.backend.damage.dto.controller.request.DamageVerificationRequestDTO;
 import com.potless.backend.damage.dto.controller.response.DamageResponseDTO;
 import com.potless.backend.damage.dto.controller.response.ImagesResponseDTO;
 import com.potless.backend.damage.dto.service.request.AreaDamageCountForMonthServiceRequestDTO;
@@ -105,11 +104,6 @@ public class DamageServiceImpl implements IDamageService {
             imageRepository.save(image);
         }
         areaGu.addCount();
-    }
-
-    @Override
-    public List<DamageResponseDTO> getDamageVerification(DamageVerificationRequestDTO data) {
-        return damageRepository.findDamagesByVerificationRequest(data);
     }
 
     @Override
