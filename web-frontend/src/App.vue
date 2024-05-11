@@ -3,19 +3,22 @@ import { RouterView, useRoute } from "vue-router";
 import Navbar from "./views/common/Navbar2.vue";
 
 const isVisibleNavbar = () => {
-  const visibleRoutes = ["Home"];
+  const visibleRoutes = ["Home", "Login"];
   const currentRouteName = useRoute().name;
   return visibleRoutes.includes(currentRouteName);
 };
 </script>
 
 <template>
-  <body>
+  <body v-if="!isVisibleNavbar()">
     <div class="main-layout">
-      <Navbar v-if="!isVisibleNavbar()" />
+      <Navbar />
       <RouterView />
     </div>
   </body>
+  <div v-else>
+    <RouterView />
+  </div>
 </template>
 
 <style scoped>
