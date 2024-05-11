@@ -31,7 +31,7 @@ const store = useMoveStore();
 const activeNavItem = ref(0);
 
 const navItems = [
-  { name: "홈", icon: "fa fa-house", action: 0 },
+  { name: "홈", icon: "fa fa-house", action: store.moveMain },
   { name: "포트홀 조회", icon: "fa fa-user", action: store.movePorthole },
   { name: "작업 정보", icon: "fa fa-calendar-check", action: store.moveTask },
   { name: "통계 자료", icon: "fa fa-person-running", action: store.moveStatistics },
