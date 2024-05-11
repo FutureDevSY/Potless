@@ -19,6 +19,9 @@
           </a>
         </li>
       </ul>
+      <div>
+        <button id="logout-btn">로그아웃</button>
+      </div>
     </nav>
   </main>
 </template>
@@ -114,6 +117,8 @@ img {
   border-top-left-radius: 40px;
   border-bottom-left-radius: 40px;
   z-index: 10;
+  transition-property: background-color, color, font-size;
+  transition-duration: 0.5s;
 }
 
 .nav-item b:nth-child(1) {
@@ -178,5 +183,36 @@ img {
 .nav-text {
   display: block;
   width: 120px;
+}
+
+.nav-item a:click {
+  background-color: #ffffff;
+  color: black;
+}
+
+.nav-item a:hover {
+  font-size: 1.4rem;
+}
+
+#logout-btn {
+  position: absolute;
+  top: 90%;
+  left: 2%;
+  width: 8%;
+  height: 5%;
+  font-size: 1.2rem;
+  font-weight: bold;
+  text-decoration: none;
+  border-color: white;
+  border-radius: 5%;
+  color: #ffffff;
+  background-color: transparent;
+  transition-property: all;
+  transition-duration: 0.5s;
+}
+
+#logout-btn:hover {
+  color: black;
+  background-color: #ffffff;
 }
 </style>
