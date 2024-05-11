@@ -23,7 +23,7 @@ onMounted(async () => {
 });
 </script>
 
-<style>
+<style scoped>
 .map-container {
   display: flex;
   justify-content: center;
@@ -46,19 +46,19 @@ onMounted(async () => {
 }
 
 .map svg g g g .cls-6 {
-  animation: moving-gu 15s ease infinite
+  animation: moving-gu 15s ease infinite;
 }
 .map svg g g g .cls-4 {
-  animation: moving-gu 15s ease 3s infinite
+  animation: moving-gu 15s ease 3s infinite;
 }
 .map svg g g g .cls-3 {
-  animation: moving-gu 15s ease 6s infinite
+  animation: moving-gu 15s ease 6s infinite;
 }
 .map svg g g g .cls-2 {
-  animation: moving-gu 15s ease 9s infinite
+  animation: moving-gu 15s ease 9s infinite;
 }
 .map svg g g g .cls-5 {
-  animation: moving-gu 15s ease 12s infinite
+  animation: moving-gu 15s ease 12s infinite;
 }
 
 @-webkit-keyframes moving-gu {
