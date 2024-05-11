@@ -8,12 +8,14 @@ import com.potless.backend.damage.dto.controller.response.DamageResponseDTO;
 import com.potless.backend.damage.dto.controller.response.LocationResponseDTO;
 import com.potless.backend.damage.dto.service.request.AreaDamageCountForMonthServiceRequestDTO;
 import com.potless.backend.damage.dto.service.request.DamageSetRequestServiceDTO;
-import com.potless.backend.damage.dto.service.request.ReDetectionRequestDTO;
 import com.potless.backend.damage.dto.service.response.*;
 import com.potless.backend.damage.dto.service.response.kakao.Address;
 import com.potless.backend.damage.dto.service.response.kakao.RoadAddress;
 import com.potless.backend.damage.entity.enums.Status;
-import com.potless.backend.damage.service.*;
+import com.potless.backend.damage.service.AsyncService;
+import com.potless.backend.damage.service.IAreaLocationService;
+import com.potless.backend.damage.service.IDamageService;
+import com.potless.backend.damage.service.KakaoService;
 import com.potless.backend.global.exception.pothole.PotholeNotFoundException;
 import com.potless.backend.global.format.code.ApiResponse;
 import com.potless.backend.global.format.response.ResponseCode;
@@ -21,6 +23,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -34,11 +37,11 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 
@@ -52,10 +55,9 @@ public class DamageController {
     private final IDamageService iDamageService;
     private final KakaoService kakaoService;
     private final ApiResponse response;
-    private final IVerificationService iVerificationService;
     private final AwsService awsService;
     private final IAreaLocationService iAreaLocationService;
-    private final ReDetectionApiService detectionApiService;
+    private final AsyncService asyncService;
 
     @Operation(summary = "Area 리스트 가져오기", description = "Area 리스트 가져오기", responses = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = AreaResponseDTO.class)))
@@ -341,90 +343,29 @@ public class DamageController {
     @PostMapping(value = "set", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<?> setDamage(
             Authentication authentication,
-            @RequestPart("dtype") String dtype,
-            @RequestPart("x") String x,
-            @RequestPart("y") String y,
-            @RequestPart("files") List<MultipartFile> files,
-            @RequestPart("label") MultipartFile label
+            @RequestPart("dtype") @NotNull String dtype,
+            @RequestPart("x") @NotNull String x,
+            @RequestPart("y") @NotNull String y,
+            @RequestPart("files") @NotNull List<MultipartFile> files,
+            @RequestPart("label") @NotNull MultipartFile label
     ) throws IOException {
+
+        double xValue = Double.parseDouble(x);
+        double yValue = Double.parseDouble(y);
+
+        if ((xValue <= 100 || xValue >= 140) || (yValue <= 20 || yValue >= 50)) {
+            throw new IllegalArgumentException("x와 y 값은 100을 초과해야 합니다.");
+        }
+
         DamageSetRequestDTO damageSetRequestDTO = DamageSetRequestDTO.builder()
                 .dtype(dtype)
-                .x(Double.valueOf(x))
-                .y(Double.valueOf(y))
+                .x(xValue)
+                .y(yValue)
                 .build();
 
-//        fastApi 2차 탐지 요청 수행 및 결과 반환
-        ReDetectionRequestDTO detectionRequestDTO = new ReDetectionRequestDTO(files.get(0), label);
-        int severityResult = detectionApiService.reDetectionResponse(detectionRequestDTO);
-        log.info("severity = {}", severityResult);
-        damageSetRequestDTO.setSeverity(severityResult);
-
-        // 위험도 파악 비동기
-        Map<String, String> fileUrlsAndKeys = files.stream()
-                .map(file -> {
-                    try {
-                        String fileName = "BeforeVerification/" + System.currentTimeMillis() + "_" + file.getOriginalFilename();
-                        return awsService.uploadFileToS3(file, fileName);
-                    } catch (IOException e) {
-                        log.error("Error uploading file to S3", e);
-                        return null;
-                    }
-                })
-                .filter(Objects::nonNull)
-                .flatMap(map -> map.entrySet().stream())
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-
-        List<String> fileUrls = new ArrayList<>(fileUrlsAndKeys.values()); // URL 리스트 추출
-
-        damageSetRequestDTO.setImages(fileUrls);
-
-        // 비동기로 처리하고 바로 응답 반환 검증
-        kakaoService.fetchKakaoData(damageSetRequestDTO.getX(), damageSetRequestDTO.getY())
-                .thenAcceptAsync(data -> {
-                    try {
-                        RoadAddress roadAddress = data.getDocuments().get(0).getRoad_address();
-                        Address address = data.getDocuments().get(0).getAddress();
-
-                        String addressName = (address != null) ? address.getAddress_name() : roadAddress.getAddress_name();
-                        String location = (address != null) ? address.getRegion_3depth_name() : "정보가 존재하지 않습니다";
-                        String area = (address != null) ? address.getRegion_2depth_name() : roadAddress.getRegion_2depth_name();
-
-                        DamageVerificationRequestDTO verificationRequestDTO = DamageVerificationRequestDTO.builder()
-                                .dtype(damageSetRequestDTO.getDtype())
-                                .damageAddress(addressName)
-                                .location(location)
-                                .area(area)
-                                .images(fileUrls)
-                                .build();
-
-                        List<DamageResponseDTO> damageVerification = iDamageService.getDamageVerification(verificationRequestDTO);
-                        if (iVerificationService.verificationDamage(damageVerification)) {
-                            // 이미지 위치 옮기기
-                            List<String> newUrls = fileUrlsAndKeys.keySet().stream()
-                                    .map(s -> awsService.moveFileToVerified(s, "AfterVerification/BeforeWork/" + s.substring(s.lastIndexOf('/') + 1)))
-                                    .toList();
-                            // width 구하기, 위험도 구하기 로직 추가 해야됨
-                            DamageSetRequestServiceDTO serviceDTO = DamageSetRequestServiceDTO.builder()
-                                    .dirX(damageSetRequestDTO.getX())
-                                    .dirY(damageSetRequestDTO.getY())
-                                    .dtype(damageSetRequestDTO.getDtype())
-                                    .width(10.000)
-                                    .address(addressName)
-                                    .severity(damageSetRequestDTO.getSeverity())
-                                    .status(Status.작업전)
-                                    .area(area)
-                                    .location(location)
-                                    .images(newUrls)
-                                    .build();
-                            iDamageService.setDamage(serviceDTO);
-                        }
-                    } catch (Exception e) {
-                        for (String s : fileUrls)
-                            awsService.deleteFile(s);
-                        throw new PotholeNotFoundException();
-                    }
-                });
-
+        CompletableFuture<Void> future = asyncService.setDamageAsyncMethod(damageSetRequestDTO, files, label);
+        future.join();
         return response.success(ResponseCode.POTHOLE_DETECTED);
     }
+
 }
