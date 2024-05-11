@@ -2,7 +2,6 @@ package com.potless.backend.damage.service;
 
 import com.potless.backend.damage.dto.controller.request.AreaDamageCountForDateRequestDTO;
 import com.potless.backend.damage.dto.controller.request.DamageSearchRequestDTO;
-import com.potless.backend.damage.dto.controller.request.DamageVerificationRequestDTO;
 import com.potless.backend.damage.dto.controller.response.DamageResponseDTO;
 import com.potless.backend.damage.dto.service.request.AreaDamageCountForMonthServiceRequestDTO;
 import com.potless.backend.damage.dto.service.request.DamageSetRequestServiceDTO;
@@ -19,10 +18,6 @@ public interface IDamageService {
 
     void setDamage(DamageSetRequestServiceDTO data);
 
-    List<DamageResponseDTO> getDamageVerification(DamageVerificationRequestDTO data);
-
-    void deleteDamage(Long damageId);
-
     StatisticLocationCountResponseDTO getStatisticLocation(String locationName);
 
     List<StatisticLocationCountResponseDTO> getStatisticLocations();
@@ -38,6 +33,8 @@ public interface IDamageService {
     AreaForDateListResponseDTO getAreaDamageCountForDate(AreaDamageCountForDateRequestDTO areaDamageCountForDateRequestDTO);
 
     AreaForMonthListResponseDTO getAreaDamageCountForMonth(AreaDamageCountForMonthServiceRequestDTO areaDamageCountForMonthServiceRequestDTO);
+
+    List<String> deleteDamage(List<Long> damageIds);
 
 
 //    List<DamageResponseDTO> getWorkDamage(Long memberId);

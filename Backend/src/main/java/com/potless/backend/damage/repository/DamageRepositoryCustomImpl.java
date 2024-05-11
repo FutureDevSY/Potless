@@ -2,7 +2,6 @@ package com.potless.backend.damage.repository;
 
 import com.potless.backend.damage.dto.controller.request.AreaDamageCountForDateRequestDTO;
 import com.potless.backend.damage.dto.controller.request.DamageSearchRequestDTO;
-import com.potless.backend.damage.dto.controller.request.DamageVerificationRequestDTO;
 import com.potless.backend.damage.dto.controller.response.DamageResponseDTO;
 import com.potless.backend.damage.dto.controller.response.ImagesResponseDTO;
 import com.potless.backend.damage.dto.service.request.AreaDamageCountForMonthServiceRequestDTO;
@@ -216,6 +215,7 @@ public class DamageRepositoryCustomImpl implements DamageRepositoryCustom {
                     .where(builder)
                     .offset(pageable.getOffset())
                     .limit(pageable.getPageSize())
+                    .orderBy(damage.createdDateTime.desc())
                     .fetch();
 
             Long countResult = queryFactory
@@ -249,6 +249,7 @@ public class DamageRepositoryCustomImpl implements DamageRepositoryCustom {
                     .where(builder)
                     .offset(pageable.getOffset())
                     .limit(pageable.getPageSize())
+                    .orderBy(damage.createdDateTime.desc())
                     .fetch();
 
             Long countResult = queryFactory
@@ -280,6 +281,7 @@ public class DamageRepositoryCustomImpl implements DamageRepositoryCustom {
                     .where(builder)
                     .offset(pageable.getOffset())
                     .limit(pageable.getPageSize())
+                    .orderBy(damage.createdDateTime.desc())
                     .fetch();
 
             for (DamageResponseDTO damageResponseDTO : results) {
@@ -304,58 +306,6 @@ public class DamageRepositoryCustomImpl implements DamageRepositoryCustom {
 
             return new PageImpl<>(results, pageable, total);
         }
-    }
-
-    @Override
-    public List<DamageResponseDTO> findDamagesByVerificationRequest(DamageVerificationRequestDTO verificationRequest) {
-
-        QDamageEntity damage = QDamageEntity.damageEntity;
-        QImageEntity image = QImageEntity.imageEntity;
-
-        BooleanBuilder builder = new BooleanBuilder();
-        if (verificationRequest.getDtype() != null) {
-            builder.and(damage.dtype.eq(verificationRequest.getDtype()));
-        }
-        if (verificationRequest.getDamageAddress() != null) {
-            builder.and(damage.address.contains(verificationRequest.getDamageAddress()));
-        }
-        if (verificationRequest.getArea() != null) {
-            builder.and(damage.areaEntity.areaGu.contains(verificationRequest.getArea()));
-        }
-        if (verificationRequest.getLocation() != null) {
-            builder.and(damage.locationEntity.locationName.contains(verificationRequest.getLocation()));
-        }
-
-        List<DamageResponseDTO> results = queryFactory
-                .select(Projections.constructor(DamageResponseDTO.class,
-                        damage.id,
-                        damage.severity,
-                        damage.dirX,
-                        damage.dirY,
-                        damage.address,
-                        damage.width,
-                        damage.status,
-                        damage.areaEntity.areaGu,
-                        damage.locationEntity.locationName,
-                        damage.dtype,
-                        damage.createdDateTime
-                ))
-                .from(damage)
-                .where(builder)
-                .fetch();
-
-        for (DamageResponseDTO damageResponseDTO : results) {
-            List<ImagesResponseDTO> imagesForDamage = queryFactory
-                    .select(Projections.constructor(ImagesResponseDTO.class,
-                            image.id,
-                            image.url,
-                            image.order))
-                    .from(image)
-                    .where(image.damageEntity.id.eq(damageResponseDTO.getId()))
-                    .fetch();
-            damageResponseDTO.setImagesResponseDTOS(imagesForDamage);
-        }
-        return results;
     }
 
     @Override
@@ -399,7 +349,6 @@ public class DamageRepositoryCustomImpl implements DamageRepositoryCustom {
         String areaGu = em.find(AreaEntity.class, areaId).getAreaGu();
         return new StatisticListResponseDTO(areaGu, results);
     }
-
 
 
     @Override

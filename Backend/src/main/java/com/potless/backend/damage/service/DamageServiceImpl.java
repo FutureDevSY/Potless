@@ -3,7 +3,6 @@ package com.potless.backend.damage.service;
 import com.potless.backend.aws.service.AwsService;
 import com.potless.backend.damage.dto.controller.request.AreaDamageCountForDateRequestDTO;
 import com.potless.backend.damage.dto.controller.request.DamageSearchRequestDTO;
-import com.potless.backend.damage.dto.controller.request.DamageVerificationRequestDTO;
 import com.potless.backend.damage.dto.controller.response.DamageResponseDTO;
 import com.potless.backend.damage.dto.controller.response.ImagesResponseDTO;
 import com.potless.backend.damage.dto.service.request.AreaDamageCountForMonthServiceRequestDTO;
@@ -108,23 +107,22 @@ public class DamageServiceImpl implements IDamageService {
     }
 
     @Override
-    public List<DamageResponseDTO> getDamageVerification(DamageVerificationRequestDTO data) {
-        return damageRepository.findDamagesByVerificationRequest(data);
-    }
-
-    @Override
     @Transactional
-    public void deleteDamage(Long damageId) {
-        DamageEntity damageEntity = damageRepository.findById(damageId).orElseThrow(PotholeNotFoundException::new);
-        damageEntity.getAreaEntity().minusCount();
+    public List<String> deleteDamage(List<Long> damageIds) {
+        // 여러 Damage 엔티티 조회
+        List<DamageEntity> damages = damageRepository.findAllById(damageIds);
 
-        for (ImageEntity image : damageEntity.getImageEntities()) {
-            if(image.getUrl().equals("https://mine702-amazon-s3.s3.ap-northeast-2.amazonaws.com/Default/default.jpg"))
-                break;
-            awsService.deleteFile(image.getUrl());
-        }
+        // S3에서 삭제할 파일 URL 수집
+        List<String> urlsToDelete = damages.stream()
+                .flatMap(damage -> damage.getImageEntities().stream())
+                .map(ImageEntity::getUrl)
+                .filter(url -> !url.equals("https://mine702-amazon-s3.s3.ap-northeast-2.amazonaws.com/Default/default.jpg"))
+                .toList();
 
-        damageRepository.deleteById(damageId);
+        // Damage 엔티티 삭제
+        damageRepository.deleteAll(damages);
+
+        return urlsToDelete;
     }
 
     @Override
