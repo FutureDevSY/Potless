@@ -4,11 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b20a1863-9606-482e-b0d4-8130e6ff2f40" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/../Backend/src/main/java/com/potless/backend/damage/controller/DamageController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Backend/src/main/java/com/potless/backend/damage/controller/DamageController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Backend/src/main/java/com/potless/backend/hexagon/controller/HexagonController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Backend/src/main/java/com/potless/backend/hexagon/controller/HexagonController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Backend/src/main/java/com/potless/backend/hexagon/service/HexagonService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Backend/src/main/java/com/potless/backend/hexagon/service/HexagonService.java" afterDir="false" />
-    </list>
+    <list default="true" id="b20a1863-9606-482e-b0d4-8130e6ff2f40" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
