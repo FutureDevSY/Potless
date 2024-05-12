@@ -134,17 +134,17 @@ const tooltipText = computed(() => {
 }
 
 .data-title {
-  font-size: 20px;
+  font-size: 2vh;
   transform: translateY(-5%);
 }
 
 .data-number {
-  font-size: 24px;
+  font-size: 2.2vh;
   font-weight: bold;
 }
 
 .data-percent {
-  font-size: 20px;
+  font-size: 2vh;
   position: relative;
   padding-bottom: 1px;
   cursor: help;

@@ -43,13 +43,13 @@ const props = defineProps({
 }
 
 .data-title {
-  font-size: 20px;
+  font-size: 2vh;
   color: #717171;
   font-weight: 600;
 }
 
 .data-number {
-  font-size: 22px;
+  font-size: 2.2vh;
   font-weight: bold;
   color: #373737;
 }

@@ -248,13 +248,13 @@ onMounted(() => {
 .left-box {
   display: grid;
   grid-template-rows: 29% 68.4%;
-  gap: 25px;
+  gap: 3%;
 }
 
 .right-box {
   display: grid;
-  grid-template-rows: 60.4% 37%;
-  gap: 25px;
+  grid-template-rows: 60% 37%;
+  gap: 3%;
 }
 
 .totalincident-title,
@@ -262,7 +262,7 @@ onMounted(() => {
 .town-title,
 .work-title,
 .road-title {
-  font-size: 24px;
+  font-size: 2vh;
   font-weight: 600;
   color: #373737;
 }
@@ -365,7 +365,7 @@ input {
   background: none;
   border: 2px solid #a1a1a1;
   transition: border 0.4s ease;
-  font-size: 16px;
+  font-size: 1.5vh;
   color: #373737;
   background-color: white;
   transform: translateY(-0.6vh);
@@ -414,7 +414,7 @@ input:focus {
 }
 .data-list {
   border-left: 1px solid #ccc;
-  height: 230px;
+  height: 85%;
   display: flex;
   flex-direction: column;
   justify-content: center;

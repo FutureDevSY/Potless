@@ -2,7 +2,7 @@
   <main>
     <nav class="main-menu">
       <div class="logo">
-        <img src="../../assets/icon/weblogo.png" alt="#" />
+        <img src="../../assets/icon/weblogo-b.png" alt="#" />
       </div>
       <ul>
         <li
@@ -137,9 +137,9 @@ img {
   align-items: center;
   justify-content: center;
   color: #fff;
-  font-size: 1.2rem;
+  font-size: 2vh;
   font-weight: bold;
-  padding: 2.2vh 0;
+  padding: 2.2vh 12px;
   margin-left: 20px;
   border-top-left-radius: 40px;
   border-bottom-left-radius: 40px;
@@ -218,28 +218,29 @@ img {
 }
 
 .nav-item a:hover {
-  font-size: 1.4rem;
+  font-size: 2.3vh;
 }
 
 #logout-btn {
   position: absolute;
-  top: 90%;
-  left: 2%;
-  width: 8%;
-  height: 5%;
-  font-size: 1.2rem;
-  font-weight: bold;
+  top: 88%;
+  left: 2.45%;
+  width: 7.5%;
+  padding: 1.5vh 0vw;
+  font-size: 2.2vh;
   text-decoration: none;
-  border-color: white;
-  border-radius: 5%;
+  border-radius: 5px;
+  border: 1px solid #ffffff;
   color: #ffffff;
-  background-color: transparent;
-  transition-property: all;
-  transition-duration: 0.5s;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-block;
 }
 
 #logout-btn:hover {
-  color: black;
+  color: #373737;
+  font-weight: bold;
   background-color: #ffffff;
 }
 </style>
