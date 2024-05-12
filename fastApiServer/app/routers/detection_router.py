@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import JSONResponse, StreamingResponse
 from typing import List
-from services.augmentation_service import color_inverse
+from services.augmentation_service import process_images
 from services.model_service import model_2th_detection
 from services.estimate_service import calcPotholeDan, calcPotholeWidth
 from services.calculate_service import calculate_object_scale
@@ -24,14 +24,12 @@ rec = APIRouter(
             response_description="2차 탐지로 확인된 포트홀 이미지 데이터, 결과 메시지 반환 ", 
             description="재탐지된 결과에 대해서는 탐지된 이미지 데이터와 위험도 관련 정보를 함께 전송, 아니라면 결과와 메시지만 반환합니다.")
 async def detection_confirm(
-    image_data: UploadFile = File(...),
-    label_data: UploadFile = File(...)
+    image_data: UploadFile = File(...)
 ):
     origin_image = await image_data.read()
-    label = await label_data.read()
     logging.info("파일 받음요")
 
-    processed_image = await color_inverse(origin_image, label)
+    processed_image = await process_images(origin_image)
     # 전처리에서 문제 발생한 경우
     if processed_image is None:
         raise HTTPException(status_code=401, detail="이미지 컬러값 변환 처리에 실패하였습니다.") 

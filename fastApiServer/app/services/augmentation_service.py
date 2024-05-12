@@ -11,7 +11,7 @@ import logging
 # label_path = "./label/"
 
 
-async def color_inverse(image_data: UploadFile, label):
+async def color_inverse(image_data: UploadFile):
 
     # image_bytes = await image_data.read()  # 파일의 바이트 데이터를 읽습니다.
     image_array = np.frombuffer(image_data, np.uint8)  # 바이트 데이터를 NumPy 배열로 변환합니다.
@@ -20,10 +20,10 @@ async def color_inverse(image_data: UploadFile, label):
     height, width = gray.shape
     pixel_num = pixel_sum = 0
      # label_data가 bytes형태이므로 문자열로 디코딩
-    label_str = label.decode('utf-8')
+    # label_str = label.decode('utf-8')
     # label_info = label_str.strip().split()
     # labels = label_str.readlines()
-    labels = label_str.strip().split('\n')
+    # labels = label_str.strip().split('\n')
 
     for label in labels:
         label_info = label.split()
@@ -53,10 +53,11 @@ async def color_inverse(image_data: UploadFile, label):
 
 async def process_images(image_data):
 
-#    이미지를 컬러로 읽어옴 
-    color = cv2.imread(image_data, cv2.IMREAD_COLOR)
+#    이미지를 컬러로 읽어옴
+    image_array = np.frombuffer(image_data, np.uint8)  
+    color = cv2.imdecode(image_array, cv2.IMREAD_COLOR)
     if color is None:
-        return None # Skip if image is not loaded properly
+        return image_data # Skip if image is not loaded properly
     
     gray = cv2.cvtColor(color, cv2.COLOR_BGR2GRAY)
 
@@ -95,12 +96,13 @@ async def process_images(image_data):
     # processed_image_path = await process_images(compose)
     # return processed_image_path
     # processed_image_path = await process_images(compose)
-    processed_image_path = await process_images(compose)
-    return processed_image_path
+    processed_image = await process_images(compose)
+    cv2.imwrite('processed_image.jpg', processed_image)
+    return 'processed_image.jpg'
 
     # return compose.astype(np.uint8)
 
-async def process_images(image):
-    # 가정: 이미지 처리 후 파일 시스템에 저장
-    cv2.imwrite('processed_image.jpg', image)
-    return 'processed_image.jpg'
+# async def process_images(image):
+#     # 가정: 이미지 처리 후 파일 시스템에 저장
+#     cv2.imwrite('processed_image.jpg', image)
+#     return 'processed_image.jpg'
