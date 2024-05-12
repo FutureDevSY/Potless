@@ -129,6 +129,7 @@ const showPath = () => {
     accessToken.value,
     pathBody.value,
     (res) => {
+      console.log(res);
       if (res.data.status == "SUCCESS") {
         console.log(res.data.message);
         console.log(res.data.data);
