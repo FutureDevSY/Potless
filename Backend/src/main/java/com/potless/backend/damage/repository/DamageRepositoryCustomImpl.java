@@ -15,10 +15,7 @@ import com.potless.backend.damage.entity.area.AreaEntity;
 import com.potless.backend.damage.entity.area.QAreaEntity;
 import com.potless.backend.damage.entity.area.QLocationEntity;
 import com.potless.backend.damage.entity.enums.Status;
-import com.potless.backend.damage.entity.road.QCrackEntity;
-import com.potless.backend.damage.entity.road.QDamageEntity;
-import com.potless.backend.damage.entity.road.QImageEntity;
-import com.potless.backend.damage.entity.road.QPotholeEntity;
+import com.potless.backend.damage.entity.road.*;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
@@ -177,6 +174,16 @@ public class DamageRepositoryCustomImpl implements DamageRepositoryCustom {
         return new AreaForMonthListResponseDTO(resultList);
     }
 
+    @Override
+    public List<DamageEntity> findDamageByHexagonIdAndDtype(Long hexagonId, String dtype) {
+        QDamageEntity damage = QDamageEntity.damageEntity;
+
+        return queryFactory
+                .selectFrom(damage)
+                .where(damage.hexagonEntity.id.eq(hexagonId)
+                        .and(damage.dtype.eq(dtype)))
+                .fetch();
+    }
 
     @Override
     public Page<DamageResponseDTO> findDamagesWithLatestTransaction(DamageSearchRequestDTO searchDTO, Pageable pageable) {

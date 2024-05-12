@@ -7,6 +7,7 @@ import com.potless.backend.damage.dto.controller.request.DamageVerificationReque
 import com.potless.backend.damage.dto.controller.response.DamageResponseDTO;
 import com.potless.backend.damage.dto.service.request.AreaDamageCountForMonthServiceRequestDTO;
 import com.potless.backend.damage.dto.service.response.*;
+import com.potless.backend.damage.entity.road.DamageEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -29,5 +30,5 @@ public interface DamageRepositoryCustom {
 
     AreaForMonthListResponseDTO getAreaDamageCountForMonth(AreaDamageCountForMonthServiceRequestDTO areaDamageCountForMonthServiceRequestDTO);
 
-//    List<DamageResponseDTO> findDamagesByWorker(Long memberId);
+    List<DamageEntity> findDamageByHexagonIdAndDtype(Long hexagonId, String dtype);
 }
