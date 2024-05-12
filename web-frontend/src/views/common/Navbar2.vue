@@ -218,7 +218,7 @@ img {
 }
 
 .nav-item a:hover {
-  font-size: 2.3vh;
+  font-size: 2.25vh;
 }
 
 #logout-btn {
