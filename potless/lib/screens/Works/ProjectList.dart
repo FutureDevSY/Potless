@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:kakao_flutter_sdk_common/kakao_flutter_sdk_common.dart';
 import 'package:potless/API/api_request.dart';
 import 'package:potless/models/pothole.dart';
 import 'package:potless/screens/Works/WorkList2.dart';
@@ -29,6 +30,8 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
   }
 
   Future<List<Project>> _fetchProjects() async {
+    debugPrint('카카오 키');
+    debugPrint(await KakaoSdk.origin);
     return await _apiService.fetchProject();
   }
 

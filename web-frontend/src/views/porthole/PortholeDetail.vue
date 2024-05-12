@@ -64,7 +64,7 @@
 import { ref, onMounted, computed } from "vue";
 import { useRoute } from "vue-router";
 import Carusel from "./components/Carusel.vue";
-import RoadTypeIncidentsGraph from "./components/PotholeLocationMap.vue";
+import RoadTypeIncidentsGraph from "./components/PotholeDetailMap.vue";
 import { useMoveStore } from "@/stores/move";
 import { useAuthStore } from "@/stores/user";
 import { getPotholeDetail, deletePothole } from "../../api/pothole/pothole.js";
@@ -94,11 +94,13 @@ const takeData = (potholeId) => {
 };
 
 const deleteData = (potholeId) => {
+  const pothole_info2 = {
+    damageIds: [potholeId],
+  };
   deletePothole(
     accessToken.value,
-    potholeId,
+    pothole_info2,
     (res) => {
-      console.log(res);
       if (res.data.status == "SUCCESS") {
         console.log(res.data.message);
         store.moveBack();

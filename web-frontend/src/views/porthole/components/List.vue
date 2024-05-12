@@ -4,20 +4,29 @@
     <table>
       <thead>
         <tr>
+          <!-- <th class="detect-column">탐지 일시</th> -->
+          <th class="danger-column">위험성</th>
+          <th class="type-column">종류</th>
+          <th class="city-column">행정동</th>
+          <th class="address-column">지번 주소</th>
           <th class="work-column">
             <button
               class="add-button"
               :disabled="!hasSelected"
               @click="openModal('add')"
             >
-              작업추가
+              추가하기
             </button>
           </th>
-          <!-- <th class="detect-column">탐지 일시</th> -->
-          <th class="danger-column">위험성</th>
-          <th class="type-column">종류</th>
-          <th class="city-column">행정동</th>
-          <th class="address-column">지번 주소</th>
+          <th class="work-column">
+            <button
+              class="add-button"
+              :disabled="!hasSelected"
+              @click="deletePotholeSelect()"
+            >
+              삭제
+            </button>
+          </th>
         </tr>
       </thead>
       <tbody>
@@ -27,6 +36,17 @@
           @mouseover="updateMapLocation(pothole.dirX, pothole.dirY)"
           @click="handleRowClick(pothole)"
         >
+          <!-- <td>
+          <div>{{ porthole.detect.split(" ")[0] }}</div>
+          </td> -->
+          <td class="dangers-column">
+            <div class="danger-type" :class="dangerClass(pothole.severity)">
+              <p>{{ pothole.severity }}</p>
+            </div>
+          </td>
+          <td>{{ displayType(pothole.dtype) }}</td>
+          <td>{{ pothole.location }}</td>
+          <td>{{ pothole.address }}</td>
           <td class="select-column" @click.stop="toggleSelect(pothole)">
             <div
               class="checkbox"
@@ -39,17 +59,11 @@
               <div v-if="pothole.isSelected" class="checkmark"></div>
             </div>
           </td>
-          <!-- <td>
-            <div>{{ porthole.detect.split(" ")[0] }}</div>
-          </td> -->
-          <td class="dangers-column">
-            <div class="danger-type" :class="dangerClass(pothole.severity)">
-              <p>{{ pothole.severity }}</p>
+          <td class="select-column" @click.stop="toggleSelect(pothole)">
+            <div class="checkbox">
+              <div v-if="pothole.isSelected" class="checkmark"></div>
             </div>
           </td>
-          <td>{{ pothole.dtype }}</td>
-          <td>{{ pothole.location }}</td>
-          <td>{{ pothole.address }}</td>
         </tr>
       </tbody>
     </table>
@@ -83,9 +97,14 @@
 <script setup>
 import { ref, computed } from "vue";
 import { useMoveStore } from "../../../stores/move";
+import { useAuthStore } from "@/stores/user";
+import { storeToRefs } from "pinia";
 import TaskList from "./TaskList.vue";
 import TeamModal from "./AddTeamModal.vue";
+import { deletePothole } from "../../../api/pothole/pothole";
 
+const store2 = useAuthStore();
+const { accessToken } = storeToRefs(store2);
 const store = useMoveStore();
 const props = defineProps({
   currentData: Object,
@@ -119,6 +138,11 @@ const dangerClass = (danger) => {
   }
 };
 
+// 타입 필터링
+function displayType(dtype) {
+  return dtype === "POTHOLE" ? "포트홀" : dtype === "CRACK" ? "도로균열" : "";
+}
+
 // 선택
 const selectedIds = ref(new Set());
 function toggleSelect(porthole) {
@@ -134,6 +158,33 @@ const hasSelected = computed(() => {
   return selectedIds.value.size > 0;
 });
 
+// 포트홀 삭제
+const emit = defineEmits(["refreshData", "updateMapLocation"]);
+const deletePotholeSelect = () => {
+  const selectedPotholeIds = Array.from(selectedIds.value);
+  const selectPothole = {
+    damageIds: selectedPotholeIds,
+  };
+  deletePothole(
+    accessToken.value,
+    selectPothole,
+    (res) => {
+      console.log(res);
+      if (res.data.status === "SUCCESS") {
+        console.log(res.data.message);
+        selectedIds.value.clear();
+        emit("refreshData");
+      }
+    },
+    (error) => {
+      console.error("Error:", error);
+      if (error.response && error.response.data) {
+        console.error("Error Message:", error.response.data.message);
+      }
+    }
+  );
+};
+
 // 작업 리스트 모달창
 const isModalOpen = ref(false);
 const modalMode = ref("");
@@ -148,7 +199,6 @@ function openModal(mode) {
   toggleModal();
 }
 
-const emit = defineEmits(["updateMapLocation"]);
 const updateMapLocation = (dirX, dirY) => {
   emit("updateMapLocation", { dirX, dirY });
 };
