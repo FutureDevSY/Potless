@@ -3,13 +3,13 @@
     <div class="left-box">
       <div class="top-box">
         <Weather />
-        <div class="today-container"></div>
+        <CurrentStats />
       </div>
       <div class="bottom-box">
         <div class="report-container">
           <ReportList />
         </div>
-        <div class="map-container"></div>
+        <div class="map-containers"></div>
       </div>
     </div>
     <div class="right-box">
@@ -19,6 +19,7 @@
 </template>
 <script setup>
 import Weather from "./components/Weather.vue";
+import CurrentStats from "./components/CurrentStats.vue";
 import ReportList from "./components/TaskList.vue";
 </script>
 <style scoped>
@@ -30,32 +31,32 @@ import ReportList from "./components/TaskList.vue";
 }
 .left-box {
   display: grid;
-  grid-template-rows: 23% 75.5%;
-  gap: 1.5%;
+  grid-template-rows: 23% 74.5%;
+  gap: 2%;
 }
 .right-box {
-  background-color: rgb(195, 254, 235);
+  background-color: rgba(241, 241, 241, 0.641);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.255);
+  border-radius: 15px;
 }
 .top-box {
   display: grid;
-  grid-template-columns: 34% 65%;
-  gap: 1%;
+  grid-template-columns: 34% 64.5%;
+  gap: 1.5%;
 }
 .bottom-box {
   display: grid;
   grid-template-columns: 59% 40%;
   gap: 1%;
 }
-.weather-container {
-  background-color: rgb(255, 168, 168);
-}
-.today-container {
-  background-color: rgb(255, 218, 255);
-}
 .report-container {
-  background-color: rgb(246, 246, 176);
+  background-color: rgba(241, 241, 241, 0.641);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.255);
+  border-radius: 15px;
 }
-.map-container {
-  background-color: blue;
+.map-containers {
+  background-color: rgba(241, 241, 241, 0.641);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.255);
+  border-radius: 15px;
 }
 </style>

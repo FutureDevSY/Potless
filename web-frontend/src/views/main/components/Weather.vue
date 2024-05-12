@@ -152,6 +152,7 @@ watch(weather, updateWeatherImage);
 <style scoped>
 .main-container {
   transition: background-color 0.5s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.255);
   border-radius: 15px;
   padding: 1.5vh;
   display: grid;

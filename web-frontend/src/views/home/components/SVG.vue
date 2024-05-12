@@ -23,7 +23,7 @@ onMounted(async () => {
 });
 </script>
 
-<style scoped>
+<style>
 .map-container {
   display: flex;
   justify-content: center;
