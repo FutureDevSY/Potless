@@ -49,10 +49,9 @@ public class MemberServiceImpl implements MemberService {
                         }
                 );
 
-        AreaEntity area = areaRepository.findById(requestDto.getRegion())
-                .orElseThrow(AreaNotFoundException::new);
-        MemberEntity newMember = MemberEntity.of(requestDto, area,
-                passwordEncoder.encode(requestDto.getPassword()));
+//        AreaEntity area = areaRepository.findById(requestDto.getRegion())
+//                .orElseThrow(AreaNotFoundException::new);
+        MemberEntity newMember = MemberEntity.of(requestDto, passwordEncoder.encode(requestDto.getPassword()));
         memberRepository.save(newMember);
 
         return newMember.getId();
@@ -65,7 +64,8 @@ public class MemberServiceImpl implements MemberService {
         MemberEntity member = memberRepository.searchByEmail(requestDto.getEmail())
                 .orElseThrow(EmailNotFoundException::new);
         //앱 로그인 경우에서 작업자 이외의 로그인 시도 또는 웹 로그인 경우에서 관리자 이외의 로그인 시도시 에러
-        if ((identify == 1 && member.getRole() != 1) || (identify == 0 && member.getRole() != 0)) {
+        int memberRole = member.getRole();
+        if ((identify == 1 && memberRole == 0) || (identify == 0 && memberRole != 0)) {
             throw new InvalidLoginAuthException();
         }
 
