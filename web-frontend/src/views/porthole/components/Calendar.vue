@@ -9,7 +9,11 @@
       <template #default="{ togglePopover, inputValue, inputEvents }">
         <div class="input" @click="() => togglePopover()" tabindex="0">
           {{ formattedDateRange }}
-          <img src="../../../assets/icon/calendar.png" alt="#" @click="() => togglePopover()" />
+          <img
+            src="../../../assets/icon/calendar.png"
+            alt="#"
+            @click="() => togglePopover()"
+          />
         </div>
       </template>
     </VDatePicker>
@@ -21,11 +25,17 @@ import { ref, computed, watch } from "vue";
 
 const emit = defineEmits(["update:dateRange"]);
 const getUtcDate = (date) => {
-  return new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+  return new Date(
+    Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())
+  );
 };
 
 const today = getUtcDate(new Date());
-const oneWeekAgo = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 7);
+const oneWeekAgo = new Date(
+  today.getFullYear(),
+  today.getMonth(),
+  today.getDate() - 6
+);
 
 const formatDate = (date) => {
   return date.toLocaleDateString("ko-KR", {
@@ -55,7 +65,9 @@ watch(
     if (newRange.end >= today) {
       dateRange.value.end = today;
     }
-    formattedDateRange.value = `${formatDate(newRange.start)} - ${formatDate(newRange.end)}`;
+    formattedDateRange.value = `${formatDate(newRange.start)} - ${formatDate(
+      newRange.end
+    )}`;
     emit("update:dateRange", { ...dateRange.value });
   },
   { immediate: true, deep: true }

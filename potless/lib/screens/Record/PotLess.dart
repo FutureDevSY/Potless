@@ -44,6 +44,11 @@ class _VideoPageState extends State<VideoPage> with WidgetsBindingObserver {
   List<double> scores = [];
   List<XFile> imageSaveQueue = [];
 
+  Map<String, dynamic>? stats;
+  String? cls;
+  String? box;
+  String? score;
+
   final ApiService _apiService = ApiService();
   FrameRateTester _frameRateTester = FrameRateTester();
   final bool _isTestingFrameRate = false;
@@ -92,6 +97,8 @@ class _VideoPageState extends State<VideoPage> with WidgetsBindingObserver {
             classes = values['cls'];
             bboxes = values['box'];
             scores = values['conf'];
+
+            stats = values['stats'];
           });
         });
       });
@@ -160,6 +167,8 @@ class _VideoPageState extends State<VideoPage> with WidgetsBindingObserver {
       double lat = queuedImage.position.latitude;
       double lng = queuedImage.position.longitude;
 
+      // debugPrint('업로드 대신 나오는 코드');
+
       bool success = await _apiService.damageSet('POTHOLE', lng, lat, file);
     } catch (e) {
       debugPrint('potless 212: $e');
@@ -182,11 +191,11 @@ class _VideoPageState extends State<VideoPage> with WidgetsBindingObserver {
 
   @override
   void dispose() {
+    _detector?.stop();
+    WidgetsBinding.instance.removeObserver(this);
     _frameRateTester.stopTesting();
     _uploadStreamController.close();
-    WidgetsBinding.instance.removeObserver(this);
     _cameraController?.dispose();
-    _detector?.stop();
     _subscription?.cancel();
     super.dispose();
   }
@@ -224,6 +233,15 @@ class _VideoPageState extends State<VideoPage> with WidgetsBindingObserver {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   const Text('AI 촬영의 성능을 위해 카메라 화면을 꺼두는 모드입니다.'),
+                  if (stats != null) ...[
+                    Text('Conversion time: ${stats!['Conversion time:']}'),
+                    Text(
+                        'Pre-processing time: ${stats!['Pre-processing time:']}'),
+                    Text('Inference time: ${stats!['Inference time:']}'),
+                    Text(
+                        'Total prediction time: ${stats!['Total prediction time:']}'),
+                    Text('Frame: ${stats!['Frame']}'),
+                  ],
                   SizedBox(
                     height: UIhelper.deviceHeight(context) * 0.3,
                   ),

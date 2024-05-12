@@ -25,7 +25,7 @@
         <button class="pdf-button" @click="openPdf">PDF 미리보기</button>
       </div>
     </div>
-    <List :data="taskData" v-if="taskData && !loading" />
+    <List :data="taskData" v-if="taskData" />
     <PathModal
       v-if="isModalVisible"
       :pathData="modalData"
@@ -33,8 +33,6 @@
       @close="closeModal"
     />
 
-    <div v-if="loading">로딩 중...</div>
-    <div v-if="error">{{ errorMessage }}</div>
     <div v-if="isPdfModalVisible" class="pdf-modal">
       <div class="modal-content">
         <div class="button-group">
@@ -46,6 +44,9 @@
             PDF로 변환하기
           </button>
           <button @click="closePdfModal" class="pdf-button">닫기</button>
+          <div class="loading-container" v-if="showLoading">
+            <LottieLoading />
+          </div>
         </div>
         <div id="pdf" class="report-pdf" v-if="taskData && taskData.length">
           <PDFGeneratorMain
@@ -79,6 +80,7 @@ import { getTaskDetail, postOptimal } from "../../api/task/taskDetail";
 import { useAuthStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
 import PathModal from "./components/PathModal.vue";
+import LottieLoading from "./components/LottieLoading.vue";
 
 const route = useRoute();
 const store2 = useAuthStore();
@@ -113,6 +115,7 @@ const showDetail = () => {
   );
 };
 
+const showLoading = ref(false);
 const modalData = ref(null);
 const isModalVisible = ref(false);
 const wayPoint = ref(null);
@@ -126,6 +129,7 @@ const showPath = () => {
     accessToken.value,
     pathBody.value,
     (res) => {
+      console.log(res);
       if (res.data.status == "SUCCESS") {
         console.log(res.data.message);
         console.log(res.data.data);
@@ -154,31 +158,35 @@ const closePdfModal = () => {
 };
 
 function generatePdf() {
-  const container = document.querySelector(".task-detail-container");
-  const pdfArea = document.getElementById("pdf");
-
-  container.style.overflow = "auto";
-  container.style.height = "auto";
-
-  pdfArea.style.visibility = "visible";
-  pdfArea.style.opacity = "1";
-
-  const options = {
-    margin: 0,
-    filename: "downloaded.pdf",
-    image: { type: "jpeg", quality: 0.98 },
-    html2canvas: { scale: 2 },
-  };
-
-  html2pdf()
-    .set(options)
-    .from(pdfArea)
-    .save()
-    .then(() => {});
-
+  showLoading.value = true;
   setTimeout(() => {
-    closePdfModal();
-  }, 3000);
+    showLoading.value = false; // 로딩 애니메이션 숨기기
+
+    // 로딩 애니메이션이 숨겨진 후 PDF 생성을 시작
+    const container = document.querySelector(".task-detail-container");
+    const pdfArea = document.getElementById("pdf");
+
+    container.style.overflow = "auto";
+    container.style.height = "auto";
+
+    pdfArea.style.visibility = "visible";
+    pdfArea.style.opacity = "1";
+
+    const options = {
+      margin: 0,
+      filename: "downloaded.pdf",
+      image: { type: "jpeg", quality: 0.98 },
+      html2canvas: { scale: 2 },
+    };
+
+    html2pdf()
+      .set(options)
+      .from(pdfArea)
+      .save()
+      .finally(() => {
+        closePdfModal(); // PDF 생성이 끝난 후 모달 창 닫기
+      });
+  }, 5000); // 5초 대기
 }
 </script>
 
@@ -291,5 +299,13 @@ function generatePdf() {
 .button-group {
   display: flex;
   justify-content: end;
+}
+
+.loading-container {
+  position: absolute;
+  top: 50%;
+  left: 60%;
+  transform: translate(-50%, -50%);
+  z-index: 1050;
 }
 </style>
