@@ -10,8 +10,6 @@ import java.io.File;
 @Getter
 public class ReDetectionRequestDTO {
 
-    private MultipartFile image;
-
-    private MultipartFile label;
+    private File image;
 
 }

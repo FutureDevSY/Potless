@@ -10,10 +10,7 @@ import com.potless.backend.damage.dto.service.response.*;
 import com.potless.backend.damage.dto.service.response.kakao.Address;
 import com.potless.backend.damage.dto.service.response.kakao.RoadAddress;
 import com.potless.backend.damage.entity.enums.Status;
-import com.potless.backend.damage.service.AsyncService;
-import com.potless.backend.damage.service.IAreaLocationService;
-import com.potless.backend.damage.service.IDamageService;
-import com.potless.backend.damage.service.KakaoService;
+import com.potless.backend.damage.service.*;
 import com.potless.backend.global.exception.pothole.InvalidCoordinateRangeException;
 import com.potless.backend.global.exception.pothole.PotholeNotFoundException;
 import com.potless.backend.global.format.code.ApiResponse;
@@ -35,6 +32,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
 import java.io.IOException;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
@@ -53,6 +52,8 @@ public class DamageController {
     private final AwsService awsService;
     private final IAreaLocationService iAreaLocationService;
     private final AsyncService asyncService;
+    private final FileService fileService;
+
     @Operation(summary = "Area 리스트 가져오기", description = "Area 리스트 가져오기", responses = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = AreaResponseDTO.class)))
     })
@@ -305,8 +306,7 @@ public class DamageController {
             @RequestPart("dtype") @NotNull String dtype,
             @RequestPart("x") @NotNull String x,
             @RequestPart("y") @NotNull String y,
-            @RequestPart("files") @NotNull List<MultipartFile> files,
-            @RequestPart("label") @NotNull MultipartFile label
+            @RequestPart("files") @NotNull List<MultipartFile> files
     ) throws IOException {
         double xValue = Double.parseDouble(x);
         double yValue = Double.parseDouble(y);
@@ -318,7 +318,11 @@ public class DamageController {
                                                                      .x(xValue)
                                                                      .y(yValue)
                                                                      .build();
-        CompletableFuture<Void> future = asyncService.setDamageAsyncMethod(damageSetRequestDTO, files, label);
+
+        // file로 변환된 형태를 넘겨줘야 참조가 가능함
+        File imageFile = fileService.convertAndSaveFile(files.get(0));
+
+        CompletableFuture<Void> future = asyncService.setDamageAsyncMethod(damageSetRequestDTO, imageFile);
         future.join();
         return response.success(ResponseCode.POTHOLE_DETECTED);
     }
