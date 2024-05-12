@@ -2,7 +2,7 @@
   <div class="main-box">
     <div class="left-box">
       <div class="top-box">
-        <div class="weather-container"></div>
+        <Weather />
         <div class="today-container"></div>
       </div>
       <div class="bottom-box">
@@ -15,7 +15,9 @@
     </div>
   </div>
 </template>
-<script setup></script>
+<script setup>
+import Weather from "./components/Weather.vue";
+</script>
 <style scoped>
 .main-box {
   display: grid;
