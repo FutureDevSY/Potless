@@ -19,7 +19,7 @@ class _Command {
 }
 
 class Detector {
-  static const String _modelPath = 'assets/ai_model/train34.tflite';
+  static const String _modelPath = 'assets/ai_model/train34_16.tflite';
   static const String _labelPath = 'assets/ai_model/train34.txt';
 
   Detector._(this._isolate, this._interpreter, this._labels);
@@ -52,18 +52,11 @@ class Detector {
   }
 
   static Future<Interpreter> _loadModel() async {
-    final interpreterOptions = InterpreterOptions();
-
-    // Use XNNPACK Delegate
-    if (Platform.isAndroid) {
-      interpreterOptions.addDelegate(XNNPackDelegate());
-      // gpu
-      // interpreterOptions.addDelegate(GpuDelegateV2());
-    }
-
+    final interpreterOptions = InterpreterOptions()..threads = 4;
+    interpreterOptions.addDelegate(XNNPackDelegate());
     return Interpreter.fromAsset(
       _modelPath,
-      options: interpreterOptions..threads = 4,
+      options: interpreterOptions,
     );
   }
 
@@ -81,38 +74,6 @@ class Detector {
     }
   }
 
-  // void _handleCommand(_Command command) {
-  //   switch (command.code) {
-  //     case _Codes.init:
-  //       _sendPort = command.args?[0] as SendPort;
-  //       RootIsolateToken rootIsolateToken = RootIsolateToken.instance!;
-  //       _sendPort.send(_Command(_Codes.init,
-  //           args: [rootIsolateToken, _interpreter.address, _labels]));
-  //     case _Codes.ready:
-  //       _isReady = true;
-  //     case _Codes.busy:
-  //       _isReady = false;
-  //     case _Codes.result:
-  //       _isReady = true;
-  //       try {
-  //         if (command.args != null && command.args!.length > 1) {
-  //           CameraImage cameraImage = command.args![1] as CameraImage;
-  //           resultsStream.add({
-  //             'results': command.args?[0] as Map<String, dynamic>,
-  //             'image': cameraImage
-  //           });
-  //         } else {
-  //           resultsStream
-  //               .add({'results': command.args?[0] as Map<String, dynamic>});
-  //         }
-  //       } catch (E) {
-  //         debugPrint('detector 106 : $E');
-  //       }
-
-  //     default:
-  //       debugPrint('Detector unrecognized command: ${command.code}');
-  //   }
-  // }
   void _handleCommand(_Command command) {
     switch (command.code) {
       case _Codes.init:
@@ -142,7 +103,7 @@ class Detector {
 }
 
 class _DetectorServer {
-  int mlModelInputSize = 640; // 이미지 사이즈, 설정 없으면 기본 사용
+  int mlModelInputSize = 416;
   Interpreter? _interpreter;
   List<String>? _labels;
 
@@ -168,9 +129,9 @@ class _DetectorServer {
             command.args?[0] as RootIsolateToken;
         BackgroundIsolateBinaryMessenger.ensureInitialized(rootIsolateToken);
         _interpreter = Interpreter.fromAddress(command.args?[1] as int);
-        // [1,224, 224, 3] 이면 224 가져와서 설정
+
         mlModelInputSize =
-            _interpreter?.getInputTensors().first.shape[1] ?? 640;
+            _interpreter?.getInputTensors().first.shape[1] ?? 416;
         _labels = command.args?[2] as List<String>;
         _sendPort.send(const _Command(_Codes.ready));
       case _Codes.detect:
