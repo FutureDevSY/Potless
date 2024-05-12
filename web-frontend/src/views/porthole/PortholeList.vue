@@ -294,6 +294,7 @@ onMounted(() => {
   background-color: #151c62;
   border: none;
   color: white;
+  width: 100px;
   font-size: 1.8vh;
   border-radius: 4px;
   cursor: pointer;
@@ -304,6 +305,14 @@ onMounted(() => {
 }
 
 .register {
-  margin-right: 670px;
+  margin-right: 500px;
+  padding: 1.2vh 15px;
+  background-color: #151c62;
+  border: none;
+  color: white;
+  width: 150px;
+  font-size: 1.8vh;
+  border-radius: 4px;
+  cursor: pointer;
 }
 </style>
