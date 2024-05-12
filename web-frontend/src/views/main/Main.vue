@@ -6,7 +6,9 @@
         <div class="today-container"></div>
       </div>
       <div class="bottom-box">
-        <div class="report-container"></div>
+        <div class="report-container">
+          <ReportList />
+        </div>
         <div class="map-container"></div>
       </div>
     </div>
@@ -15,7 +17,9 @@
     </div>
   </div>
 </template>
-<script setup></script>
+<script setup>
+import ReportList from "./components/TaskList.vue";
+</script>
 <style scoped>
 .main-box {
   display: grid;
