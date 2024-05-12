@@ -21,21 +21,15 @@ import java.util.List;
 @RequiredArgsConstructor
 public class HexagonService {
     private final H3Core h3;
-    private final HexagonRepository hexagonRepository;
     private final DamageRepository damageRepository;
 
-    public boolean duplCheck(HexagonRequestDto duplRequestDto) {
+    public boolean duplCheck(Double x, Double y, String dtype) {
+        int res = 13;
 
-        Long hexagonId = getHexagon(duplRequestDto.getLatitude(),duplRequestDto.getLongitude());
+        Long hexagonId = h3.latLngToCell(x, y, res);
 
-        List<DamageEntity> damageEntities = damageRepository.findDamageByHexagonIdAndDtype(hexagonId, duplRequestDto.getType());
+        List<DamageEntity> damageEntities = damageRepository.findDamageByHexagonIdAndDtype(hexagonId, dtype);
 
-        return damageEntities.isEmpty();
+        return !damageEntities.isEmpty();
     }
-
-    public Long getHexagon(Double latitude, Double longitude) {
-        return h3.latLngToCell(latitude, longitude, 8);
-    }
-
-
 }

@@ -17,6 +17,7 @@ import com.potless.backend.damage.service.*;
 import com.potless.backend.global.exception.pothole.PotholeNotFoundException;
 import com.potless.backend.global.format.code.ApiResponse;
 import com.potless.backend.global.format.response.ResponseCode;
+import com.potless.backend.hexagon.service.HexagonService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -56,6 +57,7 @@ public class DamageController {
     private final AwsService awsService;
     private final IAreaLocationService iAreaLocationService;
     private final ReDetectionApiService detectionApiService;
+    private final HexagonService hexagonService;
 
     @Operation(summary = "Area 리스트 가져오기", description = "Area 리스트 가져오기", responses = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = AreaResponseDTO.class)))
@@ -382,6 +384,9 @@ public class DamageController {
         damageSetRequestDTO.setImages(fileUrls);
 
         // 중복 처리
+        if(hexagonService.duplCheck(damageSetRequestDTO.getX(), damageSetRequestDTO.getY(), dtype)){
+            return response.success(ResponseCode.DUPLICATION_TRUE);
+        }
 
         // 비동기로 처리하고 바로 응답 반환 검증
         kakaoService.fetchKakaoData(damageSetRequestDTO.getX(), damageSetRequestDTO.getY())
