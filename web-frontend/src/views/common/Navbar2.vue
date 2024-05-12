@@ -20,7 +20,7 @@
         </li>
       </ul>
       <div>
-        <button id="logout-btn">로그아웃</button>
+        <button id="logout-btn" @click="clickLogout">로그아웃</button>
       </div>
     </nav>
   </main>
@@ -29,9 +29,15 @@
 <script setup>
 import { ref } from "vue";
 import { useMoveStore } from "../../stores/move.js";
+import { useAuthStore } from "../../stores/user.js";
+import { storeToRefs } from "pinia";
+import { logout } from "../../api/auth/auth.js";
+import router from "@/router";
 
 const store = useMoveStore();
 const activeNavItem = ref(0);
+const store2 = useAuthStore();
+const { accessToken } = storeToRefs(store2);
 
 const navItems = [
   { name: "홈", icon: "fa fa-house", action: store.moveMain },
@@ -49,6 +55,44 @@ function handleClick(index) {
   setActiveNavItem(index);
   navItems[index].action();
 }
+
+const clickLogout = () => {
+  logout(
+    accessToken.value,
+    (res) => {
+      if (res.data.status == "SUCCESS") {
+        console.log(res.data.message);
+        store2.logoutfc();
+        store.moveHome();
+      } else {
+        store2.logoutfc();
+        store.moveHome();
+        console.log(res);
+      }
+    },
+    (error) => {
+      store2.logoutfc();
+      store.moveHome();
+      console.log(error.response.data.message);
+    }
+  );
+};
+
+router.beforeEach((to, from) => {
+  const store = useAuthStore();
+  if (to.name === "Main") {
+    setActiveNavItem(0)
+  }
+  if (to.name === "PortholeList") {
+    setActiveNavItem(1)
+  }
+  if (to.name === "Statistics") {
+    setActiveNavItem(3)
+  }
+  if (to.name === "TaskInfo") {
+    setActiveNavItem(2)
+  }
+});
 </script>
 
 <style scoped>
