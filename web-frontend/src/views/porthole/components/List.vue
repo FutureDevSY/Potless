@@ -10,20 +10,12 @@
           <th class="city-column">행정동</th>
           <th class="address-column">지번 주소</th>
           <th class="work-column">
-            <button
-              class="add-button"
-              :disabled="!hasSelected"
-              @click="openModal('add')"
-            >
-              추가하기
+            <button class="add-button" :disabled="!hasSelected" @click="openModal('add')">
+              추가
             </button>
           </th>
           <th class="work-column">
-            <button
-              class="add-button"
-              :disabled="!hasSelected"
-              @click="deletePotholeSelect()"
-            >
+            <button class="add-button" :disabled="!hasSelected" @click="deletePotholeSelect()">
               삭제
             </button>
           </th>
@@ -51,9 +43,7 @@
             <div
               class="checkbox"
               :class="{
-                disabled:
-                  props.selectedStatus === '작업완료' ||
-                  props.selectedStatus === '작업중',
+                disabled: props.selectedStatus === '작업완료' || props.selectedStatus === '작업중',
               }"
             >
               <div v-if="pothole.isSelected" class="checkmark"></div>
@@ -69,13 +59,8 @@
     </table>
   </div>
 
-  <button class="button list-button" @click="openModal('list')">
-    작업지시서
-  </button>
-  <div
-    v-if="isModalOpen && (modalMode === 'list' || modalMode === 'add')"
-    class="modal"
-  >
+  <button class="button list-button" @click="openModal('list')">작업지시서</button>
+  <div v-if="isModalOpen && (modalMode === 'list' || modalMode === 'add')" class="modal">
     <div class="modal-content">
       <TaskList
         :is-adding-tasks="modalMode === 'add'"
@@ -209,8 +194,8 @@ const updateMapLocation = (dirX, dirY) => {
 } */
 
 .checkbox {
-  width: 2.8vh;
-  height: 2.8vh;
+  width: 2vh;
+  height: 2vh;
   border: 2px solid #ccc;
   background: white;
   display: inline-block;
@@ -306,7 +291,7 @@ tbody tr:hover {
 }
 
 .work-column {
-  width: 5.4vw;
+  width: 3.2vw;
   text-align: center;
   white-space: nowrap;
 }
@@ -325,13 +310,13 @@ tbody tr:hover {
 }
 
 .type-column {
-  width: 10vw;
+  width: 5vw;
   text-align: center;
   white-space: nowrap;
 }
 
 .city-column {
-  width: 10vw;
+  width: 7vw;
   text-align: center;
   white-space: nowrap;
 }

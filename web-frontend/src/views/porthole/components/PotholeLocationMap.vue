@@ -86,15 +86,8 @@ watch(currentData, updateMarkers, { deep: true, immediate: true });
 watch(
   [potholeDirx, potholeDiry],
   () => {
-    if (
-      map &&
-      potholeDirx.value !== undefined &&
-      potholeDiry.value !== undefined
-    ) {
-      const newCenterPoint = new window.kakao.maps.LatLng(
-        potholeDirx.value,
-        potholeDiry.value
-      );
+    if (map && potholeDirx.value !== undefined && potholeDiry.value !== undefined) {
+      const newCenterPoint = new window.kakao.maps.LatLng(potholeDirx.value, potholeDiry.value);
       map.setCenter(newCenterPoint);
     }
   },
