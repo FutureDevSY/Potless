@@ -23,10 +23,11 @@ public class HexagonController {
 
     @PostMapping
     public ResponseEntity<?> duplCheck(
-            
-            @RequestBody HexagonRequestDto hexagonRequestDto
+            @RequestPart Double x,
+            @RequestPart Double y,
+            @RequestPart String dtype
     ) {
-        boolean result = hexagonService.duplCheck(hexagonRequestDto);
+        boolean result = hexagonService.duplCheck(x,y,dtype);
 
         if (result) {
             return response.success(ResponseCode.DUPLICATION_TRUE, result);
