@@ -1,6 +1,5 @@
 package com.potless.backend.damage.dto.service.response;
 
-import com.potless.backend.damage.dto.service.response.count.AreaDamageCountForDateListResponseDTO;
 import com.potless.backend.damage.dto.service.response.count.AreaDamageCountForMonthListResponseDTO;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;

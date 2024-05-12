@@ -8,8 +8,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.data.repository.query.Param;
 
-import java.util.List;
-
 public interface DamageRepository extends JpaRepository<DamageEntity, Long>, DamageRepositoryCustom, QuerydslPredicateExecutor<DamageEntity> {
 
     @Query("SELECT new com.potless.backend.damage.dto.controller.response.DamageResponseDTO(" +
