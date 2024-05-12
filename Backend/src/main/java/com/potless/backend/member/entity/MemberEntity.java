@@ -23,7 +23,7 @@ public class MemberEntity extends MemberBaseEntity {
     @Column(name = "member_name", nullable = false)
     private String memberName;
 
-    /* 0은 관리자, 1은 일반 회원 */
+    /* 0은 관리자, 1은 작업자, 3은 일반회원 */
     @Column(name = "member_role", nullable = false)
     private Integer role;
 
@@ -62,14 +62,13 @@ public class MemberEntity extends MemberBaseEntity {
 //        this.workerEntity = workerEntity;
     }
 
-    public static MemberEntity of(SignupRequestDto requestDto, AreaEntity area, String encodedPassword) {
+    public static MemberEntity of(SignupRequestDto requestDto, String encodedPassword) {
         return MemberEntity.builder()
                 .email(requestDto.getEmail())
                 .password(encodedPassword)
                 .memberName(requestDto.getMemberName())
-                .role(0)
+                .role(3)    //회원가입이 일반 사용자들을 위함이므로 3
                 .phone(requestDto.getPhone())
-                .area(area)
                 .build();
     }
 

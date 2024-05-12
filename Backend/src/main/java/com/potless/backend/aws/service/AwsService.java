@@ -43,6 +43,20 @@ public class AwsService {
         }
     }
 
+    public Map<String, String> uploadFileToS3(File localFile, String fileName) throws IOException {
+        s3Client.putObject(new PutObjectRequest(bucketName, fileName, localFile));
+        try {
+            Files.delete(localFile.toPath());
+            log.info("Temporary file deleted successfully: {}", localFile.getPath());
+        } catch (IOException e) {
+            log.error("Failed to delete temporary file: {}", localFile.getPath(), e);
+        }
+
+        String fileUrl = s3Client.getUrl(bucketName, fileName).toString();
+        Map<String, String> fileData = new HashMap<>();
+        fileData.put(fileName, fileUrl);
+        return fileData;
+    }
 
     public Map<String, String> uploadFileToS3(MultipartFile file, String fileName) throws IOException {
         File localFile = convertMultiPartToFile(file);
