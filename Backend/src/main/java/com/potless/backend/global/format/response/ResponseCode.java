@@ -61,6 +61,10 @@ public enum ResponseCode {
     WORKER_FETCHED(HttpStatus.OK, "지역별 작업자 조회가 성공적으로 이루어졌습니다."),
     TEAD_DELETED(HttpStatus.OK, "팀이 성공적으로 삭제되었습니다."),
 
+    /* H3 */
+    DUPLICATION_TRUE(HttpStatus.OK, "중복조회가 성공적으로 이루어졌습니다. 해당 값은 중복값 입니다."),
+    DUPLICATION_FALSE(HttpStatus.OK, "중복조회가 성공적으로 이루어졌습니다. 해당 값은 중복값이 아닙니다."),
+
     /* 경로(Path) */
     OPTIMAL_PATH_FOUND(HttpStatus.OK, "최적 경로 조회가 성공적으로 이루어졌습니다."),
 
