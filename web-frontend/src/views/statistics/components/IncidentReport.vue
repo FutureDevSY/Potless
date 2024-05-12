@@ -174,7 +174,7 @@ const tooltipText = computed(() => {
   padding: 10% 15%;
   position: absolute;
   z-index: 4;
-  font-size: 20px;
+  font-size: 2vh;
   top: 120%;
   left: 50%;
   transform: translateX(-50%);
