@@ -3,9 +3,7 @@
     <div class="filter">
       <!-- 필터 -->
       <div class="search-tab">
-        <button class="register" @click="store.moveSelfRegister">
-          도로파손 추가
-        </button>
+        <button class="register" @click="store.moveSelfRegister">도로파손 추가</button>
         <Calendar @update:dateRange="handleDateRangeUpdate" />
         <Select
           :options="['심각', '주의', '양호']"
@@ -35,10 +33,7 @@
           @updateMapLocation="handleMapUpdate"
           @refreshData="takeData"
         />
-        <Pagination
-          :total-page="totalPage"
-          @update:current-page="handleCurrentPageUpdate"
-        />
+        <Pagination :total-page="totalPage" @update:current-page="handleCurrentPageUpdate" />
       </div>
 
       <div class="right">
@@ -94,9 +89,7 @@ const takeData = (currentPage) => {
   };
 
   const queryParams = Object.fromEntries(
-    Object.entries(rawParams).filter(
-      ([key, value]) => value !== "" && value != null
-    )
+    Object.entries(rawParams).filter(([key, value]) => value !== "" && value != null)
   );
 
   getPotholeList(
@@ -138,9 +131,7 @@ const handleSeverity = (option) => {
 // 파손 종류
 const selectedType = ref("");
 const handleType = (selectedText) => {
-  const selectedOption = typeOptions.find(
-    (option) => option.text === selectedText
-  );
+  const selectedOption = typeOptions.find((option) => option.text === selectedText);
   if (selectedOption) {
     selectedType.value = selectedOption.value;
   }
@@ -186,29 +177,31 @@ onMounted(() => {
 
 <style scoped>
 .container {
+  margin-top: 20px;
   display: flex;
   width: 100%;
 }
 
 .filter {
-  width: 97vw;
+  margin-top: 30px;
+  width: 87vw;
   padding: 10px;
   text-align: center;
 }
 
 .left {
-  flex: 8;
-}
-
-.right {
   flex: 6;
 }
 
+.right {
+  flex: 5;
+}
+
 .search-tab {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
   align-items: center;
   justify-content: end;
-  gap: 10px;
 }
 
 #pagination-control {
@@ -318,12 +311,12 @@ onMounted(() => {
 }
 
 .register {
-  margin-right: 500px;
+  margin-left: 20px;
   padding: 1.2vh 15px;
   background-color: #151c62;
   border: none;
   color: white;
-  width: 150px;
+  width: 130px;
   font-size: 1.8vh;
   border-radius: 4px;
   cursor: pointer;
