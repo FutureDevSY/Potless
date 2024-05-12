@@ -65,7 +65,7 @@ public class MemberServiceImpl implements MemberService {
                 .orElseThrow(EmailNotFoundException::new);
         //앱 로그인 경우에서 작업자 이외의 로그인 시도 또는 웹 로그인 경우에서 관리자 이외의 로그인 시도시 에러
         int memberRole = member.getRole();
-        if ((identify == 1 && memberRole == 0) || (identify == 0 && memberRole == 1)) {
+        if ((identify == 1 && memberRole == 0) || (identify == 0 && memberRole != 0)) {
             throw new InvalidLoginAuthException();
         }
 
