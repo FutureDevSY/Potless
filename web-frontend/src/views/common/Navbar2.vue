@@ -20,7 +20,7 @@
         </li>
       </ul>
       <div>
-        <button id="logout-btn">로그아웃</button>
+        <button id="logout-btn" @click="clickLogout">로그아웃</button>
       </div>
     </nav>
   </main>
@@ -29,8 +29,13 @@
 <script setup>
 import { ref } from "vue";
 import { useMoveStore } from "../../stores/move.js";
+import { useAuthStore } from "../../stores/user.js";
+import { storeToRefs } from "pinia";
+import { logout } from "../../api/auth/auth.js";
 
 const store = useMoveStore();
+const store2 = useAuthStore();
+const { accessToken } = storeToRefs(store2);
 const activeNavItem = ref(0);
 
 const navItems = [
@@ -49,6 +54,28 @@ function handleClick(index) {
   setActiveNavItem(index);
   navItems[index].action();
 }
+
+const clickLogout = () => {
+  logout(
+    accessToken.value,
+    (res) => {
+      if (res.data.status == "SUCCESS") {
+        console.log(res.data.message);
+        store2.logoutfc();
+        store.moveHome();
+      } else {
+        store2.logoutfc();
+        store.moveHome();
+        console.log(res);
+      }
+    },
+    (error) => {
+      store2.logoutfc();
+      store.moveHome();
+      console.log(error.response.data.message);
+    }
+  );
+};
 </script>
 
 <style scoped>
