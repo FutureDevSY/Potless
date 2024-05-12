@@ -59,9 +59,7 @@ flutter:
     - assets/icons/
     - assets/lottie/
     - assets/dummy_data/
-    - assets/ai_model/train34.pt
-    - assets/ai_model/train34.txt
-    - assets/ai_model/train34.tflite
+    - assets/ai_model/
   
   fonts:
     - family: 'Hanbit'
