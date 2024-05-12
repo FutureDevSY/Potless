@@ -7,13 +7,14 @@
       </div>
       <div class="bottom-box">
         <div class="report-container">
+          <div>리포트 현황</div>
           <ReportList />
         </div>
-        <div class="map-containers"></div>
+        <div class="map-containers"><div>지역별 현황</div></div>
       </div>
     </div>
     <div class="right-box">
-      <div class="worker-container"></div>
+      <div class="worker-container"><div>보수 공사팀</div></div>
     </div>
   </div>
 </template>
