@@ -3,10 +3,15 @@ package com.potless.backend.hexagon.service;
 import com.potless.backend.hexagon.entity.HexagonEntity;
 import com.potless.backend.hexagon.repository.HexagonRepository;
 import lombok.RequiredArgsConstructor;
+<<<<<<< HEAD
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 @Slf4j
+=======
+import org.springframework.stereotype.Service;
+
+>>>>>>> dev-BE
 @Service
 @RequiredArgsConstructor
 public class HexagonService {

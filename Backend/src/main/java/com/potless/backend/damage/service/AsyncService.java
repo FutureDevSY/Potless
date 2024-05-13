@@ -13,7 +13,6 @@ import com.potless.backend.global.exception.pothole.PotholeNotFoundException;
 import com.potless.backend.hexagon.service.H3Service;
 import com.potless.backend.hexagon.service.HexagonService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Service;
@@ -24,7 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-@Slf4j
 @Service
 @EnableAsync
 @RequiredArgsConstructor
@@ -50,7 +48,10 @@ public class AsyncService {
             ReDetectionRequestDTO detectionRequestDTO = new ReDetectionRequestDTO(imageFile);
 
             int severityResult = detectionApiService.reDetectionResponse(detectionRequestDTO);
+<<<<<<< HEAD
             log.info("severity = {}", severityResult);
+=======
+>>>>>>> dev-BE
             damageSetRequestDTO.setSeverity(severityResult);
 
             String fileName = "AfterVerification/BeforeWork/" + System.currentTimeMillis() + "_" + imageFile.getName();

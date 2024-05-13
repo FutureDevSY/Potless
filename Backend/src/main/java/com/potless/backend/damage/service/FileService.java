@@ -14,9 +14,9 @@ import java.nio.file.Paths;
 public class FileService {
 
     //  임시 경로
-    private Path currentPath = Paths.get("");
-    private String curPath = currentPath.toAbsolutePath().toString();
-    private String uploadDir = curPath + "/file";
+    private final Path currentPath = Paths.get("");
+    private final String curPath = currentPath.toAbsolutePath().toString();
+    private final String uploadDir = curPath + "/file";
 
     public File convertAndSaveFile(MultipartFile multipartFile) throws IOException {
         // 파일 저장 디렉토리 생성
@@ -28,10 +28,9 @@ public class FileService {
         if (!multipartFile.isEmpty()) {
             String originalFileName = multipartFile.getOriginalFilename();
             File file = new File(uploadDir, originalFileName);
-            log.info("savedFileName = {}", originalFileName);
             multipartFile.transferTo(file);  // 파일 저장
             return file;  // 저장된 파일 객체 반환
-        }else {
+        } else {
             log.info("multipartFile이 비어있습니다. 저장 실패");
         }
 
@@ -41,8 +40,7 @@ public class FileService {
     public void deleteFile(File file) {
         if (file != null && file.exists()) {
             file.delete();
-        }
-        else{
+        } else {
             log.info("파일 삭제에 실패하였습니다.");
         }
     }
