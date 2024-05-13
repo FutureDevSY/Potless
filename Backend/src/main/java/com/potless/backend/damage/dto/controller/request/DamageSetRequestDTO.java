@@ -21,6 +21,8 @@ public class DamageSetRequestDTO {
     @Setter
     private int severity;
     @Setter
+    private Double width;
+    @Setter
     private List<String> images = new ArrayList<>();
 
     @Builder
