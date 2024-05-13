@@ -34,7 +34,6 @@ public class AsyncService {
     private final ReDetectionApiService detectionApiService;
     private final DamageRepository damageRepository;
     private final H3Service h3Service;
-    private final HexagonService hexagonService;
 
     @Async
     public void setDamageAsyncMethod(DamageSetRequestDTO damageSetRequestDTO, File imageFile) throws IOException {
@@ -48,10 +47,6 @@ public class AsyncService {
             ReDetectionRequestDTO detectionRequestDTO = new ReDetectionRequestDTO(imageFile);
 
             int severityResult = detectionApiService.reDetectionResponse(detectionRequestDTO);
-<<<<<<< HEAD
-            log.info("severity = {}", severityResult);
-=======
->>>>>>> dev-BE
             damageSetRequestDTO.setSeverity(severityResult);
 
             String fileName = "AfterVerification/BeforeWork/" + System.currentTimeMillis() + "_" + imageFile.getName();
