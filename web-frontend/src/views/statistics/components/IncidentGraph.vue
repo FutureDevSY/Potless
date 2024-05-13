@@ -1,7 +1,5 @@
 <template>
-  <div>
-    <apexchart type="line" :options="chartOptions" :series="series" />
-  </div>
+  <apexchart type="line" width="100%" height="124%" :options="chartOptions" :series="series" />
 </template>
 
 <script setup>
@@ -55,7 +53,6 @@ onMounted(() => {
 
 const chartOptions = computed(() => ({
   chart: {
-    height: "320px",
     type: "line",
     stacked: false,
     animations: {
@@ -119,8 +116,6 @@ const chartOptions = computed(() => ({
   },
   legend: {
     horizontalAlign: "center",
-    offsetY: 15,
-    position: "top",
   },
   colors: ["#BCF95D", "#151c62"],
   states: {
@@ -149,3 +144,4 @@ const series = computed(() => [
   },
 ]);
 </script>
+<style scoped></style>

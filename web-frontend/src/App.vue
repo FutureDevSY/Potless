@@ -1,17 +1,50 @@
 <script setup>
 import { RouterView, useRoute } from "vue-router";
-import Navbar from "./views/common/Navbar.vue";
+import Navbar from "./views/common/Navbar2.vue";
 
 const isVisibleNavbar = () => {
-  const visibleRoutes = ["Home"];
+  const visibleRoutes = ["Home", "Login"];
   const currentRouteName = useRoute().name;
   return visibleRoutes.includes(currentRouteName);
 };
 </script>
 
 <template>
-  <Navbar v-if="!isVisibleNavbar()" />
-  <RouterView />
+  <body v-if="!isVisibleNavbar()">
+    <div class="main-layout">
+      <Navbar />
+      <RouterView />
+    </div>
+  </body>
+  <div v-else>
+    <RouterView />
+  </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+body {
+  font-family: "Nunito", sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  margin: 0;
+  background-color: #d3d5ed;
+  background-repeat: no-repeat;
+  background-size: cover;
+  box-sizing: border-box;
+}
+
+.main-layout {
+  display: grid;
+  grid-template-columns: 10% 90%;
+  width: calc(100% - 5vh);
+  height: 95vh;
+  background: rgb(254, 254, 254);
+  box-shadow: 0 0.5px 0 1px rgba(255, 255, 255, 0.23) inset,
+    0 1px 0 0 rgba(255, 255, 255, 0.66) inset, 0 4px 16px rgba(0, 0, 0, 0.12);
+  border-radius: 15px;
+  z-index: 10;
+  min-height: 0;
+}
+</style>

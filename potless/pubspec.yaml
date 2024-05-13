@@ -12,6 +12,7 @@ dependencies:
     sdk: flutter
 
   kakao_map_plugin: ^0.3.0
+  kakao_flutter_sdk_common: ^1.9.1+2
 
   cupertino_icons: ^1.0.6
   lottie: ^3.1.0
@@ -58,9 +59,7 @@ flutter:
     - assets/icons/
     - assets/lottie/
     - assets/dummy_data/
-    - assets/ai_model/train34.pt
-    - assets/ai_model/train34.txt
-    - assets/ai_model/train34.tflite
+    - assets/ai_model/
   
   fonts:
     - family: 'Hanbit'

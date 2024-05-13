@@ -1,5 +1,6 @@
 <template>
   <div class="container">
+    <img class="logo" src="../../assets/icon/weblogo.png" alt="#" />
     <div class="login-box">
       <div class="login-title">관리자 로그인</div>
       <form class="login-form" @submit.prevent="moveHome">
@@ -58,7 +59,7 @@ const doLogin = () => {
       if (res.data.status == "SUCCESS") {
         console.log(res.data.message);
         store.login(res.data, res.data.data.token);
-        store2.movePorthole();
+        store2.moveMain();
       }
     },
     (error) => {
@@ -75,8 +76,13 @@ const doLogin = () => {
   display: flex;
   align-items: center;
   flex-direction: column;
-  height: calc(100vh - 125px);
+  height: 100vh;
   background-color: #f8f8f8;
+}
+
+.logo {
+  margin-top: 3.5vh;
+  width: 22.5vw;
 }
 
 .login-box {
@@ -86,7 +92,7 @@ const doLogin = () => {
   background-color: #ffffff;
   height: 57vh;
   width: 480px;
-  margin-top: 10vh;
+  margin-top: 8vh;
   color: #373737;
   box-shadow: 0 4px 9px rgba(0, 0, 0, 0.4);
 }

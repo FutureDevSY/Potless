@@ -4,7 +4,7 @@
       ref="apexChartRef"
       type="bar"
       width="98%"
-      height="388"
+      height="95%"
       :options="chartOptions"
       :series="series"
     ></apexchart>
