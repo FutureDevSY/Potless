@@ -25,7 +25,7 @@ export const useAuthStore = defineStore(
       isLoggedIn.value = true;
       accessToken.value = userToken;
       username.value = userData.data.memberInfo.memberName;
-      areaId.value = userData.data.memberInfo.region;
+      areaId.value = userData.data.memberInfo.areaId;
       userId.value = userData.data.memberInfo.id;
       areaName.value = areaIdToName[areaId.value];
 
