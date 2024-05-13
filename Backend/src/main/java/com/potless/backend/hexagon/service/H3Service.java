@@ -1,20 +1,14 @@
 package com.potless.backend.hexagon.service;
 
 import com.uber.h3core.H3Core;
-import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
-
-@Slf4j
 @Service
+@RequiredArgsConstructor
 public class H3Service {
 
     private final H3Core h3Core;
-
-    public H3Service() throws IOException {
-        this.h3Core = H3Core.newInstance();
-    }
 
     public String getH3Index(double latitude, double longitude, int resolution) {
         long h3Index = h3Core.geoToH3(latitude, longitude, resolution);
