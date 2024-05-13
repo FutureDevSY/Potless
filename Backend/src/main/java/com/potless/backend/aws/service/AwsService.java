@@ -74,7 +74,6 @@ public class AwsService {
         return fileData;
     }
 
-
     public String moveFileToVerified(String sourceKey, String destinationKey) {
         // 파일을 새 위치로 복사
         CopyObjectRequest copyObjRequest = new CopyObjectRequest(bucketName, sourceKey, bucketName, destinationKey);

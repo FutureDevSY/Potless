@@ -15,6 +15,7 @@ import com.potless.backend.global.exception.pothole.InvalidCoordinateRangeExcept
 import com.potless.backend.global.exception.pothole.PotholeNotFoundException;
 import com.potless.backend.global.format.code.ApiResponse;
 import com.potless.backend.global.format.response.ResponseCode;
+import com.potless.backend.hexagon.service.HexagonService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -32,7 +33,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.io.File;
 import java.io.IOException;
 import java.time.YearMonth;
@@ -53,7 +53,7 @@ public class DamageController {
     private final IAreaLocationService iAreaLocationService;
     private final AsyncService asyncService;
     private final FileService fileService;
-
+    private final HexagonService hexagonService;
     @Operation(summary = "Area 리스트 가져오기", description = "Area 리스트 가져오기", responses = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = AreaResponseDTO.class)))
     })
@@ -104,9 +104,9 @@ public class DamageController {
         YearMonth startMonth = YearMonth.parse(areaDamageCountForMonthRequestDTO.getStart(), DateTimeFormatter.ofPattern("yyyy-MM"));
         YearMonth endMonth = areaDamageCountForMonthRequestDTO.getEnd() != null ? YearMonth.parse(areaDamageCountForMonthRequestDTO.getEnd(), DateTimeFormatter.ofPattern("yyyy-MM")) : startMonth;
         AreaDamageCountForMonthServiceRequestDTO serviceRequestDTO = AreaDamageCountForMonthServiceRequestDTO.builder()
-                                                                                                             .start(startMonth)
-                                                                                                             .end(endMonth)
-                                                                                                             .build();
+                .start(startMonth)
+                .end(endMonth)
+                .build();
         // 서비스 계층 호출
         AreaForMonthListResponseDTO areaDamageCountForMonth = iDamageService.getAreaDamageCountForMonth(serviceRequestDTO);
         // 결과 반환
@@ -194,18 +194,18 @@ public class DamageController {
             @RequestPart("files") List<MultipartFile> files
     ) {
         Map<String, String> fileUrlsAndKeys = files.stream()
-                                                   .map(file -> {
-                                                       try {
-                                                           String fileName = "AfterVerification/DuringWork/" + System.currentTimeMillis() + "_" + file.getOriginalFilename();
-                                                           return awsService.uploadFileToS3(file, fileName);
-                                                       } catch (IOException e) {
-                                                           log.error("Error uploading file to S3", e);
-                                                           return null;
-                                                       }
-                                                   })
-                                                   .filter(Objects::nonNull)
-                                                   .flatMap(map -> map.entrySet().stream())
-                                                   .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+                .map(file -> {
+                    try {
+                        String fileName = "AfterVerification/DuringWork/" + System.currentTimeMillis() + "_" + file.getOriginalFilename();
+                        return awsService.uploadFileToS3(file, fileName);
+                    } catch (IOException e) {
+                        log.error("Error uploading file to S3", e);
+                        return null;
+                    }
+                })
+                .filter(Objects::nonNull)
+                .flatMap(map -> map.entrySet().stream())
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
         List<String> fileUrls = new ArrayList<>(fileUrlsAndKeys.values()); // URL 리스트 추출
         try {
             iDamageService.setImageForStatus(Long.valueOf(damageId), fileUrls);
@@ -225,18 +225,18 @@ public class DamageController {
             @RequestPart("damageId") String damageId,
             @RequestPart("files") List<MultipartFile> files) {
         Map<String, String> fileUrlsAndKeys = files.stream()
-                                                   .map(file -> {
-                                                       try {
-                                                           String fileName = "AfterVerification/AfterWork/" + System.currentTimeMillis() + "_" + file.getOriginalFilename();
-                                                           return awsService.uploadFileToS3(file, fileName);
-                                                       } catch (IOException e) {
-                                                           log.error("Error uploading file to S3", e);
-                                                           return null;
-                                                       }
-                                                   })
-                                                   .filter(Objects::nonNull)
-                                                   .flatMap(map -> map.entrySet().stream())
-                                                   .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+                .map(file -> {
+                    try {
+                        String fileName = "AfterVerification/AfterWork/" + System.currentTimeMillis() + "_" + file.getOriginalFilename();
+                        return awsService.uploadFileToS3(file, fileName);
+                    } catch (IOException e) {
+                        log.error("Error uploading file to S3", e);
+                        return null;
+                    }
+                })
+                .filter(Objects::nonNull)
+                .flatMap(map -> map.entrySet().stream())
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
         List<String> fileUrls = new ArrayList<>(fileUrlsAndKeys.values()); // URL 리스트 추출
         try {
             iDamageService.setImageForStatus(Long.valueOf(damageId), fileUrls);
@@ -269,32 +269,32 @@ public class DamageController {
         }
         // 비동기로 처리하고 바로 응답 반환 검증
         kakaoService.fetchKakaoData(request.getX(), request.getY())
-                    .thenAcceptAsync(data -> {
-                        RoadAddress roadAddress = data.getDocuments().get(0).getRoad_address();
-                        Address address = data.getDocuments().get(0).getAddress();
-                        String addressName = (address != null) ? address.getAddress_name() : roadAddress.getAddress_name();
-                        String location = (address != null) ? address.getRegion_3depth_name() : "정보가 존재하지 않습니다";
-                        String area = (address != null) ? address.getRegion_2depth_name() : roadAddress.getRegion_2depth_name();
-                        DamageSetRequestDTO damageSetRequestDTO = DamageSetRequestDTO.builder()
-                                                                                     .dtype(request.getType())
-                                                                                     .x(request.getX())
-                                                                                     .y(request.getY())
-                                                                                     .build();
-                        damageSetRequestDTO.setImages(Collections.singletonList("https://mine702-amazon-s3.s3.ap-northeast-2.amazonaws.com/Default/default.jpg"));
-                        DamageSetRequestServiceDTO serviceDTO = DamageSetRequestServiceDTO.builder()
-                                                                                          .dirX(damageSetRequestDTO.getX())
-                                                                                          .dirY(damageSetRequestDTO.getY())
-                                                                                          .dtype(damageSetRequestDTO.getDtype())
-                                                                                          .width(0.0)
-                                                                                          .address(addressName)
-                                                                                          .severity(request.getSeverity())
-                                                                                          .status(Status.작업전)
-                                                                                          .area(area)
-                                                                                          .location(location)
-                                                                                          .images(damageSetRequestDTO.getImages())
-                                                                                          .build();
-                        iDamageService.setDamage(serviceDTO);
-                    });
+                .thenAcceptAsync(data -> {
+                    RoadAddress roadAddress = data.getDocuments().get(0).getRoad_address();
+                    Address address = data.getDocuments().get(0).getAddress();
+                    String addressName = (address != null) ? address.getAddress_name() : roadAddress.getAddress_name();
+                    String location = (address != null) ? address.getRegion_3depth_name() : "정보가 존재하지 않습니다";
+                    String area = (address != null) ? address.getRegion_2depth_name() : roadAddress.getRegion_2depth_name();
+                    DamageSetRequestDTO damageSetRequestDTO = DamageSetRequestDTO.builder()
+                            .dtype(request.getType())
+                            .x(request.getX())
+                            .y(request.getY())
+                            .build();
+                    damageSetRequestDTO.setImages(Collections.singletonList("https://mine702-amazon-s3.s3.ap-northeast-2.amazonaws.com/Default/default.jpg"));
+                    DamageSetRequestServiceDTO serviceDTO = DamageSetRequestServiceDTO.builder()
+                            .dirX(damageSetRequestDTO.getX())
+                            .dirY(damageSetRequestDTO.getY())
+                            .dtype(damageSetRequestDTO.getDtype())
+                            .width(0.0)
+                            .address(addressName)
+                            .severity(request.getSeverity())
+                            .status(Status.작업전)
+                            .area(area)
+                            .location(location)
+                            .images(damageSetRequestDTO.getImages())
+                            .build();
+                    iDamageService.setDamage(serviceDTO);
+                });
         return response.success(ResponseCode.POTHOLE_DETECTED);
     }
     @Operation(summary = "Damage 삽입", description = "Damage를 삽입합니다.", responses = {
@@ -314,16 +314,15 @@ public class DamageController {
             throw new InvalidCoordinateRangeException();
         }
         DamageSetRequestDTO damageSetRequestDTO = DamageSetRequestDTO.builder()
-                                                                     .dtype(dtype)
-                                                                     .x(xValue)
-                                                                     .y(yValue)
-                                                                     .build();
-
+                .dtype(dtype)
+                .x(xValue)
+                .y(yValue)
+                .build();
         // file로 변환된 형태를 넘겨줘야 참조가 가능함
         File imageFile = fileService.convertAndSaveFile(files.get(0));
-
         CompletableFuture<Void> future = asyncService.setDamageAsyncMethod(damageSetRequestDTO, imageFile);
         future.join();
+
         return response.success(ResponseCode.POTHOLE_DETECTED);
     }
 }
