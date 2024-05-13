@@ -144,9 +144,16 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         log.error("UnauthorizedRequestException = {}", e.getErrorCode().getMessage());
         return response.error(e.getErrorCode());
     }
+
     @ExceptionHandler(PotholeDetectionFailException.class)
     protected ResponseEntity<?> handle(PotholeDetectionFailException e) {
         log.error("PotholeDetectionFailException = {}", e.getErrorCode().getMessage());
+        return response.error(e.getErrorCode());
+    }
+
+    @ExceptionHandler(DuplPotholeException.class)
+    protected ResponseEntity<?> handle(DuplPotholeException e) {
+        log.error("DuplPotholeException = {}", e.getErrorCode().getMessage());
         return response.error(e.getErrorCode());
     }
 

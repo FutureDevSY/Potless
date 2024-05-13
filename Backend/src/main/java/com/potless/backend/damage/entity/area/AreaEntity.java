@@ -21,14 +21,15 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class AreaEntity extends BaseEntity {
 
-    @Column(name = "area_pothole_cnt", nullable = false)
-    private Long potholeCnt = 0L;
     @Id
     @Column(name = "area_id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(name = "area_gu", nullable = false)
     private String areaGu;
+    @Column(name = "area_pothole_cnt", nullable = false)
+    private Long potholeCnt = 0L;
+
     @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, mappedBy = "areaEntity")
     private List<ManagerEntity> managerEntities = new ArrayList<>();
 
