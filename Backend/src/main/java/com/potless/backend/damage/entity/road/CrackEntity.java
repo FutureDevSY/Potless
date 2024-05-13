@@ -22,6 +22,7 @@ public class CrackEntity extends DamageEntity {
 
     @Builder
     @QueryProjection
+
     public CrackEntity(Long id, Integer severity, Double dirX, Double dirY, String address, Double width, Status status, AreaEntity areaEntity, LocationEntity locationEntity, HexagonEntity hexagonEntity, List<ImageEntity> imageEntities, String dtype) {
         super(id, severity, dirX, dirY, address, width, status, areaEntity, locationEntity, hexagonEntity, imageEntities, dtype);
     }

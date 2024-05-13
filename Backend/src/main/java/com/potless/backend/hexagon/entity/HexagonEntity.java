@@ -15,21 +15,22 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "hexagon")
 public class HexagonEntity {
+
     @Id
+    @Column(name = "hexagon_id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(length = 50, nullable = false)
-    private Double latitude;
-    @Column(length = 50, nullable = false)
-    private Double longitude;
+
+    @Column(name = "hexagon_index")
+    private String hexagonIndex;
+
     @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST}, mappedBy = "hexagonEntity")
     private List<DamageEntity> damageEntities = new ArrayList<>();
 
     @Builder
-    public HexagonEntity(Long id, Double latitude, Double longitude, List<DamageEntity> damageEntities) {
+    public HexagonEntity(Long id, String hexagonIndex, List<DamageEntity> damageEntities) {
         this.id = id;
-        this.latitude = latitude;
-        this.longitude = longitude;
+        this.hexagonIndex = hexagonIndex;
         this.damageEntities = damageEntities;
     }
 }

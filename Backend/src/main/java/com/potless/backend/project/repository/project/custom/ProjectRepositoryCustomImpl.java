@@ -105,6 +105,7 @@ public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
                 projectEntity.getManagerEntity().getMemberEntity().getMemberName(),
                 teamName,
                 projectEntity.getProjectSize(),
+                projectEntity.getProjectDate(),
                 damageResponses
         );
     }

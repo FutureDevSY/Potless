@@ -36,9 +36,6 @@ public class MemberEntity extends MemberBaseEntity {
     @Column(name = "member_password", nullable = false)
     private String password;
 
-    @Column(name = "member_region")
-    private Integer region;
-
     @OneToOne(mappedBy = "memberEntity", fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE, CascadeType.PERSIST}, orphanRemoval = true)
     private ManagerEntity managerEntity;
 
