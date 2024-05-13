@@ -42,7 +42,11 @@ const navItems = [
   { name: "홈", icon: "fa fa-house", action: store.moveMain },
   { name: "포트홀 조회", icon: "fa fa-user", action: store.movePorthole },
   { name: "작업 정보", icon: "fa fa-calendar-check", action: store.moveTask },
-  { name: "통계 자료", icon: "fa fa-person-running", action: store.moveStatistics },
+  {
+    name: "통계 자료",
+    icon: "fa fa-person-running",
+    action: store.moveStatistics,
+  },
 ];
 
 function setActiveNavItem(index) {
@@ -67,16 +71,16 @@ const clickLogout = () => {
       if (res.data.status == "SUCCESS") {
         console.log(res.data.message);
         store2.logoutfc();
-        store.moveHome();
+        store.moveLogin();
       } else {
         store2.logoutfc();
-        store.moveHome();
+        store.moveLogin();
         console.log(res);
       }
     },
     (error) => {
       store2.logoutfc();
-      store.moveHome();
+      store.moveLogin();
       console.log(error.response.data.message);
     }
   );
