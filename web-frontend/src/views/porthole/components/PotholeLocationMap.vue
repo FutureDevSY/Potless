@@ -97,7 +97,7 @@ watch(
 
 <style scoped>
 .map {
-  width: 40.3vw;
+  width: 37.3vw;
   height: 70.5vh;
   margin-top: 0px;
   border: 2px solid rgb(223, 223, 223);
