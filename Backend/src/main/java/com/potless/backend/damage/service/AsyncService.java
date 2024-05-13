@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
@@ -38,7 +39,7 @@ public class AsyncService {
     private final H3Service h3Service;
 
     @Async
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public void setDamageAsyncMethod(DamageSetRequestDTO damageSetRequestDTO, File imageFile) throws IOException {
         try {
             int res = 13;
