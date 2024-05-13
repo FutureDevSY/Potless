@@ -10,7 +10,10 @@
           <div>리포트 현황</div>
           <ReportList />
         </div>
-        <div class="map-containers"><div>지역별 현황</div></div>
+        <div class="map-containers">
+          <div>지역별 현황</div>
+          <SVG></SVG>
+        </div>
       </div>
     </div>
     <div class="right-box">
@@ -22,6 +25,7 @@
 import Weather from "./components/Weather.vue";
 import CurrentStats from "./components/CurrentStats.vue";
 import ReportList from "./components/TaskList.vue";
+import SVG from "./components/SVG.vue";
 </script>
 <style scoped>
 .main-box {
