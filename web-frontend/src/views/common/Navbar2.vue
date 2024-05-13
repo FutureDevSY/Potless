@@ -137,7 +137,7 @@ img {
   align-items: center;
   justify-content: center;
   color: #fff;
-  font-size: 2vh;
+  font-size: 1.9vh;
   font-weight: bold;
   padding: 2.2vh 12px;
   margin-left: 20px;
@@ -218,7 +218,7 @@ img {
 }
 
 .nav-item a:hover {
-  font-size: 2.25vh;
+  font-size: 2.1vh;
 }
 
 #logout-btn {
@@ -227,7 +227,7 @@ img {
   left: 2.45%;
   width: 7.5%;
   padding: 1.5vh 0vw;
-  font-size: 2.2vh;
+  font-size: 1.9vh;
   text-decoration: none;
   border-radius: 5px;
   border: 1px solid #ffffff;
