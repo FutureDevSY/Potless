@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import Home from "../views/home/Home.vue";
 import Login from "../views/auth/Login.vue";
+import Main from "../views/main/Main.vue";
 
 import PortholeList from "../views/porthole/PortholeList.vue";
 import PortholeDetail from "../views/porthole/PortholeDetail.vue";
@@ -10,8 +11,6 @@ import Statistics from "../views/statistics/Statistics.vue";
 
 import TaskInfo from "../views/task/TaskInfo.vue";
 import TaskInfoDetail from "../views/task/TaskInfoDetail.vue";
-
-import Test from "../views/home/Test.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -26,6 +25,12 @@ const router = createRouter({
       path: "/auth/login",
       name: "Login",
       component: Login,
+      props: true,
+    },
+    {
+      path: "/main",
+      name: "Main",
+      component: Main,
       props: true,
     },
     {
@@ -62,12 +67,6 @@ const router = createRouter({
       path: "/taskinfo/:id",
       name: "TaskInfoDetail",
       component: TaskInfoDetail,
-      props: true,
-    },
-    {
-      path: "/test",
-      name: "Test",
-      component: Test,
       props: true,
     },
   ],

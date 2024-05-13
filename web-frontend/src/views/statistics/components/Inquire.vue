@@ -22,11 +22,11 @@ const props = defineProps({
   justify-content: space-between;
   border: 1px solid #e0e0e0;
   border-radius: 10px;
-  margin: 0px 0px 10px 50px;
+  margin: 0px 0px 10px 40px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
   background-color: #fff;
-  width: 300px;
-  padding: 14px;
+  width: 250px;
+  padding: 2.3vh 3vh;
   transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
 }
 
@@ -43,13 +43,13 @@ const props = defineProps({
 }
 
 .data-title {
-  font-size: 18px;
+  font-size: 2vh;
   color: #717171;
   font-weight: 600;
 }
 
 .data-number {
-  font-size: 22px;
+  font-size: 2.2vh;
   font-weight: bold;
   color: #373737;
 }

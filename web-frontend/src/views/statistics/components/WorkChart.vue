@@ -1,5 +1,12 @@
 <template>
-  <apexchart :key="chartKey" type="donut" :options="chartOptions" :series="chartSeries" />
+  <apexchart
+    :key="chartKey"
+    width="100%"
+    height="112%"
+    type="donut"
+    :options="chartOptions"
+    :series="chartSeries"
+  />
 </template>
 
 <script setup>

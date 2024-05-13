@@ -100,7 +100,7 @@ const tooltipText = computed(() => {
   justify-content: space-between;
   border: 1px solid #ccc;
   border-radius: 10px;
-  padding: 25px 30px;
+  padding: 13% 13%;
   margin: 0px 10px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   background-color: #fff;
@@ -113,7 +113,7 @@ const tooltipText = computed(() => {
 
 .updown-icon {
   padding-top: 4px;
-  width: 15px;
+  width: 20px;
   height: auto;
 }
 
@@ -134,16 +134,17 @@ const tooltipText = computed(() => {
 }
 
 .data-title {
-  font-size: 17px;
+  font-size: 2vh;
+  transform: translateY(-5%);
 }
 
 .data-number {
-  font-size: 20px;
+  font-size: 2.2vh;
   font-weight: bold;
 }
 
 .data-percent {
-  font-size: 16px;
+  font-size: 2vh;
   position: relative;
   padding-bottom: 1px;
   cursor: help;
@@ -155,7 +156,7 @@ const tooltipText = computed(() => {
   left: 0;
   bottom: 0;
   width: 100%;
-  height: 1px;
+  height: 2px;
   background-color: #d8d8d8;
   transition: background-color 0.3s ease;
 }
@@ -170,9 +171,10 @@ const tooltipText = computed(() => {
   color: white;
   text-align: center;
   border-radius: 6px;
-  padding: 5px 10px;
+  padding: 10% 15%;
   position: absolute;
   z-index: 4;
+  font-size: 2vh;
   top: 120%;
   left: 50%;
   transform: translateX(-50%);

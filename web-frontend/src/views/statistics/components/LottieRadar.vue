@@ -1,5 +1,5 @@
 <template>
-  <div ref="lottieContainer" style="width: 5%; height: 5%"></div>
+  <div ref="lottieContainer" style="width: 100%; height: 100%"></div>
 </template>
 
 <script setup>
