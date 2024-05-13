@@ -88,6 +88,7 @@ public class MemberServiceImpl implements MemberService {
                         .role(member.getRole())
                         .email(member.getEmail())
                         .phone(member.getPhone())
+                        .areaId(member.getArea().getId())
                         .build())
                 .build();
     }
