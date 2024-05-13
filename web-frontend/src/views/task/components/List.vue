@@ -29,7 +29,7 @@
               {{ porthole.severity }}
             </div>
           </td>
-          <td>{{ porthole.dtype }}</td>
+          <td>{{ dtypeDisplay(porthole.dtype) }}</td>
           <td>{{ porthole.location }}</td>
           <td>{{ porthole.address }}</td>
           <td>{{ porthole.width }}</td>
@@ -78,6 +78,19 @@ const dangerClass = (danger) => {
       return "safe";
     default:
       return "";
+  }
+};
+
+const dtypeDisplay = (dtype) => {
+  switch (dtype) {
+    case "POTHOLE":
+      return "포트홀";
+    case "CRACK":
+      return "도로균열";
+    case "WORNOUT":
+      return "도로마모";
+    default:
+      return "알 수 없는 유형";
   }
 };
 
