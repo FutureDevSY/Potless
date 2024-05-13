@@ -74,22 +74,6 @@ public class AwsService {
         return fileData;
     }
 
-    public Map<String, String> uploadFileToS3(File localFile, String fileName) throws IOException {
-        s3Client.putObject(new PutObjectRequest(bucketName, fileName, localFile));
-        try {
-            Files.delete(localFile.toPath());
-            log.info("Temporary file deleted successfully: {}", localFile.getPath());
-        } catch (IOException e) {
-            log.error("Failed to delete temporary file: {}", localFile.getPath(), e);
-        }
-
-        String fileUrl = s3Client.getUrl(bucketName, fileName).toString();
-        Map<String, String> fileData = new HashMap<>();
-        fileData.put(fileName, fileUrl);
-        return fileData;
-    }
-
-
     public String moveFileToVerified(String sourceKey, String destinationKey) {
         // 파일을 새 위치로 복사
         CopyObjectRequest copyObjRequest = new CopyObjectRequest(bucketName, sourceKey, bucketName, destinationKey);
