@@ -14,4 +14,5 @@ public class MemberInfo {
     private String email;
     private String phone;
     private Long areaId;
+
 }

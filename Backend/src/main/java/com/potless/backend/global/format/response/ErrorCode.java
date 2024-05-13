@@ -74,7 +74,8 @@ public enum ErrorCode {
     FAILED_TO_UPLOAD(HttpStatus.INTERNAL_SERVER_ERROR, "S3 이미지 저장에 실패했습니다."),
 
     // Hexagon 예외 처리
-    HEXAGON_NOT_FOUND(HttpStatus.UNAUTHORIZED,"Hexagon 정보를 찾을 수 없습니다.");
+    HEXAGON_NOT_FOUND(HttpStatus.UNAUTHORIZED,"Hexagon 정보를 찾을 수 없습니다."),
+    DUPL_POTHOLE(HttpStatus.UNAUTHORIZED,"중복된 포트홀입니다.");
 
     private final HttpStatus status;
     private final String message;

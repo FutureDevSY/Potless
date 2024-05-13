@@ -62,7 +62,6 @@ public abstract class DamageEntity extends BaseEntity {
     @Column(name = "dtype", insertable = false, updatable = false)
     private String dtype;
 
-
     public DamageEntity(Long id, Integer severity, Double dirX, Double dirY, String address, Double width, Status status, AreaEntity areaEntity, LocationEntity locationEntity, HexagonEntity hexagonEntity, List<ImageEntity> imageEntities, String dtype) {
         this.id = id;
         this.severity = severity;

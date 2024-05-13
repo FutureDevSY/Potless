@@ -23,6 +23,8 @@ public class DamageSetRequestServiceDTO {
     private List<String> images;
     private String dtype;
 
+    @Setter
+    private String hexagonIndex;
 
     @Builder
     public DamageSetRequestServiceDTO(Long id, Integer severity, Double dirX, Double dirY, String address, Double width, Status status, String area, String location, List<String> images, String dtype) {
@@ -38,4 +40,5 @@ public class DamageSetRequestServiceDTO {
         this.images = images;
         this.dtype = dtype;
     }
+
 }

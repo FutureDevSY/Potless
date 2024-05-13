@@ -14,7 +14,10 @@ import com.potless.backend.damage.entity.area.AreaEntity;
 import com.potless.backend.damage.entity.area.QAreaEntity;
 import com.potless.backend.damage.entity.area.QLocationEntity;
 import com.potless.backend.damage.entity.enums.Status;
-import com.potless.backend.damage.entity.road.*;
+import com.potless.backend.damage.entity.road.QCrackEntity;
+import com.potless.backend.damage.entity.road.QDamageEntity;
+import com.potless.backend.damage.entity.road.QImageEntity;
+import com.potless.backend.damage.entity.road.QPotholeEntity;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
@@ -174,14 +177,15 @@ public class DamageRepositoryCustomImpl implements DamageRepositoryCustom {
     }
 
     @Override
-    public List<DamageEntity> findDamageByHexagonIdAndDtype(Long hexagonId, String dtype) {
+    public boolean findDamageByHexagonIndexAndDtype(String hexagonIndex, String dtype) {
         QDamageEntity damage = QDamageEntity.damageEntity;
 
         return queryFactory
-                .selectFrom(damage)
-                .where(damage.hexagonEntity.id.eq(hexagonId)
+                .selectOne()
+                .from(damage)
+                .where(damage.hexagonEntity.hexagonIndex.eq(hexagonIndex)
                         .and(damage.dtype.eq(dtype)))
-                .fetch();
+                .fetchFirst() != null;
     }
 
     @Override

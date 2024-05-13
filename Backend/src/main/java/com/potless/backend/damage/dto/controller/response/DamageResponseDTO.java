@@ -87,7 +87,4 @@ public class DamageResponseDTO {
         this.createdDateTime = damageEntity.getCreatedDateTime();
     }
 
-
-
-
 }
