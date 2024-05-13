@@ -4,34 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b20a1863-9606-482e-b0d4-8130e6ff2f40" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/../Backend/src/main/java/com/potless/backend/global/H3/test.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Backend/src/main/java/com/potless/backend/global/H3/test2.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Backend/src/main/java/com/potless/backend/global/config/H3Config.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Backend/src/main/java/com/potless/backend/global/config/H3ConfigTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Backend/src/main/java/com/potless/backend/global/exception/hexagon/HexagonNotFoundException.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Backend/src/main/java/com/potless/backend/global/exception/pothole/DuplPotholeException.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Backend/src/main/java/com/potless/backend/hexagon/controller/HexagonController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Backend/src/main/java/com/potless/backend/hexagon/dto/requestDto/HexagonRequestDto.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Backend/src/main/java/com/potless/backend/hexagon/dto/responseDto/HexagonResponseDto.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Backend/src/main/java/com/potless/backend/hexagon/entity/HexagonEntity.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Backend/src/main/java/com/potless/backend/hexagon/repository/HexagonRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Backend/src/main/java/com/potless/backend/hexagon/service/HexagonService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Backend/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/../Backend/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Backend/src/main/java/com/potless/backend/aws/service/AwsService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Backend/src/main/java/com/potless/backend/aws/service/AwsService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Backend/src/main/java/com/potless/backend/damage/controller/DamageController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Backend/src/main/java/com/potless/backend/damage/controller/DamageController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Backend/src/main/java/com/potless/backend/damage/entity/road/CrackEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Backend/src/main/java/com/potless/backend/damage/entity/road/CrackEntity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Backend/src/main/java/com/potless/backend/damage/entity/road/DamageEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Backend/src/main/java/com/potless/backend/damage/entity/road/DamageEntity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Backend/src/main/java/com/potless/backend/damage/entity/road/PotholeEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Backend/src/main/java/com/potless/backend/damage/entity/road/PotholeEntity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Backend/src/main/java/com/potless/backend/damage/repository/DamageRepositoryCustom.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Backend/src/main/java/com/potless/backend/damage/repository/DamageRepositoryCustom.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Backend/src/main/java/com/potless/backend/damage/repository/DamageRepositoryCustomImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Backend/src/main/java/com/potless/backend/damage/repository/DamageRepositoryCustomImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Backend/src/main/java/com/potless/backend/damage/service/AsyncService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Backend/src/main/java/com/potless/backend/damage/service/AsyncService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Backend/src/main/java/com/potless/backend/global/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Backend/src/main/java/com/potless/backend/global/config/SecurityConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Backend/src/main/java/com/potless/backend/global/format/response/ErrorCode.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Backend/src/main/java/com/potless/backend/global/format/response/ErrorCode.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Backend/src/main/java/com/potless/backend/global/format/response/ResponseCode.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Backend/src/main/java/com/potless/backend/global/format/response/ResponseCode.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../web-frontend/.env" beforeDir="false" afterPath="$PROJECT_DIR$/../web-frontend/.env" afterDir="false" />
-    </list>
+    <list default="true" id="b20a1863-9606-482e-b0d4-8130e6ff2f40" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
