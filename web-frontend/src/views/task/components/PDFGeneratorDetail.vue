@@ -17,9 +17,9 @@
           <div :style="severityStyle">
             {{
               props.pothole.severity === 1
-                ? "안전"
+                ? "양호"
                 : props.pothole.severity === 2
-                ? "위험"
+                ? "주의"
                 : props.pothole.severity === 3
                 ? "심각"
                 : "Unknown"
@@ -41,13 +41,6 @@
         <div>
           {{ props.pothole.location }} {{ props.pothole.area }}
           {{ props.pothole.roadName }}
-        </div>
-      </div>
-      <div class="direct info">
-        <div>위경도 좌표:</div>
-        <div class="coordinates">
-          <div>x: {{ props.pothole.dirX }}</div>
-          <div>y: {{ props.pothole.dirY }}</div>
         </div>
       </div>
       <div class="info">
