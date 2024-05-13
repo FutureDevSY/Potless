@@ -1,7 +1,7 @@
 <template>
   <main>
     <nav class="main-menu">
-      <div class="logo">
+      <div @click="handleLogoClick" class="logo">
         <img src="../../assets/icon/weblogo-b.png" alt="#" />
       </div>
       <ul>
@@ -42,7 +42,11 @@ const navItems = [
   { name: "홈", icon: "fa fa-house", action: store.moveMain },
   { name: "포트홀 조회", icon: "fa fa-user", action: store.movePorthole },
   { name: "작업 정보", icon: "fa fa-calendar-check", action: store.moveTask },
-  { name: "통계 자료", icon: "fa fa-person-running", action: store.moveStatistics },
+  {
+    name: "통계 자료",
+    icon: "fa fa-person-running",
+    action: store.moveStatistics,
+  },
 ];
 
 function setActiveNavItem(index) {
@@ -55,6 +59,11 @@ function handleClick(index) {
   navItems[index].action();
 }
 
+function handleLogoClick() {
+  setActiveNavItem(0);
+  store.moveMain();
+}
+
 const clickLogout = () => {
   logout(
     accessToken.value,
@@ -62,16 +71,16 @@ const clickLogout = () => {
       if (res.data.status == "SUCCESS") {
         console.log(res.data.message);
         store2.logoutfc();
-        store.moveHome();
+        store.moveLogin();
       } else {
         store2.logoutfc();
-        store.moveHome();
+        store.moveLogin();
         console.log(res);
       }
     },
     (error) => {
       store2.logoutfc();
-      store.moveHome();
+      store.moveLogin();
       console.log(error.response.data.message);
     }
   );
@@ -119,6 +128,7 @@ nav ul li a {
   justify-content: center;
   width: 100%;
   margin: 4vh auto 4vh auto;
+  cursor: pointer;
 }
 
 img {
@@ -219,10 +229,6 @@ img {
 .nav-item a:click {
   background-color: #ffffff;
   color: black;
-}
-
-.nav-item a:hover {
-  font-size: 2.1vh;
 }
 
 #logout-btn {

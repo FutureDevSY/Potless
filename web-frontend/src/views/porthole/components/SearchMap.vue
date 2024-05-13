@@ -1,19 +1,18 @@
 <template>
-  <div class="map-container">
-    <div class="search-container">
-      <input
-        type="text"
-        v-model="query"
-        @keyup.enter="searchAddress"
-        placeholder="검색어 입력"
-      />
-      <ul v-if="results.length > 0">
-        <li v-for="item in results" :key="item.id" @click="findLocation(item)">
-          {{ item.place_name }} - {{ item.address_name }}
-        </li>
-      </ul>
+  <div class="maps-container">
+    <div class="inputs-group">
+      <div class="inputs-title">위험물의 주소/위치를 입력해 주세요 :</div>
+      <div class="search-container">
+        <input type="text" v-model="query" @keyup.enter="searchAddress" placeholder="주소/위치" />
+        <ul v-if="results.length > 0">
+          <li v-for="item in results" :key="item.id" @click="findLocation(item)">
+            {{ item.place_name }} - {{ item.address_name }}
+          </li>
+        </ul>
+      </div>
     </div>
-    <div id="map" style="width: 100%; height: 400px"></div>
+
+    <div id="map" style="width: 98%; height: 400px"></div>
   </div>
 </template>
 
@@ -94,43 +93,54 @@ const findLocation = (item) => {
 </script>
 
 <style scoped>
-.map-container {
-  display: flex;
+.maps-container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  /* display: flex;
   max-width: 100%;
   margin: auto;
   max-height: 600px;
-  align-items: start;
+  align-items: start; */
 }
-#map {
-  max-width: 400px;
+
+input {
+  margin: 10px;
+  width: 150px;
+  height: 4.5vh;
+  border-radius: 5px;
+  font-size: 1.8vh;
+  border: 1px solid rgb(91, 91, 91);
+  padding: 0vh 0vw 0 3vw;
 }
 
 .search-container {
-  width: 500px;
+  z-index: 10;
 }
 
 .search-container ul {
-  list-style: none;
-  padding-left: 0;
-  max-height: 500px;
+  height: 40vh;
+  position: absolute;
+  top: 7%;
+  left: 130px;
+  width: 80%;
   overflow-y: auto;
-  margin-top: 10px;
+  padding-left: 0;
 }
 
 .search-container li {
   background-color: #f9f9f9;
-  border-bottom: 1px solid #ccc;
-  padding: 8px;
+  padding: 2.5vh 2vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   transition: background-color 0.3s;
+  border: 1px solid rgb(131, 131, 131);
 }
 
 .search-container li:hover {
   background-color: #f1f1f1;
   cursor: pointer;
-}
-
-.search-container li:last-child {
-  border-bottom: none;
 }
 
 .search-container li a {
@@ -139,7 +149,14 @@ const findLocation = (item) => {
   display: block;
 }
 
-.search-container li a:hover {
-  color: #000;
+.inputs-group {
+  display: flex;
+  align-items: center;
+}
+.inputs-title {
+  width: 100%;
+  font-size: 2vh;
+  font-weight: 500;
+  color: #373737;
 }
 </style>
