@@ -4,6 +4,7 @@ import com.potless.backend.damage.entity.area.AreaEntity;
 import com.potless.backend.damage.entity.area.LocationEntity;
 import com.potless.backend.damage.entity.enums.Status;
 import com.potless.backend.global.entity.BaseEntity;
+import com.potless.backend.hexagon.entity.HexagonEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -51,13 +52,18 @@ public abstract class DamageEntity extends BaseEntity {
     @JoinColumn(name = "location_id")
     private LocationEntity locationEntity;
 
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST})
+    @JoinColumn(name = "hexagon_id")
+    private HexagonEntity hexagonEntity;
+
     @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, mappedBy = "damageEntity")
     private List<ImageEntity> imageEntities = new ArrayList<>();
 
     @Column(name = "dtype", insertable = false, updatable = false)
     private String dtype;
 
-    public DamageEntity(Long id, Integer severity, Double dirX, Double dirY, String address, Double width, Status status, AreaEntity areaEntity, LocationEntity locationEntity, List<ImageEntity> imageEntities, String dtype) {
+
+    public DamageEntity(Long id, Integer severity, Double dirX, Double dirY, String address, Double width, Status status, AreaEntity areaEntity, LocationEntity locationEntity, HexagonEntity hexagonEntity, List<ImageEntity> imageEntities, String dtype) {
         this.id = id;
         this.severity = severity;
         this.dirX = dirX;
@@ -67,6 +73,7 @@ public abstract class DamageEntity extends BaseEntity {
         this.status = status;
         this.areaEntity = areaEntity;
         this.locationEntity = locationEntity;
+        this.hexagonEntity = hexagonEntity;
         this.imageEntities = imageEntities;
         this.dtype = dtype;
     }

@@ -7,7 +7,12 @@ import com.potless.backend.damage.dto.service.request.ReDetectionRequestDTO;
 import com.potless.backend.damage.dto.service.response.kakao.Address;
 import com.potless.backend.damage.dto.service.response.kakao.RoadAddress;
 import com.potless.backend.damage.entity.enums.Status;
+import com.potless.backend.damage.entity.road.DamageEntity;
+import com.potless.backend.damage.repository.DamageRepository;
+import com.potless.backend.global.exception.pothole.DuplPotholeException;
 import com.potless.backend.global.exception.pothole.PotholeNotFoundException;
+import com.potless.backend.hexagon.service.HexagonService;
+import com.uber.h3core.H3Core;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
@@ -31,38 +36,30 @@ public class AsyncService {
     private final KakaoService kakaoService;
     private final AwsService awsService;
     private final ReDetectionApiService detectionApiService;
-    private final FileService fileService;
+    private final DamageRepository damageRepository;
+    private final H3Core h3;
 
     @Async
     public CompletableFuture<Void> setDamageAsyncMethod(DamageSetRequestDTO damageSetRequestDTO, File imageFile) throws IOException {
         return CompletableFuture.runAsync(() -> {
-            //중복 처리
+
+            //중복처리
+            int res = 13;
+            Long hexagonId = h3.latLngToCell(damageSetRequestDTO.getX(), damageSetRequestDTO.getY(), res);
+            List<DamageEntity> damageEntities = damageRepository.findDamageByHexagonIdAndDtype(hexagonId, damageSetRequestDTO.getDtype());
+
+            if (!damageEntities.isEmpty()) {
+                throw new DuplPotholeException();
+            }
 
             //file -> multipartFile 변환
             try {
-//                MultipartFile imageMultipartFile = fileService.fileToMultipartFile(imageFile);
-//                MultipartFile labelMultipartFile = fileService.fileToMultipartFile(labelFile);
-
                 //fastApi 2차 탐지 요청 수행 및 결과 반환
                 ReDetectionRequestDTO detectionRequestDTO = new ReDetectionRequestDTO(imageFile);
 
                 int severityResult = detectionApiService.reDetectionResponse(detectionRequestDTO);
                 log.info("severity = {}", severityResult);
                 damageSetRequestDTO.setSeverity(severityResult);
-
-//                 Map<String, String> fileUrlsAndKeys = files.stream()
-//                    .map(file -> {
-//                        try {
-//                            String fileName = "AfterVerification/BeforeWork/" + System.currentTimeMillis() + "_" + file.getOriginalFilename();
-//                            return awsService.uploadFileToS3(file, fileName);
-//                        } catch (IOException e) {
-//                            log.error("Error uploading file to S3", e);
-//                            return null;
-//                        }
-//                    })
-//                    .filter(Objects::nonNull)
-//                    .flatMap(map -> map.entrySet().stream())
-//                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
                 String fileName = "AfterVerification/BeforeWork/" + System.currentTimeMillis() + "_" + imageFile.getName();
                 Map<String, String> fileUrlAndKey = awsService.uploadFileToS3(imageFile, fileName);
