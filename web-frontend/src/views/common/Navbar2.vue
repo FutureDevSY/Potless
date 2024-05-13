@@ -144,8 +144,7 @@ img {
   border-top-left-radius: 40px;
   border-bottom-left-radius: 40px;
   z-index: 10;
-  transition-property: background-color, color, font-size;
-  transition-duration: 0.5s;
+  transition: all 0.3s ease-out;
 }
 
 .nav-item b:nth-child(1) {
@@ -154,6 +153,7 @@ img {
   height: 1.4vh;
   width: 100%;
   background: #fff;
+
   display: none;
 }
 
@@ -194,6 +194,10 @@ img {
 }
 
 .nav-item.active a {
+  background: linear-gradient(to right, #151c62 50%, white 50%);
+  background-size: 200% 120%;
+  background-position: right bottom;
+  transition: all 0.3s ease-out;
   background-color: #ffffff;
   text-decoration: none;
   color: #555555;
@@ -228,6 +232,7 @@ img {
   width: 7.5%;
   padding: 1.5vh 0vw;
   font-size: 1.9vh;
+  font-weight: bold;
   text-decoration: none;
   border-radius: 5px;
   border: 1px solid #ffffff;

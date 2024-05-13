@@ -173,12 +173,12 @@ watch(weather, updateWeatherImage);
 }
 .info-container {
   display: grid;
-  grid-template-columns: 62% 38%;
+  grid-template-columns: 53% 47%;
 }
 .weather-img {
   display: flex;
   height: 15vh;
-  padding: 0vh 0vh 0vh 2vw;
+  padding: 0vh 0vh 0vh 1vw;
 }
 .weather-info {
   color: white;
