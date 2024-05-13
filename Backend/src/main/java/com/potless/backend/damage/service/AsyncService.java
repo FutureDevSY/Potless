@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,6 +27,7 @@ import java.util.Map;
 @Service
 @EnableAsync
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class AsyncService {
 
     private final IDamageService iDamageService;
@@ -36,6 +38,7 @@ public class AsyncService {
     private final H3Service h3Service;
 
     @Async
+    @Transactional
     public void setDamageAsyncMethod(DamageSetRequestDTO damageSetRequestDTO, File imageFile) throws IOException {
         try {
             int res = 13;
