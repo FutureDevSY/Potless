@@ -39,7 +39,7 @@
           </td> -->
           <td class="dangers-column">
             <div class="danger-type" :class="dangerClass(pothole.severity)">
-              <p>{{ pothole.severity }}</p>
+              <p>{{ dangerClass2(pothole.severity) }}</p>
             </div>
           </td>
           <td>{{ displayType(pothole.dtype) }}</td>
@@ -131,6 +131,19 @@ const dangerClass = (danger) => {
       return "cautious";
     case 1:
       return "safe";
+    default:
+      return "";
+  }
+};
+
+const dangerClass2 = (danger) => {
+  switch (danger) {
+    case 3:
+      return "심각";
+    case 2:
+      return "주의";
+    case 1:
+      return "양호";
     default:
       return "";
   }
@@ -242,7 +255,7 @@ p {
   height: 35px;
   border-radius: 100%;
   color: #ffffff;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: bold;
   line-height: 42px;
   background-color: inherit;
