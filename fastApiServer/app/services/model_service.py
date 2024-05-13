@@ -5,6 +5,7 @@ import numpy as np
 from ultralytics import YOLO
 from PIL import Image
 import logging
+from dto.data_class import DetectionResponse
 from services.estimate_service import calcPotholeDan, calcPotholeWidth
 from fastapi import APIRouter, HTTPException
 
@@ -30,15 +31,16 @@ def model_2th_detection(image):
                 i += 1
                 # 탐지된 박스가 여러개일 경우를 고려
                 box_x, box_y, box_width, h = box.xywh[0]
-                pothole_width = calcPotholeWidth(box_y=box_y, box_width=box_width)
-                dan_result = calcPotholeDan(pothole_width=pothole_width, box_x=box_x, box_y=box_y, box_width=box_width)
-                if(dan_result > danger_max):
-                    danger_max = dan_result
+                width = round(calcPotholeWidth(box_y=box_y, box_width=box_width).item(), 2) * 100
+                severity = calcPotholeDan(pothole_width=width, box_x=box_x, box_y=box_y, box_width=box_width)
+                if(severity > danger_max):
+                    danger_max = severity
 
         else:
             raise HTTPException(status_code=200, detail="포트홀 2차 탐지 결과 발견하지 못했습니다.") 
         
-    logging.info("Objects detected:", i)
-    return danger_max
+    # logging.info("Objects detected:", i)
+    result = DetectionResponse(severity=severity, width=width)
+    return result
 
 # model_2th_detection('./app/origin3.jpg')
