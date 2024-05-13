@@ -4,6 +4,7 @@ import com.potless.backend.aws.service.AwsService;
 import com.potless.backend.damage.dto.controller.request.DamageSetRequestDTO;
 import com.potless.backend.damage.dto.service.request.DamageSetRequestServiceDTO;
 import com.potless.backend.damage.dto.service.request.ReDetectionRequestDTO;
+import com.potless.backend.damage.dto.service.response.ReDetectionResponseDTO;
 import com.potless.backend.damage.dto.service.response.kakao.Address;
 import com.potless.backend.damage.dto.service.response.kakao.RoadAddress;
 import com.potless.backend.damage.entity.enums.Status;
@@ -13,6 +14,7 @@ import com.potless.backend.global.exception.pothole.PotholeNotFoundException;
 import com.potless.backend.hexagon.service.H3Service;
 import com.potless.backend.hexagon.service.HexagonService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Service;
@@ -23,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+@Log4j2
 @Service
 @EnableAsync
 @RequiredArgsConstructor
@@ -47,12 +50,12 @@ public class AsyncService {
             //fastApi 2차 탐지 요청 수행 및 결과 반환
             ReDetectionRequestDTO detectionRequestDTO = new ReDetectionRequestDTO(imageFile);
 
-            int severityResult = detectionApiService.reDetectionResponse(detectionRequestDTO);
-<<<<<<< HEAD
-            log.info("severity = {}", severityResult);
-=======
->>>>>>> dev-BE
-            damageSetRequestDTO.setSeverity(severityResult);
+            ReDetectionResponseDTO detectionResult = detectionApiService.reDetectionResponse(detectionRequestDTO);
+            log.info("severity = {}", detectionResult.getSeverity());
+            log.info("width = {}", detectionResult.getWidth());
+
+            damageSetRequestDTO.setSeverity(detectionResult.getSeverity());
+            damageSetRequestDTO.setWidth((double)detectionResult.getWidth());
 
             String fileName = "AfterVerification/BeforeWork/" + System.currentTimeMillis() + "_" + imageFile.getName();
             Map<String, String> fileUrlAndKey = awsService.uploadFileToS3(imageFile, fileName);
@@ -85,7 +88,7 @@ public class AsyncService {
                                     .dirX(damageSetRequestDTO.getX())
                                     .dirY(damageSetRequestDTO.getY())
                                     .dtype(damageSetRequestDTO.getDtype())
-                                    .width(10.000)
+                                    .width(damageSetRequestDTO.getWidth())
                                     .address(addressName)
                                     .severity(damageSetRequestDTO.getSeverity())
                                     .status(Status.작업전)
