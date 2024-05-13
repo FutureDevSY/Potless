@@ -10,12 +10,18 @@
           <th class="city-column">행정동</th>
           <th class="address-column">지번 주소</th>
           <th class="work-column">
-            <button class="add-button" :disabled="!hasSelected" @click="openModal('add')">
+            <button
+              class="add-button"
+              :disabled="!hasSelected"
+              @click="openModal('add')"
+            >
               추가
             </button>
-          </th>
-          <th class="work-column">
-            <button class="add-button" :disabled="!hasSelected" @click="deletePotholeSelect()">
+            <button
+              class="add-button"
+              :disabled="!hasSelected"
+              @click="deletePotholeSelect()"
+            >
               삭제
             </button>
           </th>
@@ -33,7 +39,7 @@
           </td> -->
           <td class="dangers-column">
             <div class="danger-type" :class="dangerClass(pothole.severity)">
-              <p>{{ pothole.severity }}</p>
+              <p>{{ dangerClass2(pothole.severity) }}</p>
             </div>
           </td>
           <td>{{ displayType(pothole.dtype) }}</td>
@@ -43,24 +49,31 @@
             <div
               class="checkbox"
               :class="{
-                disabled: props.selectedStatus === '작업완료' || props.selectedStatus === '작업중',
+                disabled:
+                  props.selectedStatus === '작업완료' ||
+                  props.selectedStatus === '작업중',
               }"
             >
               <div v-if="pothole.isSelected" class="checkmark"></div>
             </div>
           </td>
-          <td class="select-column" @click.stop="toggleSelect(pothole)">
+          <!-- <td class="select-column" @click.stop="toggleSelect(pothole)">
             <div class="checkbox">
               <div v-if="pothole.isSelected" class="checkmark"></div>
             </div>
-          </td>
+          </td> -->
         </tr>
       </tbody>
     </table>
   </div>
 
-  <button class="button list-button" @click="openModal('list')">작업지시서</button>
-  <div v-if="isModalOpen && (modalMode === 'list' || modalMode === 'add')" class="modal">
+  <button class="button list-button" @click="openModal('list')">
+    작업지시서
+  </button>
+  <div
+    v-if="isModalOpen && (modalMode === 'list' || modalMode === 'add')"
+    class="modal"
+  >
     <div class="modal-content">
       <TaskList
         :is-adding-tasks="modalMode === 'add'"
@@ -118,6 +131,19 @@ const dangerClass = (danger) => {
       return "cautious";
     case 1:
       return "safe";
+    default:
+      return "";
+  }
+};
+
+const dangerClass2 = (danger) => {
+  switch (danger) {
+    case 3:
+      return "심각";
+    case 2:
+      return "주의";
+    case 1:
+      return "양호";
     default:
       return "";
   }
@@ -229,7 +255,7 @@ p {
   height: 35px;
   border-radius: 100%;
   color: #ffffff;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: bold;
   line-height: 42px;
   background-color: inherit;
@@ -291,7 +317,7 @@ tbody tr:hover {
 }
 
 .work-column {
-  width: 3.2vw;
+  width: 7vw;
   text-align: center;
   white-space: nowrap;
 }

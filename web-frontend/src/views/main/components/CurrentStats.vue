@@ -9,11 +9,11 @@
           <div class="info-text end">심각 - 4건</div>
         </div>
         <div>
-          <img class="soso-img" src="../../../assets/icon/soso.png" alt="soso" />
+          <img class="soso-img" src="../../../assets/icon/medium.png" alt="soso" />
           <div class="info-text mid">보통 - 4건</div>
         </div>
         <div>
-          <img class="good-img" src="../../../assets/icon/good.png" alt="good" />
+          <img class="good-img" src="../../../assets/icon/soso.png" alt="good" />
           <div class="info-text start">양호 - 4건</div>
         </div>
       </div>
