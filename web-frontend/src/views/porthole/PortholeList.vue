@@ -3,9 +3,7 @@
     <div class="filter">
       <!-- 필터 -->
       <div class="search-tab">
-        <button class="register" @click="store.moveSelfRegister">
-          수동 신고
-        </button>
+        <button class="register" @click="store.moveSelfRegister">도로파손 추가</button>
         <Calendar @update:dateRange="handleDateRangeUpdate" />
         <Select
           :options="['심각', '주의', '양호']"
@@ -13,7 +11,7 @@
           @update:selected="handleSeverity"
         />
         <Select
-          :options="['POTHOLE', 'CRACK']"
+          :options="typeOptions.map((option) => option.text)"
           defaultText="종류"
           @update:selected="handleType"
         />
@@ -33,15 +31,14 @@
           :current-data="currentData"
           :selected-status="selectedStatus"
           @updateMapLocation="handleMapUpdate"
+          @refreshData="takeData"
         />
-        <Pagination
-          :total-page="totalPage"
-          @update:current-page="handleCurrentPageUpdate"
-        />
+        <Pagination :total-page="totalPage" @update:current-page="handleCurrentPageUpdate" />
       </div>
 
       <div class="right">
         <PotholeLocationMap
+          :current-data="currentData"
           :pothole-dirx="potholeInfo.dirY"
           :pothole-diry="potholeInfo.dirX"
         />
@@ -66,7 +63,7 @@ import { storeToRefs } from "pinia";
 const store = useMoveStore();
 const store2 = useAuthStore();
 const { accessToken } = storeToRefs(store2);
-const currentData = ref(null);
+const currentData = ref([]);
 const totalPage = ref(null);
 const severityMap = {
   양호: 1,
@@ -74,11 +71,16 @@ const severityMap = {
   심각: 3,
 };
 
+const typeOptions = [
+  { text: "포트홀", value: "POTHOLE" },
+  { text: "도로균열", value: "CRACK" },
+];
+
 const takeData = (currentPage) => {
   const rawParams = {
     start: formatDate(dateRange.value.start),
     end: formatDate(dateRange.value.end),
-    type: selectedType.value,
+    dtype: selectedType.value,
     status: selectedStatus.value,
     severity: selectedSeverity.value,
     area: store2.areaName,
@@ -87,15 +89,14 @@ const takeData = (currentPage) => {
   };
 
   const queryParams = Object.fromEntries(
-    Object.entries(rawParams).filter(
-      ([key, value]) => value !== "" && value != null
-    )
+    Object.entries(rawParams).filter(([key, value]) => value !== "" && value != null)
   );
 
   getPotholeList(
     accessToken.value,
     queryParams,
     (res) => {
+      console.log(res);
       if (res.data.status == "SUCCESS") {
         console.log(res.data.message);
         currentData.value = res.data.data.content;
@@ -129,8 +130,11 @@ const handleSeverity = (option) => {
 
 // 파손 종류
 const selectedType = ref("");
-const handleType = (option) => {
-  selectedType.value = option;
+const handleType = (selectedText) => {
+  const selectedOption = typeOptions.find((option) => option.text === selectedText);
+  if (selectedOption) {
+    selectedType.value = selectedOption.value;
+  }
 };
 
 // 현재 상황
@@ -173,29 +177,32 @@ onMounted(() => {
 
 <style scoped>
 .container {
+  margin-top: 20px;
   display: flex;
   width: 100%;
 }
 
 .filter {
-  width: 97vw;
+  margin-top: 30px;
+  margin-left: 17px;
+  width: 86vw;
   padding: 10px;
   text-align: center;
 }
 
 .left {
-  flex: 8;
-}
-
-.right {
   flex: 6;
 }
 
+.right {
+  flex: 5;
+}
+
 .search-tab {
-  display: flex;
+  display: grid;
+  grid-template-columns: 27% 22% 9% 9% 9% 15% 8.5%;
   align-items: center;
   justify-content: end;
-  gap: 10px;
 }
 
 #pagination-control {
@@ -294,6 +301,7 @@ onMounted(() => {
   background-color: #151c62;
   border: none;
   color: white;
+  width: 100px;
   font-size: 1.8vh;
   border-radius: 4px;
   cursor: pointer;
@@ -304,6 +312,13 @@ onMounted(() => {
 }
 
 .register {
-  margin-right: 670px;
+  padding: 1.2vh 15px;
+  background-color: #151c62;
+  border: none;
+  color: white;
+  width: 160px;
+  font-size: 1.8vh;
+  border-radius: 4px;
+  cursor: pointer;
 }
 </style>

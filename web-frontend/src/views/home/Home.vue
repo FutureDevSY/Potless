@@ -41,9 +41,9 @@ const weatherData = () => {};
 }
 
 .logo {
-  margin-top: 3vh;
-  width: 40vh;
-  margin-right: 27vw;
+  margin-top: 3.5vh;
+  width: 22.5vw;
+  margin-right: 25.73vw;
 }
 
 .login-btn {
