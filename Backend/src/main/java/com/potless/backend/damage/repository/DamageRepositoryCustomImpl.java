@@ -24,6 +24,7 @@ import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.LockModeType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -177,12 +178,13 @@ public class DamageRepositoryCustomImpl implements DamageRepositoryCustom {
         QDamageEntity damage = QDamageEntity.damageEntity;
 
         return queryFactory
-                .selectOne()
-                .from(damage)
+                .selectFrom(damage)
                 .where(damage.hexagonEntity.hexagonIndex.eq(hexagonIndex)
                         .and(damage.dtype.eq(dtype)))
+                .setLockMode(LockModeType.PESSIMISTIC_WRITE) // Pessimistic Lock 설정
                 .fetchFirst() != null;
     }
+
 
     @Override
     public Page<DamageResponseDTO> findDamagesWithLatestTransaction(DamageSearchRequestDTO searchDTO, Pageable pageable) {
