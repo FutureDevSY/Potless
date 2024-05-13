@@ -4,10 +4,12 @@ import 'package:image_picker/image_picker.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:intl/intl.dart';
 import 'package:kakao_map_plugin/kakao_map_plugin.dart';
+import 'package:potless/API/api_request.dart';
 import 'package:potless/models/pothole.dart';
 import 'package:potless/widgets/UI/AppBar.dart';
 import 'package:potless/widgets/UI/ScreenSize.dart';
-import 'package:potless/widgets/blocks/carousel_block.dart'; // Assuming your model is set up correctly
+import 'package:potless/widgets/blocks/carousel_block.dart';
+import 'package:potless/widgets/buttons/714_100button.dart'; // Assuming your model is set up correctly
 
 class WorkDetailScreen extends StatefulWidget {
   final double placeLatitude, placeLongitude, width;
@@ -15,6 +17,7 @@ class WorkDetailScreen extends StatefulWidget {
   final String address, roadName, status, field, dType;
   final List<DamageImage> images;
   final DateTime createdAt;
+  final VoidCallback onProjectUpdate;
 
   const WorkDetailScreen({
     super.key,
@@ -30,6 +33,7 @@ class WorkDetailScreen extends StatefulWidget {
     required this.images,
     required this.dType,
     required this.createdAt,
+    required this.onProjectUpdate,
   });
 
   @override
@@ -37,9 +41,10 @@ class WorkDetailScreen extends StatefulWidget {
 }
 
 class _WorkDetailScreenState extends State<WorkDetailScreen> {
+  final ApiService _apiService = ApiService();
   final ImagePicker picker = ImagePicker();
   List<Widget> imageWidgets = [];
-  int filledImageSlots = 1; // Start with one always filled
+  int filledImageSlots = 1;
 
   Set<Marker> markers = {};
 
@@ -69,13 +74,11 @@ class _WorkDetailScreenState extends State<WorkDetailScreen> {
   void initState() {
     super.initState();
 
-    // Ensuring there are always three slots
     while (widget.images.length < 3) {
       widget.images
           .add(DamageImage(id: -1, url: '', order: widget.images.length + 1));
     }
 
-    // Prepare image widgets
     imageWidgets = widget.images
         .map((image) => CustomCarouselCard(
               image: image,
@@ -88,8 +91,6 @@ class _WorkDetailScreenState extends State<WorkDetailScreen> {
                       context, widget.images.indexOf(image));
                 } else {
                   debugPrint("85URL is not empty, image order: ${image.order}");
-                  // Define other actions here if the image is not empty
-                  debugPrint("87Tapped image with order: ${image.order}");
                 }
               },
             ))
@@ -226,11 +227,12 @@ class _WorkDetailScreenState extends State<WorkDetailScreen> {
                       .map((image) => CustomCarouselCard(
                             image: image,
                             onTap: () {
-                              if (image.url.isEmpty) {
+                              if (image.url.startsWith('http') ||
+                                  image.url.startsWith('https')) {
+                                debugPrint('167 tapped ${image.order}');
+                              } else {
                                 _showImageSourceActionSheet(
                                     context, widget.images.indexOf(image));
-                              } else {
-                                debugPrint('167 tapped ${image.order}');
                               }
                             },
                           ))
@@ -242,6 +244,28 @@ class _WorkDetailScreenState extends State<WorkDetailScreen> {
                     viewportFraction: 0.8,
                   ),
                 ),
+                SizedBox(height: UIhelper.deviceHeight(context) * 0.05),
+                button714_100(
+                  lable: '작업 완료',
+                  onPressed: () {
+                    if (_areAllImagesSet()) {
+                      _showConfirmationDialog(
+                        context,
+                        widget.images,
+                        widget.potholeId.toString(),
+                      );
+                    } else {
+                      // Optionally, inform the user that not all images are set
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text("입력되지 않은 사진이 있습니다"),
+                          duration: Duration(seconds: 2),
+                        ),
+                      );
+                    }
+                  },
+                ),
+                SizedBox(height: UIhelper.deviceHeight(context) * 0.05),
               ],
             ),
           ),
@@ -311,91 +335,71 @@ class _WorkDetailScreenState extends State<WorkDetailScreen> {
     );
   }
 
-  Widget _buildAddImageButton(int index) {
-    return GestureDetector(
-      onTap: () => _showImageSourceActionSheet(context, index),
-      child: Container(
-        width: double.infinity,
-        margin: const EdgeInsets.all(5.0),
-        decoration: BoxDecoration(
-          color: Colors.grey.shade300,
-          borderRadius: BorderRadius.circular(5),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(
-              Icons.add_a_photo,
-              color: Colors.grey,
-              size: 50,
+  void _showConfirmationDialog(
+      BuildContext context, List<DamageImage> images, String potholeId) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: const Text('Confirm Action'),
+          content: const Text('Are you sure you want to complete this work?'),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () {
+                Navigator.of(dialogContext).pop();
+              },
             ),
-            Padding(
-              padding: const EdgeInsets.only(top: 8.0),
-              child: Text(
-                '사진을 추가해주세요',
-                style: TextStyle(
-                  color: Colors.grey[600],
-                  fontSize: 16,
-                ),
-              ),
+            TextButton(
+              child: const Text('Confirm'),
+              onPressed: () {
+                Navigator.of(dialogContext).pop();
+                handleUploadSequence(images, potholeId);
+              },
             ),
           ],
-        ),
-      ),
+        );
+      },
     );
   }
 
-  Widget _buildImageBox(dynamic imageSource, String heading, int index) {
-    Widget imageWidget;
-    if (imageSource is String) {
-      imageWidget = Image.asset(imageSource, fit: BoxFit.cover);
-    } else if (imageSource is File) {
-      imageWidget = Image.file(imageSource, fit: BoxFit.cover);
-    } else {
-      imageWidget = Container(color: Colors.grey);
+  Future<void> handleUploadSequence(
+      List<DamageImage> images, String potholeId) async {
+    if (images.length < 3) {
+      debugPrint("Insufficient images provided.");
+      return;
     }
 
-    return GestureDetector(
-      onTap: () async {
-        _showImageSourceActionSheet(context, index);
-      },
-      child: Container(
-        margin: const EdgeInsets.all(5.0),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(5),
-          boxShadow: const [
-            BoxShadow(
-              color: Colors.black26,
-              blurRadius: 4,
-              offset: Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Expanded(
-                child: ClipRRect(
-                    borderRadius:
-                        const BorderRadius.vertical(top: Radius.circular(5)),
-                    child: imageWidget)),
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.5),
-                borderRadius:
-                    const BorderRadius.vertical(bottom: Radius.circular(5)),
-              ),
-              child: Text(
-                heading,
-                style: const TextStyle(color: Colors.white, fontSize: 16),
-                textAlign: TextAlign.center,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+    if (images[1].url.startsWith('http') || images[1].url.startsWith('https')) {
+      debugPrint('WorkDetail2 377: no need');
+    } else {
+      bool uploadDuringSuccess =
+          await _apiService.damageDuring(potholeId, File(images[1].url));
+      if (!uploadDuringSuccess) {
+        debugPrint("Failed to upload 'during' image.");
+        return;
+      }
+    }
+
+    if (images[1].url.startsWith('http') || images[1].url.startsWith('https')) {
+      debugPrint('WorkDetail2 388: no need');
+    } else {
+      bool uploadAfterSuccess =
+          await _apiService.damageAfter(potholeId, File(images[2].url));
+      if (!uploadAfterSuccess) {
+        debugPrint("Failed to upload 'after' image.");
+        return;
+      }
+    }
+    debugPrint('393: workdone start');
+    await _apiService.workDone(widget.potholeId);
+    debugPrint('395: workdone end');
+
+    widget.onProjectUpdate;
+  }
+
+  bool _areAllImagesSet() {
+    return widget.images.every((image) => image.url.isNotEmpty);
   }
 }

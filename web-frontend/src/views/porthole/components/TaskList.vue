@@ -127,7 +127,7 @@ function addNewTask() {
   const newData = ref({
     teamId: null,
     title: "도로 부속 작업 보고서",
-    projectDate: "2024-05-02",
+    projectDate: "2024-05-13",
     areaId: store2.areaId,
     damageNums: [],
   });

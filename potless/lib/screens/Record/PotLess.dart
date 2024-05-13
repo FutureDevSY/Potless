@@ -1,21 +1,24 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:camera/camera.dart'; // 카메라 플러그인
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:potless/API/api_request.dart';
 import 'package:potless/main.dart';
 import 'package:potless/models/detected.dart';
 import 'package:potless/widgets/functions/frame_rate.dart';
 import 'package:potless/widgets/functions/geolocator.dart';
 import 'package:potless/widgets/tflite/bbox.dart';
-import 'package:potless/widgets/tflite/detector.dart';
 import 'package:potless/widgets/tflite/screen.dart';
 import 'package:potless/widgets/UI/AppBar.dart';
 import 'package:potless/widgets/UI/ScreenSize.dart';
+
+import 'package:potless/widgets/tflite/detector.dart';
 
 class VideoPage extends StatefulWidget {
   const VideoPage({super.key});
@@ -34,15 +37,21 @@ class _VideoPageState extends State<VideoPage> with WidgetsBindingObserver {
 
   bool _previewOn = false;
   int imageTaken = 0;
+  int _currentFps = 0;
   int? resultIndex;
   List<String> classes = [];
   List<List<double>> bboxes = [];
   List<double> scores = [];
   List<XFile> imageSaveQueue = [];
 
+  Map<String, dynamic>? stats;
+  String? cls;
+  String? box;
+  String? score;
+
   final ApiService _apiService = ApiService();
-  final FrameRateTester _frameRateTester = FrameRateTester();
-  bool _isTestingFrameRate = false;
+  FrameRateTester _frameRateTester = FrameRateTester();
+  final bool _isTestingFrameRate = false;
   final StreamController<QueuedImage> _uploadStreamController =
       StreamController<QueuedImage>();
 
@@ -67,6 +76,11 @@ class _VideoPageState extends State<VideoPage> with WidgetsBindingObserver {
     WidgetsBinding.instance.addObserver(this);
     _initStateAsync();
     _uploadStreamController.stream.listen(_uploadImage);
+    _frameRateTester = FrameRateTester(onUpdate: (fps) {
+      setState(() {
+        _currentFps = fps;
+      });
+    });
   }
 
   void _initStateAsync() async {
@@ -76,11 +90,16 @@ class _VideoPageState extends State<VideoPage> with WidgetsBindingObserver {
         _detector = instance;
         _subscription = instance.resultsStream.stream.listen((values) {
           setState(() {
+            if (values.containsKey('jpegImage')) {
+              Uint8List imageData = values['jpegImage'];
+              _handleDetectedImage(imageData);
+            }
             classes = values['cls'];
             bboxes = values['box'];
             scores = values['conf'];
+
+            stats = values['stats'];
           });
-          _handleDetectionResults();
         });
       });
     });
@@ -107,49 +126,39 @@ class _VideoPageState extends State<VideoPage> with WidgetsBindingObserver {
   }
 
   int frameCounter = 0;
-  int skipFactor = 5;
+  int skipFactor = 9;
 
   void onLatestImageAvailable(CameraImage cameraImage) async {
-    if (_isTestingFrameRate) {
-      _frameRateTester.countFrame();
-    }
+    // debugPrint('125: FPS 측정좀');
+    _frameRateTester.countFrame();
     if (frameCounter % (skipFactor + 1) == 0) {
+      debugPrint('125: 실제 들어가는 값');
+
       _detector?.processFrame(cameraImage);
     }
     frameCounter++;
 
     if (frameCounter > 1000) {
+      // debugPrint('125: FPS 초기화');
+
       frameCounter = 0;
     }
   }
 
-  void _handleDetectionResults() {
-    for (int i = 0; i < scores.length; i++) {
-      if (scores[i] > 0.75) {
-        debugPrint('Detection with high confidence, capturing photo...');
-        capturePhoto();
-        break;
-      }
-    }
-  }
+  Future<void> _handleDetectedImage(Uint8List imageData) async {
+    String directory = (await getApplicationDocumentsDirectory()).path;
+    String fileName = '${DateTime.now().millisecondsSinceEpoch}.jpg';
+    File imageFile = File('$directory/$fileName');
+    await imageFile.writeAsBytes(imageData);
 
-  Future<void> capturePhoto() async {
-    if (_cameraController != null && _cameraController!.value.isInitialized) {
-      if (!_cameraController!.value.isTakingPicture) {
-        try {
-          XFile picture = await _cameraController!.takePicture();
-          Position position = await Geolocator.getCurrentPosition(
-              desiredAccuracy: LocationAccuracy.high);
-          _uploadStreamController.add(QueuedImage(picture, position));
-          imageTaken = imageTaken + 1;
-        } catch (e) {
-          debugPrint("Error capturing image: $e");
-        }
-      }
+    Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+    try {
+      _uploadStreamController.add(QueuedImage(imageFile, position));
+      imageTaken = imageTaken + 1;
+    } catch (E) {
+      debugPrint('Potless 146: $E');
     }
-    await Future.delayed(
-      const Duration(milliseconds: 500),
-    );
   }
 
   Future<void> _uploadImage(QueuedImage queuedImage) async {
@@ -158,15 +167,11 @@ class _VideoPageState extends State<VideoPage> with WidgetsBindingObserver {
       double lat = queuedImage.position.latitude;
       double lng = queuedImage.position.longitude;
 
-      bool success = await _apiService.damageSet('POTHOLE', lng, lat, file);
+      // debugPrint('업로드 대신 나오는 코드');
 
-      if (success) {
-        debugPrint('potless 207 업로드 올라감');
-      } else {
-        debugPrint('potless 209 업로드 실패');
-      }
+      bool success = await _apiService.damageSet('POTHOLE', lng, lat, file);
     } catch (e) {
-      debugPrint('potless 212 에러 $e');
+      debugPrint('potless 212: $e');
     }
   }
 
@@ -186,10 +191,11 @@ class _VideoPageState extends State<VideoPage> with WidgetsBindingObserver {
 
   @override
   void dispose() {
-    _uploadStreamController.close();
-    WidgetsBinding.instance.removeObserver(this);
-    _cameraController?.dispose();
     _detector?.stop();
+    WidgetsBinding.instance.removeObserver(this);
+    _frameRateTester.stopTesting();
+    _uploadStreamController.close();
+    _cameraController?.dispose();
     _subscription?.cancel();
     super.dispose();
   }
@@ -227,6 +233,15 @@ class _VideoPageState extends State<VideoPage> with WidgetsBindingObserver {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   const Text('AI 촬영의 성능을 위해 카메라 화면을 꺼두는 모드입니다.'),
+                  if (stats != null) ...[
+                    Text('Conversion time: ${stats!['Conversion time:']}'),
+                    Text(
+                        'Pre-processing time: ${stats!['Pre-processing time:']}'),
+                    Text('Inference time: ${stats!['Inference time:']}'),
+                    Text(
+                        'Total prediction time: ${stats!['Total prediction time:']}'),
+                    Text('Frame: ${stats!['Frame']}'),
+                  ],
                   SizedBox(
                     height: UIhelper.deviceHeight(context) * 0.3,
                   ),
@@ -237,20 +252,15 @@ class _VideoPageState extends State<VideoPage> with WidgetsBindingObserver {
           Column(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              FloatingActionButton(
-                onPressed: () {
-                  setState(() {
-                    _isTestingFrameRate = !_isTestingFrameRate;
-                    if (_isTestingFrameRate) {
-                      _frameRateTester
-                          .startTesting(() => onLatestImageAvailable);
-                    } else {
-                      _frameRateTester.stopTesting();
-                    }
-                  });
-                },
-                child:
-                    Icon(_isTestingFrameRate ? Icons.stop : Icons.play_arrow),
+              Container(
+                color: const Color(0xff151c62),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    ElevatedButton(onPressed: incFrame, child: const Text('+')),
+                    ElevatedButton(onPressed: decFrame, child: const Text('-')),
+                  ],
+                ),
               ),
               Container(
                 color: const Color(0xff151c62),
@@ -285,9 +295,11 @@ class _VideoPageState extends State<VideoPage> with WidgetsBindingObserver {
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Text(
-                        '저장 중: ${imageSaveQueue.length}',
+                        '현재 프레임: $skipFactor',
                         style: const TextStyle(
-                            color: Colors.white, fontWeight: FontWeight.bold),
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ],
@@ -298,6 +310,18 @@ class _VideoPageState extends State<VideoPage> with WidgetsBindingObserver {
         ],
       ),
     );
+  }
+
+  void incFrame() {
+    setState(() {
+      skipFactor++;
+    });
+  }
+
+  void decFrame() {
+    setState(() {
+      skipFactor--;
+    });
   }
 
   void togglePreview() {
