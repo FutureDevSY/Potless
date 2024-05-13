@@ -9,7 +9,7 @@
         <div class="info">
           <div>위험물 유형:</div>
           <div>
-            {{ props.pothole.dtype }}
+            {{ dtypeDisplay }}
           </div>
         </div>
         <div class="info">
@@ -17,9 +17,9 @@
           <div :style="severityStyle">
             {{
               props.pothole.severity === 1
-                ? "안전"
+                ? "양호"
                 : props.pothole.severity === 2
-                ? "위험"
+                ? "주의"
                 : props.pothole.severity === 3
                 ? "심각"
                 : "Unknown"
@@ -41,13 +41,6 @@
         <div>
           {{ props.pothole.location }} {{ props.pothole.area }}
           {{ props.pothole.roadName }}
-        </div>
-      </div>
-      <div class="direct info">
-        <div>위경도 좌표:</div>
-        <div class="coordinates">
-          <div>x: {{ props.pothole.dirX }}</div>
-          <div>y: {{ props.pothole.dirY }}</div>
         </div>
       </div>
       <div class="info">
@@ -72,6 +65,18 @@ const imageUrl = ref("");
 
 const props = defineProps({
   pothole: Object,
+});
+
+const dtypeDisplay = computed(() => {
+  const display =
+    props.pothole.dtype === "POTHOLE"
+      ? "포트홀"
+      : props.pothole.dtype === "CRACK"
+      ? "도로균열"
+      : props.pothole.dtype === "WORNOUT"
+      ? "도로마모"
+      : "알 수 없는 유형";
+  return display;
 });
 
 const severityStyle = computed(() => {

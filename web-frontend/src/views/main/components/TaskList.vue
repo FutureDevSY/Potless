@@ -4,10 +4,32 @@
     <button @click="takeData('thisWeek')">이번주</button>
     <button @click="takeData('nextWeek')">다음주</button>
   </div>
+  <table>
+      <thead>
+        <tr>
+          <th>작업 보고서</th>
+          <th>작업 갯수</th>
+          <th>작업 관리자</th>
+          <th>작업 예정 일자</th>
+          <th class="delete-column"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          v-for="project in currentData"
+          :key="project.projectId"
+        >
+          <td>{{ project.projectName }}</td>
+          <td>{{ project.projectSize }} 건</td>
+          <td>{{ project.managerName }}</td>
+          <td>{{ project.projectDate }}</td>
+        </tr>
+      </tbody>
+    </table>
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { useAuthStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
 import { getTaskList } from "../../../api/task/taskList";
@@ -65,9 +87,7 @@ function takeData(weekType) {
     queryParams,
     (res) => {
       if (res.data.status === "SUCCESS") {
-        console.log(res.data.message);
         currentData.value = res.data.data.content;
-        console.log(currentData.value);
       } else {
         console.log(res.data.message);
       }
@@ -78,6 +98,10 @@ function takeData(weekType) {
     }
   );
 }
+
+onMounted(() => {
+  takeData('thisWeek');
+});
 </script>
 
 <style scoped>

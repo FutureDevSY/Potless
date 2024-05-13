@@ -36,10 +36,6 @@ export const useMoveStore = defineStore("moveStore", () => {
     router.push(`/taskinfo/${id}`);
   };
 
-  const moveHome = () => {
-    router.push("/");
-  };
-
   const moveMain = () => {
     router.push("/main");
   };
@@ -57,7 +53,6 @@ export const useMoveStore = defineStore("moveStore", () => {
     moveLogin,
     moveStatistics,
     moveTaskDetail,
-    moveHome,
     moveMain,
     moveBack,
   };
