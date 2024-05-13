@@ -95,8 +95,6 @@ public class DamageServiceImpl implements IDamageService {
                     .width(data.getWidth())
                     .severity(data.getSeverity())
                     .hexagonEntity(hexagonEntity)
-<<<<<<< HEAD
-=======
                     .build();
         } else {
             damageEntity = WornOutEntity.builder()
@@ -110,7 +108,6 @@ public class DamageServiceImpl implements IDamageService {
                     .width(data.getWidth())
                     .severity(data.getSeverity())
                     .hexagonEntity(hexagonEntity)
->>>>>>> dev-BE
                     .build();
         }
 
