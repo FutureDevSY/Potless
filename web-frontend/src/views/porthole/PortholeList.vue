@@ -184,7 +184,8 @@ onMounted(() => {
 
 .filter {
   margin-top: 30px;
-  width: 87vw;
+  margin-left: 17px;
+  width: 86vw;
   padding: 10px;
   text-align: center;
 }
@@ -199,7 +200,7 @@ onMounted(() => {
 
 .search-tab {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+  grid-template-columns: 27% 22% 9% 9% 9% 15% 8.5%;
   align-items: center;
   justify-content: end;
 }
@@ -311,12 +312,11 @@ onMounted(() => {
 }
 
 .register {
-  margin-left: 20px;
   padding: 1.2vh 15px;
   background-color: #151c62;
   border: none;
   color: white;
-  width: 130px;
+  width: 160px;
   font-size: 1.8vh;
   border-radius: 4px;
   cursor: pointer;
