@@ -10,10 +10,7 @@ import com.potless.backend.damage.dto.service.response.*;
 import com.potless.backend.damage.entity.area.AreaEntity;
 import com.potless.backend.damage.entity.area.LocationEntity;
 import com.potless.backend.damage.entity.enums.Status;
-import com.potless.backend.damage.entity.road.CrackEntity;
-import com.potless.backend.damage.entity.road.DamageEntity;
-import com.potless.backend.damage.entity.road.ImageEntity;
-import com.potless.backend.damage.entity.road.PotholeEntity;
+import com.potless.backend.damage.entity.road.*;
 import com.potless.backend.damage.repository.AreaRepository;
 import com.potless.backend.damage.repository.DamageRepository;
 import com.potless.backend.damage.repository.ImageRepository;
@@ -86,7 +83,7 @@ public class DamageServiceImpl implements IDamageService {
                     .severity(data.getSeverity())
                     .hexagonEntity(hexagonEntity)
                     .build();
-        } else {
+        } else if (data.getDtype().equals("POTHOLE")) {
             damageEntity = PotholeEntity.builder()
                     .dirX(data.getDirX())
                     .dirY(data.getDirY())
@@ -98,6 +95,22 @@ public class DamageServiceImpl implements IDamageService {
                     .width(data.getWidth())
                     .severity(data.getSeverity())
                     .hexagonEntity(hexagonEntity)
+<<<<<<< HEAD
+=======
+                    .build();
+        } else {
+            damageEntity = WornOutEntity.builder()
+                    .dirX(data.getDirX())
+                    .dirY(data.getDirY())
+                    .address(data.getAddress())
+                    .dtype(data.getDtype())
+                    .status(data.getStatus())
+                    .areaEntity(areaGu)
+                    .locationEntity(locationName)
+                    .width(data.getWidth())
+                    .severity(data.getSeverity())
+                    .hexagonEntity(hexagonEntity)
+>>>>>>> dev-BE
                     .build();
         }
 

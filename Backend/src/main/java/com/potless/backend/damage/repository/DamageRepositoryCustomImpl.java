@@ -14,10 +14,8 @@ import com.potless.backend.damage.entity.area.AreaEntity;
 import com.potless.backend.damage.entity.area.QAreaEntity;
 import com.potless.backend.damage.entity.area.QLocationEntity;
 import com.potless.backend.damage.entity.enums.Status;
-import com.potless.backend.damage.entity.road.QCrackEntity;
 import com.potless.backend.damage.entity.road.QDamageEntity;
 import com.potless.backend.damage.entity.road.QImageEntity;
-import com.potless.backend.damage.entity.road.QPotholeEntity;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
@@ -26,7 +24,6 @@ import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -37,7 +34,6 @@ import java.time.YearMonth;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Slf4j
 @Repository
 public class DamageRepositoryCustomImpl implements DamageRepositoryCustom {
 
@@ -196,127 +192,57 @@ public class DamageRepositoryCustomImpl implements DamageRepositoryCustom {
         BooleanBuilder builder = new BooleanBuilder();
 
         builder.and(betweenDates(damage, searchDTO.getStart(), searchDTO.getEnd()))
+                .and(equalToType(damage, searchDTO.getType()))
                 .and(equalToStatus(damage, searchDTO.getStatus()))
                 .and(equalToSeverity(damage, searchDTO.getSeverity()))
                 .and(containsArea(damage, searchDTO.getArea()))
                 .and(containsSearchWord(damage, searchDTO.getSearchWord()));
 
-        // 기타 코드 처리
-
         List<DamageResponseDTO> results;
 
-        if ("CRACK".equals(searchDTO.getType())) {
-            QCrackEntity crack = QCrackEntity.crackEntity;
+        results = queryFactory
+                .select(Projections.constructor(DamageResponseDTO.class,
+                        damage.id,
+                        damage.severity,
+                        damage.dirX,
+                        damage.dirY,
+                        damage.address,
+                        damage.width,
+                        damage.status,
+                        damage.areaEntity.areaGu,
+                        damage.locationEntity.locationName,
+                        damage.dtype,
+                        damage.createdDateTime
+                ))
+                .from(damage)
+                .where(builder)
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .orderBy(damage.createdDateTime.desc())
+                .fetch();
 
-            results = queryFactory
-                    .select(Projections.constructor(DamageResponseDTO.class,
-                            damage.id,
-                            damage.severity,
-                            damage.dirX,
-                            damage.dirY,
-                            damage.address,
-                            damage.width,
-                            damage.status,
-                            damage.areaEntity.areaGu,
-                            damage.locationEntity.locationName,
-                            damage.dtype,
-                            damage.createdDateTime
-                    ))
-                    .from(crack)
-                    .where(builder)
-                    .offset(pageable.getOffset())
-                    .limit(pageable.getPageSize())
-                    .orderBy(damage.createdDateTime.desc())
+        Long countResult = queryFactory
+                .select(damage.count())
+                .from(damage)
+                .where(builder)
+                .fetchOne();
+
+        long total = (countResult != null) ? countResult : 0;
+
+        for (DamageResponseDTO damageResponseDTO : results) {
+            List<ImagesResponseDTO> imagesForDamage = queryFactory
+                    .select(Projections.constructor(ImagesResponseDTO.class,
+                            image.id,
+                            image.url,
+                            image.order))
+                    .from(image)
+                    .where(image.damageEntity.id.eq(damageResponseDTO.getId()))
                     .fetch();
-
-            Long countResult = queryFactory
-                    .select(crack.count())
-                    .from(crack)
-                    .where(builder)
-                    .fetchOne();
-
-            long total = (countResult != null) ? countResult : 0;
-
-            return new PageImpl<>(results, pageable, total);
-
-        } else if ("POTHOLE".equals(searchDTO.getType())) {
-            QPotholeEntity pothole = QPotholeEntity.potholeEntity;
-
-            results = queryFactory
-                    .select(Projections.constructor(DamageResponseDTO.class,
-                            damage.id,
-                            damage.severity,
-                            damage.dirX,
-                            damage.dirY,
-                            damage.address,
-                            damage.width,
-                            damage.status,
-                            damage.areaEntity.areaGu,
-                            damage.locationEntity.locationName,
-                            damage.dtype,
-                            damage.createdDateTime
-                    ))
-                    .from(pothole)
-                    .where(builder)
-                    .offset(pageable.getOffset())
-                    .limit(pageable.getPageSize())
-                    .orderBy(damage.createdDateTime.desc())
-                    .fetch();
-
-            Long countResult = queryFactory
-                    .select(pothole.count())
-                    .from(pothole)
-                    .where(builder)
-                    .fetchOne();
-
-            long total = (countResult != null) ? countResult : 0;
-
-            return new PageImpl<>(results, pageable, total);
-        } else {
-            // 베이스 엔티티 또는 기타 타입을 기본적으로 쿼리
-            results = queryFactory
-                    .select(Projections.constructor(DamageResponseDTO.class,
-                            damage.id,
-                            damage.severity,
-                            damage.dirX,
-                            damage.dirY,
-                            damage.address,
-                            damage.width,
-                            damage.status,
-                            damage.areaEntity.areaGu,
-                            damage.locationEntity.locationName,
-                            damage.dtype,
-                            damage.createdDateTime
-                    ))
-                    .from(damage)
-                    .where(builder)
-                    .offset(pageable.getOffset())
-                    .limit(pageable.getPageSize())
-                    .orderBy(damage.createdDateTime.desc())
-                    .fetch();
-
-            for (DamageResponseDTO damageResponseDTO : results) {
-                List<ImagesResponseDTO> imagesForDamage = queryFactory
-                        .select(Projections.constructor(ImagesResponseDTO.class,
-                                image.id,
-                                image.url,
-                                image.order))
-                        .from(image)
-                        .where(image.damageEntity.id.eq(damageResponseDTO.getId()))
-                        .fetch();
-                damageResponseDTO.setImagesResponseDTOS(imagesForDamage);
-            }
-
-            Long countResult = queryFactory
-                    .select(damage.count())
-                    .from(damage)
-                    .where(builder)
-                    .fetchOne();
-
-            long total = (countResult != null) ? countResult : 0;
-
-            return new PageImpl<>(results, pageable, total);
+            damageResponseDTO.setImagesResponseDTOS(imagesForDamage);
         }
+
+        return new PageImpl<>(results, pageable, total);
+
     }
 
     @Override
@@ -468,6 +394,13 @@ public class DamageRepositoryCustomImpl implements DamageRepositoryCustom {
     private BooleanExpression betweenDates(QDamageEntity damage, LocalDate start, LocalDate end) {
         if (start != null && end != null) {
             return damage.createdDateTime.between(start.atStartOfDay(), end.atTime(23, 59, 59));
+        }
+        return null;
+    }
+
+    private BooleanExpression equalToType(QDamageEntity damage, String type) {
+        if (type != null) {
+            return damage.dtype.eq(type);
         }
         return null;
     }
