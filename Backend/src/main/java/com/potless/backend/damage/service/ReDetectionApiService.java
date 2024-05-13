@@ -20,8 +20,8 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class ReDetectionApiService {
     private final WebClient webClient = WebClient.builder()
-//                                                 .baseUrl("https://ai.potless.co.kr")
-                                                 .baseUrl("http://localhost:8000")
+                                                 .baseUrl("https://ai.potless.co.kr")
+//                                                 .baseUrl("http://localhost:8000")
                                                  .build();
 
     /*
