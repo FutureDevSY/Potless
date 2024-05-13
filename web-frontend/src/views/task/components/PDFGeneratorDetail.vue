@@ -9,7 +9,7 @@
         <div class="info">
           <div>위험물 유형:</div>
           <div>
-            {{ props.pothole.dtype }}
+            {{ dtypeDisplay }}
           </div>
         </div>
         <div class="info">
@@ -65,6 +65,18 @@ const imageUrl = ref("");
 
 const props = defineProps({
   pothole: Object,
+});
+
+const dtypeDisplay = computed(() => {
+  const display =
+    props.pothole.dtype === "POTHOLE"
+      ? "포트홀"
+      : props.pothole.dtype === "CRACK"
+      ? "도로균열"
+      : props.pothole.dtype === "WORNOUT"
+      ? "도로마모"
+      : "알 수 없는 유형";
+  return display;
 });
 
 const severityStyle = computed(() => {

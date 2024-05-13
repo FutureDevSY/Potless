@@ -79,6 +79,7 @@ const severityMap = {
 const typeOptions = [
   { text: "포트홀", value: "POTHOLE" },
   { text: "도로균열", value: "CRACK" },
+  { text: "도로마모", value: "WORNOUT" },
 ];
 
 const takeData = (currentPage) => {
