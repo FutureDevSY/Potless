@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="b20a1863-9606-482e-b0d4-8130e6ff2f40" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/../Backend/src/main/java/com/potless/backend/global/H3/test.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Backend/src/main/java/com/potless/backend/global/H3/test2.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Backend/src/main/java/com/potless/backend/global/config/H3Config.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Backend/src/main/java/com/potless/backend/global/config/H3ConfigTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Backend/src/main/java/com/potless/backend/global/exception/hexagon/HexagonNotFoundException.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Backend/src/main/java/com/potless/backend/global/exception/pothole/DuplPotholeException.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Backend/src/main/java/com/potless/backend/hexagon/controller/HexagonController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Backend/src/main/java/com/potless/backend/hexagon/dto/requestDto/HexagonRequestDto.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Backend/src/main/java/com/potless/backend/hexagon/dto/responseDto/HexagonResponseDto.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Backend/src/main/java/com/potless/backend/hexagon/entity/HexagonEntity.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Backend/src/main/java/com/potless/backend/hexagon/repository/HexagonRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Backend/src/main/java/com/potless/backend/hexagon/service/HexagonService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Backend/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/../Backend/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Backend/src/main/java/com/potless/backend/aws/service/AwsService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Backend/src/main/java/com/potless/backend/aws/service/AwsService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Backend/src/main/java/com/potless/backend/damage/controller/DamageController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Backend/src/main/java/com/potless/backend/damage/controller/DamageController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Backend/src/main/java/com/potless/backend/damage/entity/road/CrackEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Backend/src/main/java/com/potless/backend/damage/entity/road/CrackEntity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Backend/src/main/java/com/potless/backend/damage/entity/road/DamageEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Backend/src/main/java/com/potless/backend/damage/entity/road/DamageEntity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Backend/src/main/java/com/potless/backend/damage/entity/road/PotholeEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Backend/src/main/java/com/potless/backend/damage/entity/road/PotholeEntity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Backend/src/main/java/com/potless/backend/damage/repository/DamageRepositoryCustom.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Backend/src/main/java/com/potless/backend/damage/repository/DamageRepositoryCustom.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Backend/src/main/java/com/potless/backend/damage/repository/DamageRepositoryCustomImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Backend/src/main/java/com/potless/backend/damage/repository/DamageRepositoryCustomImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Backend/src/main/java/com/potless/backend/damage/service/AsyncService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Backend/src/main/java/com/potless/backend/damage/service/AsyncService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Backend/src/main/java/com/potless/backend/global/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Backend/src/main/java/com/potless/backend/global/config/SecurityConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Backend/src/main/java/com/potless/backend/global/format/response/ErrorCode.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Backend/src/main/java/com/potless/backend/global/format/response/ErrorCode.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Backend/src/main/java/com/potless/backend/global/format/response/ResponseCode.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Backend/src/main/java/com/potless/backend/global/format/response/ResponseCode.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../web-frontend/.env" beforeDir="false" afterPath="$PROJECT_DIR$/../web-frontend/.env" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 7
+}</component>
+  <component name="ProjectId" id="2gG6pj2QlXIpTCS9VTGd8xn7cdm" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Application.Main.executor&quot;: &quot;Run&quot;,
+    &quot;Application.Main2.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/SSAFY/Desktop/Project4/S10P31B106/untitled&quot;,
+    &quot;onboarding.tips.debug.path&quot;: &quot;C:/Users/SSAFY/Desktop/Project4/S10P31B106/untitled/src/Main.java&quot;
+  }
+}</component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="jdk-17.0.10-corretto-17.0.10-4caba194b151-5cd809f4" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="b20a1863-9606-482e-b0d4-8130e6ff2f40" name="Changes" comment="" />
+      <created>1715311753168</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1715311753168</updated>
+    </task>
+    <servers />
+  </component>
+</project>
