@@ -9,6 +9,8 @@ pipeline {
         BUILD_ID = credentials('BUILD_ID')
         SONAR_PROJECT_KEY = credentials('SONAR_PROJECT_KEY')
         SONAR_TOKEN = credentials('SONAR_TOKEN')
+        VITE_KAKAO_REST_API_KEY = credentials('VITE_KAKAO_REST_API_KEY')
+        VITE_WEATHER_API_KEY = credentials('VITE_WEATHER_API_KEY')
     }
     stages {
         stage('Checkout') {
@@ -89,7 +91,7 @@ pipeline {
                     }
                     // Frontend 이미지 빌드
                     dir('web-frontend') {
-                        sh 'docker build --build-arg VITE_SERVICE_URL=${VITE_SERVICE_URL} --build-arg VITE_KAKAO_APP_KEY=${VITE_KAKAO_APP_KEY} -t ${DOCKER_HUB_USER}/${BUILD_ID}-frontend .'
+                        sh 'docker build --build-arg VITE_SERVICE_URL=${VITE_SERVICE_URL} --build-arg VITE_KAKAO_APP_KEY=${VITE_KAKAO_APP_KEY} --build-arg VITE_KAKAO_REST_API_KEY=${VITE_KAKAO_REST_API_KEY} --build-arg VITE_WEATHER_API_KEY=${VITE_WEATHER_API_KEY} -t ${DOCKER_HUB_USER}/${BUILD_ID}-frontend .'
                         sh 'docker push ${DOCKER_HUB_USER}/${BUILD_ID}-frontend'
                     }
                 }
