@@ -10,6 +10,7 @@ import com.potless.backend.damage.dto.service.response.kakao.RoadAddress;
 import com.potless.backend.damage.entity.enums.Status;
 import com.potless.backend.damage.repository.DamageRepository;
 import com.potless.backend.global.exception.pothole.DuplPotholeException;
+import com.potless.backend.global.exception.pothole.PotholeDetectionFailException;
 import com.potless.backend.global.exception.pothole.PotholeNotFoundException;
 import com.potless.backend.hexagon.service.H3Service;
 import com.potless.backend.hexagon.service.HexagonService;
@@ -49,11 +50,22 @@ public class AsyncService {
             int res = 13;
             String hexagonIndex = h3Service.getH3Index(damageSetRequestDTO.getY(), damageSetRequestDTO.getX(), res);
             if (damageRepository.findDamageByHexagonIndexAndDtype(hexagonIndex, damageSetRequestDTO.getDtype())) {
-                throw new DuplPotholeException();
+//                throw new DuplPotholeException();
+                log.info("중복!!");
+                return;
             }
             //fastApi 2차 탐지 요청 수행 및 결과 반환
             ReDetectionRequestDTO detectionRequestDTO = new ReDetectionRequestDTO(imageFile);
-            ReDetectionResponseDTO detectionResult = detectionApiService.reDetectionResponse(detectionRequestDTO);
+            ReDetectionResponseDTO detectionResult = new ReDetectionResponseDTO();
+
+            detectionResult = detectionApiService.reDetectionResponse(detectionRequestDTO);
+            log.info("severity = {}", detectionResult.getSeverity());
+            log.info("width = {}", detectionResult.getWidth());
+
+            if(detectionResult.getSeverity() == 0){
+                log.info("2차 탐지과정 실패");
+                return;
+            }
 
             damageSetRequestDTO.setSeverity(detectionResult.getSeverity());
             damageSetRequestDTO.setWidth((double)detectionResult.getWidth());

@@ -7,6 +7,7 @@ import com.potless.backend.global.exception.kakao.KakaoNotFoundException;
 import com.potless.backend.global.exception.member.*;
 import com.potless.backend.global.exception.pothole.*;
 import com.potless.backend.global.exception.project.AreaNotFoundException;
+import com.potless.backend.global.exception.project.ProjectDeleteFailException;
 import com.potless.backend.global.exception.project.ProjectNotFoundException;
 import com.potless.backend.global.format.code.ApiResponse;
 import com.potless.backend.global.format.response.ErrorCode;
@@ -161,6 +162,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(KakaoNotFoundException.class)
     protected ResponseEntity<?> handle(KakaoNotFoundException e) {
         log.error("KakaoNotFoundException = {}", e.getErrorCode().getMessage());
+        return response.error(e.getErrorCode());
+    }
+
+    @ExceptionHandler(ProjectDeleteFailException.class)
+    protected ResponseEntity<?> handle(ProjectDeleteFailException e) {
+        log.error("ProjectDeleteFailException = {}", e.getErrorCode().getMessage());
         return response.error(e.getErrorCode());
     }
 
