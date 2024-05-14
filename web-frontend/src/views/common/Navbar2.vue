@@ -32,6 +32,7 @@ import { useMoveStore } from "../../stores/move.js";
 import { useAuthStore } from "../../stores/user.js";
 import { storeToRefs } from "pinia";
 import { logout } from "../../api/auth/auth.js";
+import router from "@/router";
 
 const store = useMoveStore();
 const store2 = useAuthStore();
@@ -85,6 +86,23 @@ const clickLogout = () => {
     }
   );
 };
+
+router.beforeEach((to, from) => {
+  const store = useAuthStore();
+  if (to.name === "Main") {
+    setActiveNavItem(0)
+  }
+  if (to.name === "PortholeList") {
+    setActiveNavItem(1)
+  }
+  if (to.name === "Statistics") {
+    setActiveNavItem(3)
+  }
+  if (to.name === "TaskInfo") {
+    setActiveNavItem(2)
+  }
+});
+
 </script>
 
 <style scoped>

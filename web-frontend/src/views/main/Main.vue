@@ -16,7 +16,10 @@
       </div>
     </div>
     <div class="right-box">
-      <div class="worker-container"><div>보수 공사팀</div></div>
+      <div class="worker-container">
+        <div>보수 공사팀</div>
+        <Team></Team>
+      </div>
     </div>
   </div>
 </template>
@@ -25,6 +28,7 @@ import Weather from "./components/Weather.vue";
 import CurrentStats from "./components/CurrentStats.vue";
 import ReportList from "./components/TaskList.vue";
 import SVG from "./components/SVG.vue";
+import Team from "./components/Team.vue"
 </script>
 <style scoped>
 .main-box {
