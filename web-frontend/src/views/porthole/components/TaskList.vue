@@ -231,7 +231,6 @@ const assignPothole = (taskId) => {
       if (res.data.status == "SUCCESS") {
         console.log(res.data.message);
         takeData();
-        showDetail(taskId);
       }
     },
     (error) => {
