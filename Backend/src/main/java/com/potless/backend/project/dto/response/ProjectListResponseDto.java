@@ -2,7 +2,6 @@ package com.potless.backend.project.dto.response;
 
 import com.querydsl.core.annotations.QueryProjection;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -42,8 +41,8 @@ public class ProjectListResponseDto {
         this.teamName = teamName;
     }
 
-    public String formatDate(LocalDateTime date){
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-            return date.format(formatter);
+    public String formatDate(LocalDateTime date) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        return date.format(formatter);
     }
 }
