@@ -10,13 +10,7 @@
           <th class="city-column">행정동</th>
           <th class="address-column">지번 주소</th>
           <th class="work-column">
-            <button
-              class="add-button"
-              :disabled="!hasSelected"
-              @click="openModal('add')"
-            >
-              추가
-            </button>
+            <button class="add-button" @click="openModal('add')">추가</button>
             <button
               class="add-button"
               :disabled="!hasSelected"
@@ -67,9 +61,6 @@
     </table>
   </div>
 
-  <button class="button list-button" @click="openModal('list')">
-    작업지시서
-  </button>
   <div
     v-if="isModalOpen && (modalMode === 'list' || modalMode === 'add')"
     class="modal"

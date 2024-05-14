@@ -21,6 +21,9 @@
             {{ task.projectDate }}
           </td>
           <td class="cursor" @click="showDetail(task)">
+            {{ task.teamName }}
+          </td>
+          <td class="cursor" @click="showDetail(task)">
             {{ task.projectSize }} 건
           </td>
           <td class="add-column" v-if="isAddingTasks">
@@ -124,12 +127,14 @@ const showDetailAgain = () => {
 
 // 새 작업(작업 지시서 새로 만들기)
 function addNewTask() {
+  const damageIdsArray = Array.from(props.selectedIds);
   const newData = ref({
     teamId: null,
-    title: "도로 부속 작업 보고서",
+    title: "도로 부속 작업 지시서",
     projectDate: "2024-05-13",
     areaId: store2.areaId,
-    damageNums: [],
+    damageNums: damageIdsArray,
+    origin: coordinates.value,
   });
 
   postTaskCreate(
@@ -252,6 +257,7 @@ const takeData = () => {
     queryParams,
     (res) => {
       if (res.data.status == "SUCCESS") {
+        console.log(res);
         console.log(res.data.message);
         taskData.value = res.data.data.content;
       } else {
