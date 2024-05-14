@@ -6,7 +6,7 @@
         <div class="input-group">
           <div class="input-title">위험물의 종류를 입력해 주세요 :</div>
           <select id="potholeType" v-model="potholeType" required>
-            <option class="" disabled value="">타입</option>
+            <option disabled value="">타입</option>
             <option value="POTHOLE">포트홀</option>
             <option value="CRACK">도로균열</option>
             <option value="WORNOUT">도로마모</option>
@@ -22,7 +22,12 @@
           </select>
         </div>
         <div class="file-upload">
-          <input type="file" @change="handleFileChange" accept="image/*" />
+          <input
+            type="file"
+            @change="handleFileChange"
+            accept="image/*"
+            required
+          />
         </div>
         <SearchMap @updateCenter="handleCenterUpdate" />
         <div class="button-div">
@@ -55,16 +60,16 @@ const handleFileChange = (event) => {
 };
 
 const submitForm = () => {
-  const potholeInfo = {
-    x: location_x.value,
-    y: location_y.value,
-    severity: Number(severity.value),
-    type: potholeType.value,
-  };
+  const formData = new FormData();
+  formData.append("dtype", potholeType.value);
+  formData.append("severity", severity.value);
+  formData.append("x", location_x.value);
+  formData.append("y", location_y.value);
+  formData.append("files", file.value);
 
   postPotholeAdd(
     accessToken.value,
-    potholeInfo,
+    formData,
     (res) => {
       console.log(res);
       if (res.data.status == "SUCCESS") {
@@ -155,41 +160,4 @@ select {
 .report-btn:hover {
   background-color: #0e1241;
 }
-
-/* .form-box {
-  width: 500px;
-}
-.form-content {
-  align-items: center;
-}
-
-.input-group {
-  min-width: 150px;
-  height: 50px;
-}
-
-select,
-input,
-button {
-  margin: 10px;
-  width: 150px;
-  height: 100%;
-}
-
-label {
-  display: block;
-  margin-bottom: 5px;
-}
-button {
-  background-color: #007bff;
-  color: white;
-  border: none;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-button:hover {
-  background-color: #0056b3;
-}
-.map-box {
-} */
 </style>

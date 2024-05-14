@@ -194,6 +194,7 @@ function toggleModal() {
   isModalOpen.value = !isModalOpen.value;
   if (!isModalOpen.value) {
     selectedIds.value.clear();
+    emit("refreshData");
   }
 }
 function openModal(mode) {

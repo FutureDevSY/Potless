@@ -142,6 +142,7 @@ function addNewTask() {
     newData.value,
     (res) => {
       if (res.data.status == "SUCCESS") {
+        console.log(res);
         console.log(res.data.message);
         taskData.value = res.data.data;
         takeData();
@@ -202,6 +203,7 @@ function saveDetail() {
     (res) => {
       if (res.data.status == "SUCCESS") {
         console.log(res.data.message);
+        takeData();
       } else {
         console.log(res.data.message);
       }
@@ -229,7 +231,7 @@ const assignPothole = (taskId) => {
       if (res.data.status == "SUCCESS") {
         console.log(res.data.message);
         takeData();
-        closeDetail();
+        showDetail(taskId);
       }
     },
     (error) => {
