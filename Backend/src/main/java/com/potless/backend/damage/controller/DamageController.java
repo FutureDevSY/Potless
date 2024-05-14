@@ -12,6 +12,7 @@ import com.potless.backend.damage.dto.service.response.kakao.Address;
 import com.potless.backend.damage.dto.service.response.kakao.RoadAddress;
 import com.potless.backend.damage.entity.enums.Status;
 import com.potless.backend.damage.service.*;
+import com.potless.backend.global.exception.kakao.KakaoNotFoundException;
 import com.potless.backend.global.exception.pothole.InvalidCoordinateRangeException;
 import com.potless.backend.global.exception.pothole.PotholeNotFoundException;
 import com.potless.backend.global.format.code.ApiResponse;
@@ -29,8 +30,6 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -39,6 +38,7 @@ import java.io.IOException;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.concurrent.CompletionException;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -275,45 +275,87 @@ public class DamageController {
     @Operation(summary = "Damage 수동 삽입", description = "Damage를 삽입합니다.", responses = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Damage 삽입 성공", content = @Content(schema = @Schema(implementation = String.class)))
     })
-    @PostMapping(value = "setManual")
+    @PostMapping(value = "setManual", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<?> setManualDamage(
             Authentication authentication,
-            @Validated @RequestBody DamageManualRequestDTO request,
-            BindingResult bindingResult
+            @RequestPart("dtype") @NotNull String dtype,
+            @RequestPart("x") @NotNull String x,
+            @RequestPart("y") @NotNull String y,
+            @RequestPart("severity") @NotNull String severity,
+            @RequestPart("files") List<MultipartFile> files
     ) {
-        if (bindingResult.hasErrors()) {
-            return response.fail(bindingResult);
+        double xValue = Double.parseDouble(x);
+        double yValue = Double.parseDouble(y);
+
+        if ((xValue <= 100 || xValue >= 140) || (yValue <= 20 || yValue >= 50)) {
+            throw new InvalidCoordinateRangeException();
         }
-        // 비동기로 처리하고 바로 응답 반환 검증
-        kakaoService.fetchKakaoData(request.getX(), request.getY())
-                .thenAcceptAsync(data -> {
-                    RoadAddress roadAddress = data.getDocuments().get(0).getRoad_address();
-                    Address address = data.getDocuments().get(0).getAddress();
-                    String addressName = (address != null) ? address.getAddress_name() : roadAddress.getAddress_name();
-                    String location = (address != null) ? address.getRegion_3depth_name() : "정보가 존재하지 않습니다";
-                    String area = (address != null) ? address.getRegion_2depth_name() : roadAddress.getRegion_2depth_name();
-                    DamageSetRequestDTO damageSetRequestDTO = DamageSetRequestDTO.builder()
-                            .dtype(request.getType())
-                            .x(request.getX())
-                            .y(request.getY())
-                            .build();
-                    damageSetRequestDTO.setImages(Collections.singletonList("https://mine702-amazon-s3.s3.ap-northeast-2.amazonaws.com/Default/default.jpg"));
-                    DamageSetRequestServiceDTO serviceDTO = DamageSetRequestServiceDTO.builder()
-                            .dirX(damageSetRequestDTO.getX())
-                            .dirY(damageSetRequestDTO.getY())
-                            .dtype(damageSetRequestDTO.getDtype())
-                            .width(0.0)
-                            .address(addressName)
-                            .severity(request.getSeverity())
-                            .status(Status.작업전)
-                            .area(area)
-                            .location(location)
-                            .images(damageSetRequestDTO.getImages())
-                            .build();
-                    iDamageService.setDamage(serviceDTO);
-                });
+
+        KakaoMapApiResponseDTO data;
+        try {
+            data = kakaoService.fetchKakaoData(xValue, yValue).join();
+        } catch (CompletionException e) {
+            Throwable cause = e.getCause();
+            if (cause instanceof KakaoNotFoundException) {
+                throw (KakaoNotFoundException) cause;
+            }
+            throw new RuntimeException("Error processing Kakao data", e);
+        }
+
+        if (data == null || data.getMeta().getTotal_count() == 0) {
+            throw new KakaoNotFoundException();
+        }
+
+        RoadAddress roadAddress = data.getDocuments().get(0).getRoad_address();
+        Address address = data.getDocuments().get(0).getAddress();
+        String addressName = (address != null) ? address.getAddress_name() : roadAddress.getAddress_name();
+        String location = (address != null) ? address.getRegion_3depth_name() : "정보가 존재하지 않습니다";
+        String area = (address != null) ? address.getRegion_2depth_name() : roadAddress.getRegion_2depth_name();
+
+        DamageSetRequestDTO damageSetRequestDTO = DamageSetRequestDTO.builder()
+                .dtype(dtype)
+                .x(xValue)
+                .y(yValue)
+                .build();
+
+        if (files.isEmpty()) {
+            damageSetRequestDTO.setImages(Collections.singletonList("https://mine702-amazon-s3.s3.ap-northeast-2.amazonaws.com/Default/default.jpg"));
+        } else {
+            Map<String, String> fileUrlsAndKeys = files.stream()
+                    .map(file -> {
+                        try {
+                            String fileName = "AfterVerification/BeforeWork/" + System.currentTimeMillis() + "_" + file.getOriginalFilename();
+                            return awsService.uploadFileToS3(file, fileName);
+                        } catch (IOException e) {
+                            log.error("Error uploading file to S3", e);
+                            return null;
+                        }
+                    })
+                    .filter(Objects::nonNull)
+                    .flatMap(map -> map.entrySet().stream())
+                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+            List<String> fileUrls = new ArrayList<>(fileUrlsAndKeys.values());
+            damageSetRequestDTO.setImages(fileUrls);
+        }
+
+        DamageSetRequestServiceDTO serviceDTO = DamageSetRequestServiceDTO.builder()
+                .dirX(damageSetRequestDTO.getX())
+                .dirY(damageSetRequestDTO.getY())
+                .dtype(damageSetRequestDTO.getDtype())
+                .width(0.0)
+                .address(addressName)
+                .severity(Integer.valueOf(severity))
+                .status(Status.작업전)
+                .area(area)
+                .location(location)
+                .images(damageSetRequestDTO.getImages())
+                .build();
+
+        iDamageService.setDamage(serviceDTO);
+
         return response.success(ResponseCode.POTHOLE_DETECTED);
     }
+
 
     @Operation(summary = "Damage 삽입", description = "Damage를 삽입합니다.", responses = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Damage 삽입 성공", content = @Content(schema = @Schema(implementation = String.class)))
