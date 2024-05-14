@@ -20,8 +20,8 @@ public class DamageManualRequestDTO {
     @NotNull(message = "타입은 비어있을 수 없습니다")
     private String type;
 
-    @Builder
 
+    @Builder
     public DamageManualRequestDTO(Double x, Double y, Integer severity, String type) {
         this.x = x;
         this.y = y;

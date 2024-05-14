@@ -13,5 +13,6 @@ public class MemberInfo {
     private Integer role;
     private String email;
     private String phone;
-    private Integer region;
+    private Long areaId;
+
 }

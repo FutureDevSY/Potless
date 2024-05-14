@@ -3,7 +3,7 @@
     <div class="left-box">
       <div class="incident-box">
         <div class="title-and-lottie">
-          <LottieRadar class="lottie" />
+          <LottieRadar class="lottie lottie-radar" />
           <p class="incident-title">위험물 발생 현황</p>
         </div>
         <transition-group name="incident-report" tag="div" class="incident-report">
@@ -35,8 +35,8 @@
     </div>
     <div class="right-box">
       <div class="total-box">
-        <div class="title-and-lottie">
-          <LottieGraph class="lottie" />
+        <div class="title-and-lottie-cum">
+          <LottieGraph class="lottie lottie-graph" />
           <p class="totalincident-title">위험물 누적 탐지 건수</p>
         </div>
         <div class="incident-graph">
@@ -45,8 +45,8 @@
       </div>
 
       <div class="work-box">
-        <div class="title-and-lottie">
-          <LottieConstruction class="lottie" />
+        <div class="title-and-lottie-cum">
+          <LottieConstruction class="lottie lottie-construction" />
           <p class="work-title">보수 공사 현황</p>
         </div>
         <div class="chart-and-data">
@@ -239,17 +239,22 @@ onMounted(() => {
 
 <style scoped>
 .statics-container {
-  max-width: 1920px;
-  max-height: 100vh;
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  padding: 1%;
+  grid-template-columns: 49.2% 49.2%;
+  gap: 25px;
 }
 
-.left-box,
+.left-box {
+  display: grid;
+  grid-template-rows: 29% 68.4%;
+  gap: 3%;
+}
+
 .right-box {
-  display: flex;
-  flex-direction: column;
-  padding: 3.1vh 15px;
+  display: grid;
+  grid-template-rows: 60% 37%;
+  gap: 3%;
 }
 
 .totalincident-title,
@@ -257,20 +262,41 @@ onMounted(() => {
 .town-title,
 .work-title,
 .road-title {
-  font-size: 18px;
+  font-size: 2vh;
   font-weight: 600;
   color: #373737;
 }
 
 .title-and-lottie {
-  display: flex;
+  display: grid;
+  grid-template-columns: 8% 67.5%;
+  gap: 10px;
   align-items: center;
 }
+
+.title-and-lottie-cum {
+  display: grid;
+  grid-template-columns: 7% 70.5%;
+  gap: 10px;
+  align-items: center;
+}
+
 .lottie {
   margin-left: 10px;
 }
 .lottie-danger {
-  transform: translateY(-5px);
+  transform: translateY(-0.8vh);
+}
+.lottie-radar {
+  transform: translateY(-1.5vh);
+}
+
+.lottie-graph {
+  transform: translateY(-0.8vh);
+}
+
+.lottie-construction {
+  transform: translateY(-0.8vh);
 }
 
 /* ***** */
@@ -279,16 +305,17 @@ onMounted(() => {
   background-color: rgba(241, 241, 241, 0.641);
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.255);
   border-radius: 10px;
-  padding: 1.2vh 5px 8px 5px;
-  height: 177px;
-  margin-bottom: 3.4vh;
+  padding: 1.5vh 5px 0vh 0px;
+  display: grid;
+  grid-template-rows: 25% 65%;
+  gap: 1vh;
 }
 .incident-title {
-  margin: 1vh 0px 1.8vh 0px;
+  margin: 1vh 0px 4vh 0px;
 }
 .incident-report {
   display: grid;
-  margin-bottom: 20px;
+  margin: 0 0 0 10px;
   grid-template-columns: 1fr 1fr 1fr;
 }
 /* slide animation 효과 -> 왼쪽에서 오른쪽으로 이동 */
@@ -315,12 +342,15 @@ onMounted(() => {
   background-color: rgba(241, 241, 241, 0.641);
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.255);
   border-radius: 10px;
-  padding: 1.2vh 0px 0px 5px;
+  padding: 2vh 0px 0px 5px;
+  display: grid;
+  grid-template-rows: 10% 90%;
 }
 .title-input {
-  display: flex;
+  display: grid;
+  grid-template-columns: 6% 26% 100%;
+  gap: 15px;
   align-items: center;
-  margin: 1vh 0px 0px 0px;
 }
 .road-title {
   margin: 0px 0px 0px 0px;
@@ -328,17 +358,17 @@ onMounted(() => {
 }
 input {
   width: 25%;
-  padding: 9px;
+  padding: 1.8%;
   position: relative;
   overflow: hidden;
   border-radius: 8px;
   background: none;
   border: 2px solid #a1a1a1;
   transition: border 0.4s ease;
-  font-size: 14px;
+  font-size: 1.5vh;
   color: #373737;
   background-color: white;
-  margin-left: 20px;
+  transform: translateY(-0.6vh);
 }
 input:focus {
   outline: 0;
@@ -351,15 +381,13 @@ input:focus {
   background-color: rgba(241, 241, 241, 0.641);
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.255);
   border-radius: 10px;
-  padding: 1.2vh 5px 0px 5px;
-  height: 360px;
-  margin-bottom: 3.4vh;
+  padding: 0.5vh 0px 0vh 5px;
+  display: grid;
+  grid-template-rows: 15% 65%;
+  gap: 1vh;
 }
 .totalincident-title {
-  margin: 1vh 0px 0px 0px;
-}
-.incident-graph {
-  width: 93%;
+  margin: 0px 0px 0px 0px;
 }
 
 /* 보수 공사 현황 */
@@ -367,11 +395,14 @@ input:focus {
   background-color: rgba(241, 241, 241, 0.641);
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.255);
   border-radius: 10px;
-  padding: 1.2vh 5px 0px 5px;
-  height: 273.5px;
+  padding: 2vh 0px 0vh 5px;
+  display: grid;
+  grid-template-rows: 15% 85%;
+  gap: 1vh;
 }
 .work-title {
-  margin: 1vh 0px 1vh 0px;
+  margin: 0px 0px 0px 0px;
+  padding-bottom: 15px;
 }
 .chart-and-data {
   display: grid;
@@ -383,7 +414,7 @@ input:focus {
 }
 .data-list {
   border-left: 1px solid #ccc;
-  height: 200px;
+  height: 85%;
   display: flex;
   flex-direction: column;
   justify-content: center;

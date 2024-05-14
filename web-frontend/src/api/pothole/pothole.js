@@ -33,7 +33,8 @@ const getPotholeDetail = async (accessToken, damageId, success, fail) => {
 // 포트홀 정보 삭제
 const deletePothole = async (accessToken, damageId, success, fail) => {
   await local
-    .delete(`/damage/${damageId}`, {
+    .delete(`/damage`, {
+      data: damageId,
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
@@ -48,6 +49,7 @@ const postPotholeAdd = async (accessToken, potholeInfo, success, fail) => {
     .post(`/damage/setManual`, potholeInfo, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "multipart/form-data",
       },
     })
     .then(success)

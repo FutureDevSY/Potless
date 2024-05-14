@@ -10,6 +10,7 @@ import com.potless.backend.global.exception.member.ManagerNotFoundException;
 import com.potless.backend.global.exception.member.MemberNotFoundException;
 import com.potless.backend.global.exception.pothole.PotholeNotFoundException;
 import com.potless.backend.global.exception.project.AreaNotFoundException;
+import com.potless.backend.global.exception.project.ProjectDeleteFailException;
 import com.potless.backend.global.exception.project.ProjectNotFoundException;
 import com.potless.backend.member.entity.ManagerEntity;
 import com.potless.backend.member.entity.TeamEntity;
@@ -29,6 +30,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -82,6 +85,9 @@ public class ProjectServiceImpl implements ProjectService {
                 long damageId = projectSaveRequestDto.getDamageNums().get(order[i] - 1);
                 DamageEntity damageEntity = damageRepository.findById(damageId)
                         .orElseThrow(PotholeNotFoundException::new);
+                damageEntity.changeStatus(Status.작업중);
+                damageRepository.save(damageEntity);
+
                 TaskEntity taskEntity = TaskEntity.builder()
                         .projectEntity(saveProjectEntity)
                         .damageEntity(damageEntity)
@@ -103,8 +109,22 @@ public class ProjectServiceImpl implements ProjectService {
     public void deleteProject(Long projectId) {
         ProjectEntity projectEntity = projectRepository.findById(projectId)
                 .orElseThrow(ProjectNotFoundException::new);
+
+        List<TaskEntity> taskEntities = damageRepository.findTasksByProjectIdAndDamageStatus(projectId, Status.작업중);
+
+        if (!taskEntities.isEmpty()) {
+            throw new ProjectDeleteFailException();
+        }
+
         projectEntity.softDelet();
         projectRepository.save(projectEntity);
+    }
+
+    @Override
+    public void changeProjectStatus(Long projectId) {
+        ProjectEntity projectEntity = projectRepository.findById(projectId)
+                .orElseThrow(ProjectNotFoundException::new);
+        projectEntity.changeStatus(Status.작업완료);
     }
 
 }

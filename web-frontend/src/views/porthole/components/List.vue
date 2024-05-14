@@ -4,20 +4,21 @@
     <table>
       <thead>
         <tr>
-          <th class="work-column">
-            <button
-              class="add-button"
-              :disabled="!hasSelected"
-              @click="openModal('add')"
-            >
-              작업추가
-            </button>
-          </th>
           <!-- <th class="detect-column">탐지 일시</th> -->
           <th class="danger-column">위험성</th>
           <th class="type-column">종류</th>
           <th class="city-column">행정동</th>
           <th class="address-column">지번 주소</th>
+          <th class="work-column">
+            <button class="add-button" @click="openModal('add')">추가</button>
+            <button
+              class="add-button"
+              :disabled="!hasSelected"
+              @click="deletePotholeSelect()"
+            >
+              삭제
+            </button>
+          </th>
         </tr>
       </thead>
       <tbody>
@@ -27,6 +28,17 @@
           @mouseover="updateMapLocation(pothole.dirX, pothole.dirY)"
           @click="handleRowClick(pothole)"
         >
+          <!-- <td>
+          <div>{{ porthole.detect.split(" ")[0] }}</div>
+          </td> -->
+          <td class="dangers-column">
+            <div class="danger-type" :class="dangerClass(pothole.severity)">
+              <p>{{ dangerClass2(pothole.severity) }}</p>
+            </div>
+          </td>
+          <td>{{ displayType(pothole.dtype) }}</td>
+          <td>{{ pothole.location }}</td>
+          <td>{{ pothole.address }}</td>
           <td class="select-column" @click.stop="toggleSelect(pothole)">
             <div
               class="checkbox"
@@ -39,25 +51,16 @@
               <div v-if="pothole.isSelected" class="checkmark"></div>
             </div>
           </td>
-          <!-- <td>
-            <div>{{ porthole.detect.split(" ")[0] }}</div>
-          </td> -->
-          <td class="dangers-column">
-            <div class="danger-type" :class="dangerClass(pothole.severity)">
-              <p>{{ pothole.severity }}</p>
+          <!-- <td class="select-column" @click.stop="toggleSelect(pothole)">
+            <div class="checkbox">
+              <div v-if="pothole.isSelected" class="checkmark"></div>
             </div>
-          </td>
-          <td>{{ pothole.dtype }}</td>
-          <td>{{ pothole.location }}</td>
-          <td>{{ pothole.address }}</td>
+          </td> -->
         </tr>
       </tbody>
     </table>
   </div>
 
-  <button class="button list-button" @click="openModal('list')">
-    작업지시서
-  </button>
   <div
     v-if="isModalOpen && (modalMode === 'list' || modalMode === 'add')"
     class="modal"
@@ -83,9 +86,14 @@
 <script setup>
 import { ref, computed } from "vue";
 import { useMoveStore } from "../../../stores/move";
+import { useAuthStore } from "@/stores/user";
+import { storeToRefs } from "pinia";
 import TaskList from "./TaskList.vue";
 import TeamModal from "./AddTeamModal.vue";
+import { deletePothole } from "../../../api/pothole/pothole";
 
+const store2 = useAuthStore();
+const { accessToken } = storeToRefs(store2);
 const store = useMoveStore();
 const props = defineProps({
   currentData: Object,
@@ -119,6 +127,24 @@ const dangerClass = (danger) => {
   }
 };
 
+const dangerClass2 = (danger) => {
+  switch (danger) {
+    case 3:
+      return "심각";
+    case 2:
+      return "주의";
+    case 1:
+      return "양호";
+    default:
+      return "";
+  }
+};
+
+// 타입 필터링
+function displayType(dtype) {
+  return dtype === "POTHOLE" ? "포트홀" : dtype === "CRACK" ? "도로균열" : "";
+}
+
 // 선택
 const selectedIds = ref(new Set());
 function toggleSelect(porthole) {
@@ -134,6 +160,33 @@ const hasSelected = computed(() => {
   return selectedIds.value.size > 0;
 });
 
+// 포트홀 삭제
+const emit = defineEmits(["refreshData", "updateMapLocation"]);
+const deletePotholeSelect = () => {
+  const selectedPotholeIds = Array.from(selectedIds.value);
+  const selectPothole = {
+    damageIds: selectedPotholeIds,
+  };
+  deletePothole(
+    accessToken.value,
+    selectPothole,
+    (res) => {
+      console.log(res);
+      if (res.data.status === "SUCCESS") {
+        console.log(res.data.message);
+        selectedIds.value.clear();
+        emit("refreshData");
+      }
+    },
+    (error) => {
+      console.error("Error:", error);
+      if (error.response && error.response.data) {
+        console.error("Error Message:", error.response.data.message);
+      }
+    }
+  );
+};
+
 // 작업 리스트 모달창
 const isModalOpen = ref(false);
 const modalMode = ref("");
@@ -141,6 +194,7 @@ function toggleModal() {
   isModalOpen.value = !isModalOpen.value;
   if (!isModalOpen.value) {
     selectedIds.value.clear();
+    emit("refreshData");
   }
 }
 function openModal(mode) {
@@ -148,7 +202,6 @@ function openModal(mode) {
   toggleModal();
 }
 
-const emit = defineEmits(["updateMapLocation"]);
 const updateMapLocation = (dirX, dirY) => {
   emit("updateMapLocation", { dirX, dirY });
 };
@@ -159,8 +212,8 @@ const updateMapLocation = (dirX, dirY) => {
 } */
 
 .checkbox {
-  width: 2.8vh;
-  height: 2.8vh;
+  width: 2vh;
+  height: 2vh;
   border: 2px solid #ccc;
   background: white;
   display: inline-block;
@@ -194,7 +247,7 @@ p {
   height: 35px;
   border-radius: 100%;
   color: #ffffff;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: bold;
   line-height: 42px;
   background-color: inherit;
@@ -256,7 +309,7 @@ tbody tr:hover {
 }
 
 .work-column {
-  width: 5.4vw;
+  width: 7vw;
   text-align: center;
   white-space: nowrap;
 }
@@ -275,13 +328,13 @@ tbody tr:hover {
 }
 
 .type-column {
-  width: 10vw;
+  width: 5vw;
   text-align: center;
   white-space: nowrap;
 }
 
 .city-column {
-  width: 10vw;
+  width: 7vw;
   text-align: center;
   white-space: nowrap;
 }

@@ -29,7 +29,7 @@ public class ReDetectionApiService {
         탐지 성공한 경우 - 위험도 측정결과 응답
         탐지 실패한 경우 - 처리결과만 응답
      */
-    public Integer reDetectionResponse(ReDetectionRequestDTO requestDto) throws IOException {
+    public ReDetectionResponseDTO reDetectionResponse(ReDetectionRequestDTO requestDto) throws IOException {
         MultiValueMap<String, HttpEntity<?>> parts = new LinkedMultiValueMap<>();
         parts.add("image_data", new HttpEntity<>(new FileSystemResource(requestDto.getImage()), createFileHeaders(requestDto.getImage(), "image_data", "image/jpeg")));
         return webClient.post()
@@ -41,7 +41,6 @@ public class ReDetectionApiService {
                             throw new PotholeDetectionFailException();
                         })
                         .bodyToMono(ReDetectionResponseDTO.class)
-                        .map(ReDetectionResponseDTO::getSeverity) // 성공 응답시 severity 값 반환
                         .block(); // Mono를 블로킹 호출하여 결과값을 얻음
     }
     private HttpHeaders createFileHeaders(File file, String name, String type) {
