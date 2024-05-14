@@ -16,6 +16,9 @@ import com.potless.backend.damage.entity.area.QLocationEntity;
 import com.potless.backend.damage.entity.enums.Status;
 import com.potless.backend.damage.entity.road.QDamageEntity;
 import com.potless.backend.damage.entity.road.QImageEntity;
+import com.potless.backend.project.entity.QProjectEntity;
+import com.potless.backend.project.entity.QTaskEntity;
+import com.potless.backend.project.entity.TaskEntity;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
@@ -180,258 +183,272 @@ public class DamageRepositoryCustomImpl implements DamageRepositoryCustom {
         return queryFactory
                 .selectFrom(damage)
                 .where(damage.hexagonEntity.hexagonIndex.eq(hexagonIndex)
-                        .and(damage.dtype.eq(dtype)))
+                        .and(damage.dtype.eq(dtype))
+                        .and(damage.status.in(Status.작업전, Status.작업중)))
                 .setLockMode(LockModeType.PESSIMISTIC_WRITE) // Pessimistic Lock 설정
                 .fetchFirst() != null;
     }
 
-
     @Override
-    public Page<DamageResponseDTO> findDamagesWithLatestTransaction(DamageSearchRequestDTO searchDTO, Pageable pageable) {
-        QDamageEntity damage = QDamageEntity.damageEntity;
-        QImageEntity image = QImageEntity.imageEntity;
+    public List<TaskEntity> findTasksByProjectIdAndDamageStatus(Long projectId, Status status) {
+        QTaskEntity taskEntity = QTaskEntity.taskEntity;
+        QDamageEntity damageEntity = QDamageEntity.damageEntity;
 
-        BooleanBuilder builder = new BooleanBuilder();
-
-        builder.and(betweenDates(damage, searchDTO.getStart(), searchDTO.getEnd()))
-                .and(equalToType(damage, searchDTO.getType()))
-                .and(equalToStatus(damage, searchDTO.getStatus()))
-                .and(equalToSeverity(damage, searchDTO.getSeverity()))
-                .and(containsArea(damage, searchDTO.getArea()))
-                .and(containsSearchWord(damage, searchDTO.getSearchWord()));
-
-        List<DamageResponseDTO> results;
-
-        results = queryFactory
-                .select(Projections.constructor(DamageResponseDTO.class,
-                        damage.id,
-                        damage.severity,
-                        damage.dirX,
-                        damage.dirY,
-                        damage.address,
-                        damage.width,
-                        damage.status,
-                        damage.areaEntity.areaGu,
-                        damage.locationEntity.locationName,
-                        damage.dtype,
-                        damage.createdDateTime
-                ))
-                .from(damage)
-                .where(builder)
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
-                .orderBy(damage.createdDateTime.desc())
+        return queryFactory.selectFrom(taskEntity)
+                .join(taskEntity.damageEntity, damageEntity)
+                .where(taskEntity.projectEntity.id.eq(projectId)
+                        .and(damageEntity.status.eq(status)))
                 .fetch();
-
-        Long countResult = queryFactory
-                .select(damage.count())
-                .from(damage)
-                .where(builder)
-                .fetchOne();
-
-        long total = (countResult != null) ? countResult : 0;
-
-        for (DamageResponseDTO damageResponseDTO : results) {
-            List<ImagesResponseDTO> imagesForDamage = queryFactory
-                    .select(Projections.constructor(ImagesResponseDTO.class,
-                            image.id,
-                            image.url,
-                            image.order))
-                    .from(image)
-                    .where(image.damageEntity.id.eq(damageResponseDTO.getId()))
-                    .fetch();
-            damageResponseDTO.setImagesResponseDTOS(imagesForDamage);
-        }
-
-        return new PageImpl<>(results, pageable, total);
-
     }
 
-    @Override
-    public StatisticListResponseDTO getStatistic(Long areaId) {
-        QDamageEntity damage = QDamageEntity.damageEntity;
-        QLocationEntity location = QLocationEntity.locationEntity;
 
-        // 각 상태 및 심각도 3에 대한 조건부 카운트를 집계하는 쿼리
-        List<Tuple> rawResults = queryFactory
-                .select(location.id, location.locationName,
-                        new CaseBuilder()
-                                .when(damage.status.eq(Status.작업전))
-                                .then(1).otherwise(0).sum().as("countDamageBefore"),
-                        new CaseBuilder()
-                                .when(damage.status.eq(Status.작업중))
-                                .then(1).otherwise(0).sum().as("countDamageDuring"),
-                        new CaseBuilder()
-                                .when(damage.status.eq(Status.작업완료))
-                                .then(1).otherwise(0).sum().as("countDamageDone"),
-                        new CaseBuilder()
-                                .when(damage.severity.eq(3))
-                                .then(1).otherwise(0).sum().as("severityCount") // 심각도 3 조건 추가
-                )
-                .from(location)
-                .leftJoin(location.damageEntities, damage)
-                .where(location.areaEntity.id.eq(areaId))
-                .groupBy(location.id)
+
+@Override
+public Page<DamageResponseDTO> findDamagesWithLatestTransaction(DamageSearchRequestDTO searchDTO, Pageable pageable) {
+    QDamageEntity damage = QDamageEntity.damageEntity;
+    QImageEntity image = QImageEntity.imageEntity;
+
+    BooleanBuilder builder = new BooleanBuilder();
+
+    builder.and(betweenDates(damage, searchDTO.getStart(), searchDTO.getEnd()))
+            .and(equalToType(damage, searchDTO.getType()))
+            .and(equalToStatus(damage, searchDTO.getStatus()))
+            .and(equalToSeverity(damage, searchDTO.getSeverity()))
+            .and(containsArea(damage, searchDTO.getArea()))
+            .and(containsSearchWord(damage, searchDTO.getSearchWord()));
+
+    List<DamageResponseDTO> results;
+
+    results = queryFactory
+            .select(Projections.constructor(DamageResponseDTO.class,
+                    damage.id,
+                    damage.severity,
+                    damage.dirX,
+                    damage.dirY,
+                    damage.address,
+                    damage.width,
+                    damage.status,
+                    damage.areaEntity.areaGu,
+                    damage.locationEntity.locationName,
+                    damage.dtype,
+                    damage.createdDateTime
+            ))
+            .from(damage)
+            .where(builder)
+            .offset(pageable.getOffset())
+            .limit(pageable.getPageSize())
+            .orderBy(damage.createdDateTime.desc())
+            .fetch();
+
+    Long countResult = queryFactory
+            .select(damage.count())
+            .from(damage)
+            .where(builder)
+            .fetchOne();
+
+    long total = (countResult != null) ? countResult : 0;
+
+    for (DamageResponseDTO damageResponseDTO : results) {
+        List<ImagesResponseDTO> imagesForDamage = queryFactory
+                .select(Projections.constructor(ImagesResponseDTO.class,
+                        image.id,
+                        image.url,
+                        image.order))
+                .from(image)
+                .where(image.damageEntity.id.eq(damageResponseDTO.getId()))
                 .fetch();
-
-        // 결과 처리
-        List<StatisticLocationSeverityCountResponseDTO> results = rawResults.stream()
-                .map(tuple -> new StatisticLocationSeverityCountResponseDTO(
-                        tuple.get(location.locationName),
-                        Optional.ofNullable(tuple.get(Expressions.numberPath(Integer.class, "countDamageBefore"))).orElse(0).longValue(),
-                        Optional.ofNullable(tuple.get(Expressions.numberPath(Integer.class, "countDamageDuring"))).orElse(0).longValue(),
-                        Optional.ofNullable(tuple.get(Expressions.numberPath(Integer.class, "countDamageDone"))).orElse(0).longValue(),
-                        Optional.ofNullable(tuple.get(Expressions.numberPath(Integer.class, "severityCount"))).orElse(0).longValue()
-                ))
-                .collect(Collectors.toList());
-
-        String areaGu = em.find(AreaEntity.class, areaId).getAreaGu();
-        return new StatisticListResponseDTO(areaGu, results);
+        damageResponseDTO.setImagesResponseDTOS(imagesForDamage);
     }
 
+    return new PageImpl<>(results, pageable, total);
 
-    @Override
-    public List<StatisticCountResponseDTO> getStatistics() {
-        QDamageEntity damage = QDamageEntity.damageEntity;
-        QAreaEntity area = QAreaEntity.areaEntity;
+}
 
-        List<Tuple> results = queryFactory
-                .select(area.areaGu,
-                        damage.status,
-                        damage.count().as("count"))
-                .from(damage)
-                .join(damage.areaEntity, area)
-                .groupBy(area.areaGu, damage.status)
-                .fetch();
+@Override
+public StatisticListResponseDTO getStatistic(Long areaId) {
+    QDamageEntity damage = QDamageEntity.damageEntity;
+    QLocationEntity location = QLocationEntity.locationEntity;
 
-        Map<String, Map<Status, Long>> groupedResults = results.stream().collect(Collectors.groupingBy(
-                result -> Optional.ofNullable(result.get(area.areaGu)).orElse("Unknown Area"),
-                Collectors.toMap(
-                        result -> result.get(damage.status),
-                        result -> Optional.ofNullable(result.get(Expressions.numberPath(Long.class, "count"))).orElse(0L),
-                        (u, v) -> {
-                            throw new IllegalStateException(String.format("Duplicate key %s", u));
-                        }
-                )
-        ));
-        return groupedResults.entrySet().stream()
-                .map(entry -> new StatisticCountResponseDTO(
-                        entry.getKey(),
-                        entry.getValue().getOrDefault(Status.작업전, 0L),
-                        entry.getValue().getOrDefault(Status.작업중, 0L),
-                        entry.getValue().getOrDefault(Status.작업완료, 0L)
-                ))
-                .collect(Collectors.toList());
-    }
+    // 각 상태 및 심각도 3에 대한 조건부 카운트를 집계하는 쿼리
+    List<Tuple> rawResults = queryFactory
+            .select(location.id, location.locationName,
+                    new CaseBuilder()
+                            .when(damage.status.eq(Status.작업전))
+                            .then(1).otherwise(0).sum().as("countDamageBefore"),
+                    new CaseBuilder()
+                            .when(damage.status.eq(Status.작업중))
+                            .then(1).otherwise(0).sum().as("countDamageDuring"),
+                    new CaseBuilder()
+                            .when(damage.status.eq(Status.작업완료))
+                            .then(1).otherwise(0).sum().as("countDamageDone"),
+                    new CaseBuilder()
+                            .when(damage.severity.eq(3))
+                            .then(1).otherwise(0).sum().as("severityCount") // 심각도 3 조건 추가
+            )
+            .from(location)
+            .leftJoin(location.damageEntities, damage)
+            .where(location.areaEntity.id.eq(areaId))
+            .groupBy(location.id)
+            .fetch();
 
-    @Override
-    public StatisticLocationCountResponseDTO getStatisticLocation(String locationName) {
-        QDamageEntity damage = QDamageEntity.damageEntity;
-        // 상태별로 결과를 그룹화하고 카운트
-        List<Tuple> counts = queryFactory
-                .select(damage.status, damage.count())
-                .from(damage)
-                .where(damage.locationEntity.locationName.eq(locationName))
-                .groupBy(damage.status)
-                .fetch();
+    // 결과 처리
+    List<StatisticLocationSeverityCountResponseDTO> results = rawResults.stream()
+            .map(tuple -> new StatisticLocationSeverityCountResponseDTO(
+                    tuple.get(location.locationName),
+                    Optional.ofNullable(tuple.get(Expressions.numberPath(Integer.class, "countDamageBefore"))).orElse(0).longValue(),
+                    Optional.ofNullable(tuple.get(Expressions.numberPath(Integer.class, "countDamageDuring"))).orElse(0).longValue(),
+                    Optional.ofNullable(tuple.get(Expressions.numberPath(Integer.class, "countDamageDone"))).orElse(0).longValue(),
+                    Optional.ofNullable(tuple.get(Expressions.numberPath(Integer.class, "severityCount"))).orElse(0).longValue()
+            ))
+            .collect(Collectors.toList());
 
-        Long countDamageBefore = 0L;
-        Long countDamageDone = 0L;
+    String areaGu = em.find(AreaEntity.class, areaId).getAreaGu();
+    return new StatisticListResponseDTO(areaGu, results);
+}
 
-        // Tuple 결과 처리
-        for (Tuple tuple : counts) {
-            Status status = tuple.get(damage.status);
-            Long count = tuple.get(1, Long.class); // 카운트 값 가져오기
 
-            if (status == Status.작업전) {
-                countDamageBefore = count;
-            } else if (status == Status.작업완료) {
-                countDamageDone = count;
-            }
+@Override
+public List<StatisticCountResponseDTO> getStatistics() {
+    QDamageEntity damage = QDamageEntity.damageEntity;
+    QAreaEntity area = QAreaEntity.areaEntity;
+
+    List<Tuple> results = queryFactory
+            .select(area.areaGu,
+                    damage.status,
+                    damage.count().as("count"))
+            .from(damage)
+            .join(damage.areaEntity, area)
+            .groupBy(area.areaGu, damage.status)
+            .fetch();
+
+    Map<String, Map<Status, Long>> groupedResults = results.stream().collect(Collectors.groupingBy(
+            result -> Optional.ofNullable(result.get(area.areaGu)).orElse("Unknown Area"),
+            Collectors.toMap(
+                    result -> result.get(damage.status),
+                    result -> Optional.ofNullable(result.get(Expressions.numberPath(Long.class, "count"))).orElse(0L),
+                    (u, v) -> {
+                        throw new IllegalStateException(String.format("Duplicate key %s", u));
+                    }
+            )
+    ));
+    return groupedResults.entrySet().stream()
+            .map(entry -> new StatisticCountResponseDTO(
+                    entry.getKey(),
+                    entry.getValue().getOrDefault(Status.작업전, 0L),
+                    entry.getValue().getOrDefault(Status.작업중, 0L),
+                    entry.getValue().getOrDefault(Status.작업완료, 0L)
+            ))
+            .collect(Collectors.toList());
+}
+
+@Override
+public StatisticLocationCountResponseDTO getStatisticLocation(String locationName) {
+    QDamageEntity damage = QDamageEntity.damageEntity;
+    // 상태별로 결과를 그룹화하고 카운트
+    List<Tuple> counts = queryFactory
+            .select(damage.status, damage.count())
+            .from(damage)
+            .where(damage.locationEntity.locationName.eq(locationName))
+            .groupBy(damage.status)
+            .fetch();
+
+    Long countDamageBefore = 0L;
+    Long countDamageDone = 0L;
+
+    // Tuple 결과 처리
+    for (Tuple tuple : counts) {
+        Status status = tuple.get(damage.status);
+        Long count = tuple.get(1, Long.class); // 카운트 값 가져오기
+
+        if (status == Status.작업전) {
+            countDamageBefore = count;
+        } else if (status == Status.작업완료) {
+            countDamageDone = count;
         }
-
-        return StatisticLocationCountResponseDTO.builder()
-                .locationName(locationName)
-                .countDamageBefore(countDamageBefore)
-                .countDamageDone(countDamageDone)
-                .build();
     }
 
+    return StatisticLocationCountResponseDTO.builder()
+            .locationName(locationName)
+            .countDamageBefore(countDamageBefore)
+            .countDamageDone(countDamageDone)
+            .build();
+}
 
-    @Override
-    public List<StatisticLocationCountResponseDTO> getStatisticLocations() {
-        QDamageEntity damage = QDamageEntity.damageEntity;
-        QLocationEntity location = QLocationEntity.locationEntity;
 
-        List<Tuple> results = queryFactory
-                .select(location.locationName,
-                        damage.status,
-                        damage.count().as("count"))
-                .from(damage)
-                .join(damage.locationEntity, location)
-                .groupBy(location.locationName, damage.status)
-                .fetch();
+@Override
+public List<StatisticLocationCountResponseDTO> getStatisticLocations() {
+    QDamageEntity damage = QDamageEntity.damageEntity;
+    QLocationEntity location = QLocationEntity.locationEntity;
 
-        Map<String, Map<Status, Long>> groupedResults = results.stream().collect(Collectors.groupingBy(
-                result -> Optional.ofNullable(result.get(location.locationName)).orElse("Unknown Location"),
-                Collectors.toMap(
-                        result -> result.get(damage.status),
-                        result -> Optional.ofNullable(result.get(Expressions.numberPath(Long.class, "count"))).orElse(0L),
-                        (u, v) -> {
-                            throw new IllegalStateException(String.format("Duplicate key %s", u));
-                        }
-                )
-        ));
+    List<Tuple> results = queryFactory
+            .select(location.locationName,
+                    damage.status,
+                    damage.count().as("count"))
+            .from(damage)
+            .join(damage.locationEntity, location)
+            .groupBy(location.locationName, damage.status)
+            .fetch();
 
-        return groupedResults.entrySet().stream()
-                .map(entry -> new StatisticLocationCountResponseDTO(
-                        entry.getKey(),
-                        entry.getValue().getOrDefault(Status.작업전, 0L),
-                        entry.getValue().getOrDefault(Status.작업중, 0L),
-                        entry.getValue().getOrDefault(Status.작업완료, 0L)
-                ))
-                .collect(Collectors.toList());
+    Map<String, Map<Status, Long>> groupedResults = results.stream().collect(Collectors.groupingBy(
+            result -> Optional.ofNullable(result.get(location.locationName)).orElse("Unknown Location"),
+            Collectors.toMap(
+                    result -> result.get(damage.status),
+                    result -> Optional.ofNullable(result.get(Expressions.numberPath(Long.class, "count"))).orElse(0L),
+                    (u, v) -> {
+                        throw new IllegalStateException(String.format("Duplicate key %s", u));
+                    }
+            )
+    ));
+
+    return groupedResults.entrySet().stream()
+            .map(entry -> new StatisticLocationCountResponseDTO(
+                    entry.getKey(),
+                    entry.getValue().getOrDefault(Status.작업전, 0L),
+                    entry.getValue().getOrDefault(Status.작업중, 0L),
+                    entry.getValue().getOrDefault(Status.작업완료, 0L)
+            ))
+            .collect(Collectors.toList());
+}
+
+private BooleanExpression betweenDates(QDamageEntity damage, LocalDate start, LocalDate end) {
+    if (start != null && end != null) {
+        return damage.createdDateTime.between(start.atStartOfDay(), end.atTime(23, 59, 59));
     }
+    return null;
+}
 
-    private BooleanExpression betweenDates(QDamageEntity damage, LocalDate start, LocalDate end) {
-        if (start != null && end != null) {
-            return damage.createdDateTime.between(start.atStartOfDay(), end.atTime(23, 59, 59));
-        }
-        return null;
+private BooleanExpression equalToType(QDamageEntity damage, String type) {
+    if (type != null) {
+        return damage.dtype.eq(type);
     }
+    return null;
+}
 
-    private BooleanExpression equalToType(QDamageEntity damage, String type) {
-        if (type != null) {
-            return damage.dtype.eq(type);
-        }
-        return null;
+private BooleanExpression equalToStatus(QDamageEntity damage, Status status) {
+    if (status != null) {
+        return damage.status.eq(status);
     }
+    return null;
+}
 
-    private BooleanExpression equalToStatus(QDamageEntity damage, Status status) {
-        if (status != null) {
-            return damage.status.eq(status);
-        }
-        return null;
+private BooleanExpression equalToSeverity(QDamageEntity damage, Integer severity) {
+    if (severity != null) {
+        return damage.severity.eq(severity);
     }
+    return null;
+}
 
-    private BooleanExpression equalToSeverity(QDamageEntity damage, Integer severity) {
-        if (severity != null) {
-            return damage.severity.eq(severity);
-        }
-        return null;
+private BooleanExpression containsArea(QDamageEntity damage, String area) {
+    if (area != null) {
+        return damage.areaEntity.areaGu.contains(area);
     }
+    return null;
+}
 
-    private BooleanExpression containsArea(QDamageEntity damage, String area) {
-        if (area != null) {
-            return damage.areaEntity.areaGu.contains(area);
-        }
-        return null;
+private BooleanExpression containsSearchWord(QDamageEntity damage, String searchWord) {
+    if (searchWord != null) {
+        return damage.locationEntity.locationName.contains(searchWord);
     }
-
-    private BooleanExpression containsSearchWord(QDamageEntity damage, String searchWord) {
-        if (searchWord != null) {
-            return damage.locationEntity.locationName.contains(searchWord);
-        }
-        return null;
-    }
+    return null;
+}
 }

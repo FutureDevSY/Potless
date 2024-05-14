@@ -13,9 +13,18 @@
     </div>
 
     <div class="sub-navbar">
-      <div class="text-dark-title nav-item first-item" @click="store.movePorthole">포트홀 조회</div>
-      <div class="text-dark-title nav-item" @click="store.moveTask">작업 정보</div>
-      <div class="text-dark-title nav-item" @click="store.moveStatistics">통계 자료</div>
+      <div
+        class="text-dark-title nav-item first-item"
+        @click="store.movePorthole"
+      >
+        포트홀 조회
+      </div>
+      <div class="text-dark-title nav-item" @click="store.moveTask">
+        작업 정보
+      </div>
+      <div class="text-dark-title nav-item" @click="store.moveStatistics">
+        통계 자료
+      </div>
     </div>
   </div>
 </template>
@@ -37,16 +46,16 @@ const clickLogout = () => {
       if (res.data.status == "SUCCESS") {
         console.log(res.data.message);
         store2.logoutfc();
-        store.moveHome();
+        store.moveLogin();
       } else {
         store2.logoutfc();
-        store.moveHome();
+        store.moveLogin();
         console.log(res);
       }
     },
     (error) => {
       store2.logoutfc();
-      store.moveHome();
+      store.moveLogin();
       console.log(error.response.data.message);
     }
   );

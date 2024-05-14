@@ -25,7 +25,7 @@
         <button class="pdf-button" @click="openPdf">PDF 미리보기</button>
       </div>
     </div>
-    <List :data="taskData" v-if="taskData" />
+    <List :data="taskData" v-if="taskData" @updateList="handleUpdateList" />
     <PathModal
       v-if="isModalVisible"
       :pathData="modalData"
@@ -70,7 +70,6 @@
 </template>
 
 <script setup>
-import html2pdf from "html2pdf.js";
 import { ref, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import List from "./components/List.vue";
@@ -81,88 +80,85 @@ import { useAuthStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
 import PathModal from "./components/PathModal.vue";
 import LottieLoading from "./components/LottieLoading.vue";
+import html2pdf from "html2pdf.js";
 
 const route = useRoute();
-const store2 = useAuthStore();
-const { accessToken, coordinates } = storeToRefs(store2);
+const store = useAuthStore();
+const { accessToken, coordinates } = storeToRefs(store);
 const documentRef = ref(null);
+
+const taskNumber = ref(route.params.id);
+const taskHeader = ref(null);
+const taskData = ref(null);
+const showLoading = ref(false);
+const modalData = ref(null);
+const isModalVisible = ref(false);
+const wayPoint = ref(null);
+const isPdfModalVisible = ref(false);
 
 onMounted(() => {
   showDetail();
 });
 
-const taskNumber = ref(route.params.id);
-const taskHeader = ref(null);
-const taskData = ref(null);
-const showDetail = () => {
+const handleUpdateList = () => {
+  showDetail();
+};
+
+function showDetail() {
   getTaskDetail(
     accessToken.value,
     route.params.id,
     (res) => {
-      console.log(res);
-      if (res.data.status == "SUCCESS") {
+      if (res.data.status === "SUCCESS") {
         console.log(res.data.message);
         taskHeader.value = res.data.data;
         taskData.value = res.data.data.damageDetailToProjectDtos;
+        console.log(taskData.value);
+        console.log(taskData.value);
       } else {
         console.log(res.data.message);
       }
     },
     (error) => {
-      console.log(error);
-      console.log(error.data.message);
+      console.error("Error fetching task details:", error);
     }
   );
-};
+}
 
-const showLoading = ref(false);
-const modalData = ref(null);
-const isModalVisible = ref(false);
-const wayPoint = ref(null);
-const showPath = () => {
-  const pathBody = ref({
+function showPath() {
+  const pathBody = {
     projectId: taskNumber.value,
     origin: coordinates.value,
-  });
+  };
 
   postOptimal(
     accessToken.value,
-    pathBody.value,
+    pathBody,
     (res) => {
-      console.log(res);
-      if (res.data.status == "SUCCESS") {
-        console.log(res.data.message);
-        console.log(res.data.data);
+      if (res.data.status === "SUCCESS") {
         modalData.value = res.data.data.routes[0].sections;
         wayPoint.value = res.data.data.routes[0].summary.waypoints;
         isModalVisible.value = true;
       }
     },
     (error) => {
-      console.log(error);
+      console.error("Error posting optimal path:", error);
     }
   );
-};
+}
 
-const closeModal = () => {
-  isModalVisible.value = false;
-};
-
-const isPdfModalVisible = ref(false);
 function openPdf() {
   isPdfModalVisible.value = true;
 }
 
-const closePdfModal = () => {
+function closePdfModal() {
   isPdfModalVisible.value = false;
-};
+}
 
 function generatePdf() {
   showLoading.value = true;
   setTimeout(() => {
-    showLoading.value = false; // 로딩 애니메이션 숨기기
-
-    // 로딩 애니메이션이 숨겨진 후 PDF 생성을 시작
+    showLoading.value = false;
     const container = document.querySelector(".task-detail-container");
     const pdfArea = document.getElementById("pdf");
 
@@ -184,9 +180,9 @@ function generatePdf() {
       .from(pdfArea)
       .save()
       .finally(() => {
-        closePdfModal(); // PDF 생성이 끝난 후 모달 창 닫기
+        closePdfModal();
       });
-  }, 5000); // 5초 대기
+  }, 5000);
 }
 </script>
 

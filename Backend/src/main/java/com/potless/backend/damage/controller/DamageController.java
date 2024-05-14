@@ -271,6 +271,7 @@ public class DamageController {
     @PostMapping("/workDone")
     public ResponseEntity<?> setWorkDone(Authentication authentication, @RequestBody @Valid DamageDoneRequestDTO requestDTO, BindingResult bindingResult) {
         iDamageService.setWorkDone(requestDTO.getDamageId());
+
         if (bindingResult.hasErrors()) {
             return response.fail(bindingResult);
         }
@@ -287,7 +288,7 @@ public class DamageController {
             @RequestPart("x") @NotNull String x,
             @RequestPart("y") @NotNull String y,
             @RequestPart("severity") @NotNull String severity,
-            @RequestPart("files") List<MultipartFile> files
+            @RequestPart(value = "files", required = false) List<MultipartFile> files
     ) {
         double xValue = Double.parseDouble(x);
         double yValue = Double.parseDouble(y);
@@ -323,7 +324,7 @@ public class DamageController {
                 .y(yValue)
                 .build();
 
-        if (files.isEmpty()) {
+        if (files.isEmpty() || files == null) {
             damageSetRequestDTO.setImages(Collections.singletonList("https://mine702-amazon-s3.s3.ap-northeast-2.amazonaws.com/Default/default.jpg"));
         } else {
             Map<String, String> fileUrlsAndKeys = files.stream()

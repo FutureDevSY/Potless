@@ -2,14 +2,14 @@
   <div class="pdf-container">
     <div class="header">
       <div class="pothole-info">
-        <div class="title">위험물 정보</div>
+        <div class="title">도로파손 정보</div>
         <div class="info-i">
-          위험물 No. <span class="numebr">{{ props.pothole.damageId }}</span>
+          도로파손 No. <span class="numebr">{{ props.pothole.damageId }}</span>
         </div>
         <div class="info">
           <div>위험물 유형:</div>
           <div>
-            {{ props.pothole.dtype }}
+            {{ dtypeDisplay }}
           </div>
         </div>
         <div class="info">
@@ -17,9 +17,9 @@
           <div :style="severityStyle">
             {{
               props.pothole.severity === 1
-                ? "안전"
+                ? "양호"
                 : props.pothole.severity === 2
-                ? "위험"
+                ? "주의"
                 : props.pothole.severity === 3
                 ? "심각"
                 : "Unknown"
@@ -39,21 +39,25 @@
       <div class="info">
         <div>상세 주소:</div>
         <div>
-          {{ props.pothole.location }} {{ props.pothole.area }}
-          {{ props.pothole.roadName }}
-        </div>
-      </div>
-      <div class="direct info">
-        <div>위경도 좌표:</div>
-        <div class="coordinates">
-          <div>x: {{ props.pothole.dirX }}</div>
-          <div>y: {{ props.pothole.dirY }}</div>
+          {{ props.pothole.address }}
         </div>
       </div>
       <div class="info">
-        <div>마지막 탐지 일시:</div>
+        <div>탐지 일시:</div>
         <div>
-          {{ props.pothole.createAt }}
+          {{ formattedDateTime }}
+        </div>
+      </div>
+      <div class="info-img">
+        <div class="image-box">
+          <img :src="base64Image" alt="" class="pothole-img" />
+
+          <!-- <img
+            src="../../../assets/image/default.PNG"
+            alt=""
+            class="pothole-img"
+          /> -->
+          <div><포트홀 사진></div>
         </div>
       </div>
     </div>
@@ -69,9 +73,43 @@ import marker from "../../../assets/icon/marker.png";
 
 const mapContainer = ref(null);
 const imageUrl = ref("");
+const base64Image = ref(""); // Base64 이미지 데이터를 저장할 ref
+const allImagesLoaded = ref(false);
+const imageLoadCount = ref(0);
+const totalImages = ref(1);
 
 const props = defineProps({
   pothole: Object,
+});
+
+const checkAllImagesLoaded = () => {
+  if (imageLoadCount.value >= totalImages.value) {
+    allImagesLoaded.value = true;
+    console.log("All images loaded, ready for PDF conversion.");
+  }
+};
+
+const dtypeDisplay = computed(() => {
+  const display =
+    props.pothole.dtype === "POTHOLE"
+      ? "포트홀"
+      : props.pothole.dtype === "CRACK"
+      ? "도로균열"
+      : props.pothole.dtype === "WORNOUT"
+      ? "도로마모"
+      : "알 수 없는 유형";
+  return display;
+});
+
+const formattedDateTime = computed(() => {
+  const date = new Date(props.pothole.createdDateTime);
+  return date.toLocaleString("ko-KR", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
 });
 
 const severityStyle = computed(() => {
@@ -87,18 +125,21 @@ const severityStyle = computed(() => {
   }
 });
 
-function preloadImage(url) {
-  let img = new Image();
-  img.onload = function () {
-    console.log("Image preloaded successfully");
-  };
-  img.onerror = function () {
-    console.error("Failed to load image: Image loading failed");
-  };
-  img.src = url;
+async function convertToBase64(url) {
+  const response = await fetch(url);
+  const blob = await response.blob();
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onloadend = () => resolve(reader.result);
+    reader.readAsDataURL(blob);
+  });
 }
 
-onMounted(() => {
+onMounted(async () => {
+  base64Image.value = await convertToBase64(
+    props.pothole.imagesResponseDTOS[0].url
+  );
+
   const map = L.map(mapContainer.value, {
     zoomControl: false,
   }).setView([props.pothole.dirY, props.pothole.dirX], 16);
@@ -122,7 +163,6 @@ onMounted(() => {
         return;
       }
       imageUrl.value = canvas.toDataURL();
-      preloadImage(imageUrl.value);
     });
   });
 });
@@ -153,7 +193,7 @@ onMounted(() => {
 }
 
 .title {
-  font-size: 50px;
+  font-size: 40px;
   font-weight: 800;
   margin-bottom: 20px;
 }
@@ -187,5 +227,23 @@ onMounted(() => {
 .map {
   width: 100%;
   height: 100%;
+}
+
+.image-box {
+  width: 50%;
+  height: auto;
+}
+.pothole-img {
+  width: 100%;
+  height: auto;
+}
+
+.info-img {
+  margin-top: 50px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  font-size: 20px;
 }
 </style>
