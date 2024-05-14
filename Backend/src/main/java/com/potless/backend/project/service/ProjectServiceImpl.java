@@ -31,6 +31,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -108,8 +110,9 @@ public class ProjectServiceImpl implements ProjectService {
         ProjectEntity projectEntity = projectRepository.findById(projectId)
                 .orElseThrow(ProjectNotFoundException::new);
 
-        boolean hasInProgressDamages = damageRepository.existsByProjectIdAndStatus(projectId, Status.작업중);
-        if (hasInProgressDamages) {
+        List<TaskEntity> taskEntities = damageRepository.findTasksByProjectIdAndDamageStatus(projectId, Status.작업중);
+
+        if (!taskEntities.isEmpty()) {
             throw new ProjectDeleteFailException();
         }
 

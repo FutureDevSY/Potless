@@ -20,5 +20,4 @@ public interface DamageRepository extends JpaRepository<DamageEntity, Long>, Dam
             "WHERE d.id = :damageId")
     DamageResponseDTO findDamageDetailsByIdSimple(@Param("damageId") Long damageId);
 
-    boolean existsByProjectIdAndStatus(Long projectId, Status status);
 }
