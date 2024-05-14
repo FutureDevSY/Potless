@@ -37,13 +37,15 @@ public class DamageResponseDTO {
     private String dtype;
     @Schema(description = "생성 일자")
     private LocalDateTime createdDateTime;
+    @Schema(description = "신고접수한 회원 ID")
+    private Long memberId;
     @Setter
     @Schema(description = "Damage 이미지 리스트")
     private List<ImagesResponseDTO> imagesResponseDTOS;
 
     @Builder
     @QueryProjection
-    public DamageResponseDTO(Long id, Integer severity, Double dirX, Double dirY, String address, Double width, Status status, String area, String location, String dtype, LocalDateTime createdDateTime, List<ImagesResponseDTO> imagesResponseDTOS) {
+    public DamageResponseDTO(Long id, Integer severity, Double dirX, Double dirY, String address, Double width, Status status, String area, String location, String dtype, LocalDateTime createdDateTime, List<ImagesResponseDTO> imagesResponseDTOS, Long memberId) {
         this.id = id;
         this.severity = severity;
         this.dirX = dirX;
@@ -55,11 +57,12 @@ public class DamageResponseDTO {
         this.location = location;
         this.dtype = dtype;
         this.createdDateTime = createdDateTime;
+        this.memberId = memberId;
         this.imagesResponseDTOS = imagesResponseDTOS;
     }
 
     @Builder
-    public DamageResponseDTO(Long id, Integer severity, Double dirX, Double dirY, String address, Double width, Status status, String area, String location, String dtype, LocalDateTime createdDateTime) {
+    public DamageResponseDTO(Long id, Integer severity, Double dirX, Double dirY, String address, Double width, Status status, String area, String location, String dtype, LocalDateTime createdDateTime, Long memberId) {
         this.id = id;
         this.severity = severity;
         this.dirX = dirX;
@@ -71,6 +74,7 @@ public class DamageResponseDTO {
         this.location = location;
         this.dtype = dtype;
         this.createdDateTime = createdDateTime;
+        this.memberId = memberId;
     }
 
     public DamageResponseDTO(DamageEntity damageEntity) {
@@ -85,6 +89,7 @@ public class DamageResponseDTO {
         this.location = damageEntity.getLocationEntity().getLocationName();
         this.dtype = damageEntity.getDtype();
         this.createdDateTime = damageEntity.getCreatedDateTime();
+        this.memberId = damageEntity.getMemberEntity().getId();
     }
 
 }

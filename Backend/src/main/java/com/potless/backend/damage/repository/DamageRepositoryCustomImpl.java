@@ -231,7 +231,8 @@ public Page<DamageResponseDTO> findDamagesWithLatestTransaction(DamageSearchRequ
                     damage.areaEntity.areaGu,
                     damage.locationEntity.locationName,
                     damage.dtype,
-                    damage.createdDateTime
+                    damage.createdDateTime,
+                    damage.memberEntity.Id
             ))
             .from(damage)
             .where(builder)
