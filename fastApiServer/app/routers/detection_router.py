@@ -5,7 +5,7 @@ import cv2
 import os
 import numpy as np
 from datetime import datetime
-from services.augmentation_service import process_images, process_images_old
+from services.augmentation_service import process_images
 from services.model_service import model_2th_detection
 from services.estimate_service import calcPotholeDan, calcPotholeWidth
 from services.calculate_service import calculate_object_scale
