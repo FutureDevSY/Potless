@@ -27,14 +27,17 @@ public class ProjectListResponseDto {
     private Integer projectSize;
     @Schema(description = "생성 일자")
     private String createdDate;
+    @Schema(description = "팀 이름")
+    private String teamName;
 
-    public ProjectListResponseDto(Long projectId, String projectName, String managerName, LocalDate projectDate, Integer projectSize, LocalDateTime createdDate) {
+    public ProjectListResponseDto(Long projectId, String projectName, String managerName, LocalDate projectDate, Integer projectSize, String createdDate, String teamName) {
         this.projectId = projectId;
         this.projectName = projectName;
         this.managerName = managerName;
         this.projectDate = projectDate;
         this.projectSize = projectSize;
-        this.createdDate = formatDate(createdDate);
+        this.createdDate = createdDate;
+        this.teamName = teamName;
     }
 
     public String formatDate(LocalDateTime date){
