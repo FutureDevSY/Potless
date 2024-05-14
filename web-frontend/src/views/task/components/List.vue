@@ -15,11 +15,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr
-          v-for="porthole in portholes"
-          :key="porthole.id"
-          @click="store.movePortholeDetail(porthole.damageId)"
-        >
+        <tr v-for="porthole in portholes" :key="porthole.id">
           <td class="detect-column">
             <div>{{ formatDate(porthole.createdDateTime) }}</div>
             <div>{{ formatTime(porthole.createdDateTime) }}</div>
@@ -34,7 +30,10 @@
           <td>{{ porthole.address }}</td>
           <td>{{ porthole.width }}</td>
           <td>
-            <button class="list-button" @click="openModal(porthole.imgUrl)">
+            <button
+              class="list-button"
+              @click="store.movePortholeDetail(porthole.damageId)"
+            >
               확인하기
             </button>
           </td>
@@ -45,6 +44,7 @@
                 class="delete-img"
                 src="../../../assets/icon/delete.png"
                 alt="delete"
+                @click="deletePothole(porthole.taskId)"
               />
             </button>
           </td>
@@ -63,9 +63,37 @@
 import { useMoveStore } from "../../../stores/move";
 import { ref } from "vue";
 import CaruselModal from "../components/CaruselModal.vue";
+import { useAuthStore } from "@/stores/user";
+import { storeToRefs } from "pinia";
+import { patchPothole } from "../../../api/task/taskDetail";
 
+const store2 = useAuthStore();
+const { accessToken, coordinates } = storeToRefs(store2);
 const store = useMoveStore();
 const imgURL = ref(null);
+const emits = defineEmits(["updateList"]);
+
+const deletePothole = (taskId) => {
+  const potholeInfo = ref({
+    taskId: taskId,
+    origin: coordinates.value,
+  });
+
+  patchPothole(
+    accessToken.value,
+    potholeInfo.value,
+    (res) => {
+      console.log(res);
+      if (res.data.status == "SUCCESS") {
+        console.log(res.data.message);
+        emits("updateList");
+      }
+    },
+    (error) => {
+      console.log(error);
+    }
+  );
+};
 
 // 위험성 필터링
 const dangerClass = (danger) => {

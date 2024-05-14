@@ -25,7 +25,7 @@
         <button class="pdf-button" @click="openPdf">PDF 미리보기</button>
       </div>
     </div>
-    <List :data="taskData" v-if="taskData" />
+    <List :data="taskData" v-if="taskData" @updateList="showDetail" />
     <PathModal
       v-if="isModalVisible"
       :pathData="modalData"
@@ -103,7 +103,7 @@ const showDetail = () => {
         console.log(res.data.message);
         taskHeader.value = res.data.data;
         taskData.value = res.data.data.damageDetailToProjectDtos;
-        console.log(taskHeader.value);
+        console.log(taskData.value);
       } else {
         console.log(res.data.message);
       }
