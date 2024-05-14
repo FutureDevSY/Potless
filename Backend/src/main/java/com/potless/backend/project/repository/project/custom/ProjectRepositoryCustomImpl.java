@@ -166,7 +166,8 @@ public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
                         .from(projectEntity)
                         .join(teamEntity).on(teamEntity.id.eq(projectEntity.teamEntity.id))
                         .where(projectEntity.teamEntity.id.in(teamIdList)
-                                .and(projectEntity.status.eq(Status.작업전)))
+                                .and(projectEntity.status.eq(Status.작업전))
+                                .and(projectEntity.deleted.eq(false)))
                         .fetch();
 
         for (GetTaskResponseDto dto : responseDtoList) {
