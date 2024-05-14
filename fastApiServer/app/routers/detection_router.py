@@ -36,11 +36,11 @@ async def detection_confirm(
     logging.info("전처리 완료")
 
     # 2차 탐지 실행
-    danger_status = model_2th_detection(processed_image)
-    logging.info(danger_status) 
+    detection_result = model_2th_detection(processed_image)
+    # logging.info(detection_result) 
     logging.info("2차 탐지결과 확인 및 위험도 분석 완료")
 
-    return DetectionResponse(severity=danger_status)
+    return detection_result
     
     # def iterfile():
     #     with open(processed_image_path, mode="rb") as file_like:

@@ -5,3 +5,4 @@ from typing import List
 
 class DetectionResponse(BaseModel):
     severity: int = Field(..., alias="severity")
+    width: float = Field(..., alias="width")
