@@ -362,7 +362,7 @@ public class DamageController {
     })
     @PostMapping(value = "set", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<?> setDamage(
-            Authentication authentication,
+            Authentication authentications,
             @RequestPart("dtype") @NotNull String dtype,
             @RequestPart("x") @NotNull String x,
             @RequestPart("y") @NotNull String y,
