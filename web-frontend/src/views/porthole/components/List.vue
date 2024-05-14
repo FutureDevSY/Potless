@@ -171,7 +171,6 @@ const deletePotholeSelect = () => {
     accessToken.value,
     selectPothole,
     (res) => {
-      console.log(res);
       if (res.data.status === "SUCCESS") {
         console.log(res.data.message);
         selectedIds.value.clear();

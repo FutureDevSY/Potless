@@ -53,7 +53,6 @@ const deletePothole = (potholeId) => {
     accessToken.value,
     potholeData.value,
     (res) => {
-      console.log(res);
       if (res.data.status == "SUCCESS") {
         console.log(res.data.message);
         emit("updateDetail");

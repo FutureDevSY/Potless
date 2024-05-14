@@ -113,7 +113,6 @@ function showDetail() {
         console.log(res.data.message);
         taskHeader.value = res.data.data;
         taskData.value = res.data.data.damageDetailToProjectDtos;
-        console.log(taskData.value);
       } else {
         console.log(res.data.message);
       }

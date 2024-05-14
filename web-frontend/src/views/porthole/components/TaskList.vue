@@ -142,7 +142,6 @@ function addNewTask() {
     newData.value,
     (res) => {
       if (res.data.status == "SUCCESS") {
-        console.log(res);
         console.log(res.data.message);
         taskData.value = res.data.data;
         takeData();
@@ -258,7 +257,6 @@ const takeData = () => {
     queryParams,
     (res) => {
       if (res.data.status == "SUCCESS") {
-        console.log(res);
         console.log(res.data.message);
         taskData.value = res.data.data.content;
       } else {
