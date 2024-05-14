@@ -41,9 +41,14 @@ public class AsyncService {
     private final AwsService awsService;
     private final ReDetectionApiService detectionApiService;
     @Async
-    @Transactional
+//    @Transactional
     public void setDamageAsyncMethod(DamageSetRequestDTO damageSetRequestDTO, File imageFile, String hexagonIndex) throws IOException {
         try {
+            //fastApi 2차 탐지 요청 수행 및 결과 반환
+            ReDetectionRequestDTO detectionRequestDTO = new ReDetectionRequestDTO(imageFile);
+
+            ReDetectionResponseDTO detectionResult = detectionApiService.reDetectionResponse(detectionRequestDTO);
+
             // 1차 탐지 후 BeforeVerification/ 에 사진 담기
             String fileName = "BeforeVerification/" + System.currentTimeMillis() + "_" + imageFile.getName();
             Map<String, String> fileUrlAndKey = awsService.uploadFileToS3(imageFile, fileName);
@@ -54,21 +59,23 @@ public class AsyncService {
                 log.info("fileUrl = {}",fileUrl);
             }
 
-            //fastApi 2차 탐지 요청 수행 및 결과 반환
-            ReDetectionRequestDTO detectionRequestDTO = new ReDetectionRequestDTO(imageFile);
-            ReDetectionResponseDTO detectionResult = new ReDetectionResponseDTO();
+//            //fastApi 2차 탐지 요청 수행 및 결과 반환
+//            ReDetectionRequestDTO detectionRequestDTO = new ReDetectionRequestDTO(imageFile);
+//
+//            ReDetectionResponseDTO detectionResult = detectionApiService.reDetectionResponse(detectionRequestDTO);
 
-            detectionResult = detectionApiService.reDetectionResponse(detectionRequestDTO);
-
-            if(detectionResult.getSeverity() == 0){
-                log.info("return 당했음");
-                return;
-            }
+//            if(detectionResult.getSeverity() == 0){
+//                detectionResult = new ReDetectionResponseDTO();
+//                log.info("return 당했음");
+//                return;
+//            }
             damageSetRequestDTO.setSeverity(detectionResult.getSeverity());
             damageSetRequestDTO.setWidth((double)detectionResult.getWidth());
+            log.info("severity = {}", detectionResult.getSeverity());
+            log.info("width = {}", detectionResult.getWidth());
 
             // 2차 탐지 성공하면 AfterVerification/BeforeWork/ 파일로 이동
-            List<String> newFileUrls = null;
+            List<String> newFileUrls = new ArrayList<>();
             for (String fileUrl : fileUrls) {
                 String destinationKey = "AfterVerification/BeforeWork/" + new File(fileUrl).getName();
                 String newUrl = awsService.moveFileToVerified(fileName, destinationKey);
