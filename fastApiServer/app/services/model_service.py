@@ -31,7 +31,7 @@ def model_2th_detection(image):
                 i += 1
                 # 탐지된 박스가 여러개일 경우를 고려
                 box_x, box_y, box_width, h = box.xywh[0]
-                width = round(calcPotholeWidth(box_y=box_y, box_width=box_width).item(), 2) * 100
+                width = round(calcPotholeWidth(box_y=box_y, box_width=box_width).item() * 100, 2)
                 severity = calcPotholeDan(pothole_width=width, box_x=box_x, box_y=box_y, box_width=box_width)
                 if(severity > danger_max):
                     danger_max = severity

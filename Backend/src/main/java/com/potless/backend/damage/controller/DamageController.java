@@ -59,6 +59,7 @@ public class DamageController {
     private final FileService fileService;
     private final H3Service h3Service;
     private final DamageRepository damageRepository;
+    private final DuplicateAreaService duplicateAreaService;
 
     @Operation(summary = "Area 리스트 가져오기", description = "Area 리스트 가져오기", responses = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = AreaResponseDTO.class)))
@@ -359,14 +360,19 @@ public class DamageController {
                                                                      .x(xValue)
                                                                      .y(yValue)
                                                                      .build();
-        File imageFile = fileService.convertAndSaveFile(files.get(0));
 
-        //중복처리
-        int res = 13;
-        String hexagonIndex = h3Service.getH3Index(damageSetRequestDTO.getY(), damageSetRequestDTO.getX(), res);
-        if (damageRepository.findDamageByHexagonIndexAndDtype(hexagonIndex, damageSetRequestDTO.getDtype())) {
-                throw new DuplPotholeException();
-        }
+        File imageFile = fileService.convertAndSaveFile(files.get(0));
+        log.info("check");
+        log.info(imageFile.getAbsolutePath());
+        log.info(imageFile.getName());
+
+//        //중복처리
+//        int res = 13;
+//        String hexagonIndex = h3Service.getH3Index(damageSetRequestDTO.getY(), damageSetRequestDTO.getX(), res);
+//        if (damageRepository.findDamageByHexagonIndexAndDtype(hexagonIndex, damageSetRequestDTO.getDtype())) {
+//                throw new DuplPotholeException();
+//        }
+        String hexagonIndex = duplicateAreaService.checkIsDuplicated(damageSetRequestDTO);
 
         asyncService.setDamageAsyncMethod(damageSetRequestDTO, imageFile, hexagonIndex);
         return response.success(ResponseCode.POTHOLE_DETECTED);
