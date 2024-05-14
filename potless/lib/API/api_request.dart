@@ -12,6 +12,33 @@ class ApiService {
   static const String _baseUrl = "https://api.potless.co.kr/api";
   final StorageService _storageService = StorageService();
 
+  Future<bool> signUp(String email, String password, String passwordConfirm,
+      String memberName, String phone) async {
+    try {
+      var res = await http.post(Uri.parse('$_baseUrl/member/signup'),
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: jsonEncode({
+            'email': email,
+            'password': password,
+            'passwordConfirm': passwordConfirm,
+            'memberName': memberName,
+            'phone': phone,
+          }));
+      if (res.statusCode == 200) {
+        login(email, password);
+        return true;
+      } else {
+        debugPrint('APIservice 33: ${res.body}');
+        return false;
+      }
+    } catch (E) {
+      debugPrint('APIservice 36: $E');
+      return false;
+    }
+  }
+
   Future<bool> login(String id, String password) async {
     try {
       var response = await http.post(
@@ -27,7 +54,11 @@ class ApiService {
 
       if (response.statusCode == 200) {
         var res = jsonDecode(response.body);
-        await _storageService.saveToken(res['data']['token']);
+        await _storageService.saveToken(
+          res['data']['token'],
+          res['data']['memberInfo']['role'],
+        );
+
         debugPrint('login 31 ${res['data']['token']}');
         return true;
       } else {
@@ -60,7 +91,10 @@ class ApiService {
       if (response.statusCode == 200) {
         var res = jsonDecode(response.body);
         if (res['token'] != null) {
-          await _storageService.saveToken(res['token']);
+          await _storageService.saveToken(
+            res['token'],
+            res['data']['memberInfo']['role'],
+          );
         }
         return true;
       }
@@ -258,6 +292,38 @@ class ApiService {
       return false;
     } catch (e) {
       debugPrint('APIservice 256: $e');
+      return false;
+    }
+  }
+
+  Future<bool> projectDone(int projectId) async {
+    String? token = await _storageService.getToken();
+
+    if (token == null) {
+      debugPrint('No token found in secure storage.');
+      return false;
+    }
+
+    try {
+      var response = await http.post(
+        Uri.parse('$_baseUrl/project/workDone'),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({"projectId": projectId}),
+      );
+
+      if (response.statusCode == 200) {
+        debugPrint('api317 : done');
+        return true;
+      } else {
+        debugPrint(response.statusCode.toString());
+        debugPrint(response.body);
+      }
+      return false;
+    } catch (e) {
+      debugPrint('APIservice 325: $e');
       return false;
     }
   }

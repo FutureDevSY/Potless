@@ -5,6 +5,7 @@ import 'package:potless/API/api_request.dart';
 import 'package:potless/models/pothole.dart';
 import 'package:potless/screens/Works/WorkList2.dart';
 import 'package:potless/widgets/UI/AppBar.dart';
+import 'package:potless/widgets/blocks/project_block.dart';
 
 class ProjectListScreen extends StatefulWidget {
   const ProjectListScreen({super.key});
@@ -53,31 +54,13 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
                 itemCount: snapshot.data!.length,
                 itemBuilder: (context, index) {
                   Project project = snapshot.data![index];
-                  return ListTile(
-                    title: Text(
-                      project.projectName,
-                      style: const TextStyle(fontSize: 20),
-                    ),
-                    subtitle: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text('${project.projectId}번 지시서'),
-                        const SizedBox(),
-                        Text(
-                            '일시: ${DateFormat('yyyy-MM-dd').format(project.createdDate)}'),
-                        const SizedBox()
-                      ],
-                    ),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => WorkListScreen(
-                              damages: project.damages,
-                              onProjectUpdate: () => _refreshProjects()),
-                        ),
-                      );
-                    },
+                  return ProjectBlock(
+                    projectName: project.projectName,
+                    projectId: project.projectId,
+                    createdDate: project.createdDate,
+                    damages: project.damages,
+                    onProjectUpdate: _refreshProjects,
+                    projectDone: () {},
                   );
                 },
               );
