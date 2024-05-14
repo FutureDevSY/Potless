@@ -7,8 +7,9 @@
           <div class="input-title">위험물의 종류를 입력해 주세요 :</div>
           <select id="potholeType" v-model="potholeType" required>
             <option class="" disabled value="">타입</option>
-            <option>POTHOLE</option>
-            <option>CRACK</option>
+            <option value="POTHOLE">포트홀</option>
+            <option value="CRACK">도로균열</option>
+            <option value="WORNOUT">도로마모</option>
           </select>
         </div>
         <div class="input-group">
@@ -20,34 +21,15 @@
             <option value="1">양호</option>
           </select>
         </div>
+        <div class="file-upload">
+          <input type="file" @change="handleFileChange" accept="image/*" />
+        </div>
+        <SearchMap @updateCenter="handleCenterUpdate" />
+        <div class="button-div">
+          <button class="report-btn" type="submit">신고하기</button>
+        </div>
       </form>
-      <SearchMap @updateCenter="handleCenterUpdate" />
     </div>
-    <div class="button-div"><button class="report-btn" type="submit">신고하기</button></div>
-    <!-- 
-      <div class="form-box">
-        <form @submit.prevent="submitForm" class="form-content">
-          <div class="input-group">
-            <select id="potholeType" v-model="potholeType" required>
-              <option disabled value="">타입 선택</option>
-              <option>POTHOLE</option>
-              <option>CRACK</option>
-            </select>
-          </div>
-          <div class="input-group">
-            <select id="severity" v-model="severity" required>
-              <option disabled value="">심각도 선택</option>
-              <option value="3">심각</option>
-              <option value="2">주의</option>
-              <option value="1">양호</option>
-            </select>
-          </div>
-        </form>
-      </div>
-    </div>
-    <div class="map-box">
-      <SearchMap @updateCenter="handleCenterUpdate" />
-    <button type="submit">신고하기</button> -->
   </div>
 </template>
 
@@ -66,6 +48,11 @@ const potholeType = ref("");
 const severity = ref("");
 const location_x = ref("");
 const location_y = ref("");
+const file = ref(null);
+
+const handleFileChange = (event) => {
+  file.value = event.target.files[0];
+};
 
 const submitForm = () => {
   const potholeInfo = {
@@ -79,6 +66,7 @@ const submitForm = () => {
     accessToken.value,
     potholeInfo,
     (res) => {
+      console.log(res);
       if (res.data.status == "SUCCESS") {
         console.log(res.data.message);
         alert("포트홀 신고가 성공적으로 완료되었습니다.");
@@ -98,7 +86,6 @@ const submitForm = () => {
 const handleCenterUpdate = (coords) => {
   location_x.value = coords.x;
   location_y.value = coords.y;
-  console.log("Map center updated to:", coords);
 };
 </script>
 
@@ -162,7 +149,7 @@ select {
   color: rgb(255, 255, 255);
   font-weight: bold;
   transition: all 0.3s;
-  margin-top: 2.5vh;
+  margin-top: 30px;
 }
 
 .report-btn:hover {

@@ -3,7 +3,7 @@
     <div class="number">{{ props.taskNumber }}</div>
     <div class="pdf-middle">
       <div class="title">{{ props.taskHeader.projectName }}</div>
-      <div class="team">- 유성구 1팀 -</div>
+      <div class="team">-{{ props.taskHeader.teamName }}-</div>
     </div>
     <div class="pdf-footer">
       <div>작업 일자: {{ props.taskHeader.projectDate }}</div>
