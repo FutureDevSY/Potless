@@ -9,7 +9,7 @@
           <th>행정동</th>
           <th class="address-column">지번</th>
           <th>너비(mm)</th>
-          <th>사진</th>
+          <th>상세 정보</th>
           <th>작업 상태</th>
           <th></th>
         </tr>
@@ -26,7 +26,7 @@
           </td>
           <td class="danger-column">
             <div class="danger-type" :class="dangerClass(porthole.severity)">
-              {{ porthole.severity }}
+              {{ dangerClass2(porthole.severity) }}
             </div>
           </td>
           <td>{{ dtypeDisplay(porthole.dtype) }}</td>
@@ -76,6 +76,19 @@ const dangerClass = (danger) => {
       return "cautious";
     case 1:
       return "safe";
+    default:
+      return "";
+  }
+};
+
+const dangerClass2 = (danger) => {
+  switch (danger) {
+    case 3:
+      return "심각";
+    case 2:
+      return "주의";
+    case 1:
+      return "양호";
     default:
       return "";
   }
@@ -136,7 +149,7 @@ function formatTime(dateTime) {
   height: 42px;
   border-radius: 100%;
   color: #ffffff;
-  font-size: 19px;
+  font-size: 16px;
   font-weight: bold;
   line-height: 42px;
   background-color: inherit;
