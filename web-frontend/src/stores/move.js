@@ -25,7 +25,7 @@ export const useMoveStore = defineStore("moveStore", () => {
   };
 
   const moveLogin = () => {
-    router.push("/auth/login");
+    router.push("/");
   };
 
   const moveStatistics = () => {

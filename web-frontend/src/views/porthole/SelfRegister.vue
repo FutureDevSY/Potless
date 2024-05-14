@@ -6,9 +6,10 @@
         <div class="input-group">
           <div class="input-title">위험물의 종류를 입력해 주세요 :</div>
           <select id="potholeType" v-model="potholeType" required>
-            <option class="" disabled value="">타입</option>
-            <option>POTHOLE</option>
-            <option>CRACK</option>
+            <option disabled value="">타입</option>
+            <option value="POTHOLE">포트홀</option>
+            <option value="CRACK">도로균열</option>
+            <option value="WORNOUT">도로마모</option>
           </select>
         </div>
         <div class="input-group">
@@ -20,34 +21,20 @@
             <option value="1">양호</option>
           </select>
         </div>
+        <div class="file-upload">
+          <input
+            type="file"
+            @change="handleFileChange"
+            accept="image/*"
+            required
+          />
+        </div>
+        <SearchMap @updateCenter="handleCenterUpdate" />
+        <div class="button-div">
+          <button class="report-btn" type="submit">신고하기</button>
+        </div>
       </form>
-      <SearchMap @updateCenter="handleCenterUpdate" />
     </div>
-    <div class="button-div"><button class="report-btn" type="submit">신고하기</button></div>
-    <!-- 
-      <div class="form-box">
-        <form @submit.prevent="submitForm" class="form-content">
-          <div class="input-group">
-            <select id="potholeType" v-model="potholeType" required>
-              <option disabled value="">타입 선택</option>
-              <option>POTHOLE</option>
-              <option>CRACK</option>
-            </select>
-          </div>
-          <div class="input-group">
-            <select id="severity" v-model="severity" required>
-              <option disabled value="">심각도 선택</option>
-              <option value="3">심각</option>
-              <option value="2">주의</option>
-              <option value="1">양호</option>
-            </select>
-          </div>
-        </form>
-      </div>
-    </div>
-    <div class="map-box">
-      <SearchMap @updateCenter="handleCenterUpdate" />
-    <button type="submit">신고하기</button> -->
   </div>
 </template>
 
@@ -66,19 +53,25 @@ const potholeType = ref("");
 const severity = ref("");
 const location_x = ref("");
 const location_y = ref("");
+const file = ref(null);
+
+const handleFileChange = (event) => {
+  file.value = event.target.files[0];
+};
 
 const submitForm = () => {
-  const potholeInfo = {
-    x: location_x.value,
-    y: location_y.value,
-    severity: Number(severity.value),
-    type: potholeType.value,
-  };
+  const formData = new FormData();
+  formData.append("dtype", potholeType.value);
+  formData.append("severity", severity.value);
+  formData.append("x", location_x.value);
+  formData.append("y", location_y.value);
+  formData.append("files", file.value);
 
   postPotholeAdd(
     accessToken.value,
-    potholeInfo,
+    formData,
     (res) => {
+      console.log(res);
       if (res.data.status == "SUCCESS") {
         console.log(res.data.message);
         alert("포트홀 신고가 성공적으로 완료되었습니다.");
@@ -98,7 +91,6 @@ const submitForm = () => {
 const handleCenterUpdate = (coords) => {
   location_x.value = coords.x;
   location_y.value = coords.y;
-  console.log("Map center updated to:", coords);
 };
 </script>
 
@@ -162,47 +154,10 @@ select {
   color: rgb(255, 255, 255);
   font-weight: bold;
   transition: all 0.3s;
-  margin-top: 2.5vh;
+  margin-top: 30px;
 }
 
 .report-btn:hover {
   background-color: #0e1241;
 }
-
-/* .form-box {
-  width: 500px;
-}
-.form-content {
-  align-items: center;
-}
-
-.input-group {
-  min-width: 150px;
-  height: 50px;
-}
-
-select,
-input,
-button {
-  margin: 10px;
-  width: 150px;
-  height: 100%;
-}
-
-label {
-  display: block;
-  margin-bottom: 5px;
-}
-button {
-  background-color: #007bff;
-  color: white;
-  border: none;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-button:hover {
-  background-color: #0056b3;
-}
-.map-box {
-} */
 </style>
