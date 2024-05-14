@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Getter
@@ -21,15 +22,18 @@ public class ProjectDetailResponseDto {
     private String teamName;
     @Schema(description = "작업할 포트홀 개수")
     private Integer projectSize;
+    private LocalDate projectDate;
     @Schema(description = "작업할 포트홀 리스트")
     private List<DamageDetailToProjectDto> DamageDetailToProjectDtos;
 
     @Builder
-    public ProjectDetailResponseDto(String projectName, String managerName, String teamName, Integer projectSize, List<DamageDetailToProjectDto> damageDetailToProjectDtos) {
+
+    public ProjectDetailResponseDto(String projectName, String managerName, String teamName, Integer projectSize, LocalDate projectDate, List<DamageDetailToProjectDto> damageDetailToProjectDtos) {
         this.projectName = projectName;
         this.managerName = managerName;
         this.teamName = teamName;
         this.projectSize = projectSize;
+        this.projectDate = projectDate;
         DamageDetailToProjectDtos = damageDetailToProjectDtos;
     }
 }

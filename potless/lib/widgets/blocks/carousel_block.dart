@@ -1,7 +1,8 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:potless/models/pothole.dart'; // Assuming this is where DamageImage is defined
+import 'package:flutter/widgets.dart';
+import 'package:potless/models/pothole.dart';
 
 class CustomCarouselCard extends StatelessWidget {
   final DamageImage image;
@@ -15,7 +16,15 @@ class CustomCarouselCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Determine the status text or use placeholder text if the image order is -1
+    Color backgroundColor =
+        image.url.startsWith('http') || image.url.startsWith('https')
+            ? const Color(0xff151C62)
+            : Colors.white;
+    Color textColor =
+        image.url.startsWith('http') || image.url.startsWith('https')
+            ? Colors.white
+            : const Color(0xff151C62);
+
     String statusText() {
       switch (image.order) {
         case 1:
@@ -25,7 +34,7 @@ class CustomCarouselCard extends StatelessWidget {
         case 3:
           return '작업 후';
         default:
-          return '사진 추가'; // Placeholder text for adding new images
+          return '사진 추가';
       }
     }
 
@@ -46,7 +55,7 @@ class CustomCarouselCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: MediaQuery.of(context).size.width * 0.85, // 85% of screen width
+        width: MediaQuery.of(context).size.width * 0.85,
         margin: const EdgeInsets.symmetric(horizontal: 10),
         decoration: BoxDecoration(
           color: Colors.white,
@@ -67,18 +76,18 @@ class CustomCarouselCard extends StatelessWidget {
               child: ClipRRect(
                 borderRadius:
                     const BorderRadius.vertical(top: Radius.circular(20)),
-                child:
-                    imageContent(), // Displays either the image or a placeholder
+                child: imageContent(),
               ),
             ),
-            Padding(
+            Container(
+              color: backgroundColor,
               padding: const EdgeInsets.all(8.0),
               child: Text(
-                statusText(), // Status text based on the image's order
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
+                statusText(),
+                style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: textColor),
                 textAlign: TextAlign.center,
               ),
             ),

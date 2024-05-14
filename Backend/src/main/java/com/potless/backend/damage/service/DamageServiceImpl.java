@@ -1,6 +1,5 @@
 package com.potless.backend.damage.service;
 
-import com.potless.backend.aws.service.AwsService;
 import com.potless.backend.damage.dto.controller.request.AreaDamageCountForDateRequestDTO;
 import com.potless.backend.damage.dto.controller.request.DamageSearchRequestDTO;
 import com.potless.backend.damage.dto.controller.response.DamageResponseDTO;
@@ -11,17 +10,17 @@ import com.potless.backend.damage.dto.service.response.*;
 import com.potless.backend.damage.entity.area.AreaEntity;
 import com.potless.backend.damage.entity.area.LocationEntity;
 import com.potless.backend.damage.entity.enums.Status;
-import com.potless.backend.damage.entity.road.CrackEntity;
-import com.potless.backend.damage.entity.road.DamageEntity;
-import com.potless.backend.damage.entity.road.ImageEntity;
-import com.potless.backend.damage.entity.road.PotholeEntity;
+import com.potless.backend.damage.entity.road.*;
 import com.potless.backend.damage.repository.AreaRepository;
 import com.potless.backend.damage.repository.DamageRepository;
 import com.potless.backend.damage.repository.ImageRepository;
 import com.potless.backend.damage.repository.LocationRepository;
 import com.potless.backend.global.exception.pothole.PotholeLocationNotFoundException;
 import com.potless.backend.global.exception.pothole.PotholeNotFoundException;
+import com.potless.backend.hexagon.entity.HexagonEntity;
+import com.potless.backend.hexagon.repository.HexagonRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -29,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -38,7 +38,7 @@ public class DamageServiceImpl implements IDamageService {
     private final AreaRepository areaRepository;
     private final LocationRepository locationRepository;
     private final ImageRepository imageRepository;
-    private final AwsService awsService;
+    private final HexagonRepository hexagonRepository;
 
     @Override
     public Page<DamageResponseDTO> getDamages(DamageSearchRequestDTO damageSearchRequestDTO, Pageable pageable) {
@@ -67,6 +67,8 @@ public class DamageServiceImpl implements IDamageService {
         LocationEntity locationName = locationRepository.findByLocationName(data.getLocation())
                 .orElseThrow(PotholeLocationNotFoundException::new);
 
+        HexagonEntity hexagonEntity = hexagonRepository.findByHexagonIndex(data.getHexagonIndex());
+
         DamageEntity damageEntity;
         if (data.getDtype().equals("CRACK")) {
             damageEntity = CrackEntity.builder()
@@ -79,8 +81,9 @@ public class DamageServiceImpl implements IDamageService {
                     .locationEntity(locationName)
                     .width(data.getWidth())
                     .severity(data.getSeverity())
+                    .hexagonEntity(hexagonEntity)
                     .build();
-        } else {
+        } else if (data.getDtype().equals("POTHOLE")) {
             damageEntity = PotholeEntity.builder()
                     .dirX(data.getDirX())
                     .dirY(data.getDirY())
@@ -91,9 +94,25 @@ public class DamageServiceImpl implements IDamageService {
                     .locationEntity(locationName)
                     .width(data.getWidth())
                     .severity(data.getSeverity())
+                    .hexagonEntity(hexagonEntity)
+                    .build();
+        } else {
+            damageEntity = WornOutEntity.builder()
+                    .dirX(data.getDirX())
+                    .dirY(data.getDirY())
+                    .address(data.getAddress())
+                    .dtype(data.getDtype())
+                    .status(data.getStatus())
+                    .areaEntity(areaGu)
+                    .locationEntity(locationName)
+                    .width(data.getWidth())
+                    .severity(data.getSeverity())
+                    .hexagonEntity(hexagonEntity)
                     .build();
         }
+
         damageRepository.save(damageEntity);
+
         int order = 1;
         for (String imageUrl : data.getImages()) {
             ImageEntity image = ImageEntity.builder()
