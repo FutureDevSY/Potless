@@ -323,7 +323,7 @@ public class DamageController {
                 .y(yValue)
                 .build();
 
-        if (files == null ||  files.isEmpty()) {
+        if (files == null || files.isEmpty()) {
             damageSetRequestDTO.setImages(Collections.singletonList("https://mine702-amazon-s3.s3.ap-northeast-2.amazonaws.com/Default/default.jpg"));
         } else {
             Map<String, String> fileUrlsAndKeys = files.stream()
