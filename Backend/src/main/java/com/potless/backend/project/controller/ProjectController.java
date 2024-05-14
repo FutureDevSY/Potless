@@ -3,6 +3,7 @@ package com.potless.backend.project.controller;
 import com.potless.backend.global.format.code.ApiResponse;
 import com.potless.backend.global.format.response.ResponseCode;
 import com.potless.backend.path.service.PathService;
+import com.potless.backend.project.dto.request.ProjectDoneRequestDto;
 import com.potless.backend.project.dto.request.ProjectListRequestDto;
 import com.potless.backend.project.dto.request.ProjectSaveRequestDto;
 import com.potless.backend.project.dto.response.ProjectDetailResponseDto;
@@ -13,6 +14,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -91,11 +93,15 @@ public class ProjectController {
     @Operation(summary = "프로젝트 상태 변경", description = "프로젝트 작업 상태를 작업완료로 변경합니다.", responses = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "프로젝트 상태 변경 성공", content = @Content(schema = @Schema(implementation = String.class)))
     })
-    @PostMapping("workDone")
+    @PostMapping("/workDone")
     public ResponseEntity<?> changeStatus(
             Authentication authentication,
-            @RequestPart Long projectId) {
-        projectService.changeProjectStatus(projectId);
+            @RequestBody @Valid ProjectDoneRequestDto projectDoneRequestDto,
+            BindingResult bindingResult) {
+        projectService.changeProjectStatus(projectDoneRequestDto.getProjectId());
+        if (bindingResult.hasErrors()) {
+            return response.fail(bindingResult);
+        }
         return response.success(ResponseCode.PROJECT_DONE_WORK);
     }
 }
