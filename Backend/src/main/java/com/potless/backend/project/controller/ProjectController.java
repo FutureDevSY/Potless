@@ -87,4 +87,15 @@ public class ProjectController {
         projectService.deleteProject(projectId);
         return response.success(ResponseCode.PROJECT_DELETED);
     }
+
+    @Operation(summary = "프로젝트 상태 변경", description = "프로젝트 작업 상태를 작업완료로 변경합니다.", responses = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "프로젝트 상태 변경 성공", content = @Content(schema = @Schema(implementation = String.class)))
+    })
+    @PostMapping("workDone")
+    public ResponseEntity<?> changeStatus(
+            Authentication authentication,
+            @RequestPart Long projectId) {
+        projectService.changeProjectStatus(projectId);
+        return response.success(ResponseCode.PROJECT_DONE_WORK);
+    }
 }

@@ -5,7 +5,6 @@ import com.potless.backend.damage.entity.area.AreaEntity;
 import com.potless.backend.damage.repository.AreaRepository;
 import com.potless.backend.global.exception.member.*;
 import com.potless.backend.global.exception.project.AreaNotFoundException;
-import com.potless.backend.global.jwt.RefreshToken;
 import com.potless.backend.global.jwt.TokenInfo;
 import com.potless.backend.global.jwt.provider.TokenProvider;
 import com.potless.backend.global.jwt.repository.RefreshTokenRepository;
@@ -19,14 +18,12 @@ import com.potless.backend.member.entity.MemberEntity;
 import com.potless.backend.member.repository.member.MemberRepository;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Log4j2
 @RequiredArgsConstructor
 public class MemberServiceImpl implements MemberService {
 
@@ -136,12 +133,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     private void removeOldRefreshToken(String email, MemberEntity member) {
-        refreshTokenRepository.findById(email).ifPresent(refreshToken -> log.info("token exist."));
-        RefreshToken token = refreshTokenRepository.findById(email).orElse(null);
-        if(token != null) {
-            refreshTokenRepository.delete(token);
-            log.info("token delete 처리완료");
-        }
-
+        refreshTokenRepository.findById(email)
+                .ifPresent(refreshTokenRepository::delete);
     }
 }
