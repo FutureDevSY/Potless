@@ -113,8 +113,9 @@ public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
     @Override
     public Page<ProjectListResponseDto> findProjectAll(ProjectListRequestDto projectListRequestDto, Pageable pageable) {
         QProjectEntity project = projectEntity;
-        BooleanBuilder builder = new BooleanBuilder();
+        QTeamEntity team = teamEntity;
 
+        BooleanBuilder builder = new BooleanBuilder();
 
         builder.and(betweenDates(project, projectListRequestDto.getStart(), projectListRequestDto.getEnd()))
                 .and(equalToStatus(project, projectListRequestDto.getStatus()))
@@ -130,12 +131,15 @@ public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
                         project.managerEntity.memberEntity.memberName.as("managerName"),
                         project.projectDate,
                         project.projectSize,
-                        project.createdDateTime
+                        project.createdDateTime,
+                        team.teamName.as("teamName")
                 ))
                 .from(project)
+                .leftJoin(project.teamEntity, team)
                 .where(builder)
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
+                .orderBy(project.createdDateTime.desc())
                 .fetch();
 
         Long countResult = queryFactory
@@ -161,7 +165,8 @@ public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
                         ))
                         .from(projectEntity)
                         .join(teamEntity).on(teamEntity.id.eq(projectEntity.teamEntity.id))
-                        .where(projectEntity.teamEntity.id.in(teamIdList))
+                        .where(projectEntity.teamEntity.id.in(teamIdList)
+                                .and(projectEntity.status.eq(Status.작업전)))
                         .fetch();
 
         for (GetTaskResponseDto dto : responseDtoList) {

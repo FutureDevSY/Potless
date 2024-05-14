@@ -9,5 +9,6 @@ public class ReDetectionResponseDTO {
 
     // 탐지된 포트홀의 위험도 등급, 1~3으로 분류
     private int severity;
+    private float width;
 
 }
