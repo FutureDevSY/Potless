@@ -37,7 +37,7 @@ class _VideoPageState extends State<VideoPage> with WidgetsBindingObserver {
 
   bool _previewOn = false;
   int imageTaken = 0;
-  int _currentFps = 0;
+  final int _currentFps = 0;
   int? resultIndex;
   List<String> classes = [];
   List<List<double>> bboxes = [];
@@ -50,7 +50,7 @@ class _VideoPageState extends State<VideoPage> with WidgetsBindingObserver {
   String? score;
 
   final ApiService _apiService = ApiService();
-  FrameRateTester _frameRateTester = FrameRateTester();
+  final FrameRateTester _frameRateTester = FrameRateTester();
   final bool _isTestingFrameRate = false;
   final StreamController<QueuedImage> _uploadStreamController =
       StreamController<QueuedImage>();
@@ -76,11 +76,6 @@ class _VideoPageState extends State<VideoPage> with WidgetsBindingObserver {
     WidgetsBinding.instance.addObserver(this);
     _initStateAsync();
     _uploadStreamController.stream.listen(_uploadImage);
-    _frameRateTester = FrameRateTester(onUpdate: (fps) {
-      setState(() {
-        _currentFps = fps;
-      });
-    });
   }
 
   void _initStateAsync() async {
