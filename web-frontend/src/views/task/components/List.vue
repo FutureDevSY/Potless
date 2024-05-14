@@ -61,7 +61,7 @@
 
 <script setup>
 import { useMoveStore } from "../../../stores/move";
-import { ref } from "vue";
+import { ref, watchEffect } from "vue";
 import CaruselModal from "../components/CaruselModal.vue";
 import { useAuthStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
@@ -138,7 +138,10 @@ const dtypeDisplay = (dtype) => {
 const props = defineProps({
   data: Object,
 });
-const portholes = props.data;
+const portholes = ref(props.data);
+watchEffect(() => {
+  portholes.value = props.data;
+});
 // 작업 리스트 모달창
 const isModalOpen = ref(false);
 function toggleModal() {
