@@ -10,12 +10,15 @@ import com.potless.backend.damage.dto.service.response.*;
 import com.potless.backend.damage.dto.service.response.kakao.Address;
 import com.potless.backend.damage.dto.service.response.kakao.RoadAddress;
 import com.potless.backend.damage.entity.enums.Status;
+import com.potless.backend.damage.repository.DamageRepository;
 import com.potless.backend.damage.service.*;
 import com.potless.backend.global.exception.kakao.KakaoNotFoundException;
+import com.potless.backend.global.exception.pothole.DuplPotholeException;
 import com.potless.backend.global.exception.pothole.InvalidCoordinateRangeException;
 import com.potless.backend.global.exception.pothole.PotholeNotFoundException;
 import com.potless.backend.global.format.code.ApiResponse;
 import com.potless.backend.global.format.response.ResponseCode;
+import com.potless.backend.hexagon.service.H3Service;
 import com.potless.backend.hexagon.service.HexagonService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -54,7 +57,9 @@ public class DamageController {
     private final IAreaLocationService iAreaLocationService;
     private final AsyncService asyncService;
     private final FileService fileService;
-    private final HexagonService hexagonService;
+    private final H3Service h3Service;
+    private final DamageRepository damageRepository;
+
     @Operation(summary = "Area 리스트 가져오기", description = "Area 리스트 가져오기", responses = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = AreaResponseDTO.class)))
     })
@@ -355,7 +360,15 @@ public class DamageController {
                                                                      .y(yValue)
                                                                      .build();
         File imageFile = fileService.convertAndSaveFile(files.get(0));
-        asyncService.setDamageAsyncMethod(damageSetRequestDTO, imageFile);
+
+        //중복처리
+        int res = 13;
+        String hexagonIndex = h3Service.getH3Index(damageSetRequestDTO.getY(), damageSetRequestDTO.getX(), res);
+        if (damageRepository.findDamageByHexagonIndexAndDtype(hexagonIndex, damageSetRequestDTO.getDtype())) {
+                throw new DuplPotholeException();
+        }
+
+        asyncService.setDamageAsyncMethod(damageSetRequestDTO, imageFile, hexagonIndex);
         return response.success(ResponseCode.POTHOLE_DETECTED);
     }
 }

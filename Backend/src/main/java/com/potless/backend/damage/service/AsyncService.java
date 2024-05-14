@@ -40,42 +40,45 @@ public class AsyncService {
     private final KakaoService kakaoService;
     private final AwsService awsService;
     private final ReDetectionApiService detectionApiService;
-    private final DamageRepository damageRepository;
-    private final H3Service h3Service;
-
     @Async
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRES_NEW)
-    public void setDamageAsyncMethod(DamageSetRequestDTO damageSetRequestDTO, File imageFile) throws IOException {
+    @Transactional
+    public void setDamageAsyncMethod(DamageSetRequestDTO damageSetRequestDTO, File imageFile, String hexagonIndex) throws IOException {
         try {
-            int res = 13;
-            String hexagonIndex = h3Service.getH3Index(damageSetRequestDTO.getY(), damageSetRequestDTO.getX(), res);
-            if (damageRepository.findDamageByHexagonIndexAndDtype(hexagonIndex, damageSetRequestDTO.getDtype())) {
-//                throw new DuplPotholeException();
-                log.info("중복!!");
-                return;
+            // 1차 탐지 후 BeforeVerification/ 에 사진 담기
+            String fileName = "BeforeVerification/" + System.currentTimeMillis() + "_" + imageFile.getName();
+            Map<String, String> fileUrlAndKey = awsService.uploadFileToS3(imageFile, fileName);
+            List<String> fileUrls = new ArrayList<>(fileUrlAndKey.values());
+            log.info("fileName = {}",fileName);
+            log.info("fileUrlAndKey = {}",fileUrlAndKey);
+            for(String fileUrl : fileUrls){
+                log.info("fileUrl = {}",fileUrl);
             }
+
             //fastApi 2차 탐지 요청 수행 및 결과 반환
             ReDetectionRequestDTO detectionRequestDTO = new ReDetectionRequestDTO(imageFile);
             ReDetectionResponseDTO detectionResult = new ReDetectionResponseDTO();
 
             detectionResult = detectionApiService.reDetectionResponse(detectionRequestDTO);
-            log.info("severity = {}", detectionResult.getSeverity());
-            log.info("width = {}", detectionResult.getWidth());
 
             if(detectionResult.getSeverity() == 0){
-                log.info("2차 탐지과정 실패");
+                log.info("return 당했음");
                 return;
             }
-
             damageSetRequestDTO.setSeverity(detectionResult.getSeverity());
             damageSetRequestDTO.setWidth((double)detectionResult.getWidth());
 
-            String fileName = "AfterVerification/BeforeWork/" + System.currentTimeMillis() + "_" + imageFile.getName();
-            Map<String, String> fileUrlAndKey = awsService.uploadFileToS3(imageFile, fileName);
+            // 2차 탐지 성공하면 AfterVerification/BeforeWork/ 파일로 이동
+            List<String> newFileUrls = null;
+            for (String fileUrl : fileUrls) {
+                String destinationKey = "AfterVerification/BeforeWork/" + new File(fileUrl).getName();
+                String newUrl = awsService.moveFileToVerified(fileName, destinationKey);
+                newFileUrls.add(newUrl);
+                log.info("fileUrl = {}",fileUrl);
+                log.info("newUrl = {}",newUrl);
+            }
 
-            List<String> fileUrls = new ArrayList<>(fileUrlAndKey.values()); // URL 리스트 추출
 
-            damageSetRequestDTO.setImages(fileUrls);
+            damageSetRequestDTO.setImages(newFileUrls);
 
             // 비동기로 처리하고 바로 응답 반환 검증
             kakaoService.fetchKakaoData(damageSetRequestDTO.getX(), damageSetRequestDTO.getY())
@@ -115,7 +118,7 @@ public class AsyncService {
 
                             iDamageService.setDamage(serviceDTO);
                         } catch (Exception e) {
-                            for (String s : fileUrls)
+                            for (String s : newFileUrls)
                                 awsService.deleteFile(s);
                             throw new PotholeNotFoundException();
                         }
