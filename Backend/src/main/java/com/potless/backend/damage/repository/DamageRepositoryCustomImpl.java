@@ -180,7 +180,8 @@ public class DamageRepositoryCustomImpl implements DamageRepositoryCustom {
         return queryFactory
                 .selectFrom(damage)
                 .where(damage.hexagonEntity.hexagonIndex.eq(hexagonIndex)
-                        .and(damage.dtype.eq(dtype)))
+                        .and(damage.dtype.eq(dtype))
+                        .and(damage.status.in(Status.작업전, Status.작업중)))
                 .setLockMode(LockModeType.PESSIMISTIC_WRITE) // Pessimistic Lock 설정
                 .fetchFirst() != null;
     }

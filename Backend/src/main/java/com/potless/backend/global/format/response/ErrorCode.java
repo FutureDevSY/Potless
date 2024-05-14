@@ -64,6 +64,8 @@ public enum ErrorCode {
     PROJECT_NOT_FOUND(HttpStatus.UNAUTHORIZED, "관련 프로젝트 정보를 찾을 수 없습니다."),
     TEAM_NOT_FOUND(HttpStatus.UNAUTHORIZED, "관련 팀 정보를 찾을 수 없습니다."),
     PROJECT_AREA_NOT_FOUND(HttpStatus.UNAUTHORIZED, "관련 지역 정보를 찾을 수 없습니다."),
+    PROJECT_DELETE_FAIL(HttpStatus.UNAUTHORIZED,"프로젝트 삭제에 실패했습니다."),
+
 
     // 작업 관련 예외 처리
     TASK_NOT_FOUND(HttpStatus.UNAUTHORIZED, "작업 정보를 찾을 수 없습니다."),
