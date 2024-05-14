@@ -19,7 +19,6 @@ import java.util.List;
 @DiscriminatorValue("CRACK")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CrackEntity extends DamageEntity {
-
     @Builder
     @QueryProjection
 
