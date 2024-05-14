@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from "vue-router";
-import Home from "../views/home/Home.vue";
 import Login from "../views/auth/Login.vue";
 import Main from "../views/main/Main.vue";
 
@@ -17,12 +16,6 @@ const router = createRouter({
   routes: [
     {
       path: "/",
-      name: "Home",
-      component: Home,
-      props: true,
-    },
-    {
-      path: "/auth/login",
       name: "Login",
       component: Login,
       props: true,
@@ -80,6 +73,10 @@ router.beforeEach((to, from) => {
     window.alert("로그인이 필요합니다.");
     return { name: "Login" };
   }
+  if (to.name === "Main" && !store.isLoggedIn) {
+    window.alert("로그인이 필요합니다.");
+    return { name: "Login" };
+  }
   if (to.name === "PortholeDetail" && !store.isLoggedIn) {
     window.alert("로그인이 필요합니다.");
     return { name: "Login" };
@@ -102,7 +99,7 @@ router.beforeEach((to, from) => {
   }
   if (to.name === "Login" && store.isLoggedIn) {
     window.alert("이미 로그인 했습니다.");
-    return { name: "Home" };
+    return { name: "Main" };
   }
 });
 

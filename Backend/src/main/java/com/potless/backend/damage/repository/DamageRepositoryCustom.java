@@ -6,6 +6,8 @@ import com.potless.backend.damage.dto.controller.request.DamageSearchRequestDTO;
 import com.potless.backend.damage.dto.controller.response.DamageResponseDTO;
 import com.potless.backend.damage.dto.service.request.AreaDamageCountForMonthServiceRequestDTO;
 import com.potless.backend.damage.dto.service.response.*;
+import com.potless.backend.damage.entity.enums.Status;
+import com.potless.backend.project.entity.TaskEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -27,4 +29,6 @@ public interface DamageRepositoryCustom {
     AreaForMonthListResponseDTO getAreaDamageCountForMonth(AreaDamageCountForMonthServiceRequestDTO areaDamageCountForMonthServiceRequestDTO);
 
     boolean findDamageByHexagonIndexAndDtype(String hexagonIndex, String dtype);
+
+    List<TaskEntity> findTasksByProjectIdAndDamageStatus(Long projectId, Status status);
 }

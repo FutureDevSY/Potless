@@ -49,6 +49,7 @@ const postPotholeAdd = async (accessToken, potholeInfo, success, fail) => {
     .post(`/damage/setManual`, potholeInfo, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "multipart/form-data",
       },
     })
     .then(success)

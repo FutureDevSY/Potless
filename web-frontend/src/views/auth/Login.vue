@@ -1,7 +1,6 @@
 <template>
-  <div class="container">
-    <img class="logo" src="../../assets/icon/weblogo.png" alt="#" />
-    <div class="login-box">
+  <div class="main">
+    <div class="left-div">
       <div class="login-title">관리자 로그인</div>
       <form class="login-form" @submit.prevent="moveHome">
         <div class="input-group">
@@ -12,6 +11,7 @@
             v-model="auth_id"
             placeholder="아이디를 입력해 주세요."
           />
+          <div v-if="authIdError" class="error-message">아이디는 필수값입니다.</div>
         </div>
         <div class="input-group">
           <div class="input-title">비밀번호</div>
@@ -22,15 +22,17 @@
             placeholder="비밀번호를 입력해 주세요."
             @input="showError = false"
           />
+          <div v-if="authPasswordError" class="error-message">비밀번호는 필수값입니다.</div>
           <div v-if="showError" class="error-message">
             {{ errorMsg }}
           </div>
         </div>
-        <button class="login-button" type="submit" @click="doLogin">
-          <span class="button-text">로그인</span>
-        </button>
       </form>
+      <button class="login-button" type="submit" @click="doLogin">
+        <span class="button-text">로그인</span>
+      </button>
     </div>
+    <div class="right-div"></div>
   </div>
 </template>
 
@@ -44,10 +46,18 @@ const store = useAuthStore();
 const store2 = useMoveStore();
 const auth_id = ref("");
 const auth_password = ref("");
+const authIdError = ref(false);
+const authPasswordError = ref(false);
 const showError = ref(false);
-const errorMsg = ref("");
+const errorMsg = ref("아이디와 비밀번호를 다시 입력해주세요.");
 
 const doLogin = () => {
+  authIdError.value = !auth_id.value;
+  authPasswordError.value = !auth_password.value;
+
+  if (authIdError.value || authPasswordError.value) {
+    return;
+  }
   const loginData = ref({
     email: auth_id.value,
     password: auth_password.value,
@@ -60,6 +70,8 @@ const doLogin = () => {
         console.log(res.data.message);
         store.login(res.data, res.data.data.token);
         store2.moveMain();
+      } else {
+        showError.value = true; // 오류 표시
       }
     },
     (error) => {
@@ -72,71 +84,55 @@ const doLogin = () => {
 </script>
 
 <style scoped>
-.container {
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-  height: 100vh;
-  background-color: #f8f8f8;
+.main {
+  height: 95vh;
+  display: grid;
+  grid-template-columns: 50% 50%;
 }
-
-.logo {
-  margin-top: 3.5vh;
-  width: 22.5vw;
+.left-div {
+  display: grid;
+  grid-template-rows: 32% 38% 30%;
 }
-
-.login-box {
+.login-title {
+  margin-top: 3vh;
+  font-size: 4.5vh;
+  font-weight: bold;
+  color: #373737;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  background-color: #ffffff;
-  height: 57vh;
-  width: 480px;
-  margin-top: 8vh;
-  color: #373737;
-  box-shadow: 0 4px 9px rgba(0, 0, 0, 0.4);
+  align-items: center;
 }
-
-.login-title {
-  margin-left: 3.6vw;
-  padding-bottom: 3vh;
-  font-size: 3.6vh;
-  margin-bottom: 4vh;
-  font-weight: bold;
-  color: #373737;
+input {
+  margin: 1.3vh 0vw;
 }
-
+.input-title {
+  font-size: 2vh;
+}
 .login-form {
   display: flex;
   flex-direction: column;
   align-items: center;
   width: 100%;
 }
-
-.input-title {
-  margin-left: 0.7vw;
-  font-size: 14px;
+.input-group {
+  width: 50%;
+  margin-bottom: 4vh;
 }
-
-input {
-  margin: 1.3vh;
-}
-
 .form-control {
-  width: 350px;
-  height: 40px;
+  width: 94%;
+  height: 5.5vh;
   position: relative;
   overflow: hidden;
   border-radius: 8px;
   background: none;
   border: 2px solid #717171;
   transition: border 0.4s ease;
-  padding-left: 15px;
-  font-size: 18px;
+  font-size: 2vh;
+  padding-left: 0.5vw;
   color: #373737;
-  margin-bottom: 3vh;
+  margin-bottom: 1vh;
 }
-
 .form-control:focus {
   outline: 0;
   border-color: #151c62;
@@ -144,39 +140,40 @@ input {
 
 .form-control::placeholder {
   color: gray;
-  font-size: 16px;
+  font-size: 1.8vh;
   transition: all 0.4s ease;
 }
 
 .form-control:focus::placeholder {
   opacity: 0;
 }
-
 .login-button {
   background-color: #151c62;
-  width: 370px;
-  height: 45px;
+  margin: 0vh 12vw;
+  height: 6.5vh;
+  padding: 0vh 3vw;
   cursor: pointer;
   border-radius: 8px;
-  font-size: 20px;
+  font-size: 2.1vh;
   position: relative;
   overflow: hidden;
   color: rgb(255, 255, 255);
   font-weight: bold;
   transition: all 0.3s;
-  margin-top: 3vh;
+  margin-top: 4vh;
 }
-
 .login-button:hover {
   background-color: #0e1241;
 }
-
 .input-error {
   border: 2px solid #ff4343;
 }
-
 .error-message {
   color: #ff4343;
+  font-size: 1.8vh;
+}
+
+.right-div {
+  background-color: rgb(254, 255, 240);
 }
 </style>
-../../api/auth.js ../../api/auth/auth.js

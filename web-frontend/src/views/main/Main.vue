@@ -7,7 +7,6 @@
       </div>
       <div class="bottom-box">
         <div class="report-container">
-          <div>리포트 현황</div>
           <ReportList />
         </div>
         <div class="map-containers">

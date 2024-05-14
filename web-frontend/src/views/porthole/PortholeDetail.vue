@@ -2,7 +2,7 @@
   <div class="detail-container">
     <div class="img-box">
       <div class="carusel-container">
-        <Carusel :image="caruselImage" />
+        <Carusel :images="images" />
       </div>
       <div class="map">
         <RoadTypeIncidentsGraph
@@ -20,11 +20,11 @@
         </p>
         <p>
           <span class="info-title">위험물 종류</span>
-          <span class="infos">{{ pothole_info.dtype }}</span>
+          <span class="infos">{{ dtypeDisplay(pothole_info.dtype) }}</span>
         </p>
         <p>
           <span class="info-title">위험성 정도</span>
-          <span class="infos">{{ pothole_info.severity }}</span>
+          <span class="infos">{{ dangerClass2(pothole_info.severity) }}</span>
         </p>
         <p>
           <span class="info-title">작업 상태</span>
@@ -76,6 +76,34 @@ const { accessToken } = storeToRefs(store2);
 const route = useRoute();
 const pothole_info = ref({});
 
+const dtypeDisplay = (dtype) => {
+  switch (dtype) {
+    case "POTHOLE":
+      return "포트홀";
+    case "CRACK":
+      return "도로균열";
+    case "WORNOUT":
+      return "도로마모";
+    default:
+      return "알 수 없는 유형";
+  }
+};
+
+const dangerClass2 = (danger) => {
+  switch (danger) {
+    case 3:
+      return "심각";
+    case 2:
+      return "주의";
+    case 1:
+      return "양호";
+    default:
+      return "";
+  }
+};
+
+const images = ref([]);
+
 const takeData = (potholeId) => {
   getPotholeDetail(
     accessToken.value,
@@ -84,6 +112,7 @@ const takeData = (potholeId) => {
       if (res.data.status == "SUCCESS") {
         console.log(res.data.message);
         pothole_info.value = res.data.data;
+        images.value = res.data.data.imagesResponseDTOS;
       }
     },
     (error) => {
@@ -113,16 +142,17 @@ const deleteData = (potholeId) => {
   );
 };
 
-const caruselImage = computed(() => {
-  if (
-    pothole_info.value.imagesResponseDTOS &&
-    pothole_info.value.imagesResponseDTOS.length > 0
-  ) {
-    return pothole_info.value.imagesResponseDTOS[0].url;
-  } else {
-    return "../../assets/image/default.PNG";
-  }
-});
+// const caruselImage = computed(() => {
+//   if (
+//     pothole_info.value.imagesResponseDTOS &&
+//     pothole_info.value.imagesResponseDTOS.length > 0
+//   ) {
+//     console.log(pothole_info.value.imagesResponseDTOS[0]);
+//     return pothole_info.value.imagesResponseDTOS;
+//   } else {
+//     return ["../../assets/image/default.PNG"];
+//   }
+// });
 
 onMounted(() => {
   takeData(route.params.id);

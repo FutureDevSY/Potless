@@ -9,32 +9,31 @@
           <th>행정동</th>
           <th class="address-column">지번</th>
           <th>너비(mm)</th>
-          <th>사진</th>
+          <th>상세 정보</th>
           <th>작업 상태</th>
           <th></th>
         </tr>
       </thead>
       <tbody>
-        <tr
-          v-for="porthole in portholes"
-          :key="porthole.id"
-          @click="store.movePortholeDetail(porthole.damageId)"
-        >
+        <tr v-for="porthole in portholes" :key="porthole.id">
           <td class="detect-column">
             <div>{{ formatDate(porthole.createdDateTime) }}</div>
             <div>{{ formatTime(porthole.createdDateTime) }}</div>
           </td>
           <td class="danger-column">
             <div class="danger-type" :class="dangerClass(porthole.severity)">
-              {{ porthole.severity }}
+              {{ dangerClass2(porthole.severity) }}
             </div>
           </td>
-          <td>{{ porthole.dtype }}</td>
+          <td>{{ dtypeDisplay(porthole.dtype) }}</td>
           <td>{{ porthole.location }}</td>
           <td>{{ porthole.address }}</td>
           <td>{{ porthole.width }}</td>
           <td>
-            <button class="list-button" @click="openModal(porthole.imgUrl)">
+            <button
+              class="list-button"
+              @click="store.movePortholeDetail(porthole.damageId)"
+            >
               확인하기
             </button>
           </td>
@@ -45,6 +44,7 @@
                 class="delete-img"
                 src="../../../assets/icon/delete.png"
                 alt="delete"
+                @click="deletePothole(porthole.taskId)"
               />
             </button>
           </td>
@@ -61,11 +61,39 @@
 
 <script setup>
 import { useMoveStore } from "../../../stores/move";
-import { ref } from "vue";
+import { ref, watchEffect } from "vue";
 import CaruselModal from "../components/CaruselModal.vue";
+import { useAuthStore } from "@/stores/user";
+import { storeToRefs } from "pinia";
+import { patchPothole } from "../../../api/task/taskDetail";
 
+const store2 = useAuthStore();
+const { accessToken, coordinates } = storeToRefs(store2);
 const store = useMoveStore();
 const imgURL = ref(null);
+const emits = defineEmits(["updateList"]);
+
+const deletePothole = (taskId) => {
+  const potholeInfo = ref({
+    taskId: taskId,
+    origin: coordinates.value,
+  });
+
+  patchPothole(
+    accessToken.value,
+    potholeInfo.value,
+    (res) => {
+      console.log(res);
+      if (res.data.status == "SUCCESS") {
+        console.log(res.data.message);
+        emits("updateList");
+      }
+    },
+    (error) => {
+      console.log(error);
+    }
+  );
+};
 
 // 위험성 필터링
 const dangerClass = (danger) => {
@@ -81,10 +109,39 @@ const dangerClass = (danger) => {
   }
 };
 
+const dangerClass2 = (danger) => {
+  switch (danger) {
+    case 3:
+      return "심각";
+    case 2:
+      return "주의";
+    case 1:
+      return "양호";
+    default:
+      return "";
+  }
+};
+
+const dtypeDisplay = (dtype) => {
+  switch (dtype) {
+    case "POTHOLE":
+      return "포트홀";
+    case "CRACK":
+      return "도로균열";
+    case "WORNOUT":
+      return "도로마모";
+    default:
+      return "알 수 없는 유형";
+  }
+};
+
 const props = defineProps({
   data: Object,
 });
-const portholes = props.data;
+const portholes = ref(props.data);
+watchEffect(() => {
+  portholes.value = props.data;
+});
 // 작업 리스트 모달창
 const isModalOpen = ref(false);
 function toggleModal() {
@@ -123,7 +180,7 @@ function formatTime(dateTime) {
   height: 42px;
   border-radius: 100%;
   color: #ffffff;
-  font-size: 19px;
+  font-size: 16px;
   font-weight: bold;
   line-height: 42px;
   background-color: inherit;
