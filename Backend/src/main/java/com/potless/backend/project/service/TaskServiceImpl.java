@@ -77,6 +77,11 @@ public class TaskServiceImpl implements TaskService {
         TaskEntity taskEntity = taskRepository.findById(taskId)
                 .orElseThrow(TaskNotFoundException::new);
         ProjectEntity project = taskEntity.getProjectEntity();
+        DamageEntity damage = taskEntity.getDamageEntity();
+
+        damage.changeStatus(Status.작업전);
+        damageRepository.save(damage);
+
         project.setProjectSize(project.getProjectSize() - 1);
         projectRepository.save(project);
 
