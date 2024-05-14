@@ -63,12 +63,11 @@ public class ProjectEntity extends BaseEntity {
         this.areaEntity = areaEntity;
     }
 
+    public void setTeam(TeamEntity team) {
+        this.teamEntity = team;
+    }
     public void changeStatus(Status status) {
         this.status = status;
     }
-
-    public void setTeam(TeamEntity team){
-        this.teamEntity = team;
-    };
 }
 

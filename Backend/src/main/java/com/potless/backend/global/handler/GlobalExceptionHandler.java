@@ -3,6 +3,7 @@ package com.potless.backend.global.handler;
 import com.potless.backend.global.exception.email.FailedMessageTransmissionException;
 import com.potless.backend.global.exception.email.InvalidAuthCodeException;
 import com.potless.backend.global.exception.jwt.RefreshTokenNotFoundException;
+import com.potless.backend.global.exception.kakao.KakaoNotFoundException;
 import com.potless.backend.global.exception.member.*;
 import com.potless.backend.global.exception.pothole.*;
 import com.potless.backend.global.exception.project.AreaNotFoundException;
@@ -154,6 +155,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(DuplPotholeException.class)
     protected ResponseEntity<?> handle(DuplPotholeException e) {
         log.error("DuplPotholeException = {}", e.getErrorCode().getMessage());
+        return response.error(e.getErrorCode());
+    }
+
+    @ExceptionHandler(KakaoNotFoundException.class)
+    protected ResponseEntity<?> handle(KakaoNotFoundException e) {
+        log.error("KakaoNotFoundException = {}", e.getErrorCode().getMessage());
         return response.error(e.getErrorCode());
     }
 

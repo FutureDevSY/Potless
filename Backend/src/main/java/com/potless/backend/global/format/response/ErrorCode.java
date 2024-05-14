@@ -1,6 +1,5 @@
 package com.potless.backend.global.format.response;
 
-import com.potless.backend.global.exception.hexagon.HexagonNotFoundException;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -74,8 +73,11 @@ public enum ErrorCode {
     FAILED_TO_UPLOAD(HttpStatus.INTERNAL_SERVER_ERROR, "S3 이미지 저장에 실패했습니다."),
 
     // Hexagon 예외 처리
-    HEXAGON_NOT_FOUND(HttpStatus.UNAUTHORIZED,"Hexagon 정보를 찾을 수 없습니다."),
-    DUPL_POTHOLE(HttpStatus.UNAUTHORIZED,"중복된 포트홀입니다.");
+    HEXAGON_NOT_FOUND(HttpStatus.UNAUTHORIZED, "Hexagon 정보를 찾을 수 없습니다."),
+    DUPL_POTHOLE(HttpStatus.UNAUTHORIZED, "중복된 포트홀입니다."),
+
+    // kakao 예외 처리
+    KAKAO_NOT_FOUND(HttpStatus.UNAUTHORIZED, "KAKAO 로 조회 결과 위도 경도 정보를 찾을 수 없습니다.");
 
     private final HttpStatus status;
     private final String message;

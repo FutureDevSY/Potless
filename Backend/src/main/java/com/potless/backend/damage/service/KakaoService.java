@@ -3,6 +3,7 @@ package com.potless.backend.damage.service;
 import com.potless.backend.damage.dto.service.response.KakaoMapApiAddressResponseDTO;
 import com.potless.backend.damage.dto.service.response.KakaoMapApiResponseDTO;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -16,6 +17,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class KakaoService {
@@ -38,16 +40,20 @@ public class KakaoService {
                 .toUriString();
 
         HttpEntity<String> entity = new HttpEntity<>(headers);
+        try {
+            ResponseEntity<KakaoMapApiResponseDTO> response = restTemplate.exchange(
+                    urlTemplate,
+                    HttpMethod.POST,
+                    entity,
+                    KakaoMapApiResponseDTO.class,
+                    x, y
+            );
+            return CompletableFuture.completedFuture(response.getBody());
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return null;
+        }
 
-        ResponseEntity<KakaoMapApiResponseDTO> response = restTemplate.exchange(
-                urlTemplate,
-                HttpMethod.POST,
-                entity,
-                KakaoMapApiResponseDTO.class,
-                x, y
-        );
-
-        return CompletableFuture.completedFuture(response.getBody());
     }
 
     @Async
