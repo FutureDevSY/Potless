@@ -111,10 +111,12 @@ const deleteTask = (projectId) => {
     accessToken.value,
     projectId,
     (res) => {
+      console.log(res);
       if (res.data.status == "SUCCESS") {
         console.log(res.data.message);
         takeData(0);
       } else {
+        alert("프로젝트에 이미 작업 중인 포트홀이 있습니다.");
         console.log(res.data.message);
       }
     },
@@ -147,7 +149,6 @@ const takeData = (currentPage) => {
     accessToken.value,
     queryParams,
     (res) => {
-      console.log(res);
       if (res.data.status == "SUCCESS") {
         console.log(res.data.message);
         currentData.value = res.data.data.content;
