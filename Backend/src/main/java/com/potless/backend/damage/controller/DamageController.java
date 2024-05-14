@@ -21,6 +21,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +31,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -109,9 +111,9 @@ public class DamageController {
         YearMonth startMonth = YearMonth.parse(areaDamageCountForMonthRequestDTO.getStart(), DateTimeFormatter.ofPattern("yyyy-MM"));
         YearMonth endMonth = areaDamageCountForMonthRequestDTO.getEnd() != null ? YearMonth.parse(areaDamageCountForMonthRequestDTO.getEnd(), DateTimeFormatter.ofPattern("yyyy-MM")) : startMonth;
         AreaDamageCountForMonthServiceRequestDTO serviceRequestDTO = AreaDamageCountForMonthServiceRequestDTO.builder()
-                .start(startMonth)
-                .end(endMonth)
-                .build();
+                                                                                                             .start(startMonth)
+                                                                                                             .end(endMonth)
+                                                                                                             .build();
         // 서비스 계층 호출
         AreaForMonthListResponseDTO areaDamageCountForMonth = iDamageService.getAreaDamageCountForMonth(serviceRequestDTO);
         // 결과 반환
@@ -208,18 +210,18 @@ public class DamageController {
             @RequestPart("files") List<MultipartFile> files
     ) {
         Map<String, String> fileUrlsAndKeys = files.stream()
-                .map(file -> {
-                    try {
-                        String fileName = "AfterVerification/DuringWork/" + System.currentTimeMillis() + "_" + file.getOriginalFilename();
-                        return awsService.uploadFileToS3(file, fileName);
-                    } catch (IOException e) {
-                        log.error("Error uploading file to S3", e);
-                        return null;
-                    }
-                })
-                .filter(Objects::nonNull)
-                .flatMap(map -> map.entrySet().stream())
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+                                                   .map(file -> {
+                                                       try {
+                                                           String fileName = "AfterVerification/DuringWork/" + System.currentTimeMillis() + "_" + file.getOriginalFilename();
+                                                           return awsService.uploadFileToS3(file, fileName);
+                                                       } catch (IOException e) {
+                                                           log.error("Error uploading file to S3", e);
+                                                           return null;
+                                                       }
+                                                   })
+                                                   .filter(Objects::nonNull)
+                                                   .flatMap(map -> map.entrySet().stream())
+                                                   .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
         List<String> fileUrls = new ArrayList<>(fileUrlsAndKeys.values()); // URL 리스트 추출
         try {
             iDamageService.setImageForStatus(Long.valueOf(damageId), fileUrls);
@@ -240,18 +242,18 @@ public class DamageController {
             @RequestPart("damageId") String damageId,
             @RequestPart("files") List<MultipartFile> files) {
         Map<String, String> fileUrlsAndKeys = files.stream()
-                .map(file -> {
-                    try {
-                        String fileName = "AfterVerification/AfterWork/" + System.currentTimeMillis() + "_" + file.getOriginalFilename();
-                        return awsService.uploadFileToS3(file, fileName);
-                    } catch (IOException e) {
-                        log.error("Error uploading file to S3", e);
-                        return null;
-                    }
-                })
-                .filter(Objects::nonNull)
-                .flatMap(map -> map.entrySet().stream())
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+                                                   .map(file -> {
+                                                       try {
+                                                           String fileName = "AfterVerification/AfterWork/" + System.currentTimeMillis() + "_" + file.getOriginalFilename();
+                                                           return awsService.uploadFileToS3(file, fileName);
+                                                       } catch (IOException e) {
+                                                           log.error("Error uploading file to S3", e);
+                                                           return null;
+                                                       }
+                                                   })
+                                                   .filter(Objects::nonNull)
+                                                   .flatMap(map -> map.entrySet().stream())
+                                                   .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
         List<String> fileUrls = new ArrayList<>(fileUrlsAndKeys.values()); // URL 리스트 추출
         try {
             iDamageService.setImageForStatus(Long.valueOf(damageId), fileUrls);
@@ -266,9 +268,13 @@ public class DamageController {
     @Operation(summary = "Damage 작업 완료 상태 전환", description = "Damage의 상태를 작업 완료로 전환합니다.", responses = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Damage의 상태 전환 성공", content = @Content(schema = @Schema(implementation = String.class)))
     })
-    @PostMapping("/{damageId}/workDone")
-    public ResponseEntity<?> setWorkDone(Authentication authentication, @PathVariable(name = "damageId") Long damageId) {
-        iDamageService.setWorkDone(damageId);
+    @PostMapping("/workDone")
+    public ResponseEntity<?> setWorkDone(Authentication authentication, @RequestBody @Valid DamageDoneRequestDTO requestDTO, BindingResult bindingResult) {
+        iDamageService.setWorkDone(requestDTO.getDamageId());
+
+        if (bindingResult.hasErrors()) {
+            return response.fail(bindingResult);
+        }
         return response.success(ResponseCode.POTHOLE_DONE_WORK);
     }
 
@@ -313,43 +319,43 @@ public class DamageController {
         String area = (address != null) ? address.getRegion_2depth_name() : roadAddress.getRegion_2depth_name();
 
         DamageSetRequestDTO damageSetRequestDTO = DamageSetRequestDTO.builder()
-                .dtype(dtype)
-                .x(xValue)
-                .y(yValue)
-                .build();
+                                                                     .dtype(dtype)
+                                                                     .x(xValue)
+                                                                     .y(yValue)
+                                                                     .build();
 
         if (files.isEmpty()) {
             damageSetRequestDTO.setImages(Collections.singletonList("https://mine702-amazon-s3.s3.ap-northeast-2.amazonaws.com/Default/default.jpg"));
         } else {
             Map<String, String> fileUrlsAndKeys = files.stream()
-                    .map(file -> {
-                        try {
-                            String fileName = "AfterVerification/BeforeWork/" + System.currentTimeMillis() + "_" + file.getOriginalFilename();
-                            return awsService.uploadFileToS3(file, fileName);
-                        } catch (IOException e) {
-                            log.error("Error uploading file to S3", e);
-                            return null;
-                        }
-                    })
-                    .filter(Objects::nonNull)
-                    .flatMap(map -> map.entrySet().stream())
-                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+                                                       .map(file -> {
+                                                           try {
+                                                               String fileName = "AfterVerification/BeforeWork/" + System.currentTimeMillis() + "_" + file.getOriginalFilename();
+                                                               return awsService.uploadFileToS3(file, fileName);
+                                                           } catch (IOException e) {
+                                                               log.error("Error uploading file to S3", e);
+                                                               return null;
+                                                           }
+                                                       })
+                                                       .filter(Objects::nonNull)
+                                                       .flatMap(map -> map.entrySet().stream())
+                                                       .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
             List<String> fileUrls = new ArrayList<>(fileUrlsAndKeys.values());
             damageSetRequestDTO.setImages(fileUrls);
         }
 
         DamageSetRequestServiceDTO serviceDTO = DamageSetRequestServiceDTO.builder()
-                .dirX(damageSetRequestDTO.getX())
-                .dirY(damageSetRequestDTO.getY())
-                .dtype(damageSetRequestDTO.getDtype())
-                .width(0.0)
-                .address(addressName)
-                .severity(Integer.valueOf(severity))
-                .status(Status.작업전)
-                .area(area)
-                .location(location)
-                .images(damageSetRequestDTO.getImages())
-                .build();
+                                                                          .dirX(damageSetRequestDTO.getX())
+                                                                          .dirY(damageSetRequestDTO.getY())
+                                                                          .dtype(damageSetRequestDTO.getDtype())
+                                                                          .width(0.0)
+                                                                          .address(addressName)
+                                                                          .severity(Integer.valueOf(severity))
+                                                                          .status(Status.작업전)
+                                                                          .area(area)
+                                                                          .location(location)
+                                                                          .images(damageSetRequestDTO.getImages())
+                                                                          .build();
 
         iDamageService.setDamage(serviceDTO);
 
@@ -374,10 +380,10 @@ public class DamageController {
             throw new InvalidCoordinateRangeException();
         }
         DamageSetRequestDTO damageSetRequestDTO = DamageSetRequestDTO.builder()
-                .dtype(dtype)
-                .x(xValue)
-                .y(yValue)
-                .build();
+                                                                     .dtype(dtype)
+                                                                     .x(xValue)
+                                                                     .y(yValue)
+                                                                     .build();
         File imageFile = fileService.convertAndSaveFile(files.get(0));
         asyncService.setDamageAsyncMethod(damageSetRequestDTO, imageFile);
         return response.success(ResponseCode.POTHOLE_DETECTED);
