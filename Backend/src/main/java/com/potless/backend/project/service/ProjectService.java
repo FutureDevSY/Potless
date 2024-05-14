@@ -17,6 +17,6 @@ public interface ProjectService {
 
     void deleteProject(Long projectId);
 
-
+    void changeProjectStatus(Long projectId);
 
 }

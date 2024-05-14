@@ -18,6 +18,9 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,6 +32,7 @@ import java.util.Map;
 @Service
 @EnableAsync
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class AsyncService {
 
     private final IDamageService iDamageService;
@@ -37,9 +41,9 @@ public class AsyncService {
     private final ReDetectionApiService detectionApiService;
     private final DamageRepository damageRepository;
     private final H3Service h3Service;
-    private final HexagonService hexagonService;
 
     @Async
+    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRES_NEW)
     public void setDamageAsyncMethod(DamageSetRequestDTO damageSetRequestDTO, File imageFile) throws IOException {
         try {
             int res = 13;
@@ -49,7 +53,6 @@ public class AsyncService {
             }
             //fastApi 2차 탐지 요청 수행 및 결과 반환
             ReDetectionRequestDTO detectionRequestDTO = new ReDetectionRequestDTO(imageFile);
-
             ReDetectionResponseDTO detectionResult = detectionApiService.reDetectionResponse(detectionRequestDTO);
             log.info("severity = {}", detectionResult.getSeverity());
             log.info("width = {}", detectionResult.getWidth());

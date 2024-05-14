@@ -47,6 +47,7 @@ public enum ResponseCode {
     PROJECT_FETCHED(HttpStatus.OK, "프로젝트 정보가 성공적으로 조회되었습니다."),
     PROJECT_DETECTED(HttpStatus.CREATED, "프로젝트 정보가 성공적으로 생성되었습니다."),
     PROJECT_DELETED(HttpStatus.OK, "프로젝트 정보가 성공적으로 삭제되었습니다."),
+    PROJECT_DONE_WORK(HttpStatus.OK, "프로젝트 상태가 성공적으로 작업완료로 저장되었습니다."),
 
     /* 작업(Task)*/
     TASK_DETECTED(HttpStatus.CREATED, "작업 정보가 프로젝트에 성공적으로 저장되었습니다."),
