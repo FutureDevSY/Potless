@@ -15,7 +15,7 @@
 <script setup>
 const props = defineProps({
   taskHeader: Object,
-  taskNumber: Number,
+  taskNumber: String,
 });
 </script>
 

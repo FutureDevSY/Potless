@@ -2,7 +2,7 @@
   <div class="detail-container">
     <div class="img-box">
       <div class="carusel-container">
-        <Carusel :images="pothole_info.imagesResponseDTOS" />
+        <Carusel :images="images" />
       </div>
       <div class="map">
         <RoadTypeIncidentsGraph
@@ -102,7 +102,7 @@ const dangerClass2 = (danger) => {
   }
 };
 
-const images = ref(null);
+const images = ref([]);
 
 const takeData = (potholeId) => {
   getPotholeDetail(
@@ -110,11 +110,9 @@ const takeData = (potholeId) => {
     potholeId,
     (res) => {
       if (res.data.status == "SUCCESS") {
-        console.log(res);
         console.log(res.data.message);
         pothole_info.value = res.data.data;
         images.value = res.data.data.imagesResponseDTOS;
-        // console.log(images.value);
       }
     },
     (error) => {

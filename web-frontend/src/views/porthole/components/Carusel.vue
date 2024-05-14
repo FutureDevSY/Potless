@@ -1,10 +1,15 @@
 <template>
   <div class="carousel-container">
-    <Carousel :items-to-show="1.5" :wrap-around="true">
-      <Slide v-for="(image, index) in props.images" :key="index">
-        <img class="pot-img" :src="image.url" :alt="'Image ' + (index + 1)" />
-      </Slide>
-    </Carousel>
+    <div v-if="props.images.length == 1">
+      <img class="pot-img" :src="props.images[0].url" alt="image" />
+    </div>
+    <div v-else>
+      <Carousel :items-to-show="1.5" :wrap-around="true">
+        <Slide v-for="(image, index) in props.images" :key="index">
+          <img class="pot-img" :src="image.url" :alt="'Image ' + (index + 1)" />
+        </Slide>
+      </Carousel>
+    </div>
   </div>
 </template>
 
