@@ -22,12 +22,7 @@
           </select>
         </div>
         <div class="file-upload">
-          <input
-            type="file"
-            @change="handleFileChange"
-            accept="image/*"
-            required
-          />
+          <input type="file" @change="handleFileChange" accept="image/*" />
         </div>
         <SearchMap @updateCenter="handleCenterUpdate" />
         <div class="button-div">
@@ -56,7 +51,7 @@ const location_y = ref("");
 const file = ref(null);
 
 const handleFileChange = (event) => {
-  file.value = event.target.files[0];
+  file.value = event.target.files.length > 0 ? event.target.files[0] : null;
 };
 
 const submitForm = () => {
@@ -65,7 +60,9 @@ const submitForm = () => {
   formData.append("severity", severity.value);
   formData.append("x", location_x.value);
   formData.append("y", location_y.value);
-  formData.append("files", file.value);
+  if (file.value) {
+    formData.append("files", file.value);
+  }
 
   postPotholeAdd(
     accessToken.value,
