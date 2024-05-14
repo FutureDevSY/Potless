@@ -1,7 +1,11 @@
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import JSONResponse, StreamingResponse
 from typing import List
-from services.augmentation_service import process_images
+import cv2
+import os
+import numpy as np
+from datetime import datetime
+from services.augmentation_service import process_images, process_images_old
 from services.model_service import model_2th_detection
 from services.estimate_service import calcPotholeDan, calcPotholeWidth
 from services.calculate_service import calculate_object_scale
@@ -26,25 +30,51 @@ rec = APIRouter(
 async def detection_confirm(
     image_data: UploadFile = File(...)
 ):
+    # 파일 확장자 추출
+    file_extension = image_data.filename.split('.')[-1]
+    current_time = datetime.now().strftime("%Y%m%d_%H%M%S")
+    file_name = f"{current_time}.{file_extension}"
+
+    # 업로드된 파일을 바이트 배열로 읽기
     origin_image = await image_data.read()
-    logging.info("파일 받음요")
+    
+    # 바이트 배열을 numpy 배열로 변환
+    np_image = np.frombuffer(origin_image, np.uint8)
+    saved = cv2.imdecode(np_image, cv2.IMREAD_COLOR)
 
-    processed_image = await process_images(origin_image)
-    # 전처리에서 문제 발생한 경우
-    if processed_image is None:
-        raise HTTPException(status_code=401, detail="이미지 컬러값 변환 처리에 실패하였습니다.") 
-    logging.info("전처리 완료")
+    # 이미지 저장
+    folder_name = 'origin'
+    if not os.path.exists(folder_name):
+        os.makedirs(folder_name)
 
-    # 2차 탐지 실행
-    detection_result = model_2th_detection(processed_image)
-    # logging.info(detection_result) 
+    origin_file_path = os.path.join(folder_name, f"{file_name}")
+    cv2.imwrite(origin_file_path, saved)
+
+    logging.info("파일 받고 원본사진 저장 완료")
+
+    # 원본으로 2-1차 탐지 실행
+    detection_result = model_2th_detection(origin_file_path)
+    logging.info("2-1차 processing 완료")
+
+    if(detection_result is None):
+        # 전처리 뒤 2-2차 탐지 실행  
+        processed_image = await process_images(origin_file_path)
+        if(processed_image is None):
+            raise HTTPException(status_code=401, detail="전처리 실패 - 입력 이미지가 올바르지 않습니다.")
+       
+        detection_result = model_2th_detection(processed_image)
+        logging.info("2-2차 processing 완료")
+
+        if(detection_result is None):
+            raise HTTPException(status_code=401, detail="2차 프로세싱 모두 탐지하지 못했습니다.")
+         
     logging.info("2차 탐지결과 확인 및 위험도 분석 완료")
 
     return detection_result
     
     # def iterfile():
     #     with open(processed_image_path, mode="rb") as file_like:
-    #         yield from file_like
+ #         yield from file_like
 
     # response = StreamingResponse(iterfile(), media_type="image/jpeg")
     # return {"message": "처리가 성공적으로 완료되었습니다.", "data": response}

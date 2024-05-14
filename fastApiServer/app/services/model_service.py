@@ -13,7 +13,7 @@ def model_2th_detection(image):
 
     model = YOLO('./model/pre_processed_model.pt')
     # 감지 실행
-    results = model.predict(task="detect", source=image, stream=False, conf=0.5, hide_labels=True, hide_conf=True)
+    results = model.predict(task="detect", source=image, stream=False, conf=0.8)
 
     folder_name = 'model_result/result1'
     os.makedirs(folder_name, exist_ok=True)
@@ -37,7 +37,8 @@ def model_2th_detection(image):
                     danger_max = severity
 
         else:
-            raise HTTPException(status_code=200, detail="포트홀 2차 탐지 결과 발견하지 못했습니다.") 
+            logging.info("포트홀 탐지 실패")
+            return None
         
     # logging.info("Objects detected:", i)
     result = DetectionResponse(severity=severity, width=width)
