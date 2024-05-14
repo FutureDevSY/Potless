@@ -95,6 +95,7 @@ public class AsyncService {
                                     .status(Status.작업전)
                                     .area(area)
                                     .location(location)
+                                    .width(damageSetRequestDTO.getWidth())
                                     .images(damageSetRequestDTO.getImages())
                                     .build();
 
