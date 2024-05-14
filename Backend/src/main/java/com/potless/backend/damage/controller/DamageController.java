@@ -271,7 +271,6 @@ public class DamageController {
     @PostMapping("/workDone")
     public ResponseEntity<?> setWorkDone(Authentication authentication, @RequestBody @Valid DamageDoneRequestDTO requestDTO, BindingResult bindingResult) {
         iDamageService.setWorkDone(requestDTO.getDamageId());
-
         if (bindingResult.hasErrors()) {
             return response.fail(bindingResult);
         }
