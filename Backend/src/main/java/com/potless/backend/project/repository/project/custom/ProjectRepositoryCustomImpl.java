@@ -139,6 +139,7 @@ public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
                 .where(builder)
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
+                .orderBy(project.createdDateTime.desc())
                 .fetch();
 
         Long countResult = queryFactory
