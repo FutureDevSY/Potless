@@ -10,6 +10,7 @@ import com.potless.backend.global.exception.member.ManagerNotFoundException;
 import com.potless.backend.global.exception.member.MemberNotFoundException;
 import com.potless.backend.global.exception.pothole.PotholeNotFoundException;
 import com.potless.backend.global.exception.project.AreaNotFoundException;
+import com.potless.backend.global.exception.project.ProjectDeleteFailException;
 import com.potless.backend.global.exception.project.ProjectNotFoundException;
 import com.potless.backend.member.entity.ManagerEntity;
 import com.potless.backend.member.entity.TeamEntity;
@@ -106,6 +107,12 @@ public class ProjectServiceImpl implements ProjectService {
     public void deleteProject(Long projectId) {
         ProjectEntity projectEntity = projectRepository.findById(projectId)
                 .orElseThrow(ProjectNotFoundException::new);
+
+        boolean hasInProgressDamages = damageRepository.existsByProjectIdAndStatus(projectId, Status.작업중);
+        if (hasInProgressDamages) {
+            throw new ProjectDeleteFailException();
+        }
+
         projectEntity.softDelet();
         projectRepository.save(projectEntity);
     }

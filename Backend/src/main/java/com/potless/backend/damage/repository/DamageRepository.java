@@ -2,6 +2,7 @@ package com.potless.backend.damage.repository;
 
 
 import com.potless.backend.damage.dto.controller.response.DamageResponseDTO;
+import com.potless.backend.damage.entity.enums.Status;
 import com.potless.backend.damage.entity.road.DamageEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -19,4 +20,5 @@ public interface DamageRepository extends JpaRepository<DamageEntity, Long>, Dam
             "WHERE d.id = :damageId")
     DamageResponseDTO findDamageDetailsByIdSimple(@Param("damageId") Long damageId);
 
+    boolean existsByProjectIdAndStatus(Long projectId, Status status);
 }
