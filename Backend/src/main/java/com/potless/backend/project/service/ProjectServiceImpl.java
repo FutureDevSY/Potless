@@ -82,6 +82,9 @@ public class ProjectServiceImpl implements ProjectService {
                 long damageId = projectSaveRequestDto.getDamageNums().get(order[i] - 1);
                 DamageEntity damageEntity = damageRepository.findById(damageId)
                         .orElseThrow(PotholeNotFoundException::new);
+                damageEntity.changeStatus(Status.작업중);
+                damageRepository.save(damageEntity);
+
                 TaskEntity taskEntity = TaskEntity.builder()
                         .projectEntity(saveProjectEntity)
                         .damageEntity(damageEntity)
@@ -105,6 +108,13 @@ public class ProjectServiceImpl implements ProjectService {
                 .orElseThrow(ProjectNotFoundException::new);
         projectEntity.softDelet();
         projectRepository.save(projectEntity);
+    }
+
+    @Override
+    public void changeProjectStatus(Long projectId) {
+        ProjectEntity projectEntity = projectRepository.findById(projectId)
+                .orElseThrow(ProjectNotFoundException::new);
+        projectEntity.changeStatus(Status.작업완료);
     }
 
 }
