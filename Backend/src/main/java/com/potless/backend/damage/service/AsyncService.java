@@ -54,8 +54,6 @@ public class AsyncService {
             //fastApi 2차 탐지 요청 수행 및 결과 반환
             ReDetectionRequestDTO detectionRequestDTO = new ReDetectionRequestDTO(imageFile);
             ReDetectionResponseDTO detectionResult = detectionApiService.reDetectionResponse(detectionRequestDTO);
-            log.info("severity = {}", detectionResult.getSeverity());
-            log.info("width = {}", detectionResult.getWidth());
 
             damageSetRequestDTO.setSeverity(detectionResult.getSeverity());
             damageSetRequestDTO.setWidth((double)detectionResult.getWidth());

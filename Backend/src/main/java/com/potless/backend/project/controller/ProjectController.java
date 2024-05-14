@@ -1,5 +1,6 @@
 package com.potless.backend.project.controller;
 
+import com.potless.backend.global.exception.project.ProjectDeleteFailException;
 import com.potless.backend.global.format.code.ApiResponse;
 import com.potless.backend.global.format.response.ResponseCode;
 import com.potless.backend.path.service.PathService;
