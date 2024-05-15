@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Objects;
 import java.util.Optional;
 
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -19,6 +20,7 @@ public class DuplicateAreaService {
 
     private final H3Service h3Service;
     private final DamageRepository damageRepository;
+
 
     public String checkIsDuplicated(DamageSetRequestDTO damageSetRequestDTO) {
         int res = 13;
