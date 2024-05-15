@@ -87,6 +87,9 @@ const deletePothole = (taskId) => {
       if (res.data.status == "SUCCESS") {
         console.log(res.data.message);
         emits("updateList");
+        alert("포트홀을 성공적으로 삭제했습니다.");
+      } else {
+        alert("포트홀을 삭제할 수 없습니다.", res.data.message);
       }
     },
     (error) => {
