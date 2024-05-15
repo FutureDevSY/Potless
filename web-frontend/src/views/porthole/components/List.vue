@@ -91,14 +91,25 @@ import { storeToRefs } from "pinia";
 import TaskList from "./TaskList.vue";
 import TeamModal from "./AddTeamModal.vue";
 import { deletePothole } from "../../../api/pothole/pothole";
+import { useSwal } from "../../../composables/useSwal";
 
 const store2 = useAuthStore();
 const { accessToken } = storeToRefs(store2);
 const store = useMoveStore();
+const swal = useSwal();
 const props = defineProps({
   currentData: Object,
   selectedStatus: String,
 });
+
+const showAlert = () => {
+  swal({
+    title: "해당 포트홀이 삭제 되었습니다",
+    icon: "success",
+    confirmButtonText: "확인",
+    width: "700px",
+  });
+};
 
 const potholes = computed(() => {
   return (props.currentData || []).map((item) => ({
@@ -175,7 +186,7 @@ const deletePotholeSelect = () => {
         console.log(res.data.message);
         selectedIds.value.clear();
         emit("refreshData");
-        alert("포트홀이 삭제되었습니다.");
+        showAlert();
       }
     },
     (error) => {
