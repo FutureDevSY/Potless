@@ -162,8 +162,6 @@ class _VideoPageState extends State<VideoPage> with WidgetsBindingObserver {
       double lat = queuedImage.position.latitude;
       double lng = queuedImage.position.longitude;
 
-      // debugPrint('업로드 대신 나오는 코드');
-
       bool success = await _apiService.damageSet('POTHOLE', lng, lat, file);
     } catch (e) {
       debugPrint('potless 212: $e');
@@ -226,20 +224,20 @@ class _VideoPageState extends State<VideoPage> with WidgetsBindingObserver {
               width: UIhelper.deviceWidth(context),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text('AI 촬영의 성능을 위해 카메라 화면을 꺼두는 모드입니다.'),
                   if (stats != null) ...[
-                    Text('Conversion time: ${stats!['Conversion time:']}'),
-                    Text(
-                        'Pre-processing time: ${stats!['Pre-processing time:']}'),
-                    Text('Inference time: ${stats!['Inference time:']}'),
-                    Text(
-                        'Total prediction time: ${stats!['Total prediction time:']}'),
-                    Text('Frame: ${stats!['Frame']}'),
+                    Text('프레임 당 탐지 시간 : ${stats!['Total prediction time:']}'),
                   ],
-                  SizedBox(
-                    height: UIhelper.deviceHeight(context) * 0.3,
-                  ),
+                  SizedBox(height: UIhelper.deviceHeight(context) * 0.1),
+                  const Text('촬영개수 : 탐지 이후 실제로 서버에 업로드를 요청한 횟수입니다'),
+                  const Text('아이콘 : 촬영되고 있는 화면을 끄고 키는 버튼입니다'),
+                  const Text('프레임 : 현재 프레임 값에 도달할 때마다'),
+                  const Text('하나의 프레임을 ai 모델에 넣습니다'),
+                  const Text('영상 스트리밍 시 평균적으로 30 의 FPS 값을 갖고 있습니다.'),
+                  const Text('따라서, 프레임 값이 10일 때, 초당 3개의 프레임을 ai 모델에 삽입합니다.'),
+                  SizedBox(height: UIhelper.deviceHeight(context) * 0.2),
                 ],
               ),
             ),
@@ -252,8 +250,24 @@ class _VideoPageState extends State<VideoPage> with WidgetsBindingObserver {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    ElevatedButton(onPressed: incFrame, child: const Text('+')),
-                    ElevatedButton(onPressed: decFrame, child: const Text('-')),
+                    ElevatedButton(
+                      onPressed: incFrame,
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all(
+                          const Color(0xffFFFFFF),
+                        ),
+                      ),
+                      child: const Text('+'),
+                    ),
+                    ElevatedButton(
+                      onPressed: decFrame,
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all(
+                          const Color(0xffFFFFFF),
+                        ),
+                      ),
+                      child: const Text('-'),
+                    ),
                   ],
                 ),
               ),
@@ -290,7 +304,7 @@ class _VideoPageState extends State<VideoPage> with WidgetsBindingObserver {
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Text(
-                        '현재 프레임: $skipFactor',
+                        '프레임: ${skipFactor + 1}',
                         style: const TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
@@ -309,13 +323,13 @@ class _VideoPageState extends State<VideoPage> with WidgetsBindingObserver {
 
   void incFrame() {
     setState(() {
-      skipFactor++;
+      skipFactor = skipFactor + 5;
     });
   }
 
   void decFrame() {
     setState(() {
-      skipFactor--;
+      skipFactor = skipFactor - 5;
     });
   }
 

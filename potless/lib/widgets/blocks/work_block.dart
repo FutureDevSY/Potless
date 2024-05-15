@@ -10,7 +10,7 @@ class WorkBlock extends StatelessWidget {
   final DateTime createdAt;
   final List<DamageImage> images;
   final VoidCallback onProjectUpdate;
-
+  final VoidCallback onTaskUpdate;
   const WorkBlock({
     super.key,
     this.potholeId = 0,
@@ -26,6 +26,7 @@ class WorkBlock extends StatelessWidget {
     required this.dType,
     required this.createdAt,
     required this.onProjectUpdate,
+    required this.onTaskUpdate,
   });
 
   Image? get primaryImage {
@@ -56,6 +57,7 @@ class WorkBlock extends StatelessWidget {
                 dType: dType,
                 createdAt: createdAt,
                 onProjectUpdate: onProjectUpdate,
+                onTaskUpdate: onTaskUpdate,
               ),
             ),
           );

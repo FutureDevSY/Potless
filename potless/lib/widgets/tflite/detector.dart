@@ -19,7 +19,7 @@ class _Command {
 }
 
 class Detector {
-  static const String _modelPath = 'assets/ai_model/v5_60000.tflite';
+  static const String _modelPath = 'assets/ai_model/12_300.tflite';
   static const String _labelPath = 'assets/ai_model/train34.txt';
 
   Detector._(this._isolate, this._interpreter, this._labels);
@@ -243,7 +243,6 @@ class _DetectorServer {
           }
         };
       } else {
-        // Return an empty or a minimal structure if no high confidence detections are found
         return {
           "cls": cls,
           "box": box,
