@@ -39,9 +39,8 @@
           <button
             class="pdf-button"
             @click="generatePdf"
-            v-if="taskData && taskData.length"
-          >
-            PDF로 변환하기
+            v-if="taskData && taskData.length">
+          PDF로 변환하기
           </button>
           <button @click="closePdfModal" class="pdf-button">닫기</button>
           <div class="loading-container" v-if="showLoading">
@@ -113,11 +112,6 @@ function showDetail() {
         console.log(res.data.message);
         taskHeader.value = res.data.data;
         taskData.value = res.data.data.damageDetailToProjectDtos;
-<<<<<<< HEAD
-        console.log(taskData.value);
-        console.log(taskData.value);
-=======
->>>>>>> dev-FE
       } else {
         console.log(res.data.message);
       }
