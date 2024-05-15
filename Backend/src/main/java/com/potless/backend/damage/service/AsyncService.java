@@ -8,28 +8,25 @@ import com.potless.backend.damage.dto.service.response.ReDetectionResponseDTO;
 import com.potless.backend.damage.dto.service.response.kakao.Address;
 import com.potless.backend.damage.dto.service.response.kakao.RoadAddress;
 import com.potless.backend.damage.entity.enums.Status;
-import com.potless.backend.damage.entity.road.DamageEntity;
 import com.potless.backend.damage.repository.DamageRepository;
-import com.potless.backend.global.exception.member.MemberNotFoundException;
 import com.potless.backend.global.exception.pothole.DuplPotholeException;
 import com.potless.backend.global.exception.pothole.PotholeNotFoundException;
 import com.potless.backend.hexagon.repository.HexagonRepository;
 import com.potless.backend.hexagon.service.H3Service;
-import com.potless.backend.hexagon.service.HexagonService;
-import com.potless.backend.member.entity.MemberEntity;
 import com.potless.backend.member.repository.member.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 @Log4j2
 @Service
@@ -50,25 +47,9 @@ public class AsyncService {
 
     @Async
     @Transactional
-    public void setDamageAsyncMethod(DamageSetRequestDTO damageSetRequestDTO, File imageFile) throws IOException {
+    public void setDamageAsyncMethod(DamageSetRequestDTO damageSetRequestDTO, File imageFile, String hexagonIndex) throws IOException {
 
         try {
-            int res = 13;
-            String hexagonIndex = h3Service.getH3Index(damageSetRequestDTO.getY(), damageSetRequestDTO.getX(), res);
-
-            hexagonRepository.findByHexagonIndex(hexagonIndex);
-
-            Optional<DamageEntity> optionalDamageEntity = damageRepository.findDamageByHexagonIndexAndDtype(hexagonIndex, damageSetRequestDTO.getDtype());
-
-            if (optionalDamageEntity.isPresent()) {
-                DamageEntity damageEntity = optionalDamageEntity.get();
-                if (!Objects.equals(damageEntity.getDirX(), damageSetRequestDTO.getX()) && !Objects.equals(damageEntity.getDirY(), damageSetRequestDTO.getY())) {
-                    damageEntity.addCount();
-                    damageRepository.save(damageEntity);
-                }
-                log.error("Duplicate pothole detected: {}", damageSetRequestDTO);
-                throw new DuplPotholeException();
-            }
 
             //fastApi 2차 탐지 요청 수행 및 결과 반환
             ReDetectionRequestDTO detectionRequestDTO = new ReDetectionRequestDTO(imageFile);
