@@ -19,7 +19,7 @@ class _Command {
 }
 
 class Detector {
-  static const String _modelPath = 'assets/ai_model/train34_16.tflite';
+  static const String _modelPath = 'assets/ai_model/12_300.tflite';
   static const String _labelPath = 'assets/ai_model/train34.txt';
 
   Detector._(this._isolate, this._interpreter, this._labels);
@@ -103,7 +103,7 @@ class Detector {
 }
 
 class _DetectorServer {
-  int mlModelInputSize = 416;
+  int mlModelInputSize = 320;
   Interpreter? _interpreter;
   List<String>? _labels;
 
@@ -131,7 +131,7 @@ class _DetectorServer {
         _interpreter = Interpreter.fromAddress(command.args?[1] as int);
 
         mlModelInputSize =
-            _interpreter?.getInputTensors().first.shape[1] ?? 416;
+            _interpreter?.getInputTensors().first.shape[1] ?? 320;
         _labels = command.args?[2] as List<String>;
         _sendPort.send(const _Command(_Codes.ready));
       case _Codes.detect:
@@ -243,7 +243,6 @@ class _DetectorServer {
           }
         };
       } else {
-        // Return an empty or a minimal structure if no high confidence detections are found
         return {
           "cls": cls,
           "box": box,
@@ -280,6 +279,7 @@ class _DetectorServer {
     var map = <int, Object>{};
     map[0] = outputs;
     _interpreter!.runForMultipleInputs([input], map);
+
     return map.values.toList();
   }
 }
