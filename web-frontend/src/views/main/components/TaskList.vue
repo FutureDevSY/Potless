@@ -5,27 +5,27 @@
     <button @click="takeData('nextWeek')">다음주</button>
   </div>
   <table>
-      <thead>
-        <tr>
-          <th>작업 보고서</th>
-          <th>작업 갯수</th>
-          <th>작업 관리자</th>
-          <th>작업 예정 일자</th>
-          <th class="delete-column"></th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr
-          v-for="project in currentData"
-          :key="project.projectId"
-        >
-          <td>{{ project.projectName }}</td>
-          <td>{{ project.projectSize }} 건</td>
-          <td>{{ project.managerName }}</td>
-          <td>{{ project.projectDate }}</td>
-        </tr>
-      </tbody>
-    </table>
+    <thead>
+      <tr>
+        <th>작업 보고서</th>
+        <th>작업 갯수</th>
+        <th>작업 관리자</th>
+        <th>작업 예정 일자</th>
+        <th class="delete-column"></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr
+        v-for="project in currentData"
+        :key="project.projectId"
+      >
+        <td>{{ project.projectName }}</td>
+        <td>{{ project.projectSize }} 건</td>
+        <td>{{ project.managerName }}</td>
+        <td>{{ project.projectDate }}</td>
+      </tr>
+    </tbody>
+  </table>
 </template>
 
 <script setup>
