@@ -66,12 +66,32 @@ import CaruselModal from "../components/CaruselModal.vue";
 import { useAuthStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
 import { patchPothole } from "../../../api/task/taskDetail";
+import { useSwal } from "@/composables/useSwal";
 
 const store2 = useAuthStore();
 const { accessToken, coordinates } = storeToRefs(store2);
 const store = useMoveStore();
 const imgURL = ref(null);
 const emits = defineEmits(["updateList"]);
+const swal = useSwal();
+
+const showAlert = () => {
+  swal({
+    title: "해당 포트홀이 프로젝트에서 제외되었습니다",
+    icon: "success",
+    confirmButtonText: "확인",
+    width: "700px",
+  });
+};
+
+const showAlert2 = () => {
+  swal({
+    title: "포트홀을 삭제할 수 없습니다.",
+    icon: "error",
+    confirmButtonText: "확인",
+    width: "700px",
+  });
+};
 
 const deletePothole = (taskId) => {
   const potholeInfo = ref({
@@ -87,6 +107,9 @@ const deletePothole = (taskId) => {
       if (res.data.status == "SUCCESS") {
         console.log(res.data.message);
         emits("updateList");
+        showAlert();
+      } else {
+        showAlert2();
       }
     },
     (error) => {

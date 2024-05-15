@@ -113,16 +113,23 @@ function showDetail() {
         console.log(res.data.message);
         taskHeader.value = res.data.data;
         taskData.value = res.data.data.damageDetailToProjectDtos;
+<<<<<<< HEAD
         console.log(taskData.value);
         console.log(taskData.value);
+=======
+>>>>>>> dev-FE
       } else {
         console.log(res.data.message);
       }
     },
     (error) => {
-      console.error("Error fetching task details:", error);
+      console.error("에러 발생:", error.message);
     }
   );
+}
+
+function closeModal() {
+  isModalVisible.value = false;
 }
 
 function showPath() {
@@ -139,10 +146,12 @@ function showPath() {
         modalData.value = res.data.data.routes[0].sections;
         wayPoint.value = res.data.data.routes[0].summary.waypoints;
         isModalVisible.value = true;
+      } else {
+        console.error("오류가 발생했습니다.", error.message);
       }
     },
     (error) => {
-      console.error("Error posting optimal path:", error);
+      console.error("경로를 찾을 수 없습니다:", error.message);
     }
   );
 }
