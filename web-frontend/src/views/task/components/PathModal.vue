@@ -28,7 +28,6 @@ const closeModal = () => {
 };
 
 onMounted(() => {
-  console.log(props.wayPoint);
   loadKakaoMapsAPI()
     .then(() => {
       drawMap();
@@ -101,10 +100,10 @@ function drawMap() {
       map: map,
     });
 
-    bounds.extend(markerPosition); // 경계 확장
+    bounds.extend(markerPosition);
   });
 
-  map.setBounds(bounds); // 모든 경로 및 마커를 포함하도록 지도 범위 조정
+  map.setBounds(bounds);
 }
 </script>
 

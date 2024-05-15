@@ -123,6 +123,10 @@ function showDetail() {
   );
 }
 
+function closeModal() {
+  isModalVisible.value = false;
+}
+
 function showPath() {
   const pathBody = {
     projectId: taskNumber.value,
