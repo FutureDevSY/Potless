@@ -1,6 +1,6 @@
 <template>
   <div class="main">
-    <div class="left-div">
+    <div :class="{ 'left-div': true, hidden: loginSuccess }" :style="{ flex: leftDivFlex }">
       <div class="login-title">관리자 로그인</div>
       <form class="login-form" @submit.prevent="moveHome">
         <div class="input-group">
@@ -32,7 +32,7 @@
         <span class="button-text">로그인</span>
       </button>
     </div>
-    <div class="right-div"></div>
+    <div class="right-div" :style="{ flex: rightDivFlex }"></div>
   </div>
 </template>
 
@@ -50,6 +50,9 @@ const authIdError = ref(false);
 const authPasswordError = ref(false);
 const showError = ref(false);
 const errorMsg = ref("아이디와 비밀번호를 다시 입력해주세요.");
+const loginSuccess = ref(false);
+const leftDivFlex = ref("1");
+const rightDivFlex = ref("1");
 
 const doLogin = () => {
   authIdError.value = !auth_id.value;
@@ -67,11 +70,16 @@ const doLogin = () => {
     loginData,
     (res) => {
       if (res.data.status == "SUCCESS") {
+        loginSuccess.value = true;
+        setTimeout(() => {
+          leftDivFlex.value = "1";
+          rightDivFlex.value = "10";
+        }, 600);
         console.log(res.data.message);
         store.login(res.data, res.data.data.token);
         store2.moveMain();
       } else {
-        showError.value = true; // 오류 표시
+        showError.value = true;
       }
     },
     (error) => {
@@ -86,12 +94,19 @@ const doLogin = () => {
 <style scoped>
 .main {
   height: 95vh;
-  display: grid;
-  grid-template-columns: 50% 50%;
+  display: flex;
+  transition: flex 0.4s ease;
 }
 .left-div {
+  flex: 1;
   display: grid;
+  transition: opacity 0.4s ease, max-width 0.4s ease;
   grid-template-rows: 32% 38% 30%;
+}
+.left-div.hidden {
+  opacity: 0;
+  max-width: 10%;
+  flex-grow: 1;
 }
 .login-title {
   margin-top: 3vh;
@@ -149,7 +164,7 @@ input {
 }
 .login-button {
   background-color: #151c62;
-  margin: 0vh 12vw;
+  margin: 0vh 12.4vw;
   height: 6.5vh;
   padding: 0vh 3vw;
   cursor: pointer;
@@ -174,6 +189,9 @@ input {
 }
 
 .right-div {
+  flex: 1;
+  transition: flex-grow 0.4s ease;
+
   background-color: rgb(254, 255, 240);
 }
 </style>
