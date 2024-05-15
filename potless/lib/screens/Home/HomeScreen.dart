@@ -18,10 +18,12 @@ class _HomeScreenState extends State<HomeScreen> {
   final ApiService _apiService = ApiService();
   final StorageService _storage = StorageService();
   bool isUser = false;
+  String userName = '작업자';
   @override
   void initState() {
     super.initState();
     _checkRole();
+    _checkName();
   }
 
   void _checkRole() async {
@@ -35,6 +37,20 @@ class _HomeScreenState extends State<HomeScreen> {
       }
     } catch (E) {
       debugPrint('36: $E');
+    }
+  }
+
+  void _checkName() async {
+    try {
+      String? name = await _storage.getName();
+
+      if (name != null) {
+        setState(() {
+          userName = name;
+        });
+      }
+    } catch (E) {
+      debugPrint('52: $E');
     }
   }
 
@@ -108,7 +124,15 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
           Positioned(
-            right: 10,
+            left: 30,
+            top: 50,
+            child: Text(
+              '$userName님',
+              style: const TextStyle(fontSize: 16),
+            ),
+          ),
+          Positioned(
+            right: 20,
             top: 40,
             child: GestureDetector(
               onTap: () => _openLogoutModal(context),

@@ -13,7 +13,6 @@ class ProjectBlock extends StatefulWidget {
   final List<DamageResponse> damages;
 
   final Function onProjectUpdate;
-  final Function projectDone;
 
   const ProjectBlock({
     super.key,
@@ -22,7 +21,6 @@ class ProjectBlock extends StatefulWidget {
     required this.createdDate,
     required this.damages,
     required this.onProjectUpdate,
-    required this.projectDone,
   });
 
   @override

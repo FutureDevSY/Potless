@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart' as mime;
-import 'package:permission_handler/permission_handler.dart';
 import 'package:potless/API/login.dart';
 import 'package:potless/models/pothole.dart';
 
@@ -54,11 +53,12 @@ class ApiService {
 
       if (response.statusCode == 200) {
         var res = jsonDecode(response.body);
-        await _storageService.saveToken(
-          res['data']['token'],
-          res['data']['memberInfo']['role'],
-        );
+        var res2 = jsonDecode(utf8.decode(response.bodyBytes));
 
+        await _storageService.saveToken(
+            res['data']['token'],
+            res['data']['memberInfo']['role'],
+            res2['data']['memberInfo']['memberName']);
         debugPrint('login 31 ${res['data']['token']}');
         return true;
       } else {
@@ -89,9 +89,11 @@ class ApiService {
       debugPrint((response.statusCode.toString()));
 
       if (response.statusCode == 200) {
-        var res = jsonDecode(response.body);
+        var res = jsonDecode(utf8.decode(response.bodyBytes));
+        var res2 = jsonDecode(utf8.decode(response.bodyBytes));
         if (res['token'] != null) {
           await _storageService.saveToken(
+            res2['data']['memberInfo']['memberName'],
             res['token'],
             res['data']['memberInfo']['role'],
           );
