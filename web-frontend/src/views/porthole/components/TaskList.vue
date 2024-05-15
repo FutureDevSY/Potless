@@ -136,6 +136,15 @@ const showAlert = (text) => {
   });
 };
 
+const showAlert2 = () => {
+  swal({
+    title: "중복된 도로 파손 데이터 입니다.",
+    icon: "error",
+    confirmButtonText: "확인",
+    width: "700px",
+  });
+};
+
 // 새 작업(작업 지시서 새로 만들기)
 function addNewTask() {
   const damageIdsArray = Array.from(props.selectedIds);
@@ -156,7 +165,7 @@ function addNewTask() {
         console.log(res.data.message);
         taskData.value = res.data.data;
         takeData();
-        showAlert("새 작업 지시서가 생서성되었습니다.");
+        showAlert("새 작업 지시서가 생성되었습니다.");
       } else {
         console.log(res.data.message);
       }
@@ -243,7 +252,10 @@ const assignPothole = (taskId) => {
       if (res.data.status == "SUCCESS") {
         console.log(res.data.message);
         takeData();
-        showAlert("프로젝트에 도로파손이 할당되었습니다.");
+        showAlert("프로젝트에 도로 파손이 할당되었습니다.");
+        closeDetail();
+      } else {
+        showAlert2();
       }
     },
     (error) => {

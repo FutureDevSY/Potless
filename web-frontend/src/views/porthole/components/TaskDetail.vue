@@ -47,7 +47,7 @@ const emit = defineEmits(["updateDetail"]);
 
 const showAlert = () => {
   swal({
-    title: "해당 포트홀이 삭제 되었습니다",
+    title: "프로젝트에서 해당 도로 파손데이터가 제외되었습니다",
     icon: "success",
     confirmButtonText: "확인",
     width: "700px",
