@@ -32,11 +32,14 @@ import { useMoveStore } from "../../stores/move.js";
 import { useAuthStore } from "../../stores/user.js";
 import { storeToRefs } from "pinia";
 import { logout } from "../../api/auth/auth.js";
+import router from "@/router";
+import { useSwal } from "@/composables/useSwal";
 
 const store = useMoveStore();
 const store2 = useAuthStore();
 const { accessToken } = storeToRefs(store2);
 const activeNavItem = ref(0);
+const swal = useSwal();
 
 const navItems = [
   { name: "홈", icon: "fa fa-house", action: store.moveMain },
@@ -48,6 +51,15 @@ const navItems = [
     action: store.moveStatistics,
   },
 ];
+
+const showAlert = () => {
+  swal({
+    title: "로그아웃이 완료되었습니다.",
+    icon: "info",
+    confirmButtonText: "확인",
+    width: "700px",
+  });
+};
 
 function setActiveNavItem(index) {
   activeNavItem.value = index;
@@ -72,6 +84,7 @@ const clickLogout = () => {
         console.log(res.data.message);
         store2.logoutfc();
         store.moveLogin();
+        showAlert();
       } else {
         store2.logoutfc();
         store.moveLogin();
@@ -85,6 +98,22 @@ const clickLogout = () => {
     }
   );
 };
+
+router.beforeEach((to, from) => {
+  const store = useAuthStore();
+  if (to.name === "Main") {
+    setActiveNavItem(0);
+  }
+  if (to.name === "PortholeList") {
+    setActiveNavItem(1);
+  }
+  if (to.name === "Statistics") {
+    setActiveNavItem(3);
+  }
+  if (to.name === "TaskInfo") {
+    setActiveNavItem(2);
+  }
+});
 </script>
 
 <style scoped>

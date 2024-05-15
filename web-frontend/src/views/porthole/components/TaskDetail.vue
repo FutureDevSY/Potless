@@ -34,14 +34,25 @@ import { ref } from "vue";
 import { patchPothole } from "../../../api/task/taskDetail";
 import { useAuthStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
+import { useSwal } from "../../../composables/useSwal";
 
 const store2 = useAuthStore();
 const { accessToken, coordinates } = storeToRefs(store2);
+const swal = useSwal();
 
 const props = defineProps({
   task: Object,
 });
 const emit = defineEmits(["updateDetail"]);
+
+const showAlert = () => {
+  swal({
+    title: "해당 포트홀이 삭제 되었습니다",
+    icon: "success",
+    confirmButtonText: "확인",
+    width: "700px",
+  });
+};
 
 const deletePothole = (potholeId) => {
   const potholeData = ref({
@@ -53,8 +64,8 @@ const deletePothole = (potholeId) => {
     accessToken.value,
     potholeData.value,
     (res) => {
-      console.log(res);
       if (res.data.status == "SUCCESS") {
+        showAlert();
         console.log(res.data.message);
         emit("updateDetail");
       }
