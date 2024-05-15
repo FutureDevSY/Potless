@@ -374,26 +374,6 @@ public class DamageController {
             throw new InvalidCoordinateRangeException();
         }
         DamageSetRequestDTO damageSetRequestDTO = DamageSetRequestDTO.builder()
-<<<<<<< HEAD
-                                                                     .dtype(dtype)
-                                                                     .x(xValue)
-                                                                     .y(yValue)
-                                                                     .build();
-
-        File imageFile = fileService.convertAndSaveFile(files.get(0));
-        log.info("check");
-        log.info(imageFile.getAbsolutePath());
-        log.info(imageFile.getName());
-
-//        //중복처리
-//        int res = 13;
-//        String hexagonIndex = h3Service.getH3Index(damageSetRequestDTO.getY(), damageSetRequestDTO.getX(), res);
-//        if (damageRepository.findDamageByHexagonIndexAndDtype(hexagonIndex, damageSetRequestDTO.getDtype())) {
-//                throw new DuplPotholeException();
-//        }
-        String hexagonIndex = duplicateAreaService.checkIsDuplicated(damageSetRequestDTO);
-
-=======
                 .dtype(dtype)
                 .x(xValue)
                 .y(yValue)
@@ -402,7 +382,6 @@ public class DamageController {
         File imageFile = fileService.convertAndSaveFile(files.get(0));
 
         String hexagonIndex = duplicateAreaService.checkIsDuplicated(damageSetRequestDTO);
->>>>>>> dev-BE
         asyncService.setDamageAsyncMethod(damageSetRequestDTO, imageFile, hexagonIndex);
         return response.success(ResponseCode.POTHOLE_DETECTED);
     }

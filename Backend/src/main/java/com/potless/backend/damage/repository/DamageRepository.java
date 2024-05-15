@@ -1,8 +1,6 @@
 package com.potless.backend.damage.repository;
 
-
 import com.potless.backend.damage.dto.controller.response.DamageResponseDTO;
-import com.potless.backend.damage.entity.enums.Status;
 import com.potless.backend.damage.entity.road.DamageEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -13,11 +11,7 @@ public interface DamageRepository extends JpaRepository<DamageEntity, Long>, Dam
 
     @Query("SELECT new com.potless.backend.damage.dto.controller.response.DamageResponseDTO(" +
             "d.id, d.severity, d.dirX, d.dirY, d.address, d.width, d.status, " +
-<<<<<<< HEAD
             "area.areaGu, location.locationName, d.dtype, d.createdDateTime, d.memberEntity.Id) " +
-=======
-            "area.areaGu, location.locationName, d.dtype, d.createdDateTime, member.Id) " +
->>>>>>> dev-BE
             "FROM DamageEntity d " +
             "LEFT JOIN d.areaEntity area " +
             "LEFT JOIN d.locationEntity location " +
