@@ -11,7 +11,7 @@ const svgContent = ref("");
 
 onMounted(async () => {
   try {
-    const response = await fetch("/location4.svg");
+    const response = await fetch("/location3.svg");
     if (!response.ok) {
       throw new Error(`네트워크 에러: ${response.status}`);
     }

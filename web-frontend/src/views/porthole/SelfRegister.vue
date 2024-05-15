@@ -40,6 +40,7 @@ import { useAuthStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
 import { useMoveStore } from "@/stores/move";
 import SearchMap from "./components/SearchMap.vue";
+import { useSwal } from "../../composables/useSwal";
 
 const store = useMoveStore();
 const store2 = useAuthStore();
@@ -49,9 +50,28 @@ const severity = ref("");
 const location_x = ref("");
 const location_y = ref("");
 const file = ref(null);
+const swal = useSwal();
 
 const handleFileChange = (event) => {
   file.value = event.target.files.length > 0 ? event.target.files[0] : null;
+};
+
+const showAlert = () => {
+  swal({
+    title: "포트홀 신고가 성공적으로 완료되었습니다.",
+    icon: "success",
+    confirmButtonText: "확인",
+    width: "700px",
+  });
+};
+
+const showAlert2 = () => {
+  swal({
+    title: "포트홀 신고에 실패하였습니다. 다시 시도해주세요.",
+    icon: "error",
+    confirmButtonText: "확인",
+    width: "700px",
+  });
 };
 
 const submitForm = () => {
@@ -71,10 +91,10 @@ const submitForm = () => {
       console.log(res);
       if (res.data.status == "SUCCESS") {
         console.log(res.data.message);
-        alert("포트홀 신고가 성공적으로 완료되었습니다.");
+        showAlert();
         store.movePorthole();
       } else {
-        alert("포트홀 신고에 실패하였습니다. 다시 시도해주세요.");
+        showAlert2();
       }
     },
     (error) => {
