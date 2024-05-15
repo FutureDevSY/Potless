@@ -15,10 +15,13 @@ import com.potless.backend.damage.repository.AreaRepository;
 import com.potless.backend.damage.repository.DamageRepository;
 import com.potless.backend.damage.repository.ImageRepository;
 import com.potless.backend.damage.repository.LocationRepository;
+import com.potless.backend.global.exception.member.MemberNotFoundException;
 import com.potless.backend.global.exception.pothole.PotholeLocationNotFoundException;
 import com.potless.backend.global.exception.pothole.PotholeNotFoundException;
 import com.potless.backend.hexagon.entity.HexagonEntity;
 import com.potless.backend.hexagon.repository.HexagonRepository;
+import com.potless.backend.member.entity.MemberEntity;
+import com.potless.backend.member.repository.member.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -39,6 +42,7 @@ public class DamageServiceImpl implements IDamageService {
     private final LocationRepository locationRepository;
     private final ImageRepository imageRepository;
     private final HexagonRepository hexagonRepository;
+    private final MemberRepository memberRepository;
 
     @Override
     public Page<DamageResponseDTO> getDamages(DamageSearchRequestDTO damageSearchRequestDTO, Pageable pageable) {
@@ -61,6 +65,7 @@ public class DamageServiceImpl implements IDamageService {
     @Override
     @Transactional
     public void setDamage(DamageSetRequestServiceDTO data) {
+
         AreaEntity areaGu = areaRepository.findByAreaGu(data.getArea())
                 .orElseThrow(PotholeLocationNotFoundException::new);
 
@@ -68,6 +73,9 @@ public class DamageServiceImpl implements IDamageService {
                 .orElseThrow(PotholeLocationNotFoundException::new);
 
         HexagonEntity hexagonEntity = hexagonRepository.findByHexagonIndex(data.getHexagonIndex());
+
+        MemberEntity member = memberRepository.findById(data.getMemberId())
+                .orElseThrow(MemberNotFoundException::new);
 
         DamageEntity damageEntity;
         if (data.getDtype().equals("CRACK")) {
@@ -82,6 +90,7 @@ public class DamageServiceImpl implements IDamageService {
                     .width(data.getWidth())
                     .severity(data.getSeverity())
                     .hexagonEntity(hexagonEntity)
+                    .memberEntity(member)
                     .build();
         } else if (data.getDtype().equals("POTHOLE")) {
             damageEntity = PotholeEntity.builder()
@@ -95,6 +104,7 @@ public class DamageServiceImpl implements IDamageService {
                     .width(data.getWidth())
                     .severity(data.getSeverity())
                     .hexagonEntity(hexagonEntity)
+                    .memberEntity(member)
                     .build();
         } else {
             damageEntity = WornOutEntity.builder()
@@ -108,6 +118,7 @@ public class DamageServiceImpl implements IDamageService {
                     .width(data.getWidth())
                     .severity(data.getSeverity())
                     .hexagonEntity(hexagonEntity)
+                    .memberEntity(member)
                     .build();
         }
 
@@ -123,6 +134,7 @@ public class DamageServiceImpl implements IDamageService {
             imageRepository.save(image);
         }
         areaGu.addCount();
+
     }
 
     @Override
