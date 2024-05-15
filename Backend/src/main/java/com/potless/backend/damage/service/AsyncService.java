@@ -20,6 +20,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import java.io.File;
 import java.io.IOException;
@@ -39,6 +40,7 @@ public class AsyncService {
     private final H3Service h3Service;
     private final HexagonRepository hexagonRepository;
     private final DamageRepository damageRepository;
+    private final FileService fileService;
 
     @Async
     public void setDamageAsyncMethod(DamageSetRequestDTO damageSetRequestDTO, File imageFile) throws IOException {
@@ -56,12 +58,12 @@ public class AsyncService {
                     damageEntity.addCount();
                     damageRepository.save(damageEntity);
                 }
+                log.error("Duplicate pothole detected: {}", damageSetRequestDTO);
                 throw new DuplPotholeException();
             }
 
             //fastApi 2차 탐지 요청 수행 및 결과 반환
             ReDetectionRequestDTO detectionRequestDTO = new ReDetectionRequestDTO(imageFile);
-
             ReDetectionResponseDTO detectionResult = detectionApiService.reDetectionResponse(detectionRequestDTO);
 
             // 1차 탐지 후 BeforeVerification/ 에 사진 담기
@@ -74,16 +76,6 @@ public class AsyncService {
                 log.info("fileUrl = {}", fileUrl);
             }
 
-//            //fastApi 2차 탐지 요청 수행 및 결과 반환
-//            ReDetectionRequestDTO detectionRequestDTO = new ReDetectionRequestDTO(imageFile);
-//
-//            ReDetectionResponseDTO detectionResult = detectionApiService.reDetectionResponse(detectionRequestDTO);
-
-//            if(detectionResult.getSeverity() == 0){
-//                detectionResult = new ReDetectionResponseDTO();
-//                log.info("return 당했음");
-//                return;
-//            }
             damageSetRequestDTO.setSeverity(detectionResult.getSeverity());
             damageSetRequestDTO.setWidth((double) detectionResult.getWidth());
 
@@ -139,13 +131,22 @@ public class AsyncService {
                         } catch (Exception e) {
                             for (String s : newFileUrls)
                                 awsService.deleteFile(s);
+                            log.error("Error processing Kakao data: {}", e.getMessage());
                             throw new PotholeNotFoundException();
                         }
                     });
 
+        } catch (DuplPotholeException e) {
+            // Duplicate pothole exception handling
+            log.error("Duplicate pothole exception: {}", e.getMessage());
+        } catch (WebClientResponseException e) {
+            log.error("WebClient error: Status code {} - Body {}", e.getRawStatusCode(), e.getResponseBodyAsString());
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            fileService.deleteFile(imageFile);
+            log.error("IO error: {}", e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            log.error("Unexpected error: {}", e.getMessage());
         }
-
     }
 }
