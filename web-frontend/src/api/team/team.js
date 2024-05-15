@@ -8,7 +8,7 @@ const getTeamList = async (accessToken, area, success, fail) => {
     .get(`/team`, {
       params: {
         area,
-      },
+      },  
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },

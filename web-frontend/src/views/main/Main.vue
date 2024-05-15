@@ -20,7 +20,10 @@
       </div>
     </div>
     <div class="right-box">
-      <div class="worker-container"><div>보수 공사팀</div></div>
+      <div class="worker-container">
+        <div>보수 공사팀</div>
+        <Team></Team>
+      </div>
     </div>
   </div>
 </template>
@@ -39,6 +42,8 @@ import { storeToRefs } from "pinia";
 
 const store = useAuthStore();
 const { areaId } = storeToRefs(store);
+import SVG from "./components/SVG.vue";
+import Team from "./components/Team.vue"
 </script>
 <style scoped>
 .main-box {
