@@ -7,8 +7,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-
-
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -18,24 +16,6 @@ public class DuplicateAreaService {
     private final DamageRepository damageRepository;
     private final HexagonRepository hexagonRepository;
 
-<<<<<<< HEAD
-
-    public String checkIsDuplicated(DamageSetRequestDTO damageSetRequestDTO) {
-        int res = 13;
-        String hexagonIndex = h3Service.getH3Index(damageSetRequestDTO.getY(), damageSetRequestDTO.getX(), res);
-        Optional<DamageEntity> optionalDamageEntity = damageRepository.findDamageByHexagonIndexAndDtype(hexagonIndex, damageSetRequestDTO.getDtype());
-
-        if (optionalDamageEntity.isPresent()) {
-            DamageEntity damageEntity = optionalDamageEntity.get();
-            if (!Objects.equals(damageEntity.getDirX(), damageSetRequestDTO.getX()) && !Objects.equals(damageEntity.getDirY(), damageSetRequestDTO.getY())) {
-                damageEntity.addCount();
-                damageRepository.save(damageEntity);
-            }
-            throw new DuplPotholeException();
-        }
-        return hexagonIndex;
-    }
-=======
 //    public String checkIsDuplicated(DamageSetRequestDTO damageSetRequestDTO) {
 //        int res = 13;
 //        String hexagonIndex = h3Service.getH3Index(damageSetRequestDTO.getY(), damageSetRequestDTO.getX(), res);
@@ -52,5 +32,4 @@ public class DuplicateAreaService {
 //        }
 //        return hexagonIndex;
 //    }
->>>>>>> dev-BE
 }
