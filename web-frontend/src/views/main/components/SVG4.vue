@@ -27,7 +27,14 @@ onMounted(async () => {
 .map-container {
   display: flex;
   align-items: center;
-  width: 380px;
-  height: auto;
+  justify-content: center;
+  width: 100%;
+  height: 70%;
+  overflow: hidden;
+}
+
+.map {
+  width: 100%;
+  height: 100%;
 }
 </style>

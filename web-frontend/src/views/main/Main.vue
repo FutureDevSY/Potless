@@ -42,8 +42,7 @@ import { storeToRefs } from "pinia";
 
 const store = useAuthStore();
 const { areaId } = storeToRefs(store);
-import SVG from "./components/SVG.vue";
-import Team from "./components/Team.vue"
+import Team from "./components/Team.vue";
 </script>
 <style scoped>
 .main-box {
@@ -81,6 +80,5 @@ import Team from "./components/Team.vue"
   background-color: rgba(241, 241, 241, 0.641);
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.255);
   border-radius: 15px;
-  
 }
 </style>
