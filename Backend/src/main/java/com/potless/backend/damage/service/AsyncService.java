@@ -43,6 +43,7 @@ public class AsyncService {
     private final FileService fileService;
 
     @Async
+    @Transactional
     public void setDamageAsyncMethod(DamageSetRequestDTO damageSetRequestDTO, File imageFile) throws IOException {
         try {
             int res = 13;
