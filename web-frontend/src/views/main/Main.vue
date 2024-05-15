@@ -11,7 +11,11 @@
         </div>
         <div class="map-containers">
           <div>지역별 현황</div>
-          <SVG></SVG>
+          <SVG1 v-if="areaId === 1"></SVG1>
+          <SVG2 v-if="areaId === 2"></SVG2>
+          <SVG3 v-if="areaId === 3"></SVG3>
+          <SVG4 v-if="areaId === 4"></SVG4>
+          <SVG5 v-if="areaId === 5"></SVG5>
         </div>
       </div>
     </div>
@@ -20,11 +24,21 @@
     </div>
   </div>
 </template>
+
 <script setup>
 import Weather from "./components/Weather.vue";
 import CurrentStats from "./components/CurrentStats.vue";
 import ReportList from "./components/TaskList.vue";
-import SVG from "./components/SVG.vue";
+import SVG1 from "./components/SVG1.vue";
+import SVG2 from "./components/SVG2.vue";
+import SVG3 from "./components/SVG3.vue";
+import SVG4 from "./components/SVG4.vue";
+import SVG5 from "./components/SVG5.vue";
+import { useAuthStore } from "@/stores/user";
+import { storeToRefs } from "pinia";
+
+const store = useAuthStore();
+const { areaId } = storeToRefs(store);
 </script>
 <style scoped>
 .main-box {
@@ -62,5 +76,6 @@ import SVG from "./components/SVG.vue";
   background-color: rgba(241, 241, 241, 0.641);
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.255);
   border-radius: 15px;
+  
 }
 </style>
