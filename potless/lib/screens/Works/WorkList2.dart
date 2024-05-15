@@ -45,6 +45,12 @@ class _WorkListScreenState extends State<WorkListScreen> {
     });
   }
 
+  void taskUpdate() {
+    setState(() {
+      allDamages = widget.damages;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -103,6 +109,7 @@ class _WorkListScreenState extends State<WorkListScreen> {
                     dType: damage.dtype,
                     createdAt: damage.createdDateTime,
                     onProjectUpdate: widget.onProjectUpdate,
+                    onTaskUpdate: taskUpdate,
                   );
                 },
               ),
