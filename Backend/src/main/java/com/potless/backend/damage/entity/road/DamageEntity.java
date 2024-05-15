@@ -90,4 +90,7 @@ public abstract class DamageEntity extends BaseEntity {
         this.status = status;
     }
 
+    public void addCount() {
+        this.count++;
+    }
 }

@@ -1,30 +1,36 @@
 package com.potless.backend.damage.service;
 
 import com.potless.backend.damage.dto.controller.request.DamageSetRequestDTO;
+import com.potless.backend.damage.entity.road.DamageEntity;
 import com.potless.backend.damage.repository.DamageRepository;
 import com.potless.backend.global.exception.pothole.DuplPotholeException;
 import com.potless.backend.hexagon.service.H3Service;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
-import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@Log4j2
+import java.util.Objects;
+import java.util.Optional;
+
 @Service
-@EnableAsync
-@RequiredArgsConstructor
 @Transactional
+@RequiredArgsConstructor
 public class DuplicateAreaService {
 
     private final H3Service h3Service;
     private final DamageRepository damageRepository;
 
-    public String checkIsDuplicated(DamageSetRequestDTO damageSetRequestDTO){
-        //중복처리
+    public String checkIsDuplicated(DamageSetRequestDTO damageSetRequestDTO) {
         int res = 13;
         String hexagonIndex = h3Service.getH3Index(damageSetRequestDTO.getY(), damageSetRequestDTO.getX(), res);
-        if (damageRepository.findDamageByHexagonIndexAndDtype(hexagonIndex, damageSetRequestDTO.getDtype())) {
+        Optional<DamageEntity> optionalDamageEntity = damageRepository.findDamageByHexagonIndexAndDtype(hexagonIndex, damageSetRequestDTO.getDtype());
+
+        if (optionalDamageEntity.isPresent()) {
+            DamageEntity damageEntity = optionalDamageEntity.get();
+            if (!Objects.equals(damageEntity.getDirX(), damageSetRequestDTO.getX()) && !Objects.equals(damageEntity.getDirY(), damageSetRequestDTO.getY())) {
+                damageEntity.addCount();
+                damageRepository.save(damageEntity);
+            }
             throw new DuplPotholeException();
         }
         return hexagonIndex;
