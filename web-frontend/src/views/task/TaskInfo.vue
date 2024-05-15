@@ -112,7 +112,7 @@ const showAlert = () => {
 
 const showAlert2 = () => {
   swal({
-    title: "프로젝트에 이미 작업 중인 포트홀이 있습니다.",
+    title: "프로젝트에 이미 작업 중인 도로 파손 데이터가 있습니다.",
     icon: "error",
     confirmButtonText: "확인",
     width: "700px",
