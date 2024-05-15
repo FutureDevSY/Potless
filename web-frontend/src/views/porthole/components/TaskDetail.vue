@@ -54,6 +54,7 @@ const deletePothole = (potholeId) => {
     potholeData.value,
     (res) => {
       if (res.data.status == "SUCCESS") {
+        alert("해당 포트홀이 삭제 되었습니다");
         console.log(res.data.message);
         emit("updateDetail");
       }

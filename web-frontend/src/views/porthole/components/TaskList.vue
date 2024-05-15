@@ -145,6 +145,7 @@ function addNewTask() {
         console.log(res.data.message);
         taskData.value = res.data.data;
         takeData();
+        alert("새 작업 지시서가 생서성되었습니다.");
       } else {
         console.log(res.data.message);
       }
@@ -203,6 +204,7 @@ function saveDetail() {
       if (res.data.status == "SUCCESS") {
         console.log(res.data.message);
         takeData();
+        alert("프로젝트에 팀이 할당되었습니다.");
       } else {
         console.log(res.data.message);
       }
@@ -230,6 +232,7 @@ const assignPothole = (taskId) => {
       if (res.data.status == "SUCCESS") {
         console.log(res.data.message);
         takeData();
+        alert("프로젝트에 도로파손이 할당되었습니다.")
       }
     },
     (error) => {

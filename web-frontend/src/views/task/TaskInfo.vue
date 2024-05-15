@@ -115,6 +115,7 @@ const deleteTask = (projectId) => {
       if (res.data.status == "SUCCESS") {
         console.log(res.data.message);
         takeData(0);
+        alert("해당 프로젝트가 삭제되었습니다.");
       } else {
         alert("프로젝트에 이미 작업 중인 포트홀이 있습니다.");
         console.log(res.data.message);

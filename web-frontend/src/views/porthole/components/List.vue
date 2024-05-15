@@ -175,6 +175,7 @@ const deletePotholeSelect = () => {
         console.log(res.data.message);
         selectedIds.value.clear();
         emit("refreshData");
+        alert("포트홀이 삭제되었습니다.");
       }
     },
     (error) => {
