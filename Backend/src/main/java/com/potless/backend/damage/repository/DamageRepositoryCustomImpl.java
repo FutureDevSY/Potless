@@ -27,7 +27,6 @@ import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.LockModeType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -184,7 +183,6 @@ public class DamageRepositoryCustomImpl implements DamageRepositoryCustom {
                 .where(damage.hexagonEntity.hexagonIndex.eq(hexagonIndex)
                         .and(damage.dtype.eq(dtype))
                         .and(damage.status.in(Status.작업전, Status.작업중)))
-                .setLockMode(LockModeType.PESSIMISTIC_WRITE)
                 .fetchOne());
     }
 
