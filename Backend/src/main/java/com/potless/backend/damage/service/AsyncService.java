@@ -10,14 +10,19 @@ import com.potless.backend.damage.dto.service.response.kakao.RoadAddress;
 import com.potless.backend.damage.entity.enums.Status;
 import com.potless.backend.damage.entity.road.DamageEntity;
 import com.potless.backend.damage.repository.DamageRepository;
+import com.potless.backend.global.exception.member.MemberNotFoundException;
 import com.potless.backend.global.exception.pothole.DuplPotholeException;
 import com.potless.backend.global.exception.pothole.PotholeNotFoundException;
 import com.potless.backend.hexagon.repository.HexagonRepository;
 import com.potless.backend.hexagon.service.H3Service;
+import com.potless.backend.hexagon.service.HexagonService;
+import com.potless.backend.member.entity.MemberEntity;
+import com.potless.backend.member.repository.member.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
@@ -37,6 +42,7 @@ public class AsyncService {
     private final KakaoService kakaoService;
     private final AwsService awsService;
     private final ReDetectionApiService detectionApiService;
+    private final MemberRepository memberRepository;
     private final H3Service h3Service;
     private final HexagonRepository hexagonRepository;
     private final DamageRepository damageRepository;
@@ -44,6 +50,7 @@ public class AsyncService {
 
     @Async
     public void setDamageAsyncMethod(DamageSetRequestDTO damageSetRequestDTO, File imageFile) throws IOException {
+
         try {
             int res = 13;
             String hexagonIndex = h3Service.getH3Index(damageSetRequestDTO.getY(), damageSetRequestDTO.getX(), res);
@@ -123,10 +130,10 @@ public class AsyncService {
                                     .location(location)
                                     .width(damageSetRequestDTO.getWidth())
                                     .images(damageSetRequestDTO.getImages())
+                                    .memberId(damageSetRequestDTO.getMemberId())
                                     .build();
 
                             serviceDTO.setHexagonIndex(hexagonIndex);
-
                             iDamageService.setDamage(serviceDTO);
                         } catch (Exception e) {
                             for (String s : newFileUrls)
@@ -147,6 +154,7 @@ public class AsyncService {
             throw e;
         } catch (Exception e) {
             log.error("Unexpected error: {}", e.getMessage());
+            throw new RuntimeException(e);
         }
     }
 }
