@@ -19,7 +19,9 @@
       </div>
     </div>
     <div class="right-box">
-      <Team></Team>
+      <div class="worker-container">
+        <Team></Team>
+      </div>
     </div>
   </div>
 </template>
@@ -35,11 +37,12 @@ import SVG4 from "./components/SVG4.vue";
 import SVG5 from "./components/SVG5.vue";
 import { useAuthStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
+import Team from "./components/Team.vue";
 
 const store = useAuthStore();
 const { areaId } = storeToRefs(store);
-import Team from "./components/Team.vue";
 </script>
+
 <style scoped>
 .main-box {
   display: grid;
