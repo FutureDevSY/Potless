@@ -104,7 +104,7 @@ const props = defineProps({
 
 const showAlert = () => {
   swal({
-    title: "해당 포트홀이 삭제 되었습니다",
+    title: "해당 도로 파손데이터가 삭제 되었습니다",
     icon: "success",
     confirmButtonText: "확인",
     width: "700px",
@@ -119,9 +119,7 @@ const potholes = computed(() => {
 });
 
 function handleRowClick(pothole) {
-  if (!pothole.isSelected) {
-    store.movePortholeDetail(pothole.id);
-  }
+  store.movePortholeDetail(pothole.id);
 }
 
 // 위험성 필터링
@@ -299,7 +297,7 @@ td {
   border-left: none;
   border-right: none;
   text-align: center;
-  padding: 1.7vh;
+  padding: 1vh;
   font-size: 1.9vh;
   color: #373737;
 }
@@ -371,7 +369,7 @@ tbody tr:hover {
   margin: 16vh auto;
   padding: 0vh 1.8vw 6vh 1.8vw;
   border: 1px solid #dddddda1;
-  width: 40vw;
+  width: 50vw;
   height: 65vh;
 }
 

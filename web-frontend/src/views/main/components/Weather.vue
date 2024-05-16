@@ -18,13 +18,14 @@
       </div>
     </div>
   </div>
-  <div v-else>날씨 정보를 불러오는 중입니다...</div>
+  <div class="load-container" v-else><LottieLoading /></div>
 </template>
 <script setup>
 import { ref, computed, onMounted, watch } from "vue";
 import { useAuthStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
 import { getWeatherInfo } from "../../../api/weather/weather";
+import LottieLoading from "./LottieLoading.vue";
 
 const store = useAuthStore();
 const { areaId } = storeToRefs(store);
@@ -158,6 +159,11 @@ watch(weather, updateWeatherImage);
   display: grid;
   grid-template-rows: 15% 82%;
   gap: 3%;
+}
+.load-container {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.255);
+  border-radius: 15px;
+  background-color: rgba(241, 241, 241, 0.641);
 }
 .location-box {
   display: flex;

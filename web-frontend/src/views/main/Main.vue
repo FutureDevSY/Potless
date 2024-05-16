@@ -10,7 +10,6 @@
           <ReportList />
         </div>
         <div class="map-containers">
-          <div>지역별 현황</div>
           <SVG1 v-if="areaId === 1"></SVG1>
           <SVG2 v-if="areaId === 2"></SVG2>
           <SVG3 v-if="areaId === 3"></SVG3>
@@ -80,8 +79,8 @@ function openModal(mode) {
   gap: 2%;
 }
 .right-box {
-  background-color: rgba(241, 241, 241, 0.641);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.255);
+  background-color: #f2f2f2a3;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.255);
   border-radius: 15px;
 }
 .top-box {
@@ -91,17 +90,16 @@ function openModal(mode) {
 }
 .bottom-box {
   display: grid;
-  grid-template-columns: 59% 40%;
+  grid-template-columns: 54% 45%;
   gap: 1%;
 }
 .report-container {
-  background-color: rgba(241, 241, 241, 0.641);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.255);
+  background-color: rgb(241, 241, 241);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.255);
   border-radius: 15px;
 }
 .map-containers {
-  background-color: rgba(241, 241, 241, 0.641);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.255);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.255);
   border-radius: 15px;
 }
 

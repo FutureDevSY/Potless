@@ -3,10 +3,7 @@ const local = localAxios();
 
 // 로그인
 const login = async (loginData, success, fail) => {
-  await local
-    .post(`/member/login-web`, loginData.value)
-    .then(success)
-    .catch(fail);
+  await local.post(`/member/login-web`, loginData).then(success).catch(fail);
 };
 
 // 로그아웃

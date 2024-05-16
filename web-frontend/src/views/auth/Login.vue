@@ -2,7 +2,7 @@
   <div class="main">
     <div class="left-div">
       <div class="login-title">관리자 로그인</div>
-      <form class="login-form" @submit.prevent="moveHome">
+      <form class="login-form" @submit.prevent="doLogin">
         <div class="input-group">
           <div class="input-title">아이디</div>
           <input
@@ -10,6 +10,7 @@
             type="text"
             v-model="auth_id"
             placeholder="아이디를 입력해 주세요."
+            @keydown.enter="doLogin"
           />
           <div v-if="authIdError" class="error-message">
             아이디는 필수값입니다.
@@ -23,6 +24,7 @@
             v-model="auth_password"
             placeholder="비밀번호를 입력해 주세요."
             @input="showError = false"
+            @keydown.enter="doLogin"
           />
           <div v-if="authPasswordError" class="error-message">
             비밀번호는 필수값입니다.
@@ -31,12 +33,22 @@
             {{ errorMsg }}
           </div>
         </div>
+        <button class="login-button" type="submit">
+          <span class="button-text">로그인</span>
+        </button>
       </form>
-      <button class="login-button" type="submit" @click="doLogin">
-        <span class="button-text">로그인</span>
-      </button>
     </div>
     <div class="right-div"></div>
+    <div
+      class="invisible-div"
+      :class="{ 'login-success-visible': loginSuccess }"
+    ></div>
+    <div
+      class="lottie-car-container"
+      :class="{ 'login-success-car': loginSuccessCar }"
+    >
+      <LottieCar class="lottie-car" />
+    </div>
   </div>
 </template>
 
@@ -45,6 +57,7 @@ import { ref } from "vue";
 import { useAuthStore } from "../../stores/user.js";
 import { login } from "../../api/auth/auth";
 import { useMoveStore } from "@/stores/move";
+import LottieCar from "./components/LottieCar.vue";
 
 const store = useAuthStore();
 const store2 = useMoveStore();
@@ -54,27 +67,37 @@ const authIdError = ref(false);
 const authPasswordError = ref(false);
 const showError = ref(false);
 const errorMsg = ref("아이디와 비밀번호를 다시 입력해주세요.");
+const loginSuccess = ref(false);
+const loginSuccessCar = ref(false);
 
 const doLogin = () => {
+  console.log("doLogin 함수 호출됨");
   authIdError.value = !auth_id.value;
   authPasswordError.value = !auth_password.value;
 
   if (authIdError.value || authPasswordError.value) {
     return;
   }
-  const loginData = ref({
+
+  const loginData = {
     email: auth_id.value,
     password: auth_password.value,
-  });
+  };
 
   login(
     loginData,
     (res) => {
       console.log(res);
-      if (res.data.status == "SUCCESS") {
+      if (res.data.status === "SUCCESS") {
         console.log(res.data.message);
         store.login(res.data, res.data.data.token);
-        store2.moveMain();
+        loginSuccess.value = true;
+        setTimeout(() => {
+          loginSuccessCar.value = true;
+        }, 1040);
+        setTimeout(() => {
+          store2.moveMain();
+        }, 3000);
       } else {
         errorMsg.value = res.data.message;
         showError.value = true;
@@ -92,12 +115,16 @@ const doLogin = () => {
 <style scoped>
 .main {
   height: 95vh;
-  display: grid;
-  grid-template-columns: 50% 50%;
+  display: flex;
+  position: relative;
+  overflow: hidden;
 }
 .left-div {
+  flex: 1;
   display: grid;
   grid-template-rows: 32% 38% 30%;
+  position: relative;
+  z-index: 1;
 }
 .login-title {
   margin-top: 3vh;
@@ -120,6 +147,7 @@ input {
   flex-direction: column;
   align-items: center;
   width: 100%;
+  height: 60vh;
 }
 .input-group {
   width: 50%;
@@ -156,6 +184,7 @@ input {
 .login-button {
   background-color: #151c62;
   margin: 0vh 12vw;
+  width: 48.7%;
   height: 6.5vh;
   padding: 0vh 3vw;
   cursor: pointer;
@@ -180,6 +209,44 @@ input {
 }
 
 .right-div {
-  background-color: rgb(254, 255, 240);
+  flex: 1;
+  background-color: black;
+  /* background-color: rgb(254, 255, 240); */
+}
+
+.invisible-div {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 0;
+  height: 100%;
+  background-color: black;
+  transition: width 3s ease-in-out, background-color 3s ease-in-out;
+  z-index: 2;
+}
+
+.lottie-car-container {
+  position: absolute;
+  bottom: -60px;
+  right: calc(50% + 40px);
+  transform: translateX(50%);
+  width: 200px;
+  height: 200px;
+  pointer-events: none;
+  transition: transform 2s ease-in-out;
+}
+
+.lottie-car {
+  width: 100%;
+  transform: scaleX(-1);
+  height: 100%;
+}
+
+.login-success-visible {
+  width: 90%;
+}
+
+.login-success-car {
+  transform: translateX(-345%);
 }
 </style>
