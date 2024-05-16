@@ -11,7 +11,7 @@ public interface DamageRepository extends JpaRepository<DamageEntity, Long>, Dam
 
     @Query("SELECT new com.potless.backend.damage.dto.controller.response.DamageResponseDTO(" +
             "d.id, d.severity, d.dirX, d.dirY, d.address, d.width, d.status, " +
-            "area.areaGu, location.locationName, d.dtype, d.createdDateTime, d.memberEntity.Id) " +
+            "area.areaGu, location.locationName, d.dtype, d.createdDateTime, d.memberEntity.Id, d.count) " +
             "FROM DamageEntity d " +
             "LEFT JOIN d.areaEntity area " +
             "LEFT JOIN d.locationEntity location " +
