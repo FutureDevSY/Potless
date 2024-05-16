@@ -147,7 +147,7 @@ input {
   flex-direction: column;
   align-items: center;
   width: 100%;
-  height: 400px;
+  height: 60vh;
 }
 .input-group {
   width: 50%;
