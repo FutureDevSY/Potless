@@ -394,9 +394,7 @@ public class DamageController {
             throw new MemberNotFoundException();
         }
 
-        String hexagonIndex = duplicateAreaService.checkIsDuplicated(damageSetRequestDTO);
-        asyncService.setDamageAsyncMethod(damageSetRequestDTO, imageFile, hexagonIndex);
-
+        duplicateAreaService.checkIsDuplicated(damageSetRequestDTO, imageFile);
         return response.success(ResponseCode.POTHOLE_DETECTED);
     }
 }
