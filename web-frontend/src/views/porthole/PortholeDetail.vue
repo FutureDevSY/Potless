@@ -32,7 +32,7 @@
         </p>
         <p>
           <span class="info-title">상세 규모</span>
-          <span class="infos">너비 {{ pothole_info.width }}mm</span>
+          <span class="infos">너비 {{ roundedWidth }}mm</span>
         </p>
       </div>
       <div class="text-right">
@@ -69,12 +69,23 @@ import { useMoveStore } from "@/stores/move";
 import { useAuthStore } from "@/stores/user";
 import { getPotholeDetail, deletePothole } from "../../api/pothole/pothole.js";
 import { storeToRefs } from "pinia";
+import { useSwal } from "../../composables/useSwal";
 
 const store = useMoveStore();
 const store2 = useAuthStore();
 const { accessToken } = storeToRefs(store2);
 const route = useRoute();
 const pothole_info = ref({});
+const swal = useSwal();
+
+const showAlert = () => {
+  swal({
+    title: "도로 파손 데이터가 성공적으로 삭제되었습니다.",
+    icon: "success",
+    confirmButtonText: "확인",
+    width: "700px",
+  });
+};
 
 const dtypeDisplay = (dtype) => {
   switch (dtype) {
@@ -102,6 +113,14 @@ const dangerClass2 = (danger) => {
   }
 };
 
+const roundedWidth = computed(() => {
+  return round(pothole_info.value.width, 2);
+});
+
+function round(value, decimals) {
+  return Number(Math.round(value + "e" + decimals) + "e-" + decimals);
+}
+
 const images = ref([]);
 
 const takeData = (potholeId) => {
@@ -109,6 +128,7 @@ const takeData = (potholeId) => {
     accessToken.value,
     potholeId,
     (res) => {
+      console.log(res);
       if (res.data.status == "SUCCESS") {
         console.log(res.data.message);
         pothole_info.value = res.data.data;
@@ -133,6 +153,7 @@ const deleteData = (potholeId) => {
       if (res.data.status == "SUCCESS") {
         console.log(res.data.message);
         store.moveBack();
+        showAlert();
       }
     },
     (error) => {

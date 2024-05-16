@@ -69,6 +69,7 @@ const doLogin = () => {
   login(
     loginData,
     (res) => {
+      console.log(res);
       if (res.data.status == "SUCCESS") {
         loginSuccess.value = true;
         setTimeout(() => {
@@ -79,6 +80,7 @@ const doLogin = () => {
         store.login(res.data, res.data.data.token);
         store2.moveMain();
       } else {
+        errorMsg.value = res.data.message;
         showError.value = true;
       }
     },
