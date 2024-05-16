@@ -1,6 +1,7 @@
 <template>
   <div class="map-container">
     <div class="status-overlay">지역별 도로파손 현황</div>
+    <div class="average">* 평균 : {{ averagePotholes }} 건</div>
     <div class="input-container">
       <input type="text" placeholder="지역(동) 입력" @input="handleInput" :value="inputValue" />
       <img src="../../../assets/icon//search.png" alt="#" class="search-icon" />
@@ -25,8 +26,14 @@
     >
       <LottieLocation :style="positionStyle(item.dong)" />
       <div class="infos">
-        <div>포트홀의 개수 : {{ item.potholes }}</div>
-        <div>포트홀의 개수 : {{ item.potholes }}</div>
+        <div class="dong-label">{{ item.dong }}</div>
+        <div class="num-label">
+          포트홀의 개수 :
+          <span class="num-detail" :style="{ color: getPotholeColor(item.potholes) }">{{
+            item.potholes
+          }}</span>
+          <span :style="{ color: getPotholeColor(item.potholes) }" class="gun">건</span>
+        </div>
       </div>
     </div>
   </div>
@@ -192,6 +199,34 @@ const filteredDongList = computed(() => {
     return itemInitialConsonants.startsWith(initialConsonantSearch);
   });
 });
+
+const averagePotholes = computed(() => {
+  const validEntries = roadIncidentData.value.filter((item) => item.potholes > 0);
+  if (validEntries.length === 0) return 0;
+  const totalPotholes = validEntries.reduce((total, item) => total + item.potholes, 0);
+  return (totalPotholes / validEntries.length).toFixed(1);
+});
+
+const minPotholes = computed(() => {
+  return Math.min(...roadIncidentData.value.map((item) => item.potholes));
+});
+
+const maxPotholes = computed(() => {
+  return Math.max(...roadIncidentData.value.map((item) => item.potholes));
+});
+
+const getPotholeColor = (potholes) => {
+  const range = maxPotholes.value - minPotholes.value;
+  const percentage = ((potholes - minPotholes.value) / range) * 100;
+
+  if (percentage < 30) {
+    return "#8dc63f";
+  } else if (percentage < 70) {
+    return "#ffb931";
+  } else {
+    return "#ff4e4e";
+  }
+};
 </script>
 
 <style scoped>
@@ -214,26 +249,53 @@ const filteredDongList = computed(() => {
 .status-overlay {
   position: absolute;
   top: 3%;
-  left: 30%;
+  left: 26%;
   color: #373737;
   font-size: 2.2vh;
   font-weight: bold;
   z-index: 1;
 }
+.average {
+  position: absolute;
+  top: 4.5%;
+  left: 71%;
+  color: #242557;
+  font-size: 1.6vh;
+
+  z-index: 1;
+}
 
 .infos {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  background-color: rgb(147, 134, 223);
+  background-color: rgb(241, 241, 241);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.255);
   border-radius: 10px;
-  color: white;
-  font-size: 1.6vh;
-  font-weight: bold;
   z-index: 0;
   position: absolute;
-  top: 20%;
-  left: 20%;
+  top: 15%;
+  left: 10%;
+  padding: 2vh 1vw;
+}
+.dong-label {
+  color: #7c7c7c;
+  font-size: 1.8vh;
+  margin-bottom: 1vh;
+  font-weight: bold;
+}
+.num-label {
+  color: #606060;
+  font-size: 1.6vh;
+}
+.num-detail {
+  font-size: 2.2vh;
+  font-weight: bold;
+}
+.gun {
+  font-size: 1.8vh;
+  font-weight: bold;
 }
 
 .hover-effect {
