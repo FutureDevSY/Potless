@@ -18,6 +18,8 @@ import com.potless.backend.damage.entity.road.DamageEntity;
 import com.potless.backend.damage.entity.road.QDamageEntity;
 import com.potless.backend.damage.entity.road.QImageEntity;
 import com.potless.backend.flutter.dto.service.response.DamageAppResponseDTO;
+import com.potless.backend.hexagon.entity.HexagonEntity;
+import com.potless.backend.hexagon.entity.QHexagonEntity;
 import com.potless.backend.project.entity.QTaskEntity;
 import com.potless.backend.project.entity.TaskEntity;
 import com.querydsl.core.BooleanBuilder;
@@ -179,6 +181,21 @@ public class DamageRepositoryCustomImpl implements DamageRepositoryCustom {
     @Override
     public Optional<DamageEntity> findDamageByHexagonIndexAndDtype(String hexagonIndex, String dtype) {
         QDamageEntity damage = QDamageEntity.damageEntity;
+        QHexagonEntity hexagon = QHexagonEntity.hexagonEntity;
+
+        HexagonEntity hexagonEntity = queryFactory
+                .selectFrom(hexagon)
+                .where(hexagon.hexagonIndex.eq(hexagonIndex))
+                .fetchOne();
+
+        if (hexagonEntity == null) {
+            hexagonEntity = HexagonEntity.builder()
+                    .hexagonIndex(hexagonIndex)
+                    .build();
+            em.persist(hexagonEntity);
+        }
+
+
         return Optional.ofNullable(queryFactory
                 .selectFrom(damage)
                 .where(damage.hexagonEntity.hexagonIndex.eq(hexagonIndex)
