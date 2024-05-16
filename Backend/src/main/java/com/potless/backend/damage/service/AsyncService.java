@@ -76,12 +76,8 @@ public class AsyncService {
                 kakaoService.fetchKakaoData(damageSetRequestDTO.getX(), damageSetRequestDTO.getY())
                         .thenAcceptAsync(data -> {
                             try {
-                                RoadAddress roadAddress = data.getDocuments()
-                                        .get(0)
-                                        .getRoad_address();
-                                Address address = data.getDocuments()
-                                        .get(0)
-                                        .getAddress();
+                                RoadAddress roadAddress = data.getDocuments().get(0).getRoad_address();
+                                Address address = data.getDocuments().get(0).getAddress();
                                 String city = (address != null) ? address.getRegion_1depth_name() : roadAddress.getRegion_1depth_name();
 
                                 String addressName = (address != null) ? address.getAddress_name() : roadAddress.getAddress_name();
@@ -141,3 +137,4 @@ public class AsyncService {
         return CompletableFuture.completedFuture(null);
     }
 }
+
