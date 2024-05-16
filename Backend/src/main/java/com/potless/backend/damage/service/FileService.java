@@ -21,7 +21,6 @@ public class FileService {
     public File convertAndSaveFile(MultipartFile multipartFile) throws IOException {
         // 파일 저장 디렉토리 생성
         File directory = new File(uploadDir);
-        log.info(uploadDir);
         if (!directory.exists()) {
             directory.mkdirs();
         }
@@ -29,8 +28,7 @@ public class FileService {
         if (!multipartFile.isEmpty()) {
             String originalFileName = multipartFile.getOriginalFilename();
             File file = new File(uploadDir, originalFileName);
-            multipartFile.transferTo(file);  // 파일 저장
-            log.info("파일 저장 완료");
+            multipartFile.transferTo(file);
             return file;  // 저장된 파일 객체 반환
         } else {
             log.info("multipartFile이 비어있습니다. 저장 실패");

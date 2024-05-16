@@ -14,11 +14,13 @@ import com.potless.backend.damage.entity.enums.Status;
 import com.potless.backend.damage.repository.DamageRepository;
 import com.potless.backend.damage.service.*;
 import com.potless.backend.global.exception.kakao.KakaoNotFoundException;
+import com.potless.backend.global.exception.member.MemberNotFoundException;
 import com.potless.backend.global.exception.pothole.InvalidCoordinateRangeException;
 import com.potless.backend.global.exception.pothole.PotholeNotFoundException;
 import com.potless.backend.global.format.code.ApiResponse;
 import com.potless.backend.global.format.response.ResponseCode;
 import com.potless.backend.hexagon.service.H3Service;
+import com.potless.backend.member.service.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -61,6 +63,7 @@ public class DamageController {
     private final H3Service h3Service;
     private final DamageRepository damageRepository;
     private final DuplicateAreaService duplicateAreaService;
+    private final MemberService memberService;
 
     @Operation(summary = "Area 리스트 가져오기", description = "Area 리스트 가져오기", responses = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = AreaResponseDTO.class)))
@@ -341,6 +344,9 @@ public class DamageController {
             List<String> fileUrls = new ArrayList<>(fileUrlsAndKeys.values());
             damageSetRequestDTO.setImages(fileUrls);
         }
+        if (memberService.findMember(authentication.getName()) == null) {
+            throw new MemberNotFoundException();
+        }
         DamageSetRequestServiceDTO serviceDTO = DamageSetRequestServiceDTO.builder()
                 .dirX(damageSetRequestDTO.getX())
                 .dirY(damageSetRequestDTO.getY())
@@ -352,7 +358,9 @@ public class DamageController {
                 .area(area)
                 .location(location)
                 .images(damageSetRequestDTO.getImages())
+                .memberId(memberService.findMember(authentication.getName()).getId())
                 .build();
+
         iDamageService.setDamage(serviceDTO);
         return response.success(ResponseCode.POTHOLE_DETECTED);
     }
@@ -381,7 +389,12 @@ public class DamageController {
 
         File imageFile = fileService.convertAndSaveFile(files.get(0));
 
-        asyncService.setDamageAsyncMethod(damageSetRequestDTO, imageFile);
+        damageSetRequestDTO.setMemberId(memberService.findMember(authentication.getName()).getId());
+        if (damageSetRequestDTO.getMemberId() == null) {
+            throw new MemberNotFoundException();
+        }
+
+        duplicateAreaService.checkIsDuplicated(damageSetRequestDTO, imageFile);
         return response.success(ResponseCode.POTHOLE_DETECTED);
     }
 }

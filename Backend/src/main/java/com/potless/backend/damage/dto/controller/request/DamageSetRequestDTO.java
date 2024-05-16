@@ -1,5 +1,6 @@
 package com.potless.backend.damage.dto.controller.request;
 
+import com.potless.backend.member.entity.MemberEntity;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -22,6 +23,8 @@ public class DamageSetRequestDTO {
     private int severity;
     @Setter
     private Double width;
+    @Setter
+    private Long memberId;
     @Setter
     private List<String> images = new ArrayList<>();
 
