@@ -7,7 +7,7 @@ def calcPotholeWidth(box_y, box_width):
         theta = thetas[i]
         intercept = intercepts[i]
         x[i] = (box_y + intercept * theta) / theta
-    return 15 * box_width / (x[1] - x[0])
+    return 2 * box_width / (x[1] - x[0])
 
 def calcPotholeDan(pothole_width, box_x, box_y, box_width):
     if pothole_width < 0.25: # 바퀴가 빠지지 않을 정도의 포트홀
