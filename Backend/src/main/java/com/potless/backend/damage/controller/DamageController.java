@@ -119,9 +119,9 @@ public class DamageController {
         YearMonth startMonth = YearMonth.parse(areaDamageCountForMonthRequestDTO.getStart(), DateTimeFormatter.ofPattern("yyyy-MM"));
         YearMonth endMonth = areaDamageCountForMonthRequestDTO.getEnd() != null ? YearMonth.parse(areaDamageCountForMonthRequestDTO.getEnd(), DateTimeFormatter.ofPattern("yyyy-MM")) : startMonth;
         AreaDamageCountForMonthServiceRequestDTO serviceRequestDTO = AreaDamageCountForMonthServiceRequestDTO.builder()
-                .start(startMonth)
-                .end(endMonth)
-                .build();
+                                                                                                             .start(startMonth)
+                                                                                                             .end(endMonth)
+                                                                                                             .build();
         // 서비스 계층 호출
         AreaForMonthListResponseDTO areaDamageCountForMonth = iDamageService.getAreaDamageCountForMonth(serviceRequestDTO);
         // 결과 반환
@@ -218,18 +218,18 @@ public class DamageController {
             @RequestPart("files") List<MultipartFile> files
     ) {
         Map<String, String> fileUrlsAndKeys = files.stream()
-                .map(file -> {
-                    try {
-                        String fileName = "AfterVerification/DuringWork/" + System.currentTimeMillis() + "_" + file.getOriginalFilename();
-                        return awsService.uploadFileToS3(file, fileName);
-                    } catch (IOException e) {
-                        log.error("Error uploading file to S3", e);
-                        return null;
-                    }
-                })
-                .filter(Objects::nonNull)
-                .flatMap(map -> map.entrySet().stream())
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+                                                   .map(file -> {
+                                                       try {
+                                                           String fileName = "AfterVerification/DuringWork/" + System.currentTimeMillis() + "_" + file.getOriginalFilename();
+                                                           return awsService.uploadFileToS3(file, fileName);
+                                                       } catch (IOException e) {
+                                                           log.error("Error uploading file to S3", e);
+                                                           return null;
+                                                       }
+                                                   })
+                                                   .filter(Objects::nonNull)
+                                                   .flatMap(map -> map.entrySet().stream())
+                                                   .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
         List<String> fileUrls = new ArrayList<>(fileUrlsAndKeys.values()); // URL 리스트 추출
         try {
             iDamageService.setImageForStatus(Long.valueOf(damageId), fileUrls);
@@ -244,25 +244,25 @@ public class DamageController {
     @Operation(summary = "Damage 사진 변경 추가", description = "Damage의 사진을 변경합니다.", responses = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Damage의 사진 변경 성공", content = @Content(schema = @Schema(implementation = String.class)))
     })
-    @PostMapping(value = "set/during", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PostMapping(value = "change/image", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<?> setChangeImage(
             Authentication authentication,
             @RequestPart("damageId") String damageId,
             @RequestPart("files") List<MultipartFile> files
     ) {
         Map<String, String> fileUrlsAndKeys = files.stream()
-                .map(file -> {
-                    try {
-                        String fileName = "AfterVerification/BeforeWork/" + System.currentTimeMillis() + "_" + file.getOriginalFilename();
-                        return awsService.uploadFileToS3(file, fileName);
-                    } catch (IOException e) {
-                        log.error("Error uploading file to S3", e);
-                        return null;
-                    }
-                })
-                .filter(Objects::nonNull)
-                .flatMap(map -> map.entrySet().stream())
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+                                                   .map(file -> {
+                                                       try {
+                                                           String fileName = "AfterVerification/BeforeWork/" + System.currentTimeMillis() + "_" + file.getOriginalFilename();
+                                                           return awsService.uploadFileToS3(file, fileName);
+                                                       } catch (IOException e) {
+                                                           log.error("Error uploading file to S3", e);
+                                                           return null;
+                                                       }
+                                                   })
+                                                   .filter(Objects::nonNull)
+                                                   .flatMap(map -> map.entrySet().stream())
+                                                   .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
         List<String> fileUrls = new ArrayList<>(fileUrlsAndKeys.values()); // URL 리스트 추출
         try {
             List<String> strings = iDamageService.setChangeImage(Long.valueOf(damageId), fileUrls);
@@ -284,18 +284,18 @@ public class DamageController {
             @RequestPart("damageId") String damageId,
             @RequestPart("files") List<MultipartFile> files) {
         Map<String, String> fileUrlsAndKeys = files.stream()
-                .map(file -> {
-                    try {
-                        String fileName = "AfterVerification/AfterWork/" + System.currentTimeMillis() + "_" + file.getOriginalFilename();
-                        return awsService.uploadFileToS3(file, fileName);
-                    } catch (IOException e) {
-                        log.error("Error uploading file to S3", e);
-                        return null;
-                    }
-                })
-                .filter(Objects::nonNull)
-                .flatMap(map -> map.entrySet().stream())
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+                                                   .map(file -> {
+                                                       try {
+                                                           String fileName = "AfterVerification/AfterWork/" + System.currentTimeMillis() + "_" + file.getOriginalFilename();
+                                                           return awsService.uploadFileToS3(file, fileName);
+                                                       } catch (IOException e) {
+                                                           log.error("Error uploading file to S3", e);
+                                                           return null;
+                                                       }
+                                                   })
+                                                   .filter(Objects::nonNull)
+                                                   .flatMap(map -> map.entrySet().stream())
+                                                   .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
         List<String> fileUrls = new ArrayList<>(fileUrlsAndKeys.values()); // URL 리스트 추출
         try {
             iDamageService.setImageForStatus(Long.valueOf(damageId), fileUrls);
@@ -355,26 +355,26 @@ public class DamageController {
         String location = (address != null) ? address.getRegion_3depth_name() : "정보가 존재하지 않습니다";
         String area = (address != null) ? address.getRegion_2depth_name() : roadAddress.getRegion_2depth_name();
         DamageSetRequestDTO damageSetRequestDTO = DamageSetRequestDTO.builder()
-                .dtype(dtype)
-                .x(xValue)
-                .y(yValue)
-                .build();
+                                                                     .dtype(dtype)
+                                                                     .x(xValue)
+                                                                     .y(yValue)
+                                                                     .build();
         if (files == null || files.isEmpty()) {
             damageSetRequestDTO.setImages(Collections.singletonList("https://mine702-amazon-s3.s3.ap-northeast-2.amazonaws.com/Default/default.jpg"));
         } else {
             Map<String, String> fileUrlsAndKeys = files.stream()
-                    .map(file -> {
-                        try {
-                            String fileName = "AfterVerification/BeforeWork/" + System.currentTimeMillis() + "_" + file.getOriginalFilename();
-                            return awsService.uploadFileToS3(file, fileName);
-                        } catch (IOException e) {
-                            log.error("Error uploading file to S3", e);
-                            return null;
-                        }
-                    })
-                    .filter(Objects::nonNull)
-                    .flatMap(map -> map.entrySet().stream())
-                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+                                                       .map(file -> {
+                                                           try {
+                                                               String fileName = "AfterVerification/BeforeWork/" + System.currentTimeMillis() + "_" + file.getOriginalFilename();
+                                                               return awsService.uploadFileToS3(file, fileName);
+                                                           } catch (IOException e) {
+                                                               log.error("Error uploading file to S3", e);
+                                                               return null;
+                                                           }
+                                                       })
+                                                       .filter(Objects::nonNull)
+                                                       .flatMap(map -> map.entrySet().stream())
+                                                       .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
             List<String> fileUrls = new ArrayList<>(fileUrlsAndKeys.values());
             damageSetRequestDTO.setImages(fileUrls);
         }
@@ -382,18 +382,18 @@ public class DamageController {
             throw new MemberNotFoundException();
         }
         DamageSetRequestServiceDTO serviceDTO = DamageSetRequestServiceDTO.builder()
-                .dirX(damageSetRequestDTO.getX())
-                .dirY(damageSetRequestDTO.getY())
-                .dtype(damageSetRequestDTO.getDtype())
-                .width(0.0)
-                .address(addressName)
-                .severity(Integer.valueOf(severity))
-                .status(Status.작업전)
-                .area(area)
-                .location(location)
-                .images(damageSetRequestDTO.getImages())
-                .memberId(memberService.findMember(authentication.getName()).getId())
-                .build();
+                                                                          .dirX(damageSetRequestDTO.getX())
+                                                                          .dirY(damageSetRequestDTO.getY())
+                                                                          .dtype(damageSetRequestDTO.getDtype())
+                                                                          .width(0.0)
+                                                                          .address(addressName)
+                                                                          .severity(Integer.valueOf(severity))
+                                                                          .status(Status.작업전)
+                                                                          .area(area)
+                                                                          .location(location)
+                                                                          .images(damageSetRequestDTO.getImages())
+                                                                          .memberId(memberService.findMember(authentication.getName()).getId())
+                                                                          .build();
 
         iDamageService.setDamage(serviceDTO);
         return response.success(ResponseCode.POTHOLE_DETECTED);
@@ -415,20 +415,29 @@ public class DamageController {
         if ((xValue <= 100 || xValue >= 140) || (yValue <= 20 || yValue >= 50)) {
             throw new InvalidCoordinateRangeException();
         }
+
         DamageSetRequestDTO damageSetRequestDTO = DamageSetRequestDTO.builder()
-                .dtype(dtype)
-                .x(xValue)
-                .y(yValue)
-                .build();
+                                                                     .dtype(dtype)
+                                                                     .x(xValue)
+                                                                     .y(yValue)
+                                                                     .build();
+        long startTime = System.currentTimeMillis();
+        String hexagonIndex = duplicateAreaService.checkIsDuplicated(damageSetRequestDTO);
+        long endTime = System.currentTimeMillis();
+        long durationTimeSec = endTime - startTime;
+        log.info("duplicate durationTimeSec:  = {}", durationTimeSec / 1000);   //초 단위
 
         File imageFile = fileService.convertAndSaveFile(files.get(0));
+
+//        asyncService.setDamageAsyncMethod(damageSetRequestDTO, imageFile);
 
         damageSetRequestDTO.setMemberId(memberService.findMember(authentication.getName()).getId());
         if (damageSetRequestDTO.getMemberId() == null) {
             throw new MemberNotFoundException();
         }
+        asyncService.setDamageAsyncMethod(damageSetRequestDTO, imageFile, hexagonIndex);
 
-        duplicateAreaService.checkIsDuplicated(damageSetRequestDTO, imageFile);
         return response.success(ResponseCode.POTHOLE_DETECTED);
     }
+
 }
