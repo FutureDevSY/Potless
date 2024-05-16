@@ -244,7 +244,7 @@ public class DamageController {
     @Operation(summary = "Damage 사진 변경 추가", description = "Damage의 사진을 변경합니다.", responses = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Damage의 사진 변경 성공", content = @Content(schema = @Schema(implementation = String.class)))
     })
-    @PostMapping(value = "set/during", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PostMapping(value = "change/image", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<?> setChangeImage(
             Authentication authentication,
             @RequestPart("damageId") String damageId,
