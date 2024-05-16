@@ -1,6 +1,6 @@
 <template>
   <div class="form-container">
-    <div class="main-title">포트홀 수동 신고</div>
+    <div class="main-title">도로 파손 수동 신고</div>
     <div class="inputs">
       <form @submit.prevent="submitForm" class="form-content">
         <div class="input-group">
@@ -13,7 +13,7 @@
           </select>
         </div>
         <div class="input-group">
-          <div class="input-title">위험물의 심각도를 선택해 주세요 :</div>
+          <div class="input-title">도로 파손의 심각도를 선택해 주세요 :</div>
           <select id="severity" v-model="severity" required>
             <option disabled value="">심각도</option>
             <option value="3">심각</option>
@@ -40,6 +40,7 @@ import { useAuthStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
 import { useMoveStore } from "@/stores/move";
 import SearchMap from "./components/SearchMap.vue";
+import { useSwal } from "../../composables/useSwal";
 
 const store = useMoveStore();
 const store2 = useAuthStore();
@@ -49,9 +50,28 @@ const severity = ref("");
 const location_x = ref("");
 const location_y = ref("");
 const file = ref(null);
+const swal = useSwal();
 
 const handleFileChange = (event) => {
   file.value = event.target.files.length > 0 ? event.target.files[0] : null;
+};
+
+const showAlert = () => {
+  swal({
+    title: "도로 파손 신고가 성공적으로 완료되었습니다.",
+    icon: "success",
+    confirmButtonText: "확인",
+    width: "700px",
+  });
+};
+
+const showAlert2 = () => {
+  swal({
+    title: "도로 파손 신고에 실패하였습니다. 다시 시도해주세요.",
+    icon: "error",
+    confirmButtonText: "확인",
+    width: "700px",
+  });
 };
 
 const submitForm = () => {
@@ -71,10 +91,10 @@ const submitForm = () => {
       console.log(res);
       if (res.data.status == "SUCCESS") {
         console.log(res.data.message);
-        alert("포트홀 신고가 성공적으로 완료되었습니다.");
+        showAlert();
         store.movePorthole();
       } else {
-        alert("포트홀 신고에 실패하였습니다. 다시 시도해주세요.");
+        showAlert2();
       }
     },
     (error) => {

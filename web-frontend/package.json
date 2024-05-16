@@ -20,9 +20,11 @@
     "lottie-web": "^5.12.2",
     "pinia": "^2.1.7",
     "pinia-plugin-persist": "^1.0.0",
+    "sweetalert2": "^11.11.0",
     "v-calendar": "^3.1.2",
     "vue": "^3.4.21",
     "vue-router": "^4.3.0",
+    "vue-sweetalert2": "^5.0.9",
     "vue3-apexcharts": "^1.5.2",
     "vue3-carousel": "^0.3.3"
   },

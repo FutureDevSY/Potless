@@ -91,14 +91,25 @@ import { storeToRefs } from "pinia";
 import TaskList from "./TaskList.vue";
 import TeamModal from "./AddTeamModal.vue";
 import { deletePothole } from "../../../api/pothole/pothole";
+import { useSwal } from "../../../composables/useSwal";
 
 const store2 = useAuthStore();
 const { accessToken } = storeToRefs(store2);
 const store = useMoveStore();
+const swal = useSwal();
 const props = defineProps({
   currentData: Object,
   selectedStatus: String,
 });
+
+const showAlert = () => {
+  swal({
+    title: "해당 도로 파손데이터가 삭제 되었습니다",
+    icon: "success",
+    confirmButtonText: "확인",
+    width: "700px",
+  });
+};
 
 const potholes = computed(() => {
   return (props.currentData || []).map((item) => ({
@@ -108,9 +119,7 @@ const potholes = computed(() => {
 });
 
 function handleRowClick(pothole) {
-  if (!pothole.isSelected) {
-    store.movePortholeDetail(pothole.id);
-  }
+  store.movePortholeDetail(pothole.id);
 }
 
 // 위험성 필터링
@@ -175,6 +184,7 @@ const deletePotholeSelect = () => {
         console.log(res.data.message);
         selectedIds.value.clear();
         emit("refreshData");
+        showAlert();
       }
     },
     (error) => {
@@ -287,7 +297,7 @@ td {
   border-left: none;
   border-right: none;
   text-align: center;
-  padding: 1.7vh;
+  padding: 1vh;
   font-size: 1.9vh;
   color: #373737;
 }
@@ -359,7 +369,7 @@ tbody tr:hover {
   margin: 16vh auto;
   padding: 0vh 1.8vw 6vh 1.8vw;
   border: 1px solid #dddddda1;
-  width: 40vw;
+  width: 50vw;
   height: 65vh;
 }
 
