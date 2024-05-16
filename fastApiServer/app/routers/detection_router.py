@@ -52,7 +52,7 @@ async def detection_confirm(
 
     logging.info("파일 받고 원본사진 저장 완료")
 
-    # 원본으로 2-1차 탐지 실행
+    # processed_image = await process_images(origin_file_path)
     detection_result = model_2th_detection(origin_file_path)
     logging.info("2-1차 processing 완료")
 
