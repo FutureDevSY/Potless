@@ -63,12 +63,13 @@ public class MemberEntity extends MemberBaseEntity {
         this.profileUrl = profileUrl;
     }
 
-    public static MemberEntity of(SignupRequestDto requestDto, String encodedPassword) {
+    public static MemberEntity of(SignupRequestDto requestDto, String encodedPassword, AreaEntity area) {
         return MemberEntity.builder()
                 .email(requestDto.getEmail())
                 .password(encodedPassword)
                 .memberName(requestDto.getMemberName())
                 .role(3)    //회원가입이 일반 사용자들을 위함이므로 3
+                .area(area)
                 .phone(requestDto.getPhone())
                 .build();
     }
