@@ -7,8 +7,7 @@ import org.springframework.data.jpa.repository.Lock;
 import org.springframework.transaction.annotation.Transactional;
 
 public interface HexagonRepository extends JpaRepository<HexagonEntity, Long> {
-
-    @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Transactional
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
     HexagonEntity findByHexagonIndex(String hexagonIndex);
 }
