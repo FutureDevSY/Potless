@@ -49,7 +49,7 @@ import Team from "./components/Team.vue";
 }
 .left-box {
   display: grid;
-  grid-template-rows: 23% 74.5%;
+  grid-template-rows: 23% 75%;
   gap: 2%;
 }
 .right-box {
