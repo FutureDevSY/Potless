@@ -234,13 +234,11 @@ input {
   position: relative;
 }
 .slogan-left {
-  z-index: 10;
   font-size: 3.2vh;
   font-weight: bold;
   color: #565656;
   text-align: center;
   margin-bottom: 5vh;
-  position: relative;
 }
 
 .slogan-right {
@@ -260,7 +258,6 @@ input {
 }
 
 .helmet-img {
-  z-index: 5;
   position: absolute;
   top: -4vh;
   right: 18vw;
@@ -268,7 +265,6 @@ input {
 }
 
 .work-img {
-  z-index: 5;
   position: absolute;
   top: 5vh;
   right: -2vw;
