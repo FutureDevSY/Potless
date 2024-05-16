@@ -20,13 +20,6 @@
     </div>
     <div class="right-box">
       <div class="worker-container">
-        <div>보수 공사팀</div>
-        <button class="button team-button" @click="openModal('team')">작업팀</button>
-        <div v-if="isModalOpen && modalMode === 'team'" class="modal">
-          <div class="modal-content">
-            <TeamModal :toggle-modal="toggleModal" />
-          </div>
-        </div>
         <Team></Team>
       </div>
     </div>
@@ -44,26 +37,10 @@ import SVG4 from "./components/SVG4.vue";
 import SVG5 from "./components/SVG5.vue";
 import { useAuthStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
-import { ref } from "vue";
 import Team from "./components/Team.vue";
-import TeamModal from "../porthole/components/AddTeamModal.vue";
 
 const store = useAuthStore();
 const { areaId } = storeToRefs(store);
-
-const isModalOpen = ref(false);
-const modalMode = ref("");
-function toggleModal() {
-  isModalOpen.value = !isModalOpen.value;
-  if (!isModalOpen.value) {
-    selectedIds.value.clear();
-    emit("refreshData");
-  }
-}
-function openModal(mode) {
-  modalMode.value = mode;
-  toggleModal();
-}
 </script>
 
 <style scoped>
@@ -101,77 +78,5 @@ function openModal(mode) {
 .map-containers {
   box-shadow: 0 3px 8px rgba(0, 0, 0, 0.255);
   border-radius: 15px;
-}
-
-.modal {
-  position: fixed;
-  z-index: 100;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.4);
-}
-
-.modal-content {
-  background-color: white;
-  margin: 16vh auto;
-  padding: 0vh 1.8vw 6vh 1.8vw;
-  border: 1px solid #dddddda1;
-  width: 40vw;
-  height: 65vh;
-}
-
-.add-button {
-  padding: 5px 15px;
-  font-size: 1.55vh;
-  background-color: #f8f8fc;
-  border-radius: 5px;
-  cursor: pointer;
-  height: 4.4vh;
-  color: #4f58b5;
-  border: 1px solid #4f58b5;
-  transition: background-color 0.4s;
-}
-
-.add-button:hover {
-  background-color: #e6e6f6;
-}
-
-.add-button:disabled {
-  color: #a0a0a0;
-  cursor: default;
-  background-color: #f0f0f0;
-  border-color: #d0d0d0;
-}
-
-.button {
-  padding: 5px 15px;
-  height: 4.4vh;
-  font-size: 1.55vh;
-  cursor: pointer;
-  border: none;
-  background-color: #f8f8f8;
-  border-radius: 5px;
-  color: #373737;
-  border: 1px solid #acacac;
-  transition: background-color 0.3s;
-}
-
-.button:hover {
-  background-color: #d8d8d8;
-}
-
-.team-button {
-  margin-top: 1.3vh;
-  margin-left: 8px;
-}
-
-.button:disabled:hover {
-  background-color: #f0f0f0;
-}
-
-.new_button {
-  margin-bottom: 30px;
 }
 </style>
