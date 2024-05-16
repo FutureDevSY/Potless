@@ -38,7 +38,7 @@ public class AsyncService {
     private final FileService fileService;
 
     @Async
-    public CompletableFuture<Void> setDamageAsyncMethod(DamageSetRequestDTO damageSetRequestDTO, File imageFile, String hexagonIndex) throws IOException {
+    public void setDamageAsyncMethod(DamageSetRequestDTO damageSetRequestDTO, File imageFile, String hexagonIndex) throws IOException {
 
         try {
             // FastAPI 2차 탐지 요청 수행 및 결과 반환
@@ -118,13 +118,10 @@ public class AsyncService {
                             }
                         });
             }
-        } catch (DuplPotholeException e) {
-            // Duplicate pothole exception handling
-            log.error("Duplicate pothole exception: {}", e.getMessage());
-        } catch (PotholeDetectionFailException e) {
+        }  catch (PotholeDetectionFailException e) {
             log.error("Pothole detection failed exception: {}", e.getMessage());
         } catch (WebClientResponseException e) {
-            log.error("WebClient error: Status code {} - Body {}", e.getRawStatusCode(), e.getResponseBodyAsString());
+            log.error("WebClient error: Status code {} - Body {}", e.getStatusCode(), e.getResponseBodyAsString());
         } catch (IOException e) {
             fileService.deleteFile(imageFile);
             log.error("IO error: {}", e.getMessage());
@@ -133,8 +130,6 @@ public class AsyncService {
             log.error("Unexpected error: {}", e.getMessage());
             throw new RuntimeException(e);
         }
-
-        return CompletableFuture.completedFuture(null);
     }
 }
 
