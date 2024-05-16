@@ -241,6 +241,40 @@ public class DamageController {
         return response.success(ResponseCode.POTHOLE_DURING_WORK);
     }
 
+    @Operation(summary = "Damage 사진 변경 추가", description = "Damage의 사진을 변경합니다.", responses = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Damage의 사진 변경 성공", content = @Content(schema = @Schema(implementation = String.class)))
+    })
+    @PostMapping(value = "set/during", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<?> setChangeImage(
+            Authentication authentication,
+            @RequestPart("damageId") String damageId,
+            @RequestPart("files") List<MultipartFile> files
+    ) {
+        Map<String, String> fileUrlsAndKeys = files.stream()
+                .map(file -> {
+                    try {
+                        String fileName = "AfterVerification/BeforeWork/" + System.currentTimeMillis() + "_" + file.getOriginalFilename();
+                        return awsService.uploadFileToS3(file, fileName);
+                    } catch (IOException e) {
+                        log.error("Error uploading file to S3", e);
+                        return null;
+                    }
+                })
+                .filter(Objects::nonNull)
+                .flatMap(map -> map.entrySet().stream())
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        List<String> fileUrls = new ArrayList<>(fileUrlsAndKeys.values()); // URL 리스트 추출
+        try {
+            List<String> strings = iDamageService.setChangeImage(Long.valueOf(damageId), fileUrls);
+            strings.forEach(awsService::deleteFile);
+        } catch (Exception e) {
+            for (String s : fileUrls)
+                awsService.deleteFile(s);
+            throw new PotholeNotFoundException();
+        }
+        return response.success(ResponseCode.POTHOLE_DURING_WORK);
+    }
+
     @Operation(summary = "Damage 작업 완료 사진 추가", description = "Damage의 작업 완료 사진을 추가합니다.", responses = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Damage의 작업 완료 사진 추가 성공", content = @Content(schema = @Schema(implementation = String.class)))
     })
@@ -389,7 +423,12 @@ public class DamageController {
 
         File imageFile = fileService.convertAndSaveFile(files.get(0));
 
-        asyncService.setDamageAsyncMethod(damageSetRequestDTO, imageFile);
+        damageSetRequestDTO.setMemberId(memberService.findMember(authentication.getName()).getId());
+        if (damageSetRequestDTO.getMemberId() == null) {
+            throw new MemberNotFoundException();
+        }
+
+        duplicateAreaService.checkIsDuplicated(damageSetRequestDTO, imageFile);
         return response.success(ResponseCode.POTHOLE_DETECTED);
     }
 }
