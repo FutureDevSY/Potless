@@ -229,7 +229,8 @@ public class DamageRepositoryCustomImpl implements DamageRepositoryCustom {
                         damage.locationEntity.locationName,
                         damage.dtype,
                         damage.createdDateTime,
-                        damage.memberEntity.Id
+                        damage.memberEntity.Id,
+                        damage.count
                 ))
                 .from(damage)
                 .where(builder)
