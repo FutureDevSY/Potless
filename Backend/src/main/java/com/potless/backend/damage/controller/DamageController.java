@@ -381,8 +381,7 @@ public class DamageController {
 
         File imageFile = fileService.convertAndSaveFile(files.get(0));
 
-        String hexagonIndex = duplicateAreaService.checkIsDuplicated(damageSetRequestDTO);
-        asyncService.setDamageAsyncMethod(damageSetRequestDTO, imageFile, hexagonIndex);
+        asyncService.setDamageAsyncMethod(damageSetRequestDTO, imageFile);
         return response.success(ResponseCode.POTHOLE_DETECTED);
     }
 }
