@@ -55,7 +55,9 @@ async def color_inverse(image_data: UploadFile):
 async def process_images(image_path):
 
     color = cv2.imread(image_path, cv2.IMREAD_COLOR)
-
+    # if(test == 2):
+    #     color = 255 - color
+    color = 255 - color
     if color is None:
         logging.info("이미지 전처리 실패 - 이미지 입력값이 올바르지 않습니다.")
         return None
@@ -95,8 +97,18 @@ async def process_images(image_path):
     # Composing final image
     compose = np.dstack([superpixel[:, :, 1], grayscale, sobel])
 
-    # 이미지 처리 후 저장
-    processed_image_path = 'processed_image.jpg'
+    # # 이미지 처리 후 저장
+    # processed_image_path = 'processed_image.jpg'
+    # cv2.imwrite(processed_image_path, compose.astype(np.uint8))
+     # 이미지 저장
+    # file_name = image_path + "_" + test
+    file_name = os.path.basename(image_path)
+    # file_name = f"{test}_{file_name}"
+    folder_name = 'augmentation'
+    if not os.path.exists(folder_name):
+        os.makedirs(folder_name)
+
+    processed_image_path = os.path.join(folder_name, f"{file_name}")
     cv2.imwrite(processed_image_path, compose.astype(np.uint8))
 
     return processed_image_path
