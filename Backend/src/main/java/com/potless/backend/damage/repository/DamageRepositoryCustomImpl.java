@@ -17,6 +17,7 @@ import com.potless.backend.damage.entity.enums.Status;
 import com.potless.backend.damage.entity.road.DamageEntity;
 import com.potless.backend.damage.entity.road.QDamageEntity;
 import com.potless.backend.damage.entity.road.QImageEntity;
+import com.potless.backend.flutter.dto.service.response.DamageAppResponseDTO;
 import com.potless.backend.project.entity.QTaskEntity;
 import com.potless.backend.project.entity.TaskEntity;
 import com.querydsl.core.BooleanBuilder;
@@ -405,6 +406,23 @@ public class DamageRepositoryCustomImpl implements DamageRepositoryCustom {
                         entry.getValue().getOrDefault(Status.작업완료, 0L)
                 ))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<DamageAppResponseDTO> findByHexagonIndexIn(List<String> hexagonIndexes) {
+        QDamageEntity damage = QDamageEntity.damageEntity;
+
+        return queryFactory.select(Projections.constructor(DamageAppResponseDTO.class,
+                        damage.severity,
+                        damage.dirX,
+                        damage.dirY,
+                        damage.address,
+                        damage.dtype
+                ))
+                .from(damage)
+                .where(damage.hexagonEntity.hexagonIndex.in(hexagonIndexes)
+                        .and(damage.status.in(Status.작업전, Status.작업중)))
+                .fetch();
     }
 
     private BooleanExpression betweenDates(QDamageEntity damage, LocalDate start, LocalDate end) {
