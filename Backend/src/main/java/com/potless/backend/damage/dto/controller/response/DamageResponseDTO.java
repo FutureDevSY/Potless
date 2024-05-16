@@ -26,7 +26,7 @@ public class DamageResponseDTO {
     @Schema(description = "주소")
     private String address;
     @Schema(description = "너비")
-    private Double width;
+    private Integer width;
     @Schema(description = "작업 상태")
     private Status status;
     @Schema(description = "지역 구")
@@ -54,7 +54,7 @@ public class DamageResponseDTO {
         this.dirX = dirX;
         this.dirY = dirY;
         this.address = address;
-        this.width = width;
+        this.width = width.intValue();
         this.status = status;
         this.area = area;
         this.location = location;
@@ -72,7 +72,7 @@ public class DamageResponseDTO {
         this.dirX = dirX;
         this.dirY = dirY;
         this.address = address;
-        this.width = width;
+        this.width = width.intValue();
         this.status = status;
         this.area = area;
         this.location = location;
@@ -88,7 +88,7 @@ public class DamageResponseDTO {
         this.dirX = damageEntity.getDirX();
         this.dirY = damageEntity.getDirY();
         this.address = damageEntity.getAddress();
-        this.width = damageEntity.getWidth();
+        this.width = damageEntity.getWidth().intValue();
         this.status = damageEntity.getStatus();
         this.area = damageEntity.getAreaEntity().getAreaGu();
         this.location = damageEntity.getLocationEntity().getLocationName();

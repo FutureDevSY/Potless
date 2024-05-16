@@ -42,11 +42,24 @@ public class AsyncService {
 
     @Async
     @Transactional
-    public void setDamageAsyncMethod(DamageSetRequestDTO damageSetRequestDTO, File imageFile) throws IOException {
+    public void setDamageAsyncMethod(DamageSetRequestDTO damageSetRequestDTO, File imageFile, String hexagonIndex) throws IOException {
         try {
-            String hexagonIndex = h3Service.getH3Index(damageSetRequestDTO.getY(), damageSetRequestDTO.getX(), 13);
-
-            duplCheck(hexagonIndex, damageSetRequestDTO.getY(), damageSetRequestDTO.getX(), damageSetRequestDTO.getDtype());
+//            int res = 13;
+//            String hexagonIndex = h3Service.getH3Index(damageSetRequestDTO.getY(), damageSetRequestDTO.getX(), res);
+//
+//            hexagonRepository.findByHexagonIndex(hexagonIndex);
+//
+//            Optional<DamageEntity> optionalDamageEntity = damageRepository.findDamageByHexagonIndexAndDtype(hexagonIndex, damageSetRequestDTO.getDtype());
+//
+//            if (optionalDamageEntity.isPresent()) {
+//                DamageEntity damageEntity = optionalDamageEntity.get();
+//                if (!Objects.equals(damageEntity.getDirX(), damageSetRequestDTO.getX()) && !Objects.equals(damageEntity.getDirY(), damageSetRequestDTO.getY())) {
+//                    damageEntity.addCount();
+//                    damageRepository.save(damageEntity);
+//                }
+//                log.error("Duplicate pothole detected: {}", damageSetRequestDTO);
+//                throw new DuplPotholeException();
+//            }
 
             //fastApi 2차 탐지 요청 수행 및 결과 반환
             ReDetectionRequestDTO detectionRequestDTO = new ReDetectionRequestDTO(imageFile);
@@ -141,6 +154,7 @@ public class AsyncService {
             }
             throw new DuplPotholeException();
         }
+
 
     }
 }
