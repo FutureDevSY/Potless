@@ -249,11 +249,12 @@ const assignPothole = (taskId) => {
     accessToken.value,
     potholeData.value,
     (res) => {
+      console.log(res);
       if (res.data.status == "SUCCESS") {
         console.log(res.data.message);
         takeData();
         showAlert("프로젝트에 도로 파손이 할당되었습니다.");
-        closeDetail();
+        props.toggleModal();
       } else {
         showAlert2();
       }
