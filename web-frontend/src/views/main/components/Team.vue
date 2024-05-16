@@ -66,7 +66,8 @@ onMounted(() => {
 <style scoped>
 .float-left {
     position: relative;
-    left: 75%;
+    left: 70%;
+    top: -10px;
 }
 
 .modal {
@@ -145,7 +146,7 @@ onMounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 1.5vh 0px 0vh 0px;
+  margin: 1.5vh 0px 4vh 0px;
   gap: 100px;
 }
 
