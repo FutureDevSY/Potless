@@ -20,7 +20,6 @@ import com.potless.backend.global.exception.pothole.PotholeNotFoundException;
 import com.potless.backend.global.format.code.ApiResponse;
 import com.potless.backend.global.format.response.ResponseCode;
 import com.potless.backend.hexagon.service.H3Service;
-import com.potless.backend.hexagon.service.HexagonService;
 import com.potless.backend.member.service.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -345,22 +344,22 @@ public class DamageController {
             List<String> fileUrls = new ArrayList<>(fileUrlsAndKeys.values());
             damageSetRequestDTO.setImages(fileUrls);
         }
-        if(memberService.findMember(authentication.getName()) == null){
+        if (memberService.findMember(authentication.getName()) == null) {
             throw new MemberNotFoundException();
         }
         DamageSetRequestServiceDTO serviceDTO = DamageSetRequestServiceDTO.builder()
-                                                                          .dirX(damageSetRequestDTO.getX())
-                                                                          .dirY(damageSetRequestDTO.getY())
-                                                                          .dtype(damageSetRequestDTO.getDtype())
-                                                                          .width(0.0)
-                                                                          .address(addressName)
-                                                                          .severity(Integer.valueOf(severity))
-                                                                          .status(Status.작업전)
-                                                                          .area(area)
-                                                                          .location(location)
-                                                                          .images(damageSetRequestDTO.getImages())
-                                                                          .memberId(memberService.findMember(authentication.getName()).getId())
-                                                                          .build();
+                .dirX(damageSetRequestDTO.getX())
+                .dirY(damageSetRequestDTO.getY())
+                .dtype(damageSetRequestDTO.getDtype())
+                .width(0.0)
+                .address(addressName)
+                .severity(Integer.valueOf(severity))
+                .status(Status.작업전)
+                .area(area)
+                .location(location)
+                .images(damageSetRequestDTO.getImages())
+                .memberId(memberService.findMember(authentication.getName()).getId())
+                .build();
 
         iDamageService.setDamage(serviceDTO);
         return response.success(ResponseCode.POTHOLE_DETECTED);
@@ -391,10 +390,12 @@ public class DamageController {
         File imageFile = fileService.convertAndSaveFile(files.get(0));
 
         damageSetRequestDTO.setMemberId(memberService.findMember(authentication.getName()).getId());
-        if(damageSetRequestDTO.getMemberId() == null){
+        if (damageSetRequestDTO.getMemberId() == null) {
             throw new MemberNotFoundException();
         }
-        asyncService.setDamageAsyncMethod(damageSetRequestDTO, imageFile);
+
+        String hexagonIndex = duplicateAreaService.checkIsDuplicated(damageSetRequestDTO);
+        asyncService.setDamageAsyncMethod(damageSetRequestDTO, imageFile, hexagonIndex);
 
         return response.success(ResponseCode.POTHOLE_DETECTED);
     }
