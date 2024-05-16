@@ -193,6 +193,30 @@ public class DamageServiceImpl implements IDamageService {
 
     @Override
     @Transactional
+    public List<String> setChangeImage(Long damageId, List<String> fileUrls) {
+        DamageEntity damageEntity = damageRepository.findById(damageId).orElseThrow(PotholeNotFoundException::new);
+
+        List<String> urlsToDelete = damageEntity.getImageEntities().stream()
+                .map(ImageEntity::getUrl)
+                .filter(url -> !url.equals("https://mine702-amazon-s3.s3.ap-northeast-2.amazonaws.com/Default/default.jpg"))
+                .toList();
+
+        imageRepository.deleteAll(damageEntity.getImageEntities());
+        int order = 1;
+        for (String imageUrl : fileUrls) {
+            ImageEntity image = ImageEntity.builder()
+                    .damageEntity(damageEntity)
+                    .url(imageUrl)
+                    .order(order++)
+                    .build();
+            imageRepository.save(image);
+        }
+
+        return urlsToDelete;
+    }
+
+    @Override
+    @Transactional
     public void setWorkDone(Long damageId) {
         DamageEntity damageEntity = damageRepository.findById(damageId).orElseThrow(PotholeNotFoundException::new);
         damageEntity.changeStatus(Status.작업완료);
