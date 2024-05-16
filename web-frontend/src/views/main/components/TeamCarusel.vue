@@ -55,7 +55,7 @@ const props = defineProps({
 }
 
 .team-container {
-  height: 530px;
+  height: 650px;
   display: flex;
   align-items: center;
   justify-content: center;
