@@ -1,6 +1,6 @@
 <template>
   <div class="main">
-    <div :class="{ 'left-div': true, hidden: loginSuccess }" :style="{ flex: leftDivFlex }">
+    <div class="left-div">
       <div class="login-title">관리자 로그인</div>
       <form class="login-form" @submit.prevent="doLogin">
         <div class="input-group">
@@ -12,7 +12,9 @@
             placeholder="아이디를 입력해 주세요."
             @keydown.enter="doLogin"
           />
-          <div v-if="authIdError" class="error-message">아이디는 필수값입니다.</div>
+          <div v-if="authIdError" class="error-message">
+            아이디는 필수값입니다.
+          </div>
         </div>
         <div class="input-group">
           <div class="input-title">비밀번호</div>
@@ -24,7 +26,9 @@
             @input="showError = false"
             @keydown.enter="doLogin"
           />
-          <div v-if="authPasswordError" class="error-message">비밀번호는 필수값입니다.</div>
+          <div v-if="authPasswordError" class="error-message">
+            비밀번호는 필수값입니다.
+          </div>
           <div v-if="showError" class="error-message">
             {{ errorMsg }}
           </div>
@@ -34,7 +38,17 @@
         </button>
       </form>
     </div>
-    <div class="right-div" :style="{ flex: rightDivFlex }"></div>
+    <div class="right-div"></div>
+    <div
+      class="invisible-div"
+      :class="{ 'login-success-visible': loginSuccess }"
+    ></div>
+    <div
+      class="lottie-car-container"
+      :class="{ 'login-success-car': loginSuccessCar }"
+    >
+      <LottieCar class="lottie-car" />
+    </div>
   </div>
 </template>
 
@@ -43,6 +57,7 @@ import { ref } from "vue";
 import { useAuthStore } from "../../stores/user.js";
 import { login } from "../../api/auth/auth";
 import { useMoveStore } from "@/stores/move";
+import LottieCar from "./components/LottieCar.vue";
 
 const store = useAuthStore();
 const store2 = useMoveStore();
@@ -53,11 +68,10 @@ const authPasswordError = ref(false);
 const showError = ref(false);
 const errorMsg = ref("아이디와 비밀번호를 다시 입력해주세요.");
 const loginSuccess = ref(false);
-const leftDivFlex = ref("1");
-const rightDivFlex = ref("1");
+const loginSuccessCar = ref(false);
 
 const doLogin = () => {
-  console.log("doLogin 함수 호출됨"); // 디버깅을 위해 추가
+  console.log("doLogin 함수 호출됨");
   authIdError.value = !auth_id.value;
   authPasswordError.value = !auth_password.value;
 
@@ -77,7 +91,13 @@ const doLogin = () => {
       if (res.data.status === "SUCCESS") {
         console.log(res.data.message);
         store.login(res.data, res.data.data.token);
-        store2.moveMain();
+        loginSuccess.value = true;
+        setTimeout(() => {
+          loginSuccessCar.value = true;
+        }, 1040);
+        setTimeout(() => {
+          store2.moveMain();
+        }, 3000);
       } else {
         errorMsg.value = res.data.message;
         showError.value = true;
@@ -96,18 +116,15 @@ const doLogin = () => {
 .main {
   height: 95vh;
   display: flex;
-  transition: flex 0.4s ease;
+  position: relative;
+  overflow: hidden;
 }
 .left-div {
   flex: 1;
   display: grid;
-  transition: opacity 0.4s ease, max-width 0.4s ease;
   grid-template-rows: 32% 38% 30%;
-}
-.left-div.hidden {
-  opacity: 0;
-  max-width: 10%;
-  flex-grow: 1;
+  position: relative;
+  z-index: 1;
 }
 .login-title {
   margin-top: 3vh;
@@ -193,8 +210,43 @@ input {
 
 .right-div {
   flex: 1;
-  transition: flex-grow 0.4s ease;
+  background-color: black;
+  /* background-color: rgb(254, 255, 240); */
+}
 
-  background-color: rgb(254, 255, 240);
+.invisible-div {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 0;
+  height: 100%;
+  background-color: black;
+  transition: width 3s ease-in-out, background-color 3s ease-in-out;
+  z-index: 2;
+}
+
+.lottie-car-container {
+  position: absolute;
+  bottom: -60px;
+  right: calc(50% + 40px);
+  transform: translateX(50%);
+  width: 200px;
+  height: 200px;
+  pointer-events: none;
+  transition: transform 2s ease-in-out;
+}
+
+.lottie-car {
+  width: 100%;
+  transform: scaleX(-1);
+  height: 100%;
+}
+
+.login-success-visible {
+  width: 90%;
+}
+
+.login-success-car {
+  transform: translateX(-345%);
 }
 </style>
