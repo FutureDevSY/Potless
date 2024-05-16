@@ -22,22 +22,62 @@
       <div class="infos">
         <img class="icons" src="../../../assets/icon/pothole-icon.png" alt="pothole" />
         <div class="name">포트홀</div>
-        <div class="number">4건</div>
+        <div class="number">{{ potholeNum }}건</div>
       </div>
       <div class="infos">
         <img class="icons" src="../../../assets/icon/road-icon.png" alt="road" />
         <div class="name">도로 파손</div>
-        <div class="number">4건</div>
+        <div class="number">0건</div>
       </div>
       <div class="infos">
         <img class="icons" src="../../../assets/icon/line-icon.png" alt="line" />
         <div class="name">도로 마모</div>
-        <div class="number">4건</div>
+        <div class="number">0건</div>
       </div>
     </div>
   </div>
 </template>
-<script setup></script>
+
+<script setup>
+import { ref, onMounted } from "vue";
+import { useAuthStore } from "@/stores/user";
+import { storeToRefs } from "pinia";
+import { getDongPerDate } from "../../../api/statistics/statistics";
+
+const store = useAuthStore();
+const { accessToken, areaId } = storeToRefs(store);
+
+const currentData = ref([]);
+const potholeNum = ref(0);
+const now = new Date();
+const year = now.getFullYear()
+const month = ('0' + (now.getMonth() + 1)).slice(-2)
+const day = ('0' + now.getDate()).slice(-2)
+const today = year + '-' + month  + '-' + day
+const takeData = () => {
+  getDongPerDate(
+    accessToken.value,
+    today,
+    today,
+    (res) => {
+        if (res.data.status === "SUCCESS") {
+            currentData.value = res.data.data.list[areaId.value - 1];
+            potholeNum.value = currentData.value.list[0].count
+        } else {
+            console.log(res.data.message);
+        }
+    },
+    (error) => {
+        console.log(error.response.data.message);
+    }
+  );
+}
+
+onMounted(() => {
+    takeData();
+})
+</script>
+
 <style scoped>
 .main-container {
   background-color: rgb(241, 241, 241);
