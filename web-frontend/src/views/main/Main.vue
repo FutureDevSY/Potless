@@ -46,8 +46,8 @@ const { areaId } = storeToRefs(store);
 <style scoped>
 .main-box {
   display: grid;
-  grid-template-columns: 72.2% 27%;
-  gap: 0.8%;
+  grid-template-columns: 77.8% 21%;
+  gap: 1.2%;
   margin: 1%;
 }
 .left-box {
@@ -67,8 +67,8 @@ const { areaId } = storeToRefs(store);
 }
 .bottom-box {
   display: grid;
-  grid-template-columns: 54% 45%;
-  gap: 1%;
+  grid-template-columns: 51.5% 47%;
+  gap: 1.5%;
 }
 .report-container {
   background-color: rgb(241, 241, 241);
