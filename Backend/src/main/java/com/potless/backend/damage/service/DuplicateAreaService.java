@@ -14,27 +14,26 @@ import java.util.Optional;
 
 
 @Service
-@Transactional
 @RequiredArgsConstructor
 public class DuplicateAreaService {
 
     private final H3Service h3Service;
     private final DamageRepository damageRepository;
 
-
-    public String checkIsDuplicated(DamageSetRequestDTO damageSetRequestDTO) {
-        int res = 13;
-        String hexagonIndex = h3Service.getH3Index(damageSetRequestDTO.getY(), damageSetRequestDTO.getX(), res);
-        Optional<DamageEntity> optionalDamageEntity = damageRepository.findDamageByHexagonIndexAndDtype(hexagonIndex, damageSetRequestDTO.getDtype());
-
-        if (optionalDamageEntity.isPresent()) {
-            DamageEntity damageEntity = optionalDamageEntity.get();
-            if (!Objects.equals(damageEntity.getDirX(), damageSetRequestDTO.getX()) && !Objects.equals(damageEntity.getDirY(), damageSetRequestDTO.getY())) {
-                damageEntity.addCount();
-                damageRepository.save(damageEntity);
-            }
-            throw new DuplPotholeException();
-        }
-        return hexagonIndex;
-    }
+//    @Transactional
+//    public String checkIsDuplicated(DamageSetRequestDTO damageSetRequestDTO) {
+//        int res = 13;
+//        String hexagonIndex = h3Service.getH3Index(damageSetRequestDTO.getY(), damageSetRequestDTO.getX(), res);
+//        Optional<DamageEntity> optionalDamageEntity = damageRepository.findDamageByHexagonIndexAndDtype(hexagonIndex, damageSetRequestDTO.getDtype());
+//
+//        if (optionalDamageEntity.isPresent()) {
+//            DamageEntity damageEntity = optionalDamageEntity.get();
+//            if (!Objects.equals(damageEntity.getDirX(), damageSetRequestDTO.getX()) && !Objects.equals(damageEntity.getDirY(), damageSetRequestDTO.getY())) {
+//                damageEntity.addCount();
+//                damageRepository.save(damageEntity);
+//            }
+//            throw new DuplPotholeException();
+//        }
+//        return hexagonIndex;
+//    }
 }
