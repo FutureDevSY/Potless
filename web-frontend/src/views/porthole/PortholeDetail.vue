@@ -51,7 +51,11 @@
         <!-- 버튼 -->
         <div class="button-container">
           <button class="back-btn" @click="store.moveBack">뒤로가기</button>
-          <button class="delete-btn" @click="deleteData(pothole_info.id)">
+          <button
+            class="delete-btn"
+            @click="deleteData(pothole_info.id)"
+            v-if="canDelete"
+          >
             삭제하기
           </button>
         </div>
@@ -77,6 +81,9 @@ const { accessToken } = storeToRefs(store2);
 const route = useRoute();
 const pothole_info = ref({});
 const swal = useSwal();
+const canDelete = computed(() => {
+  return pothole_info.value.status !== "작업중";
+});
 
 const showAlert = () => {
   swal({
