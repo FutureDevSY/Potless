@@ -389,12 +389,7 @@ public class DamageController {
 
         File imageFile = fileService.convertAndSaveFile(files.get(0));
 
-        damageSetRequestDTO.setMemberId(memberService.findMember(authentication.getName()).getId());
-        if (damageSetRequestDTO.getMemberId() == null) {
-            throw new MemberNotFoundException();
-        }
-
-        duplicateAreaService.checkIsDuplicated(damageSetRequestDTO, imageFile);
+        asyncService.setDamageAsyncMethod(damageSetRequestDTO, imageFile);
         return response.success(ResponseCode.POTHOLE_DETECTED);
     }
 }

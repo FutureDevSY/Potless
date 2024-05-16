@@ -28,9 +28,7 @@ public class HexagonEntity {
     private List<DamageEntity> damageEntities = new ArrayList<>();
 
     @Builder
-    public HexagonEntity(Long id, String hexagonIndex, List<DamageEntity> damageEntities) {
-        this.id = id;
+    public HexagonEntity(String hexagonIndex) {
         this.hexagonIndex = hexagonIndex;
-        this.damageEntities = damageEntities;
     }
 }
