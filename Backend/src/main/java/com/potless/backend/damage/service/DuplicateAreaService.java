@@ -10,14 +10,13 @@ import com.potless.backend.hexagon.service.H3Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.TransactionSynchronization;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 @Service
 @RequiredArgsConstructor
@@ -27,6 +26,7 @@ public class DuplicateAreaService {
     private final DamageRepository damageRepository;
     private final HexagonRepository hexagonRepository;
     private final AsyncService asyncService;
+    private final Lock lock = new ReentrantLock();
 
 //    @Transactional
 //    public String checkIsDuplicated(DamageSetRequestDTO damageSetRequestDTO) {
