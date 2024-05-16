@@ -1,6 +1,6 @@
 <template>
   <div class="main">
-    <div class="left-div">
+    <div :class="{ 'left-div': true, hidden: loginSuccess }" :style="{ flex: leftDivFlex }">
       <div class="login-title">관리자 로그인</div>
       <form class="login-form" @submit.prevent="doLogin">
         <div class="input-group">
@@ -12,9 +12,7 @@
             placeholder="아이디를 입력해 주세요."
             @keydown.enter="doLogin"
           />
-          <div v-if="authIdError" class="error-message">
-            아이디는 필수값입니다.
-          </div>
+          <div v-if="authIdError" class="error-message">아이디는 필수값입니다.</div>
         </div>
         <div class="input-group">
           <div class="input-title">비밀번호</div>
@@ -26,9 +24,7 @@
             @input="showError = false"
             @keydown.enter="doLogin"
           />
-          <div v-if="authPasswordError" class="error-message">
-            비밀번호는 필수값입니다.
-          </div>
+          <div v-if="authPasswordError" class="error-message">비밀번호는 필수값입니다.</div>
           <div v-if="showError" class="error-message">
             {{ errorMsg }}
           </div>
@@ -38,7 +34,7 @@
         </button>
       </form>
     </div>
-    <div class="right-div"></div>
+    <div class="right-div" :style="{ flex: rightDivFlex }"></div>
   </div>
 </template>
 
@@ -56,6 +52,9 @@ const authIdError = ref(false);
 const authPasswordError = ref(false);
 const showError = ref(false);
 const errorMsg = ref("아이디와 비밀번호를 다시 입력해주세요.");
+const loginSuccess = ref(false);
+const leftDivFlex = ref("1");
+const rightDivFlex = ref("1");
 
 const doLogin = () => {
   console.log("doLogin 함수 호출됨"); // 디버깅을 위해 추가
@@ -96,12 +95,19 @@ const doLogin = () => {
 <style scoped>
 .main {
   height: 95vh;
-  display: grid;
-  grid-template-columns: 50% 50%;
+  display: flex;
+  transition: flex 0.4s ease;
 }
 .left-div {
+  flex: 1;
   display: grid;
+  transition: opacity 0.4s ease, max-width 0.4s ease;
   grid-template-rows: 32% 38% 30%;
+}
+.left-div.hidden {
+  opacity: 0;
+  max-width: 10%;
+  flex-grow: 1;
 }
 .login-title {
   margin-top: 3vh;
@@ -186,6 +192,9 @@ input {
 }
 
 .right-div {
+  flex: 1;
+  transition: flex-grow 0.4s ease;
+
   background-color: rgb(254, 255, 240);
 }
 </style>
