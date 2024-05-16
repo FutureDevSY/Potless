@@ -55,6 +55,7 @@ import { ref, onMounted } from "vue";
 import { useAuthStore } from "@/stores/user";
 import { getWokerList, postAddTeam } from "../../../api/team/team";
 import { storeToRefs } from "pinia";
+import { useSwal } from "../../../composables/useSwal";
 
 const datas = ref([]);
 const teamMembers = ref([]);
@@ -62,6 +63,16 @@ const newworker = ref("");
 const store2 = useAuthStore();
 const newTeamName = ref("");
 const { accessToken, areaName } = storeToRefs(store2);
+const swal = useSwal();
+
+const showAlert = (text) => {
+  swal({
+    title: text,
+    icon: "success",
+    confirmButtonText: "확인",
+    width: "700px",
+  });
+};
 
 const takeWorkerList = () => {
   getWokerList(
@@ -85,6 +96,8 @@ const addNewWorker = () => {
     memberId: null,
     workerName: newworker.value,
   });
+  newworker.value = "";
+  showAlert("새로운 작업자가 추가되었습니다.");
 };
 
 const pushTeam = (workerInfo) => {
@@ -100,6 +113,7 @@ const removeMember = (index) => {
 
 const emit = defineEmits(["teamAdded"], ["backToModal"]);
 
+// 새로운 팀 추가
 function addTeam() {
   const reqBody = ref({
     teamName: newTeamName.value,
@@ -115,6 +129,7 @@ function addTeam() {
       console.log(res);
       if (res.data.status == "SUCCESS") {
         console.log(res.data.message);
+        showAlert("새로운 팀이 생성되었습니다.");
         emit("teamAdded", true);
       }
     },
