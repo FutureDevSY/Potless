@@ -4,14 +4,11 @@ import com.potless.backend.path.dto.Location;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
 
 import java.util.List;
 
 @Getter
 @NoArgsConstructor
-@ToString
 public class TaskAddRequestDto {
     @NotNull(message = "projectId는 필수값입니다.")
     private Long projectId;

@@ -1,14 +1,12 @@
 package com.potless.backend.damage.dto.service.request;
 
 import com.potless.backend.damage.entity.enums.Status;
-import com.potless.backend.member.entity.MemberEntity;
 import lombok.*;
 
 import java.util.List;
 
 
 @Getter
-@ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class DamageSetRequestServiceDTO {
 

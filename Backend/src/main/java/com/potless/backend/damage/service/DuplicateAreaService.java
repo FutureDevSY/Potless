@@ -4,41 +4,25 @@ import com.potless.backend.damage.dto.controller.request.DamageSetRequestDTO;
 import com.potless.backend.damage.entity.road.DamageEntity;
 import com.potless.backend.damage.repository.DamageRepository;
 import com.potless.backend.global.exception.pothole.DuplPotholeException;
-import com.potless.backend.hexagon.entity.HexagonEntity;
-import com.potless.backend.damage.repository.DamageRepository;
-import com.potless.backend.global.exception.pothole.DuplPotholeException;
-import com.potless.backend.hexagon.repository.HexagonRepository;
-import com.potless.backend.hexagon.service.H3Service;
+import com.potless.backend.hexagon.service.HexagonService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
-
 import java.util.Objects;
 import java.util.Optional;
 
-@Log4j2
 @Service
 @RequiredArgsConstructor
 public class DuplicateAreaService {
 
-    private final H3Service h3Service;
+    private final HexagonService hexagonService;
     private final DamageRepository damageRepository;
 
     // 1차
     @Transactional(readOnly = true)
     public String checkIsDuplicated(DamageSetRequestDTO damageSetRequestDTO) {
-        int res = 13;
-        String hexagonIndex = h3Service.getH3Index(damageSetRequestDTO.getY(), damageSetRequestDTO.getX(), res);
-
+        String hexagonIndex = hexagonService.getH3Index(damageSetRequestDTO.getY(), damageSetRequestDTO.getX(), 13);
         Optional<DamageEntity> optionalDamageEntity =
                 damageRepository.findDamageByHexagonIndexAndDtype(hexagonIndex, damageSetRequestDTO.getDtype());
 
@@ -46,7 +30,6 @@ public class DuplicateAreaService {
             DamageEntity damageEntity = optionalDamageEntity.get();
 
             // 프론트 요청 6번째 자리 까지 똑같다 그러면 동일 요청이라 판단 해서 count 안늘리게
-
             if (!Objects.equals(damageEntity.getDirX(), damageSetRequestDTO.getX())
                     && !Objects.equals(damageEntity.getDirY(), damageSetRequestDTO.getY())) {
                 damageEntity.addCount();

@@ -18,8 +18,6 @@ import com.potless.backend.project.entity.ProjectEntity;
 import com.potless.backend.project.entity.TaskEntity;
 import com.potless.backend.project.repository.project.ProjectRepository;
 import com.potless.backend.project.repository.task.TaskRepository;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -37,9 +35,6 @@ public class TaskServiceImpl implements TaskService {
     private final TaskRepository taskRepository;
     private final MemberRepository memberRepository;
     private final TeamRepository teamRepository;
-
-    @PersistenceContext
-    private EntityManager entityManager;
 
     @Override
     @Transactional

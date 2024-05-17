@@ -29,9 +29,7 @@ public class SignupRequestDto {
             message = "이름은 한글(자음 또는 모음만 존재하는 것 제외)을 조합하여 2~5자 이내여야 합니다.")
     private String memberName;
 
-    @Pattern(regexp="^010-\\d{4}-\\d{4}$", message="전화번호 형식이 유효하지 않습니다.")
+    @Pattern(regexp = "^010-\\d{4}-\\d{4}$", message = "전화번호 형식이 유효하지 않습니다.")
     private String phone;
-
-//    private Long region;
 
 }

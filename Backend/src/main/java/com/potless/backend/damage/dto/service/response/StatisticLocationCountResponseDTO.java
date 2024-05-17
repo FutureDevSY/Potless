@@ -1,10 +1,12 @@
 package com.potless.backend.damage.dto.service.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
-@ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Schema(description = "동별 Damage 통계 조회 DTO")
 public class StatisticLocationCountResponseDTO {

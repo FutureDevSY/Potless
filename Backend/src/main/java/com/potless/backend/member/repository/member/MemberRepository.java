@@ -5,5 +5,4 @@ import com.potless.backend.member.repository.member.custom.MemberRepositoryCusto
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface MemberRepository extends JpaRepository<MemberEntity, Long>, MemberRepositoryCustom {
-
 }

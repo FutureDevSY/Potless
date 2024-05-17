@@ -33,7 +33,6 @@ public class FileService {
         } else {
             log.info("multipartFile이 비어있습니다. 저장 실패");
         }
-//        C:\Users\SSAFY\Desktop\GERRIT-NEW\S10P31B106\Backend\file
         return null;
     }
 
