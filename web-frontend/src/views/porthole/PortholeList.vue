@@ -105,6 +105,7 @@ const takeData = (currentPage) => {
     queryParams,
     (res) => {
       if (res.data.status == "SUCCESS") {
+        console.log(res);
         console.log(res.data.message);
         currentData.value = res.data.data.content;
         totalPage.value = res.data.data.totalPages;

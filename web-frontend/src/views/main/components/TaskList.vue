@@ -150,21 +150,21 @@ onMounted(() => {
   margin: 0vh 1vw;
 }
 .projects {
-  color: rgb(131, 131, 131);
+  color: rgb(102, 102, 102);
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 3vh 0px;
   margin: 0.5vh 0.5vw 1.5vh 0.5vw;
   border-radius: 15px;
-  background-color: #ffffff;
+  background-color: #f1f1f9;
   cursor: pointer;
-  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.079);
+  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.175);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 .projects:hover {
   transform: translateY(-5px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.296);
 }
 button {
   margin-right: 10px;

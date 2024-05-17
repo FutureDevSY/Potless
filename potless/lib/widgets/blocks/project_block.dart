@@ -107,7 +107,55 @@ class _ProjectBlockState extends State<ProjectBlock> {
               ),
               child: GestureDetector(
                 onTap: () {
-                  _apiService.projectDone(widget.projectId);
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        backgroundColor: const Color(
+                            0xffFFFFFF), // Set dialog background color to white
+                        title: Text(
+                          '${widget.projectId}번 작업 지시서',
+                          style: const TextStyle(
+                            color: Color(
+                                0xff151c62), // Set title text color to blue
+                          ),
+                        ),
+                        content: const Text(
+                          '완료하시겠습니까?',
+                          style: TextStyle(
+                            color: Color(0xff151c62),
+                          ),
+                        ),
+                        actions: <Widget>[
+                          TextButton(
+                            child: const Text(
+                              '취소',
+                              style: TextStyle(
+                                color: Color(0xff151c62),
+                              ),
+                            ),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                          TextButton(
+                            child: const Text(
+                              '확인',
+                              style: TextStyle(
+                                color: Color(
+                                    0xff151c62), // Set button text color to blue
+                              ),
+                            ),
+                            onPressed: () {
+                              Navigator.of(context).pop(); // Close the dialog
+                              _apiService.projectDone(
+                                  widget.projectId); // Perform the action
+                            },
+                          ),
+                        ],
+                      );
+                    },
+                  );
                 },
                 child: Container(
                   alignment: Alignment.center,
