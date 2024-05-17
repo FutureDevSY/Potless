@@ -69,6 +69,7 @@ watch(
   width: 350px;
   font-size: 16px;
   justify-content: end;
+  z-index: 5;
 }
 
 .input {

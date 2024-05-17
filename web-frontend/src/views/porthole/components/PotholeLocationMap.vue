@@ -150,7 +150,7 @@ watch(
 .btn-style {
   padding: 1vh 0px;
   width: 7.6vw;
-  background-color: #56acff;
+  background-color: #1e90ff;
   border: none;
   color: #ffffff;
   font-size: 1.6vh;
@@ -163,6 +163,6 @@ watch(
 }
 
 .btn-style:hover {
-  background-color: #1e90ff;
+  background-color: #0074e5;
 }
 </style>
