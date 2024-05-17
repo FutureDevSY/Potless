@@ -36,7 +36,7 @@
         </p>
         <p>
           <span class="info-title">상세 규모</span>
-          <span class="infos">너비 {{ roundedWidth }}mm</span>
+          <span class="infos">너비 {{ roundedWidth }}cm</span>
         </p>
       </div>
       <div class="text-right">
