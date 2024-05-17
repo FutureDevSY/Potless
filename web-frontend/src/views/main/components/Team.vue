@@ -96,14 +96,14 @@ onMounted(() => {
   border: none;
   background-color: #ffffff;
   border-radius: 8px;
-  color: #4f58b5;
-  border: 1px solid #4f58b5;
+  color: #6b6b6b;
+  border: 2px solid #c5c5c5;
   transition: all 0.3s;
   justify-self: end;
 }
 
 .list-button:hover {
-  background-color: #e6e6f6;
+  background-color: #c5c5c5;
 }
 
 .team-navigation {

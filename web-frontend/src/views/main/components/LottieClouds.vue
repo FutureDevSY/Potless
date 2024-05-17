@@ -21,14 +21,13 @@ onMounted(() => {
     path: "../../../../public/lottie/clouds.json",
   });
 
-  // 애니메이션을 3초마다 시작하고 멈추기
   anim.addEventListener("complete", () => {
     setTimeout(() => {
-      anim.goToAndPlay(0); // 애니메이션이 완료되면 처음부터 재생
-    });
+      anim.goToAndPlay(0);
+    }, 5000);
   });
 
-  anim.play(); // 최초 재생
+  anim.play();
 });
 
 onBeforeUnmount(() => {
