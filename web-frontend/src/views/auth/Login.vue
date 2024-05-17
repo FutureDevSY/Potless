@@ -95,10 +95,10 @@ const doLogin = () => {
         loginSuccess.value = true;
         setTimeout(() => {
           loginSuccessCar.value = true;
-        }, 1040);
+        }, 40);
         setTimeout(() => {
           store2.moveMain();
-        }, 3000);
+        }, 2250);
       } else {
         errorMsg.value = res.data.message;
         showError.value = true;
@@ -115,25 +115,24 @@ const doLogin = () => {
 
 <style scoped>
 .main {
-  height: 79vh;
+  height: 95vh;
   display: flex;
   position: relative;
   overflow: hidden;
   border-radius: 15px;
-  margin: 8vh 10vw;
   box-shadow: 0 4px 7px rgba(0, 0, 0, 0.255);
 }
 .left-div {
   flex: 1;
   display: grid;
-  grid-template-rows: 32% 38% 30%;
+  grid-template-rows: 35% 35% 30%;
   background-color: #151c62;
   position: relative;
   z-index: 1;
 }
 .login-title {
-  margin-top: 1vh;
-  font-size: 4.5vh;
+  margin-top: 3vh;
+  font-size: 4.8vh;
   font-weight: bold;
   color: #ffffff;
   display: flex;
@@ -201,7 +200,7 @@ input {
   color: #373737;
   font-weight: bold;
   transition: all 0.3s;
-  margin-top: 4vh;
+  margin-top: 5vh;
 }
 .login-button:hover {
   background-color: #c6c6c6;
@@ -224,33 +223,33 @@ input {
 }
 
 .logo {
-  margin-top: 8vh;
-  height: 9vh;
+  margin-top: 12vh;
+  height: 10vh;
 }
 
 .slogan {
   width: 65%;
-  margin: 7vh 0;
+  margin: 9vh 0;
   position: relative;
 }
 .slogan-left {
-  font-size: 3.2vh;
-  font-weight: bold;
-  color: #565656;
-  text-align: center;
-  margin-bottom: 5vh;
-}
-
-.slogan-right {
-  font-size: 3.2vh;
+  font-size: 3.5vh;
   font-weight: bold;
   color: #565656;
   text-align: center;
   margin-bottom: 6vh;
 }
 
+.slogan-right {
+  font-size: 3.5vh;
+  font-weight: bold;
+  color: #565656;
+  text-align: center;
+  margin-bottom: 7vh;
+}
+
 .slogan-center {
-  font-size: 3.8vh;
+  font-size: 4vh;
   font-weight: bold;
   color: #313131;
   text-align: center;
@@ -272,9 +271,9 @@ input {
 }
 .road-img {
   position: absolute;
-  top: 28vh;
-  right: 2vw;
-  height: 22vh;
+  top: 30vh;
+  right: 1vw;
+  height: 30vh;
 }
 
 .invisible-div {
@@ -283,8 +282,8 @@ input {
   right: 0;
   width: 0;
   height: 100%;
-  background-color: rgb(255, 255, 255);
-  transition: width 3s ease-in-out, background-color 3s ease-in-out;
+  background: #f8f8f8;
+  transition: width 2s ease-in-out, background-color 1s ease-in-out;
   z-index: 2;
 }
 
@@ -311,6 +310,6 @@ input {
 }
 
 .login-success-car {
-  transform: translateX(-345%);
+  transform: translateX(-325%);
 }
 </style>
