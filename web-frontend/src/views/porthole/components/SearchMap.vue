@@ -1,23 +1,23 @@
 <template>
   <div class="maps-container">
-    <!-- <div class="inputs-group">
-      <div class="inputs-title">위험물의 주소/위치를 입력해 주세요 :</div>
+    <div class="inputs-group">
       <div class="search-container">
-        <input type="text" v-model="query" placeholder="주소/위치" />
-        <button type="button" @click="searchAddress">위치 찾기</button>
+        <input
+          type="text"
+          v-model="query"
+          placeholder="위험물 주소(위치)를 입력해 주세요."
+          @input="handleInput"
+        />
+        <!-- <button type="button" @click="searchAddress">위치 찾기</button> -->
         <ul v-if="results.length > 0">
-          <li
-            v-for="item in results"
-            :key="item.id"
-            @click="selectLocation(item)"
-          >
+          <li v-for="item in results" :key="item.id" @click="selectLocation(item)">
             {{ item.place_name }} - {{ item.address_name }}
           </li>
         </ul>
       </div>
-    </div> -->
+    </div>
 
-    <div id="map" style="width: 100%; height: 100%"></div>
+    <div id="map" class="map-style"></div>
   </div>
 </template>
 
@@ -98,10 +98,19 @@ async function searchAddress() {
   }
 }
 
+const handleInput = async (e) => {
+  query.value = e.target.value;
+  if (query.value.trim() !== "") {
+    await searchAddress();
+  } else {
+    results.value = [];
+  }
+};
+
 function selectLocation(item) {
   const newPos = new kakao.maps.LatLng(item.y, item.x);
   map.value.setCenter(newPos);
-  results.value = []; // Clears the results to hide the list
+  results.value = [];
 }
 </script>
 
@@ -110,55 +119,77 @@ function selectLocation(item) {
   width: 100%;
   height: 100%;
   position: relative;
+  border-radius: 6px;
 }
 
 input {
-  margin: 10px;
-  width: 150px;
+  position: absolute;
+  top: 1.2vh;
+  left: 8%;
+  width: 97%;
   height: 4.5vh;
-  border-radius: 5px;
-  font-size: 1.8vh;
-  border: 1px solid rgb(91, 91, 91);
-  padding: 0vh 0vw 0 3vw;
+  border-radius: 6px;
+  font-size: 1.4vh;
+  border: 1px solid rgb(223, 223, 223);
+  padding: 0vh 0vw 0 15px;
+  background-color: rgba(255, 255, 255, 0.788);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.211);
+}
+
+input:focus {
+  border: 2px solid #0070e88b;
+  outline: none;
 }
 
 .search-container {
   z-index: 10;
+  width: 100%;
 }
 
 .search-container ul {
-  height: 40vh;
+  max-height: 40vh;
   position: absolute;
-  top: 7%;
-  left: 130px;
-  width: 80%;
+  top: 5vh;
+  left: 8.2%;
+  width: 100%;
   overflow-y: auto;
   padding-left: 0;
+  border: 2px solid #0070e88b;
+  border-radius: 6px;
 }
 
 .search-container li {
-  background-color: #f9f9f9;
-  padding: 2.5vh 2vw;
+  background-color: #ffffff;
+  padding: 2.8vh 0.5vw;
   display: flex;
   justify-content: center;
-  align-items: center;
+  font-size: 1.6vh;
+  color: #2f2f2f;
+  text-align: center;
   transition: background-color 0.3s;
-  border: 1px solid rgb(131, 131, 131);
 }
 
 .search-container li:hover {
-  background-color: #f1f1f1;
+  background-color: #ebeaea;
   cursor: pointer;
 }
 
 .inputs-group {
+  position: absolute;
   display: flex;
   align-items: center;
+  width: 86.7%;
 }
 
 .inputs-title {
   font-size: 2vh;
   font-weight: 500;
-  color: #373737;
+  color: #565656;
+}
+.map-style {
+  width: 100%;
+  height: 100%;
+  border-radius: 6px;
+  border: 2px solid #dedede;
 }
 </style>

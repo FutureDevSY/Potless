@@ -159,10 +159,10 @@ const updateSeverity = (selected) => {
   background-color: #ffffff;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.255);
   border-radius: 15px;
-  height: 80vh;
+  height: 85vh;
   width: 35vw;
   display: grid;
-  grid-template-rows: 14% 74% 12%;
+  grid-template-rows: 13% 76% 11%;
 }
 .main-title {
   display: flex;
@@ -178,8 +178,8 @@ const updateSeverity = (selected) => {
 .form-content {
   height: 100%;
   display: grid;
-  grid-template-rows: 8.5% 8% 73%;
-  gap: 5%;
+  grid-template-rows: 8% 7.5% 76.5%;
+  gap: 4%;
 }
 .input-div {
   display: grid;
@@ -189,15 +189,6 @@ const updateSeverity = (selected) => {
 .input-group {
   height: 100%;
   width: 100%;
-}
-select,
-input {
-  width: 100%;
-  height: 100%;
-  border-radius: 5px;
-  font-size: 1.8vh;
-  font-weight: bold;
-  color: #939393;
 }
 .input-title {
   font-size: 2vh;
@@ -218,7 +209,7 @@ input {
   margin-bottom: 1vh;
   background-color: #151c62;
   cursor: pointer;
-  border-radius: 8px;
+  border-radius: 6px;
   font-size: 2vh;
   position: relative;
   overflow: hidden;
@@ -236,6 +227,7 @@ select:focus option[value=""] {
 }
 .file-upload {
   display: flex;
+  width: 101%;
 }
 input[type="file"] {
   display: block;
@@ -247,7 +239,7 @@ input[type="file"] {
   width: 20%;
   height: 100%;
   background: #9f9f9f;
-  border-radius: 8px;
+  border-radius: 6px;
   color: #fff;
   font-weight: bold;
   display: flex;
@@ -261,13 +253,13 @@ input[type="file"] {
   background: rgb(136, 136, 136);
 }
 .form__span--file {
-  padding: 0 5px 0 10px;
-  margin-left: 10px;
+  padding: 0 0px 0 15px;
+  margin-left: 15px;
   display: block;
   width: 80%;
   min-height: 30px;
   border: 2px solid #d6d6d6;
-  border-radius: 8px;
+  border-radius: 6px;
   display: flex;
   align-items: center;
   color: #ababab;
