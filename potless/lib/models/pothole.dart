@@ -19,8 +19,8 @@ class DamageImage {
 }
 
 class DamageResponse {
-  final int id, severity;
-  final double dirX, dirY, width;
+  final int id, severity, width;
+  final double dirX, dirY;
   final String address, status, area, location, dtype;
   final DateTime createdDateTime;
   final List<DamageImage> images;
