@@ -10,18 +10,16 @@
           <ReportList />
         </div>
         <div class="map-containers">
-          <SVG1 v-if="areaId === 1"></SVG1>
-          <SVG2 v-if="areaId === 2"></SVG2>
-          <SVG3 v-if="areaId === 3"></SVG3>
-          <SVG4 v-if="areaId === 4"></SVG4>
-          <SVG5 v-if="areaId === 5"></SVG5>
+          <SVG1 class="border" v-if="areaId === 1"></SVG1>
+          <SVG2 class="border" v-if="areaId === 2"></SVG2>
+          <SVG3 class="border" v-if="areaId === 3"></SVG3>
+          <SVG4 class="border" v-if="areaId === 4"></SVG4>
+          <SVG5 class="border" v-if="areaId === 5"></SVG5>
         </div>
       </div>
     </div>
     <div class="right-box">
-      <div class="worker-container">
-        <Team></Team>
-      </div>
+      <Team></Team>
     </div>
   </div>
 </template>
@@ -56,7 +54,7 @@ const { areaId } = storeToRefs(store);
   gap: 2%;
 }
 .right-box {
-  background-color: #f2f2f2a3;
+  background-color: #ffffff;
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.255);
   border-radius: 15px;
 }
@@ -71,12 +69,15 @@ const { areaId } = storeToRefs(store);
   gap: 1.5%;
 }
 .report-container {
-  background-color: rgb(241, 241, 241);
+  background-color: #ffffff;
   box-shadow: 0 3px 8px rgba(0, 0, 0, 0.255);
   border-radius: 15px;
 }
 .map-containers {
   box-shadow: 0 3px 8px rgba(0, 0, 0, 0.255);
+  border-radius: 15px;
+}
+.border {
   border-radius: 15px;
 }
 </style>
