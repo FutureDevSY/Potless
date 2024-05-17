@@ -1,7 +1,6 @@
 package com.potless.backend.member.entity;
 
 import com.potless.backend.damage.entity.area.AreaEntity;
-import com.potless.backend.damage.entity.road.ImageEntity;
 import com.potless.backend.global.entity.MemberBaseEntity;
 import com.potless.backend.member.dto.SignupRequestDto;
 import jakarta.persistence.*;
@@ -42,9 +41,6 @@ public class MemberEntity extends MemberBaseEntity {
 
     @Column(name = "member_profile_url")
     private String profileUrl;
-
-//    @OneToOne(mappedBy = "memberEntity", fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE, CascadeType.PERSIST}, orphanRemoval = true)
-//    private WorkerEntity workerEntity;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST})
     @JoinColumn(name = "area_id")

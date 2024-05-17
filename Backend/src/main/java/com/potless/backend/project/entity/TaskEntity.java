@@ -1,16 +1,17 @@
 package com.potless.backend.project.entity;
 
-import com.potless.backend.damage.entity.enums.Status;
 import com.potless.backend.damage.entity.road.DamageEntity;
 import com.potless.backend.global.entity.BaseEntity;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
 @Table(name = "task")
-@ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Tag(name = "Task 컨트롤러", description = "Task Controller API")
 public class TaskEntity extends BaseEntity {

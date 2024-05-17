@@ -4,14 +4,12 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 import java.time.LocalDate;
 import java.util.List;
 
 @Getter
 @NoArgsConstructor
-@ToString
 @Schema(description = "단일 프로젝트 조회 DTO")
 public class ProjectDetailResponseDto {
     @Schema(description = "프로젝트명")
