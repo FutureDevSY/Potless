@@ -1,6 +1,6 @@
 <template>
   <div class="maps-container">
-    <div class="inputs-group">
+    <!-- <div class="inputs-group">
       <div class="inputs-title">위험물의 주소/위치를 입력해 주세요 :</div>
       <div class="search-container">
         <input type="text" v-model="query" placeholder="주소/위치" />
@@ -15,9 +15,9 @@
           </li>
         </ul>
       </div>
-    </div>
+    </div> -->
 
-    <div id="map" style="width: 98%; height: 400px"></div>
+    <div id="map" style="width: 100%; height: 100%"></div>
   </div>
 </template>
 
@@ -59,11 +59,9 @@ function initMap() {
     marker.value = new kakao.maps.Marker({
       position: map.value.getCenter(),
       map: map.value,
-      image: new window.kakao.maps.MarkerImage(
-        markerImageSrc,
-        new window.kakao.maps.Size(40, 40),
-        { offset: new window.kakao.maps.Point(20, 40) }
-      ),
+      image: new window.kakao.maps.MarkerImage(markerImageSrc, new window.kakao.maps.Size(40, 40), {
+        offset: new window.kakao.maps.Point(20, 40),
+      }),
     });
 
     kakao.maps.event.addListener(map.value, "center_changed", () => {
