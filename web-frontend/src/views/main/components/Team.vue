@@ -1,16 +1,14 @@
 <template>
-    <div class="team-navigation">
-        <span class="titled">보수 공사팀</span>
+  <div class="team-navigation">
+    <span class="titled">보수 공사팀</span>
+    <TeamCarusel :teams="currentTeams" />
+    <button class="list-button" @click="openModal('team')">수정/추가</button>
+  </div>
+  <div v-if="isModalOpen && modalMode === 'team'" class="modal">
+    <div class="modal-content">
+      <TeamModal :toggle-modal="toggleModal" />
     </div>
-    <div class="carusel-container">
-        <TeamCarusel :teams="currentTeams"/>
-    </div>
-    <button class="button team-button float-left" @click="openModal('team')">작업팀</button>
-    <div v-if="isModalOpen && modalMode === 'team'" class="modal">
-        <div class="modal-content">
-            <TeamModal :toggle-modal="toggleModal" />
-        </div>
-    </div>
+  </div>
 </template>
 
 <script setup>
@@ -25,8 +23,8 @@ const store = useAuthStore();
 const { accessToken, areaName } = storeToRefs(store);
 const currentData = ref([]);
 const currentTeams = computed(() => {
-    return currentData.value || [];
-})
+  return currentData.value || [];
+});
 
 const isModalOpen = ref(false);
 const modalMode = ref("");
@@ -42,34 +40,28 @@ function openModal(mode) {
 }
 
 const takeData = () => {
-    getTeamList(
-        accessToken.value,
-        areaName.value,
-        (res) => {
-            if (res.data.status === "SUCCESS") {
-                currentData.value = res.data.data;
-            } else {
-                console.log(res.data.message);
-            }
-        },
-        (error) => {
-            console.log(error.response.data.message);
-        }
-    );
-}
+  getTeamList(
+    accessToken.value,
+    areaName.value,
+    (res) => {
+      if (res.data.status === "SUCCESS") {
+        currentData.value = res.data.data;
+      } else {
+        console.log(res.data.message);
+      }
+    },
+    (error) => {
+      console.log(error.response.data.message);
+    }
+  );
+};
 
 onMounted(() => {
-    takeData();
-})
+  takeData();
+});
 </script>
 
 <style scoped>
-.float-left {
-    position: relative;
-    left: 70%;
-    top: -10px;
-}
-
 .modal {
   position: fixed;
   z-index: 100;
@@ -85,76 +77,51 @@ onMounted(() => {
   margin: 16vh auto;
   padding: 0vh 1.8vw 6vh 1.8vw;
   border: 1px solid #dddddda1;
+
   width: 40vw;
+  border-radius: 10px;
   height: 65vh;
-}
-
-.add-button {
-  padding: 5px 15px;
-  font-size: 1.55vh;
-  background-color: #f8f8fc;
-  border-radius: 5px;
-  cursor: pointer;
-  height: 4.4vh;
-  color: #4f58b5;
-  border: 1px solid #4f58b5;
-  transition: background-color 0.4s;
-}
-
-.add-button:hover {
-  background-color: #e6e6f6;
-}
-
-.add-button:disabled {
-  color: #a0a0a0;
-  cursor: default;
-  background-color: #f0f0f0;
-  border-color: #d0d0d0;
-}
-
-.button {
-  padding: 5px 15px;
-  height: 4.4vh;
-  font-size: 1.55vh;
-  cursor: pointer;
-  border: none;
-  background-color: #f8f8f8;
-  border-radius: 5px;
-  color: #373737;
-  border: 1px solid #acacac;
-  transition: background-color 0.3s;
-}
-
-.button:hover {
-  background-color: #d8d8d8;
-}
-
-.team-button {
-  margin-top: 1.3vh;
-  margin-left: 8px;
-}
-
-.button:disabled:hover {
-  background-color: #f0f0f0;
 }
 
 .new_button {
   margin-bottom: 30px;
 }
 
+.list-button {
+  position: absolute;
+  bottom: 4%;
+  padding: 1vh 0.5vw;
+  font-size: 1.4vh;
+  cursor: pointer;
+  border: none;
+  background-color: #ffffff;
+  border-radius: 8px;
+  color: #4f58b5;
+  border: 1px solid #4f58b5;
+  transition: all 0.3s;
+  justify-self: end;
+}
+
+.list-button:hover {
+  background-color: #e6e6f6;
+}
+
 .team-navigation {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 1.5vh 0px 4vh 0px;
-  gap: 100px;
+  height: 100%;
+  display: grid;
+  grid-template-rows: 6% 94%;
 }
 
 .titled {
-  color: #575757;
+  color: #373737;
   font-size: 2.2vh;
+  margin-top: 1vh;
   font-weight: bold;
-  margin: 1.5vh 0 1vh 0;
+  /* margin: 0.5vh 0 0vh 0; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
 }
 
 .chevron-left {
