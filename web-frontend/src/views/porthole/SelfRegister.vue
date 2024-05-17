@@ -5,26 +5,34 @@
       <form @submit.prevent="submitForm" class="form-content">
         <div class="input-div">
           <div class="input-group">
-            <select id="potholeType" v-model="potholeType" required>
-              <option disabled value="">위험물 종류</option>
-              <option value="POTHOLE">포트홀</option>
-              <option value="CRACK">도로균열</option>
-              <option value="WORNOUT">도로마모</option>
-            </select>
+            <SelfSelect
+              :options="['포트홀', '도로균열', '도로마모']"
+              defaultText="위험물 종류"
+              @update:selected="updatePotholeType"
+            />
           </div>
           <div class="input-group">
-            <select id="severity" v-model="severity" required>
-              <option disabled value="">도로파손 심각도</option>
-              <option value="3">심각</option>
-              <option value="2">주의</option>
-              <option value="1">양호</option>
-            </select>
+            <SelfSelect
+              :options="['심각', '주의', '양호']"
+              defaultText="위험물 심각도"
+              @update:selected="updateSeverity"
+            />
           </div>
         </div>
         <div class="file-upload">
-          <input type="file" @change="handleFileChange" accept="image/*" />
+          <input
+            class="form__input--file"
+            id="upload1"
+            type="file"
+            @change="handleFileChange"
+            accept="image/*"
+          />
+          <label class="form__label--file" for="upload1">파일 선택</label>
+          <span :class="['form__span--file', { 'file-selected': fileName }]">{{
+            fileName || "포트홀 사진을 선택해 주세요. (선택)"
+          }}</span>
         </div>
-        <!-- <SearchMap @updateCenter="handleCenterUpdate" /> -->
+        <SearchMap @updateCenter="handleCenterUpdate" />
       </form>
     </div>
     <div class="button-div">
@@ -39,7 +47,7 @@ import { postPotholeAdd } from "../../api/pothole/pothole";
 import { useAuthStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
 import { useMoveStore } from "@/stores/move";
-import Select from "./components/Select.vue";
+import SelfSelect from "./components/SelfSelect.vue";
 import SearchMap from "./components/SearchMap.vue";
 import { useSwal } from "../../composables/useSwal";
 
@@ -52,9 +60,11 @@ const location_x = ref("");
 const location_y = ref("");
 const file = ref(null);
 const swal = useSwal();
+const fileName = ref("");
 
 const handleFileChange = (event) => {
   file.value = event.target.files.length > 0 ? event.target.files[0] : null;
+  fileName.value = file.value ? file.value.name : "";
 };
 
 const showAlert = () => {
@@ -110,18 +120,49 @@ const handleCenterUpdate = (coords) => {
   location_x.value = coords.x;
   location_y.value = coords.y;
 };
+
+const updatePotholeType = (selected) => {
+  switch (selected) {
+    case "포트홀":
+      potholeType.value = "POTHOLE";
+      break;
+    case "도로균열":
+      potholeType.value = "CRACK";
+      break;
+    case "도로마모":
+      potholeType.value = "WORNOUT";
+      break;
+    default:
+      potholeType.value = "";
+  }
+};
+const updateSeverity = (selected) => {
+  switch (selected) {
+    case "심각":
+      severity.value = "3";
+      break;
+    case "주의":
+      severity.value = "2";
+      break;
+    case "양호":
+      severity.value = "1";
+      break;
+    default:
+      severity.value = "";
+  }
+};
 </script>
 
 <style scoped>
 .form-container {
   margin: auto;
-  background-color: rgba(241, 241, 241, 0.641);
+  background-color: #ffffff;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.255);
   border-radius: 15px;
-  height: 85vh;
+  height: 80vh;
   width: 35vw;
   display: grid;
-  grid-template-rows: 14% 73% 13%;
+  grid-template-rows: 14% 74% 12%;
 }
 .main-title {
   display: flex;
@@ -137,17 +178,17 @@ const handleCenterUpdate = (coords) => {
 .form-content {
   height: 100%;
   display: grid;
-  grid-template-rows: 9% 9% 77%;
-  gap: 2.5%;
+  grid-template-rows: 8.5% 8% 73%;
+  gap: 5%;
 }
 .input-div {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 15px;
+  gap: 20px;
 }
 .input-group {
-  display: flex;
-  align-items: center;
+  height: 100%;
+  width: 100%;
 }
 select,
 input {
@@ -157,10 +198,6 @@ input {
   font-size: 1.8vh;
   font-weight: bold;
   color: #939393;
-}
-select {
-  margin-left: auto;
-  padding-left: 20px;
 }
 .input-title {
   font-size: 2vh;
@@ -172,12 +209,13 @@ select {
   justify-content: center;
   align-items: center;
   height: 100%;
-  width: 100%;
+  padding: 0vh 3vw;
 }
 
 .report-btn {
-  height: 50%;
-  width: 70%;
+  height: 52%;
+  width: 100%;
+  margin-bottom: 1vh;
   background-color: #151c62;
   cursor: pointer;
   border-radius: 8px;
@@ -195,5 +233,52 @@ select {
 
 select:focus option[value=""] {
   display: none;
+}
+.file-upload {
+  display: flex;
+}
+input[type="file"] {
+  display: block;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+.form__label--file {
+  width: 20%;
+  height: 100%;
+  background: #9f9f9f;
+  border-radius: 8px;
+  color: #fff;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1.6vh;
+  transition: all 0.5s ease;
+}
+.form__label--file:hover {
+  background: rgb(136, 136, 136);
+}
+.form__span--file {
+  padding: 0 5px 0 10px;
+  margin-left: 10px;
+  display: block;
+  width: 80%;
+  min-height: 30px;
+  border: 2px solid #d6d6d6;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  color: #ababab;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  box-sizing: border-box;
+}
+.form__span--file.file-selected {
+  border-color: #a2a2a2;
+  background-color: #efefef6f;
+  color: #666666;
 }
 </style>
