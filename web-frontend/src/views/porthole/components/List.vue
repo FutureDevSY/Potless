@@ -287,7 +287,6 @@ td {
   padding: 1.532vh;
   font-size: 1.9vh;
   color: #373737;
-  background-color: white;
 }
 
 thead th {
@@ -298,6 +297,10 @@ thead th {
   padding: 1vh 1vh;
   font-size: 1.7vh;
   color: #6c6c6c;
+}
+
+tbody tr {
+  background-color: #ffffff;
 }
 
 tbody tr:hover {
