@@ -4,8 +4,8 @@ import 'package:potless/screens/Works/WorkDetail2.dart';
 import 'package:potless/widgets/UI/ScreenSize.dart';
 
 class WorkBlock extends StatelessWidget {
-  final int potholeId, severity;
-  final double x, y, width;
+  final int potholeId, severity, width;
+  final double x, y;
   final String address, roadName, field, status, dType;
   final DateTime createdAt;
   final List<DamageImage> images;

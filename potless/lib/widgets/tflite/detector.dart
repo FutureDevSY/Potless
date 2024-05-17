@@ -19,7 +19,7 @@ class _Command {
 }
 
 class Detector {
-  static const String _modelPath = 'assets/ai_model/12_300.tflite';
+  static const String _modelPath = 'assets/ai_model/12_v8m_224.tflite';
   static const String _labelPath = 'assets/ai_model/train34.txt';
 
   Detector._(this._isolate, this._interpreter, this._labels);
@@ -103,7 +103,7 @@ class Detector {
 }
 
 class _DetectorServer {
-  int mlModelInputSize = 320;
+  int mlModelInputSize = 224;
   Interpreter? _interpreter;
   List<String>? _labels;
 
@@ -131,7 +131,7 @@ class _DetectorServer {
         _interpreter = Interpreter.fromAddress(command.args?[1] as int);
 
         mlModelInputSize =
-            _interpreter?.getInputTensors().first.shape[1] ?? 320;
+            _interpreter?.getInputTensors().first.shape[1] ?? 224;
         _labels = command.args?[2] as List<String>;
         _sendPort.send(const _Command(_Codes.ready));
       case _Codes.detect:
@@ -151,12 +151,9 @@ class _DetectorServer {
           image = image_lib.copyRotate(image, angle: 90);
         }
 
-        // Perform detection
         final results = analyseImage(image, preConversionTime);
-        // Assuming results include confidence and we only send high confidence detections
-        if (results['conf'].any((double c) => c > 0.75)) {
-          // Using 0.8 as an example threshold
-          Uint8List jpegImage = image_lib.encodeJpg(image, quality: 85);
+        if (results['conf'].any((double c) => c > 0.20)) {
+          Uint8List jpegImage = image_lib.encodeJpg(image, quality: 60);
           _sendPort.send(
             _Command(
               _Codes.result,
@@ -213,7 +210,7 @@ class _DetectorServer {
       final numOfLabels = _labels?.length ?? 0;
       final count = numOfLabels + 4;
       (idx, box, conf) =
-          nms(rawOutput, count, confidenceThreshold: 0.63, iouThreshold: 0.4);
+          nms(rawOutput, count, confidenceThreshold: 0.20, iouThreshold: 0.4);
       if (idx.isNotEmpty) {
         cls = idx.map((e) => _labels![e]).toList();
       }
@@ -223,7 +220,7 @@ class _DetectorServer {
       var totalElapsedTime =
           DateTime.now().millisecondsSinceEpoch - preConversionTime;
 
-      bool hasHighConfidenceDetection = conf.any((double c) => c > 0.75);
+      bool hasHighConfidenceDetection = conf.any((double c) => c > 0.20);
 
       if (hasHighConfidenceDetection) {
         // Convert to JPEG format
