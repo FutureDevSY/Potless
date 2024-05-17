@@ -95,7 +95,7 @@ const doLogin = () => {
         loginSuccess.value = true;
         setTimeout(() => {
           loginSuccessCar.value = true;
-        }, 40);
+        }, 900);
         setTimeout(() => {
           store2.moveMain();
         }, 2250);
@@ -219,7 +219,7 @@ input {
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: #f1f1f1;
+  background-color: #f8f8f8;
 }
 
 .logo {
@@ -283,7 +283,8 @@ input {
   width: 0;
   height: 100%;
   background: #f8f8f8;
-  transition: width 2s ease-in-out, background-color 1s ease-in-out;
+  box-shadow: 0 4px 7px rgba(0, 0, 0, 0.255);
+  transition: width 2.1s ease-in-out, background-color 1s ease-in-out;
   z-index: 2;
 }
 
@@ -295,7 +296,7 @@ input {
   width: 200px;
   height: 200px;
   pointer-events: none;
-  transition: transform 2s ease-in-out;
+  transition: transform 1s ease-in-out;
   z-index: 10;
 }
 
