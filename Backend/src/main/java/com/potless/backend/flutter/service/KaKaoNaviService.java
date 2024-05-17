@@ -155,7 +155,7 @@ public class KaKaoNaviService {
             Point start = coordinates.get(i);
             Point end = coordinates.get(i + 1);
             detailedCoordinates.add(start);
-            detailedCoordinates.addAll(interpolate(start, end, 0.0001)); // 0.1미터 간격으로 세분화
+            detailedCoordinates.addAll(interpolate(start, end, 0.001)); // 0.1미터 간격으로 세분화
         }
         detailedCoordinates.add(coordinates.get(coordinates.size() - 1));
 
