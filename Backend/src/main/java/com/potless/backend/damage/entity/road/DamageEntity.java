@@ -57,7 +57,7 @@ public abstract class DamageEntity extends BaseEntity {
     @JoinColumn(name = "hexagon_id")
     private HexagonEntity hexagonEntity;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, mappedBy = "damageEntity")
+    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, mappedBy = "damageEntity", orphanRemoval = true)
     private List<ImageEntity> imageEntities = new ArrayList<>();
 
     @Column(name = "dtype", insertable = false, updatable = false)
