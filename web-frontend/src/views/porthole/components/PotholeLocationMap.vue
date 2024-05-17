@@ -1,10 +1,23 @@
 <template>
-  <div id="map" class="map"></div>
+  <div>
+    <div id="map" class="map"></div>
+    <button @click="toggleIsCount">
+      {{ isCount ? "심각도 조회" : "중복 신고 조회" }}
+    </button>
+  </div>
 </template>
 
 <script setup>
-import { onMounted, watch, toRefs, nextTick } from "vue";
+import { onMounted, watch, toRefs, nextTick, ref } from "vue";
 import markerImageSrc from "../../../assets/icon/marker.png";
+import markerImageSrc1 from "../../../assets/icon/marker_cautious.png";
+import markerImageSrc2 from "../../../assets/icon/marker_safe.png";
+
+import markerImageSrc3 from "../../../assets/icon/count_danger.png";
+import markerImageSrc4 from "../../../assets/icon/count_cautious.png";
+import markerImageSrc5 from "../../../assets/icon/count_safe.png";
+
+const isCount = ref(false);
 
 const props = defineProps({
   potholeDirx: Number,
@@ -48,33 +61,66 @@ function initializeMap() {
   });
 }
 
-function updateMarkers() {
-  if (!map || !window.kakao || !window.kakao.maps) {
-    console.error("Kakao Maps API is not fully loaded.");
-    return;
-  }
+function toggleIsCount() {
+  isCount.value = !isCount.value;
+  updateMarkers();
+}
 
+function updateMarkerImage(data) {
+  let imageSrc;
+  if (isCount.value) {
+    if (data.count === 0) {
+      imageSrc = markerImageSrc5;
+    } else if (data.count >= 1 && data.count <= 4) {
+      imageSrc = markerImageSrc4;
+    } else if (data.count >= 5) {
+      imageSrc = markerImageSrc3;
+    }
+  } else {
+    switch (data.severity) {
+      case 1:
+        imageSrc = markerImageSrc2;
+        break;
+      case 2:
+        imageSrc = markerImageSrc1;
+        break;
+      case 3:
+        imageSrc = markerImageSrc;
+        break;
+      default:
+        imageSrc = markerImageSrc;
+    }
+  }
+  return new window.kakao.maps.MarkerImage(
+    imageSrc,
+    new window.kakao.maps.Size(40, 40),
+    { offset: new window.kakao.maps.Point(20, 40) }
+  );
+}
+
+function updateMarkers() {
   markers.forEach((marker) => marker.setMap(null));
   markers = [];
 
   if (currentData.value && currentData.value.length) {
-    let avgX = 0,
-      avgY = 0;
+    let avgX = 0;
+    let avgY = 0;
+
     currentData.value.forEach((data) => {
       avgX += data.dirX;
       avgY += data.dirY;
       const markerPosition = new window.kakao.maps.LatLng(data.dirY, data.dirX);
+      const markerImage = updateMarkerImage(data);
+
       const marker = new window.kakao.maps.Marker({
         position: markerPosition,
         map: map,
-        image: new window.kakao.maps.MarkerImage(
-          markerImageSrc,
-          new window.kakao.maps.Size(40, 40),
-          { offset: new window.kakao.maps.Point(20, 40) }
-        ),
+        image: markerImage,
       });
+
       markers.push(marker);
     });
+
     avgX /= currentData.value.length;
     avgY /= currentData.value.length;
     map.setCenter(new window.kakao.maps.LatLng(avgY, avgX));
@@ -86,8 +132,15 @@ watch(currentData, updateMarkers, { deep: true, immediate: true });
 watch(
   [potholeDirx, potholeDiry],
   () => {
-    if (map && potholeDirx.value !== undefined && potholeDiry.value !== undefined) {
-      const newCenterPoint = new window.kakao.maps.LatLng(potholeDirx.value, potholeDiry.value);
+    if (
+      map &&
+      potholeDirx.value !== undefined &&
+      potholeDiry.value !== undefined
+    ) {
+      const newCenterPoint = new window.kakao.maps.LatLng(
+        potholeDirx.value,
+        potholeDiry.value
+      );
       map.setCenter(newCenterPoint);
     }
   },
