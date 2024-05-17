@@ -222,10 +222,12 @@ function generatePdf() {
 }
 
 .report-num {
-  font-size: 2.2vh;
+  font-size: 2.8vh;
   border: 2px solid #373737;
   padding: 0.9vh 5px;
   margin-right: 20px;
+  width: 40px;
+  text-align: center;
 }
 
 .report-info {
