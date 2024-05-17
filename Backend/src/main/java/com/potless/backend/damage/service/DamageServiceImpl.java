@@ -22,6 +22,7 @@ import com.potless.backend.hexagon.entity.HexagonEntity;
 import com.potless.backend.hexagon.repository.HexagonRepository;
 import com.potless.backend.member.entity.MemberEntity;
 import com.potless.backend.member.repository.member.MemberRepository;
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -44,6 +45,7 @@ public class DamageServiceImpl implements IDamageService {
     private final ImageRepository imageRepository;
     private final HexagonRepository hexagonRepository;
     private final MemberRepository memberRepository;
+    private final EntityManager entityManager;  // EntityManager 주입
 
     @Override
     public Page<DamageResponseDTO> getDamages(DamageSearchRequestDTO damageSearchRequestDTO, Pageable pageable) {
@@ -196,24 +198,33 @@ public class DamageServiceImpl implements IDamageService {
     public List<String> setChangeImage(Long damageId, List<String> fileUrls) {
         DamageEntity damageEntity = damageRepository.findById(damageId).orElseThrow(PotholeNotFoundException::new);
 
-        List<String> urlsToDelete = damageEntity.getImageEntities().stream()
-                .map(ImageEntity::getUrl)
-                .filter(url -> !url.equals("https://mine702-amazon-s3.s3.ap-northeast-2.amazonaws.com/Default/default.jpg"))
-                .toList();
+        if (damageEntity.getStatus().equals(Status.작업전)) {
+            List<String> urlsToDelete = damageEntity.getImageEntities().stream()
+                    .map(ImageEntity::getUrl)
+                    .filter(url -> !url.equals("https://mine702-amazon-s3.s3.ap-northeast-2.amazonaws.com/Default/default.jpg"))
+                    .toList();
 
-        imageRepository.deleteAll(damageEntity.getImageEntities());
-        int order = 1;
-        for (String imageUrl : fileUrls) {
-            ImageEntity image = ImageEntity.builder()
-                    .damageEntity(damageEntity)
-                    .url(imageUrl)
-                    .order(order++)
-                    .build();
-            imageRepository.save(image);
+            List<Long> imageIds = damageEntity.getImageEntities().stream()
+                    .map(ImageEntity::getId)
+                    .toList();
+
+            imageRepository.deleteByIds(imageIds);
+
+            int order = 1;
+            for (String imageUrl : fileUrls) {
+                ImageEntity image = ImageEntity.builder()
+                        .damageEntity(damageEntity)
+                        .url(imageUrl)
+                        .order(order++)
+                        .build();
+                imageRepository.save(image);
+            }
+            return urlsToDelete;
+        } else {
+            return null;
         }
-
-        return urlsToDelete;
     }
+
 
     @Override
     @Transactional
