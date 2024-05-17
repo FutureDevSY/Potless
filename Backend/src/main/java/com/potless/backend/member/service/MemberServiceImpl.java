@@ -18,12 +18,14 @@ import com.potless.backend.member.entity.MemberEntity;
 import com.potless.backend.member.repository.member.MemberRepository;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Log4j2
 @RequiredArgsConstructor
 public class MemberServiceImpl implements MemberService {
 
@@ -49,9 +51,9 @@ public class MemberServiceImpl implements MemberService {
                         }
                 );
 
-//        AreaEntity area = areaRepository.findById(requestDto.getRegion())
-//                .orElseThrow(AreaNotFoundException::new);
-        MemberEntity newMember = MemberEntity.of(requestDto, passwordEncoder.encode(requestDto.getPassword()));
+        AreaEntity area = areaRepository.findById(6L).orElseThrow(NullPointerException::new);
+        log.info("areaId = {}", area.getId());
+        MemberEntity newMember = MemberEntity.of(requestDto, passwordEncoder.encode(requestDto.getPassword()), area);
         memberRepository.save(newMember);
 
         return newMember.getId();

@@ -39,9 +39,8 @@
           <button
             class="pdf-button"
             @click="generatePdf"
-            v-if="taskData && taskData.length"
-          >
-            PDF로 변환하기
+            v-if="taskData && taskData.length">
+          PDF로 변환하기
           </button>
           <button @click="closePdfModal" class="pdf-button">닫기</button>
           <div class="loading-container" v-if="showLoading">

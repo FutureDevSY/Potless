@@ -8,62 +8,88 @@ import com.potless.backend.damage.dto.service.response.ReDetectionResponseDTO;
 import com.potless.backend.damage.dto.service.response.kakao.Address;
 import com.potless.backend.damage.dto.service.response.kakao.RoadAddress;
 import com.potless.backend.damage.entity.enums.Status;
+import com.potless.backend.damage.entity.road.DamageEntity;
 import com.potless.backend.damage.repository.DamageRepository;
 import com.potless.backend.global.exception.pothole.DuplPotholeException;
 import com.potless.backend.global.exception.pothole.PotholeNotFoundException;
+import com.potless.backend.hexagon.repository.HexagonRepository;
 import com.potless.backend.hexagon.service.H3Service;
-import com.potless.backend.hexagon.service.HexagonService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Log4j2
 @Service
 @EnableAsync
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class AsyncService {
 
     private final IDamageService iDamageService;
     private final KakaoService kakaoService;
     private final AwsService awsService;
     private final ReDetectionApiService detectionApiService;
-    private final DamageRepository damageRepository;
     private final H3Service h3Service;
+    private final HexagonRepository hexagonRepository;
+    private final DamageRepository damageRepository;
+    private final FileService fileService;
 
     @Async
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRES_NEW)
-    public void setDamageAsyncMethod(DamageSetRequestDTO damageSetRequestDTO, File imageFile) throws IOException {
+    @Transactional
+    public void setDamageAsyncMethod(DamageSetRequestDTO damageSetRequestDTO, File imageFile, String hexagonIndex) throws IOException {
         try {
-            int res = 13;
-            String hexagonIndex = h3Service.getH3Index(damageSetRequestDTO.getY(), damageSetRequestDTO.getX(), res);
-            if (damageRepository.findDamageByHexagonIndexAndDtype(hexagonIndex, damageSetRequestDTO.getDtype())) {
-                throw new DuplPotholeException();
-            }
+//            int res = 13;
+//            String hexagonIndex = h3Service.getH3Index(damageSetRequestDTO.getY(), damageSetRequestDTO.getX(), res);
+//
+//            hexagonRepository.findByHexagonIndex(hexagonIndex);
+//
+//            Optional<DamageEntity> optionalDamageEntity = damageRepository.findDamageByHexagonIndexAndDtype(hexagonIndex, damageSetRequestDTO.getDtype());
+//
+//            if (optionalDamageEntity.isPresent()) {
+//                DamageEntity damageEntity = optionalDamageEntity.get();
+//                if (!Objects.equals(damageEntity.getDirX(), damageSetRequestDTO.getX()) && !Objects.equals(damageEntity.getDirY(), damageSetRequestDTO.getY())) {
+//                    damageEntity.addCount();
+//                    damageRepository.save(damageEntity);
+//                }
+//                log.error("Duplicate pothole detected: {}", damageSetRequestDTO);
+//                throw new DuplPotholeException();
+//            }
+
             //fastApi 2차 탐지 요청 수행 및 결과 반환
             ReDetectionRequestDTO detectionRequestDTO = new ReDetectionRequestDTO(imageFile);
+
             ReDetectionResponseDTO detectionResult = detectionApiService.reDetectionResponse(detectionRequestDTO);
 
-            damageSetRequestDTO.setSeverity(detectionResult.getSeverity());
-            damageSetRequestDTO.setWidth((double)detectionResult.getWidth());
-
-            String fileName = "AfterVerification/BeforeWork/" + System.currentTimeMillis() + "_" + imageFile.getName();
+            // 1차 탐지 후 BeforeVerification/ 에 사진 담기
+            String fileName = "BeforeVerification/" + System.currentTimeMillis() + "_" + imageFile.getName();
             Map<String, String> fileUrlAndKey = awsService.uploadFileToS3(imageFile, fileName);
+            List<String> fileUrls = new ArrayList<>(fileUrlAndKey.values());
+            log.info("fileName = {}", fileName);
+            log.info("fileUrlAndKey = {}", fileUrlAndKey);
+            for (String fileUrl : fileUrls) {
+                log.info("fileUrl = {}", fileUrl);
+            }
 
-            List<String> fileUrls = new ArrayList<>(fileUrlAndKey.values()); // URL 리스트 추출
+            damageSetRequestDTO.setSeverity(detectionResult.getSeverity());
+            damageSetRequestDTO.setWidth((double) detectionResult.getWidth());
 
-            damageSetRequestDTO.setImages(fileUrls);
+            // 2차 탐지 성공하면 AfterVerification/BeforeWork/ 파일로 이동
+            List<String> newFileUrls = new ArrayList<>();
+            for (String fileUrl : fileUrls) {
+                String destinationKey = "AfterVerification/BeforeWork/" + new File(fileUrl).getName();
+                String newUrl = awsService.moveFileToVerified(fileName, destinationKey);
+                newFileUrls.add(newUrl);
+                log.info("fileUrl = {}", fileUrl);
+                log.info("newUrl = {}", newUrl);
+            }
+
+            damageSetRequestDTO.setImages(newFileUrls);
 
             // 비동기로 처리하고 바로 응답 반환 검증
             kakaoService.fetchKakaoData(damageSetRequestDTO.getX(), damageSetRequestDTO.getY())
@@ -103,15 +129,32 @@ public class AsyncService {
 
                             iDamageService.setDamage(serviceDTO);
                         } catch (Exception e) {
-                            for (String s : fileUrls)
+                            for (String s : newFileUrls)
                                 awsService.deleteFile(s);
                             throw new PotholeNotFoundException();
                         }
                     });
 
         } catch (IOException e) {
+            fileService.deleteFile(imageFile);
             throw new RuntimeException(e);
         }
+
+    }
+
+    private void duplCheck(String hexagonIndex, Double x, Double y, String dtype) {
+
+        Optional<DamageEntity> optionalDamageEntity = damageRepository.findDamageByHexagonIndexAndDtype(hexagonIndex, dtype);
+
+        if (optionalDamageEntity.isPresent()) {
+            DamageEntity damageEntity = optionalDamageEntity.get();
+            if (!Objects.equals(damageEntity.getDirX(), x) && !Objects.equals(damageEntity.getDirY(), y)) {
+                damageEntity.addCount();
+                damageRepository.save(damageEntity);
+            }
+            throw new DuplPotholeException();
+        }
+
 
     }
 }

@@ -28,12 +28,12 @@ public class FileService {
         if (!multipartFile.isEmpty()) {
             String originalFileName = multipartFile.getOriginalFilename();
             File file = new File(uploadDir, originalFileName);
-            multipartFile.transferTo(file);  // 파일 저장
+            multipartFile.transferTo(file);
             return file;  // 저장된 파일 객체 반환
         } else {
             log.info("multipartFile이 비어있습니다. 저장 실패");
         }
-
+//        C:\Users\SSAFY\Desktop\GERRIT-NEW\S10P31B106\Backend\file
         return null;
     }
 

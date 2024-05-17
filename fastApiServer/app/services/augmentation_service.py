@@ -51,14 +51,18 @@ async def color_inverse(image_data: UploadFile):
     return await process_images(gray)
 
 
-async def process_images(image_data):
 
-#    이미지를 컬러로 읽어옴
-    image_array = np.frombuffer(image_data, np.uint8)  
-    color = cv2.imdecode(image_array, cv2.IMREAD_COLOR)
+async def process_images(image_path):
+
+    color = cv2.imread(image_path, cv2.IMREAD_COLOR)
+    # if(test == 2):
+    #     color = 255 - color
+    color = 255 - color
     if color is None:
-        return image_data # Skip if image is not loaded properly
+        logging.info("이미지 전처리 실패 - 이미지 입력값이 올바르지 않습니다.")
+        return None
     
+    # 이미지를 그레이스케일로 변환
     gray = cv2.cvtColor(color, cv2.COLOR_BGR2GRAY)
 
     height, width, channels = color.shape
@@ -93,14 +97,23 @@ async def process_images(image_data):
     # Composing final image
     compose = np.dstack([superpixel[:, :, 1], grayscale, sobel])
 
-    # processed_image_path = await process_images(compose)
-    # return processed_image_path
-    # processed_image_path = await process_images(compose)
-    processed_image = await process_images(compose)
-    cv2.imwrite('processed_image.jpg', processed_image)
-    return 'processed_image.jpg'
+    # # 이미지 처리 후 저장
+    # processed_image_path = 'processed_image.jpg'
+    # cv2.imwrite(processed_image_path, compose.astype(np.uint8))
+     # 이미지 저장
+    # file_name = image_path + "_" + test
+    file_name = os.path.basename(image_path)
+    # file_name = f"{test}_{file_name}"
+    folder_name = 'augmentation'
+    if not os.path.exists(folder_name):
+        os.makedirs(folder_name)
 
-    # return compose.astype(np.uint8)
+    processed_image_path = os.path.join(folder_name, f"{file_name}")
+    cv2.imwrite(processed_image_path, compose.astype(np.uint8))
+
+    return processed_image_path
+
+
 
 # async def process_images(image):
 #     # 가정: 이미지 처리 후 파일 시스템에 저장

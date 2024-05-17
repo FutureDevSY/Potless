@@ -7,11 +7,14 @@ import com.potless.backend.damage.dto.controller.response.DamageResponseDTO;
 import com.potless.backend.damage.dto.service.request.AreaDamageCountForMonthServiceRequestDTO;
 import com.potless.backend.damage.dto.service.response.*;
 import com.potless.backend.damage.entity.enums.Status;
+import com.potless.backend.damage.entity.road.DamageEntity;
+import com.potless.backend.flutter.dto.service.response.DamageAppResponseDTO;
 import com.potless.backend.project.entity.TaskEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface DamageRepositoryCustom {
     Page<DamageResponseDTO> findDamagesWithLatestTransaction(DamageSearchRequestDTO damageSearchRequestDTO, Pageable pageable);
@@ -28,7 +31,10 @@ public interface DamageRepositoryCustom {
 
     AreaForMonthListResponseDTO getAreaDamageCountForMonth(AreaDamageCountForMonthServiceRequestDTO areaDamageCountForMonthServiceRequestDTO);
 
-    boolean findDamageByHexagonIndexAndDtype(String hexagonIndex, String dtype);
+    Optional<DamageEntity> findDamageByHexagonIndexAndDtype(String hexagonIndex, String dtype);
 
     List<TaskEntity> findTasksByProjectIdAndDamageStatus(Long projectId, Status status);
+
+    List<DamageAppResponseDTO> findByHexagonIndexIn(List<String> hexagonIndexes);
+
 }
