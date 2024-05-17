@@ -287,6 +287,7 @@ td {
   padding: 1.532vh;
   font-size: 1.9vh;
   color: #373737;
+  background-color: white;
 }
 
 thead th {
