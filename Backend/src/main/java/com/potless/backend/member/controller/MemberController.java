@@ -1,6 +1,5 @@
 package com.potless.backend.member.controller;
 
-import com.potless.backend.global.annotation.AccessToken;
 import com.potless.backend.global.format.code.ApiResponse;
 import com.potless.backend.global.format.response.ResponseCode;
 import com.potless.backend.global.jwt.service.TokenService;
@@ -8,7 +7,6 @@ import com.potless.backend.member.dto.*;
 import com.potless.backend.member.service.MailService;
 import com.potless.backend.member.service.MemberService;
 import com.potless.backend.project.dto.response.GetTaskResponseDto;
-import com.potless.backend.project.dto.response.ProjectDetailResponseDto;
 import com.potless.backend.project.service.TaskService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -35,8 +33,8 @@ public class MemberController {
     private final TaskService taskService;
 
     /* 일반 회원가입 */
-    @Operation(summary = "회원가입", description = "일반 사용자 회원가입", responses = { @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "지역별 작업자 목록 조회 요청 성공"
-            ,content = @Content(schema = @Schema(implementation = GetWorkerResponseDto.class)))})
+    @Operation(summary = "회원가입", description = "일반 사용자 회원가입", responses = {@io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "지역별 작업자 목록 조회 요청 성공"
+            , content = @Content(schema = @Schema(implementation = GetWorkerResponseDto.class)))})
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@Valid @RequestBody SignupRequestDto requestDto,
                                     BindingResult bindingResult) {
@@ -63,7 +61,6 @@ public class MemberController {
         return response.success(ResponseCode.EMAIL_VERIFICATION_SENT.getMessage());
     }
 
-
     /* 이메일 인증코드 인증처리 */
     @PostMapping("/email/validation")
     @Operation(summary = "이메일 확인", description = "이메일 인증 요청 확인")
@@ -82,7 +79,7 @@ public class MemberController {
     /* 로그인 요청 web/app 구별, refresh token 만료기간 차이*/
     @PostMapping("/login-web")
     @Operation(summary = "웹 로그인", description = "웹 로그인 요청",
-            responses = { @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "지역별 팀 목록 조회 요청 성공"
+            responses = {@io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "지역별 팀 목록 조회 요청 성공"
                     , content = @Content(schema = @Schema(implementation = LoginResponseDto.class)))})
     public ResponseEntity<?> loginWeb(@Valid @RequestBody LoginRequestDto requestDto,
                                       BindingResult bindingResult,
@@ -97,7 +94,7 @@ public class MemberController {
 
     @PostMapping("/login-app")
     @Operation(summary = "앱 로그인", description = "앱 로그인 요청",
-            responses = { @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "지역별 팀 목록 조회 요청 성공"
+            responses = {@io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "지역별 팀 목록 조회 요청 성공"
                     , content = @Content(schema = @Schema(implementation = LoginResponseDto.class)))})
     public ResponseEntity<?> loginApp(@Valid @RequestBody LoginRequestDto requestDto,
                                       BindingResult bindingResult,
@@ -142,11 +139,4 @@ public class MemberController {
     public ResponseEntity<?> getTaskList(Authentication authentication) {
         return response.success(ResponseCode.TASK_FETCHED, taskService.getTaskList(authentication));
     }
-
-//    @PutMapping
-//    @Operation(summary = "토큰 재발급", description = "토큰 재발급 요청")
-//    public ResponseEntity<?> token(@AccessToken @RequestBody String accessToken) {
-//        return response.success(tokenService.reIssueAccessToken(accessToken, 1));
-//    }
-
 }

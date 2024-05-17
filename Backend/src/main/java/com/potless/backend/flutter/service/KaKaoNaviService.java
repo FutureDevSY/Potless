@@ -5,7 +5,7 @@ import com.potless.backend.damage.repository.DamageRepository;
 import com.potless.backend.flutter.dto.service.response.DamageAppResponseDTO;
 import com.potless.backend.flutter.dto.service.response.KakaoResponseDTO;
 import com.potless.backend.flutter.dto.service.response.Point;
-import com.potless.backend.hexagon.service.H3Service;
+import com.potless.backend.hexagon.service.HexagonService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,7 +32,7 @@ public class KaKaoNaviService {
 
     private final RestTemplate restTemplate;
     private final DamageRepository damageRepository;
-    private final H3Service h3Service;
+    private final HexagonService hexagonService;
 
     @Value("${kakao.api-service-key}")
     private String KAKAO_API_KEY;
@@ -130,7 +130,7 @@ public class KaKaoNaviService {
     @Async
     public CompletableFuture<List<DamageAppResponseDTO>> checkCoordinates(List<Point> coordinates) {
         List<String> hexagonIndexes = coordinates.stream()
-                .map(point -> h3Service.getH3Index(point.getY(), point.getX(), 13))
+                .map(point -> hexagonService.getH3Index(point.getY(), point.getX(), 13))
                 .distinct()
                 .collect(Collectors.toList());
         return CompletableFuture.supplyAsync(() -> damageRepository.findByHexagonIndexIn(hexagonIndexes));

@@ -4,7 +4,6 @@ package com.potless.backend.member.service;
 import com.potless.backend.damage.entity.area.AreaEntity;
 import com.potless.backend.damage.repository.AreaRepository;
 import com.potless.backend.global.exception.member.*;
-import com.potless.backend.global.exception.project.AreaNotFoundException;
 import com.potless.backend.global.jwt.TokenInfo;
 import com.potless.backend.global.jwt.provider.TokenProvider;
 import com.potless.backend.global.jwt.repository.RefreshTokenRepository;
@@ -18,14 +17,12 @@ import com.potless.backend.member.entity.MemberEntity;
 import com.potless.backend.member.repository.member.MemberRepository;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Log4j2
 @RequiredArgsConstructor
 public class MemberServiceImpl implements MemberService {
 
@@ -52,7 +49,6 @@ public class MemberServiceImpl implements MemberService {
                 );
 
         AreaEntity area = areaRepository.findById(6L).orElseThrow(NullPointerException::new);
-        log.info("areaId = {}", area.getId());
         MemberEntity newMember = MemberEntity.of(requestDto, passwordEncoder.encode(requestDto.getPassword()), area);
         memberRepository.save(newMember);
 
@@ -115,8 +111,6 @@ public class MemberServiceImpl implements MemberService {
 
         return tokenInfo.getAccessToken();
     }
-
-    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     public MemberEntity findMember(String email) {
         return memberRepository.searchByEmail(email).orElseThrow(MemberNotFoundException::new);

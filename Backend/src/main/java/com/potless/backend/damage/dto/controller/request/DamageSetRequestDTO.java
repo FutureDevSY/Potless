@@ -1,6 +1,5 @@
 package com.potless.backend.damage.dto.controller.request;
 
-import com.potless.backend.member.entity.MemberEntity;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -9,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-@ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class DamageSetRequestDTO {
 
