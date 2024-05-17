@@ -60,8 +60,7 @@ public class SecurityConfig {
                             "/swagger-ui/**",
                             "/swagger-config/**",
                             "/swagger-resources/**",
-                            "/api/damage/statistic/**",
-                            "/api/flutter/**"
+                            "/api/damage/statistic/**"
                     ).permitAll();
                     authorize.requestMatchers(HttpMethod.OPTIONS, "/api/**").permitAll();
                     authorize.anyRequest().authenticated();
