@@ -298,8 +298,14 @@ public class DamageRepositoryCustomImpl implements DamageRepositoryCustom {
                                 .when(damage.status.eq(Status.작업완료))
                                 .then(1).otherwise(0).sum().as("countDamageDone"),
                         new CaseBuilder()
+                                .when(damage.severity.eq(1))
+                                .then(1).otherwise(0).sum().as("severityOne"),
+                        new CaseBuilder()
+                                .when(damage.severity.eq(2))
+                                .then(1).otherwise(0).sum().as("severityTwo"),
+                        new CaseBuilder()
                                 .when(damage.severity.eq(3))
-                                .then(1).otherwise(0).sum().as("severityCount") // 심각도 3 조건 추가
+                                .then(1).otherwise(0).sum().as("severityThree")
                 )
                 .from(location)
                 .leftJoin(location.damageEntities, damage)
@@ -314,7 +320,9 @@ public class DamageRepositoryCustomImpl implements DamageRepositoryCustom {
                         Optional.ofNullable(tuple.get(Expressions.numberPath(Integer.class, "countDamageBefore"))).orElse(0).longValue(),
                         Optional.ofNullable(tuple.get(Expressions.numberPath(Integer.class, "countDamageDuring"))).orElse(0).longValue(),
                         Optional.ofNullable(tuple.get(Expressions.numberPath(Integer.class, "countDamageDone"))).orElse(0).longValue(),
-                        Optional.ofNullable(tuple.get(Expressions.numberPath(Integer.class, "severityCount"))).orElse(0).longValue()
+                        Optional.ofNullable(tuple.get(Expressions.numberPath(Integer.class, "severityOne"))).orElse(0).longValue(),
+                        Optional.ofNullable(tuple.get(Expressions.numberPath(Integer.class, "severityTwo"))).orElse(0).longValue(),
+                        Optional.ofNullable(tuple.get(Expressions.numberPath(Integer.class, "severityThree"))).orElse(0).longValue()
                 ))
                 .collect(Collectors.toList());
 
