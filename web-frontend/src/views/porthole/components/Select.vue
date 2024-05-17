@@ -69,6 +69,7 @@ onUnmounted(() => {
   cursor: pointer;
   justify-content: space-between;
   margin-right: 8px;
+  z-index: 5;
 }
 
 .dropdown-display {

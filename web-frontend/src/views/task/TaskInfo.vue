@@ -211,17 +211,17 @@ onMounted(() => {
 }
 
 .search-button {
-  padding: 10px 15px;
-  background-color: #151c62;
+  padding: 0.9vh 20px;
+  background-color: #6d6d6d;
   border: none;
   color: white;
-  font-size: 16px;
+  font-size: 1.7vh;
   border-radius: 4px;
   cursor: pointer;
 }
 
 .search-button:hover {
-  background-color: #0e1241;
+  background-color: #8c8c8c;
 }
 
 table {
@@ -230,6 +230,7 @@ table {
   border-collapse: collapse;
   table-layout: fixed;
   color: #373737;
+  border: 2px solid #dfdfdf;
 }
 
 th,
@@ -248,7 +249,7 @@ th {
 }
 
 td {
-  padding: 1.5vh;
+  padding: 1vh;
   font-size: 1.8vh;
   color: #373737;
 }
@@ -257,8 +258,12 @@ thead {
   background-color: #f9f9f9;
 }
 
+tbody tr {
+  background-color: #ffffff;
+}
+
 tbody tr:hover {
-  background-color: #dddddd44;
+  background-color: #ececec98;
   cursor: pointer;
 }
 

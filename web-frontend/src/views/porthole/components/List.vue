@@ -10,7 +10,9 @@
           <th class="city-column">행정동</th>
           <th class="address-column">지번 주소</th>
           <th class="work-column">
-            <button class="add-button" @click="openModal('add')">추가</button>
+            <button class="add-button" :disabled="!hasSelected" @click="openModal('add')">
+              추가
+            </button>
             <button
               class="add-button delete-btn"
               :disabled="!hasSelected"
@@ -213,7 +215,6 @@ const updateMapLocation = (dirX, dirY) => {
   border: 2px solid #ccc;
   background: white;
   display: inline-block;
-  z-index: -2;
   position: relative;
 }
 
@@ -223,13 +224,13 @@ const updateMapLocation = (dirX, dirY) => {
 }
 
 .checkmark {
-  width: 2.2vh;
+  width: 1.8vh;
   height: 1vh;
-  z-index: -1;
+  z-index: 1;
   position: relative;
   border-bottom: 4px solid #151c62;
   border-left: 4px solid #151c62;
-  transform: translateX(9px) translateY(8px) rotate(-45deg);
+  transform: translateX(9px) translateY(6px) rotate(-50deg);
   transform-origin: left bottom;
 }
 
@@ -290,13 +291,12 @@ td {
 }
 
 thead th {
-  position: sticky;
   top: 0;
   background-color: #d3d5ed;
-  z-index: 0;
   padding: 1vh 1vh;
   font-size: 1.7vh;
   color: #6c6c6c;
+  /* z-index: 0; */
 }
 
 tbody tr {
@@ -388,6 +388,7 @@ tbody tr:hover {
   color: #4f58b5;
   border: 1px solid #4f58b5;
   transition: background-color 0.4s;
+  /* z-index: -3; */
 }
 
 .add-button:hover {
