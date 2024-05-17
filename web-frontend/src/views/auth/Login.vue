@@ -224,13 +224,13 @@ input {
 }
 
 .logo {
-  margin-top: 7vh;
+  margin-top: 8vh;
   height: 9vh;
 }
 
 .slogan {
   width: 65%;
-  margin: 12vh 0;
+  margin: 7vh 0;
   position: relative;
 }
 .slogan-left {

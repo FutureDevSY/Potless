@@ -61,15 +61,11 @@ function setCurrentPage(page) {
 }
 
 const isPrevGroupDisabled = computed(() => currentPage.value <= visiblePages);
-const isNextGroupDisabled = computed(
-  () => currentPage.value > totalPages - visiblePages
-);
+const isNextGroupDisabled = computed(() => currentPage.value > totalPages - visiblePages);
 
 watch(currentPage, (newValue) => {
   if (!pageNumbers.value.includes(newValue)) {
-    setCurrentPage(
-      Math.floor((newValue - 1) / visiblePages) * visiblePages + 1
-    );
+    setCurrentPage(Math.floor((newValue - 1) / visiblePages) * visiblePages + 1);
   }
 });
 </script>
@@ -87,7 +83,7 @@ watch(currentPage, (newValue) => {
   padding: 1vh 0.9vw;
   margin: 0 4px;
   text-decoration: none;
-  border: 1px solid #ddd;
+  border: 1px solid #cecece;
   cursor: pointer;
   transition: background-color 0.3s, color 0.3s;
 }
@@ -97,7 +93,7 @@ watch(currentPage, (newValue) => {
 }
 
 .page-item.active {
-  background-color: #bbbbbb;
+  background-color: #959595;
   color: white;
   border-color: #bbbbbb;
 }

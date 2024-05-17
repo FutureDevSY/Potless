@@ -3,32 +3,32 @@
     <div class="main-title">도로 파손 수동 신고</div>
     <div class="inputs">
       <form @submit.prevent="submitForm" class="form-content">
-        <div class="input-group">
-          <div class="input-title">위험물의 종류를 입력해 주세요 :</div>
-          <select id="potholeType" v-model="potholeType" required>
-            <option disabled value="">타입</option>
-            <option value="POTHOLE">포트홀</option>
-            <option value="CRACK">도로균열</option>
-            <option value="WORNOUT">도로마모</option>
-          </select>
-        </div>
-        <div class="input-group">
-          <div class="input-title">도로 파손의 심각도를 선택해 주세요 :</div>
-          <select id="severity" v-model="severity" required>
-            <option disabled value="">심각도</option>
-            <option value="3">심각</option>
-            <option value="2">주의</option>
-            <option value="1">양호</option>
-          </select>
+        <div class="input-div">
+          <div class="input-group">
+            <select id="potholeType" v-model="potholeType" required>
+              <option disabled value="">위험물 종류</option>
+              <option value="POTHOLE">포트홀</option>
+              <option value="CRACK">도로균열</option>
+              <option value="WORNOUT">도로마모</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <select id="severity" v-model="severity" required>
+              <option disabled value="">도로파손 심각도</option>
+              <option value="3">심각</option>
+              <option value="2">주의</option>
+              <option value="1">양호</option>
+            </select>
+          </div>
         </div>
         <div class="file-upload">
           <input type="file" @change="handleFileChange" accept="image/*" />
         </div>
-        <SearchMap @updateCenter="handleCenterUpdate" />
-        <div class="button-div">
-          <button class="report-btn" type="submit">신고하기</button>
-        </div>
+        <!-- <SearchMap @updateCenter="handleCenterUpdate" /> -->
       </form>
+    </div>
+    <div class="button-div">
+      <button class="report-btn" type="submit">신고하기</button>
     </div>
   </div>
 </template>
@@ -39,6 +39,7 @@ import { postPotholeAdd } from "../../api/pothole/pothole";
 import { useAuthStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
 import { useMoveStore } from "@/stores/move";
+import Select from "./components/Select.vue";
 import SearchMap from "./components/SearchMap.vue";
 import { useSwal } from "../../composables/useSwal";
 
@@ -118,20 +119,31 @@ const handleCenterUpdate = (coords) => {
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.255);
   border-radius: 15px;
   height: 85vh;
-  width: 38vw;
+  width: 35vw;
   display: grid;
-  grid-template-rows: 15% 70% 15%;
+  grid-template-rows: 14% 73% 13%;
 }
 .main-title {
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 3.5vh;
+  font-size: 3.4vh;
   font-weight: bold;
   color: #373737;
 }
 .inputs {
-  padding: 0vh 2vw;
+  padding: 0vh 3vw;
+}
+.form-content {
+  height: 100%;
+  display: grid;
+  grid-template-rows: 9% 9% 77%;
+  gap: 2.5%;
+}
+.input-div {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
 }
 .input-group {
   display: flex;
@@ -139,11 +151,12 @@ const handleCenterUpdate = (coords) => {
 }
 select,
 input {
-  margin: 10px;
-  width: 150px;
-  height: 4.5vh;
+  width: 100%;
+  height: 100%;
   border-radius: 5px;
   font-size: 1.8vh;
+  font-weight: bold;
+  color: #939393;
 }
 select {
   margin-left: auto;
@@ -157,12 +170,15 @@ select {
 .button-div {
   display: flex;
   justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
 }
 
 .report-btn {
-  background-color: #151c62;
-  width: 80%;
   height: 50%;
+  width: 70%;
+  background-color: #151c62;
   cursor: pointer;
   border-radius: 8px;
   font-size: 2vh;
@@ -171,10 +187,13 @@ select {
   color: rgb(255, 255, 255);
   font-weight: bold;
   transition: all 0.3s;
-  margin-top: 30px;
 }
 
 .report-btn:hover {
   background-color: #0e1241;
+}
+
+select:focus option[value=""] {
+  display: none;
 }
 </style>
