@@ -42,6 +42,8 @@ public interface DamageRepository extends JpaRepository<DamageEntity, Long>, Dam
                                    @Param("createdDateTime") LocalDateTime createdDateTime,
                                    @Param("modifiedDateTime") LocalDateTime modifiedDateTime);
 
-    DamageEntity findTopByHexagonEntityOrderByCreatedDateTimeDesc(HexagonEntity hexagonEntity);
+    DamageEntity findTopByHexagonEntityAndDtypeOrderByCreatedDateTimeDesc(@Param("hexagonEntity") HexagonEntity hexagonEntity,
+                                                                          @Param("dtype") String dtype);
+
 
 }

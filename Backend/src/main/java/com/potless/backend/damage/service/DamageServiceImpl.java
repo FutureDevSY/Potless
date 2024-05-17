@@ -264,7 +264,7 @@ public class DamageServiceImpl implements IDamageService {
                 now
         );
 
-        DamageEntity damageEntity = damageRepository.findTopByHexagonEntityOrderByCreatedDateTimeDesc(hexagonEntity);
+        DamageEntity damageEntity = damageRepository.findTopByHexagonEntityAndDtypeOrderByCreatedDateTimeDesc(hexagonEntity, serviceDTO.getDtype());
 
         if (damageEntity.getImageEntities().isEmpty()) {
             int order = 1;
