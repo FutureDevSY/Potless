@@ -19,11 +19,6 @@ spring:
         dialect: org.hibernate.dialect.MySQL8Dialect
 
 ---
-spring:
-  servlet:
-    multipart:
-      max-file-size: 5MB
-      max-request-size: 10MB
 
 cors:
   allowed:
@@ -31,3 +26,4 @@ cors:
 
 server:
   port: 7080
+
