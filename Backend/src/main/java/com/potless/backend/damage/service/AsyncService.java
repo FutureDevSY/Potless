@@ -8,12 +8,8 @@ import com.potless.backend.damage.dto.service.response.ReDetectionResponseDTO;
 import com.potless.backend.damage.dto.service.response.kakao.Address;
 import com.potless.backend.damage.dto.service.response.kakao.RoadAddress;
 import com.potless.backend.damage.entity.enums.Status;
-import com.potless.backend.damage.repository.DamageRepository;
 import com.potless.backend.global.exception.pothole.PotholeNotFoundException;
-import com.potless.backend.hexagon.repository.HexagonRepository;
-import com.potless.backend.hexagon.service.H3Service;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Service;
@@ -24,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-@Log4j2
 @Service
 @EnableAsync
 @RequiredArgsConstructor
@@ -34,9 +29,6 @@ public class AsyncService {
     private final KakaoService kakaoService;
     private final AwsService awsService;
     private final ReDetectionApiService detectionApiService;
-    private final H3Service h3Service;
-    private final HexagonRepository hexagonRepository;
-    private final DamageRepository damageRepository;
     private final FileService fileService;
 
     @Async

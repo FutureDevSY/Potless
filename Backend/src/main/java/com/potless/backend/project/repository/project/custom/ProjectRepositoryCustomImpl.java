@@ -6,7 +6,6 @@ import com.potless.backend.damage.entity.enums.Status;
 import com.potless.backend.damage.entity.road.QDamageEntity;
 import com.potless.backend.damage.entity.road.QImageEntity;
 import com.potless.backend.member.entity.QTeamEntity;
-import com.potless.backend.member.entity.TeamEntity;
 import com.potless.backend.project.dto.request.ProjectListRequestDto;
 import com.potless.backend.project.dto.response.*;
 import com.potless.backend.project.entity.ProjectEntity;
@@ -195,9 +194,6 @@ public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
 
         return responseDtoList;
     }
-
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     //매니저
     private BooleanExpression managerIdEquals(QProjectEntity project, Long managerId) {

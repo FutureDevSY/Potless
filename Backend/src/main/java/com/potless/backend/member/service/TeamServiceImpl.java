@@ -55,9 +55,6 @@ public class TeamServiceImpl implements TeamService {
         TeamEntity team = teamRepository.findById(teamAddRequestDto.getTeamId())
                 .orElseThrow(TeamNotFoundException::new);
 
-//        ProjectEntity saveProject = project.builder()
-//                .teamEntity(team)
-//                .build();
         project.setTeam(team);
 
         return project.getId();
@@ -240,8 +237,6 @@ public class TeamServiceImpl implements TeamService {
 
         return teamId;
     }
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // 팀 삭제 후 중복된 memberId를 가진 팀이 없는 작업자가 생겼다면 하나만 남도록 확인
     public void duplicatedWorkerCheck() {

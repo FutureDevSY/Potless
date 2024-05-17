@@ -99,8 +99,8 @@ public class MailService {
         return "<html>" +
                 "<body>" +
                 "<div style='font-family: Arial, sans-serif; text-align: center; color: #333;'>" +
-                "<h2>MyBrary: 마이브러리에 오신 것을 진심으로 환영합니다!</h2>" +
-                "<p>저희 마이브러리에 가입해 주셔서 감사드립니다. 여러분의 참여가 저희 서비스를 더욱 풍부하게 만들어 줄 것입니다:) </p>" +
+                "<h2>MyBrary: 포트리스 오신 것을 진심으로 환영합니다!</h2>" +
+                "<p>저희 포트리스에 가입해 주셔서 감사드립니다. 여러분의 참여가 저희 서비스를 더욱 풍부하게 만들어 줄 것입니다:) </p>" +
                 "<br>" +
                 "<p>이메일 인증을 위해 아래 인증 번호를 사용해 주세요. <strong style='color: red;'>인증 번호의 유효 시간은 5분입니다.</strong> 5분 이내에 회원가입을 완료해 주십시오:</p>" +
                 "<div style='font-size: 18px; margin: 20px; padding: 10px; background-color: #f2f2f2; border: 1px solid #e0e0e0; display: inline-block;'>"
