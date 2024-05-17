@@ -28,7 +28,6 @@ const closeModal = () => {
 };
 
 onMounted(() => {
-  console.log(props.wayPoint);
   loadKakaoMapsAPI()
     .then(() => {
       drawMap();
@@ -99,12 +98,17 @@ function drawMap() {
     const marker = new kakao.maps.Marker({
       position: markerPosition,
       map: map,
+      image: new window.kakao.maps.MarkerImage(
+        markerImageSrc,
+        new window.kakao.maps.Size(40, 40),
+        { offset: new window.kakao.maps.Point(20, 40) }
+      ),
     });
 
-    bounds.extend(markerPosition); // 경계 확장
+    bounds.extend(markerPosition);
   });
 
-  map.setBounds(bounds); // 모든 경로 및 마커를 포함하도록 지도 범위 조정
+  map.setBounds(bounds);
 }
 </script>
 

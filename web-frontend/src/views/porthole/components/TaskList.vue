@@ -87,6 +87,7 @@ import { getTaskList } from "../../../api/task/taskList";
 import { useAuthStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
 import { getTeamList } from "../../../api/team/team";
+import { useSwal } from "../../../composables/useSwal";
 
 const store2 = useAuthStore();
 const { accessToken, areaName, coordinates } = storeToRefs(store2);
@@ -115,6 +116,7 @@ const props = defineProps({
   selectedIds: Array,
 });
 
+const swal = useSwal();
 const selectedTeamId = ref(null);
 const taskData = ref([]);
 const currentTasks = computed(() => {
@@ -123,6 +125,24 @@ const currentTasks = computed(() => {
 // 자식으로 부터 이벤트 송신
 const showDetailAgain = () => {
   showDetail(selectedTask.value);
+};
+
+const showAlert = (text) => {
+  swal({
+    title: text,
+    icon: "success",
+    confirmButtonText: "확인",
+    width: "700px",
+  });
+};
+
+const showAlert2 = () => {
+  swal({
+    title: "중복된 도로 파손 데이터 입니다.",
+    icon: "error",
+    confirmButtonText: "확인",
+    width: "700px",
+  });
 };
 
 // 새 작업(작업 지시서 새로 만들기)
@@ -142,10 +162,10 @@ function addNewTask() {
     newData.value,
     (res) => {
       if (res.data.status == "SUCCESS") {
-        console.log(res);
         console.log(res.data.message);
         taskData.value = res.data.data;
         takeData();
+        showAlert("새 작업 지시서가 생성되었습니다.");
       } else {
         console.log(res.data.message);
       }
@@ -204,6 +224,7 @@ function saveDetail() {
       if (res.data.status == "SUCCESS") {
         console.log(res.data.message);
         takeData();
+        showAlert("프로젝트에 팀이 할당되었습니다.");
       } else {
         console.log(res.data.message);
       }
@@ -228,9 +249,14 @@ const assignPothole = (taskId) => {
     accessToken.value,
     potholeData.value,
     (res) => {
+      console.log(res);
       if (res.data.status == "SUCCESS") {
         console.log(res.data.message);
         takeData();
+        showAlert("프로젝트에 도로 파손이 할당되었습니다.");
+        props.toggleModal();
+      } else {
+        showAlert2();
       }
     },
     (error) => {
@@ -258,7 +284,6 @@ const takeData = () => {
     queryParams,
     (res) => {
       if (res.data.status == "SUCCESS") {
-        console.log(res);
         console.log(res.data.message);
         taskData.value = res.data.data.content;
       } else {

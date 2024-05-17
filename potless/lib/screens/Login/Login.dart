@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:potless/API/api_request.dart';
 import 'package:potless/screens/Home/HomeScreen.dart';
+import 'package:potless/screens/Login/SignUp.dart';
 import 'package:potless/widgets/UI/ScreenSize.dart';
 import 'package:potless/widgets/buttons/714_150button.dart';
 
@@ -64,88 +65,116 @@ class _LoginScreenState extends State<LoginScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        color: Colors.white,
-        padding: const EdgeInsets.all(20),
-        child: Center(
-          child: Column(
-            children: [
-              SizedBox(height: UIhelper.deviceHeight(context) * 0.1),
-              const Text('포트리스', style: TextStyle(fontSize: 26)),
-              const Text('Pot-Less'),
-              Lottie.asset('assets/lottie/loading_truck.json'),
-              InkWell(
-                onTap: () {
-                  _openInputModal(context, _idController, 'ID를 입력해주세요');
-                },
-                child: Container(
-                  height: UIhelper.deviceHeight(context) * 0.08,
-                  padding: const EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.blue),
-                    borderRadius: BorderRadius.circular(10),
+      body: Stack(
+        children: [
+          Container(
+            color: Colors.white,
+            padding: const EdgeInsets.all(20),
+            child: Center(
+              child: Column(
+                children: [
+                  SizedBox(height: UIhelper.deviceHeight(context) * 0.1),
+                  const Text('포트리스', style: TextStyle(fontSize: 26)),
+                  const Text('Pot-Less'),
+                  Lottie.asset('assets/lottie/loading_truck.json'),
+                  InkWell(
+                    onTap: () {
+                      _openInputModal(context, _idController, 'ID를 입력해주세요');
+                    },
+                    child: Container(
+                      height: UIhelper.deviceHeight(context) * 0.08,
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.blue),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: Text(
+                              _idController.text.isEmpty
+                                  ? 'ID를 입력해주세요'
+                                  : _idController.text,
+                              style: const TextStyle(fontSize: 16),
+                            ),
+                          ),
+                          const Icon(Icons.edit, color: Colors.blue),
+                        ],
+                      ),
+                    ),
                   ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: Text(
-                          _idController.text.isEmpty
-                              ? 'ID를 입력해주세요'
-                              : _idController.text,
-                          style: const TextStyle(fontSize: 16),
+                  SizedBox(height: UIhelper.deviceHeight(context) * 0.02),
+                  InkWell(
+                    onTap: () {
+                      _openInputModal(context, _pwController, 'PW를 입력해주세요');
+                    },
+                    child: Material(
+                      type: MaterialType.transparency,
+                      child: Container(
+                        height: UIhelper.deviceHeight(context) * 0.08,
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.blue),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: Text(
+                                _pwController.text.isEmpty
+                                    ? 'PW를 입력해주세요'
+                                    : '•' * _pwController.text.length,
+                                style: const TextStyle(fontSize: 16),
+                              ),
+                            ),
+                            const Icon(Icons.edit, color: Colors.blue),
+                          ],
                         ),
                       ),
-                      const Icon(Icons.edit, color: Colors.blue),
-                    ],
-                  ),
-                ),
-              ),
-              SizedBox(height: UIhelper.deviceHeight(context) * 0.02),
-              InkWell(
-                onTap: () {
-                  _openInputModal(context, _pwController, 'PW를 입력해주세요');
-                },
-                child: Material(
-                  type: MaterialType.transparency,
-                  child: Container(
-                    height: UIhelper.deviceHeight(context) * 0.08,
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.blue),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Expanded(
-                          child: Text(
-                            _pwController.text.isEmpty
-                                ? 'PW를 입력해주세요'
-                                : '•' * _pwController.text.length,
-                            style: const TextStyle(fontSize: 16),
-                          ),
-                        ),
-                        const Icon(Icons.edit, color: Colors.blue),
-                      ],
                     ),
                   ),
-                ),
+                  SizedBox(height: UIhelper.deviceHeight(context) * 0.02),
+                  button714_150(
+                    lable: '로그인',
+                    backgroundColor: _colorAnimation.value,
+                    onPressed: _handleLogin,
+                    transform: Matrix4.translationValues(
+                        _positionAnimation.value *
+                            (_animationController.value <= 0.5 ? 1 : -1),
+                        0,
+                        0),
+                  ),
+                ],
               ),
-              SizedBox(height: UIhelper.deviceHeight(context) * 0.02),
-              button714_150(
-                lable: '로그인',
-                backgroundColor: _colorAnimation.value,
-                onPressed: _handleLogin,
-                transform: Matrix4.translationValues(
-                    _positionAnimation.value *
-                        (_animationController.value <= 0.5 ? 1 : -1),
-                    0,
-                    0),
-              ),
-            ],
+            ),
           ),
-        ),
+          Positioned(
+            right: 10,
+            top: 40,
+            child: GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const SignUpScreen(),
+                  ),
+                );
+              },
+              child: const Row(
+                children: [
+                  Icon(
+                    Icons.logout,
+                    color: Color(0xff151c62),
+                    size: 30,
+                  ),
+                  Text('회원가입')
+                ],
+              ),
+            ),
+          )
+        ],
       ),
     );
   }

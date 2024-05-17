@@ -204,7 +204,7 @@ const secondfourthData = async () => {
 
       roadIncidentData.value = list.map((dong) => ({
         dong: dong.locationName,
-        potholes: dong.countDamageBefore,
+        potholes: dong.countDamageBefore + dong.countDamageDuring,
         severity: dong.severityCount,
       }));
 
@@ -219,7 +219,7 @@ const secondfourthData = async () => {
         { title: "보수중", number: countDuring.toString() },
         { title: "완료", number: countDone.toString() },
       ];
-      console.log("도로별 포트홀 현황:", roadIncidentData.value);
+      // console.log("도로별 포트홀 현황:", roadIncidentData.value);
       // console.log("보수 공사 현황:", workChartData.value);
     } else {
       console.error("Invalid or empty data received from the API");
