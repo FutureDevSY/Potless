@@ -264,11 +264,19 @@ public class DamageServiceImpl implements IDamageService {
                 now
         );
 
-        log.info("실행 됬어요");
+        DamageEntity damageEntity = damageRepository.findTopByHexagonEntityOrderByCreatedDateTimeDesc(hexagonEntity);
+
+        if (damageEntity.getImageEntities().isEmpty()) {
+            int order = 1;
+            for (String imageUrl : serviceDTO.getImages()) {
+                ImageEntity image = ImageEntity.builder()
+                        .damageEntity(damageEntity)
+                        .url(imageUrl)
+                        .order(order++)
+                        .build();
+                imageRepository.save(image);
+            }
+        }
     }
 
-    //    @Override
-//    public List<DamageResponseDTO> getWorkDamage(Long memberId) {
-//        return damageRepository.findDamagesByWorker(memberId);
-//    }
 }
