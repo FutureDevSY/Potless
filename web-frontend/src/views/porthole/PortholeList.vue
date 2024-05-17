@@ -185,6 +185,7 @@ onMounted(() => {
 
 .filter {
   margin-top: 30px;
+  transform: translateY(10px);
   margin-left: 17px;
   width: 86vw;
   padding: 10px;
@@ -201,7 +202,7 @@ onMounted(() => {
 
 .search-tab {
   display: grid;
-  grid-template-columns: 27% 22% 9% 9% 9% 15% 8.5%;
+  grid-template-columns: 26% 22% 9.3% 9.3% 9.3% 15% 8.5%;
   align-items: center;
   justify-content: end;
 }
@@ -298,7 +299,7 @@ onMounted(() => {
 }
 
 .search-button {
-  padding: 1.2vh 15px;
+  padding: 1vh 15px;
   background-color: #6d6d6d;
   border: none;
   color: white;

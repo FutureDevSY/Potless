@@ -27,7 +27,7 @@
             type="text"
             v-model="searchTerm"
             placeholder="동을 입력해주세요."
-            @input="updateChart"
+            @input="handleInput"
           />
         </div>
         <RoadTypeIncidentsGraphVue :search-term="searchTerm" :road-data="roadIncidentData" />
@@ -227,6 +227,10 @@ const secondfourthData = async () => {
   } catch (error) {
     console.error("Error fetching Dong statistics:", error);
   }
+};
+
+const handleInput = (e) => {
+  searchTerm.value = e.target.value;
 };
 
 onMounted(() => {

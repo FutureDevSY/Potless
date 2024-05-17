@@ -28,14 +28,14 @@
           <td>{{ task.projectSize }} 건</td>
           <td>{{ task.managerName }}</td>
           <td>{{ task.projectDate }}</td>
-          <td>{{ task.createdDate }}</td>
+          <!-- <td>{{ task.createdDate }}</td> -->
+          <td class="detect-column">
+            <div>{{ formatDated(task.createdDate) }}</div>
+            <div>{{ formatTimed(task.createdDate) }}</div>
+          </td>
           <td class="delete-div">
             <button class="delete-btn" @click.stop="deleteTask(task.projectId)">
-              <img
-                class="delete-img"
-                src="../../assets/icon/delete.png"
-                alt="delete"
-              />
+              <img class="delete-img" src="../../assets/icon/delete.png" alt="delete" />
             </button>
           </td>
         </tr>
@@ -88,6 +88,18 @@ const dateRange = ref({ start: null, end: null });
 const handleDateRangeUpdate = (newRange) => {
   dateRange.value = newRange;
 };
+
+// 날짜 형식을 YYYY-MM-DD 로 변경
+function formatDated(dateTime) {
+  const date = new Date(dateTime);
+  return date.toISOString().split("T")[0];
+}
+
+// 시간 형식을 HH:MM:SS 로 변경
+function formatTimed(dateTime) {
+  const time = new Date(dateTime);
+  return time.toTimeString().split(" ")[0];
+}
 
 // 쿼리 검색
 const inputValue = ref("");
@@ -161,9 +173,7 @@ const takeData = (currentPage) => {
   };
 
   const queryParams = Object.fromEntries(
-    Object.entries(rawParams).filter(
-      ([key, value]) => value !== "" && value != null
-    )
+    Object.entries(rawParams).filter(([key, value]) => value !== "" && value != null)
   );
 
   getTaskList(

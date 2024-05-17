@@ -11,7 +11,11 @@
           <th class="address-column">지번 주소</th>
           <th class="work-column">
             <button class="add-button" @click="openModal('add')">추가</button>
-            <button class="add-button" :disabled="!hasSelected" @click="deletePotholeSelect()">
+            <button
+              class="add-button delete-btn"
+              :disabled="!hasSelected"
+              @click="deletePotholeSelect()"
+            >
               삭제
             </button>
           </th>
@@ -280,7 +284,7 @@ td {
   border-left: none;
   border-right: none;
   text-align: center;
-  padding: 1vh;
+  padding: 1.532vh;
   font-size: 1.9vh;
   color: #373737;
 }
@@ -371,12 +375,12 @@ tbody tr:hover {
 }
 
 .add-button {
-  padding: 5px 15px;
+  padding: 4px 17px;
   font-size: 1.55vh;
   background-color: #f8f8fc;
   border-radius: 5px;
   cursor: pointer;
-  height: 4.4vh;
+  height: 4vh;
   color: #4f58b5;
   border: 1px solid #4f58b5;
   transition: background-color 0.4s;
@@ -410,6 +414,10 @@ tbody tr:hover {
   background-color: #d8d8d8;
 }
 
+.delete-btn {
+  margin-left: 4px;
+}
+
 .list-button {
   margin-top: 1.3vh;
   margin-left: 30px;
@@ -434,7 +442,7 @@ tbody tr:hover {
 
 .list-overflow {
   overflow-y: auto;
-  height: 62vh;
+  height: 70vh;
   margin-right: 6px;
   margin-left: 30px;
   border: 2px solid rgb(223, 223, 223);

@@ -81,7 +81,7 @@ watch(currentPage, (newValue) => {
   color: #333;
   font-size: 2vh;
   padding: 1vh 0.9vw;
-  margin: 0 4px;
+  margin: 0.5vh 4px;
   text-decoration: none;
   border: 1px solid #cecece;
   cursor: pointer;
