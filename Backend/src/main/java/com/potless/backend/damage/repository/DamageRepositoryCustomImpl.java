@@ -36,6 +36,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.YearMonth;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -449,6 +451,45 @@ public class DamageRepositoryCustomImpl implements DamageRepositoryCustom {
                 .where(damage.hexagonEntity.hexagonIndex.in(hexagonIndexes)
                         .and(damage.status.in(Status.작업전, Status.작업중)))
                 .fetch();
+    }
+
+    @Override
+    public SeverityAreaResponseDTO countTodaysDamagesBySeverity(Long areaId) {
+        QDamageEntity damageEntity = QDamageEntity.damageEntity;
+        QAreaEntity areaEntity = QAreaEntity.areaEntity;
+
+        LocalDateTime startOfDay = LocalDateTime.now().with(LocalTime.MIN);
+        LocalDateTime endOfDay = LocalDateTime.now().with(LocalTime.MAX);
+
+        Long severityOne = queryFactory
+                .select(damageEntity.id.count())
+                .from(damageEntity)
+                .where(damageEntity.areaEntity.id.eq(areaId)
+                        .and(damageEntity.severity.eq(1))
+                        .and(damageEntity.createdDateTime.between(startOfDay, endOfDay)))
+                .fetchOne();
+
+        Long severityTwo = queryFactory
+                .select(damageEntity.id.count())
+                .from(damageEntity)
+                .where(damageEntity.areaEntity.id.eq(areaId)
+                        .and(damageEntity.severity.eq(2))
+                        .and(damageEntity.createdDateTime.between(startOfDay, endOfDay)))
+                .fetchOne();
+
+        Long severityThree = queryFactory
+                .select(damageEntity.id.count())
+                .from(damageEntity)
+                .where(damageEntity.areaEntity.id.eq(areaId)
+                        .and(damageEntity.severity.eq(3))
+                        .and(damageEntity.createdDateTime.between(startOfDay, endOfDay)))
+                .fetchOne();
+
+        return SeverityAreaResponseDTO.builder()
+                .severityOne(severityOne != null ? severityOne : 0L)
+                .severityTwo(severityTwo != null ? severityTwo : 0L)
+                .severityThree(severityThree != null ? severityThree : 0L)
+                .build();
     }
 
     private BooleanExpression betweenDates(QDamageEntity damage, LocalDate start, LocalDate end) {

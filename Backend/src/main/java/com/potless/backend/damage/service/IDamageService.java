@@ -39,5 +39,7 @@ public interface IDamageService {
     List<String> setChangeImage(Long damageId, List<String> fileUrls);
     
     void setAsyncDamage(DamageSetRequestServiceDTO serviceDTO);
+
+    SeverityAreaResponseDTO getSeverity(Long areaId);
 //    List<DamageResponseDTO> getWorkDamage(Long memberId);
 }

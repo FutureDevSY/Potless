@@ -290,4 +290,8 @@ public class DamageServiceImpl implements IDamageService {
         }
     }
 
+    @Override
+    public SeverityAreaResponseDTO getSeverity(Long areaId) {
+        return damageRepository.countTodaysDamagesBySeverity(areaId);
+    }
 }
