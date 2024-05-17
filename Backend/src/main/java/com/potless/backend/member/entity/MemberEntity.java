@@ -1,6 +1,7 @@
 package com.potless.backend.member.entity;
 
 import com.potless.backend.damage.entity.area.AreaEntity;
+import com.potless.backend.damage.entity.road.ImageEntity;
 import com.potless.backend.global.entity.MemberBaseEntity;
 import com.potless.backend.member.dto.SignupRequestDto;
 import jakarta.persistence.*;
@@ -39,6 +40,9 @@ public class MemberEntity extends MemberBaseEntity {
     @OneToOne(mappedBy = "memberEntity", fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE, CascadeType.PERSIST}, orphanRemoval = true)
     private ManagerEntity managerEntity;
 
+    @Column(name = "member_profile_url")
+    private String profileUrl;
+
 //    @OneToOne(mappedBy = "memberEntity", fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE, CascadeType.PERSIST}, orphanRemoval = true)
 //    private WorkerEntity workerEntity;
 
@@ -47,7 +51,7 @@ public class MemberEntity extends MemberBaseEntity {
     private AreaEntity area;
 
     @Builder
-    public MemberEntity(Long id, String memberName, Integer role, String email, String phone, String password, AreaEntity area, ManagerEntity managerEntity) {
+    public MemberEntity(Long id, String memberName, Integer role, String email, String phone, String password, AreaEntity area, ManagerEntity managerEntity, String profileUrl) {
         Id = id;
         this.memberName = memberName;
         this.role = role;
@@ -56,15 +60,16 @@ public class MemberEntity extends MemberBaseEntity {
         this.password = password;
         this.area = area;
         this.managerEntity = managerEntity;
-//        this.workerEntity = workerEntity;
+        this.profileUrl = profileUrl;
     }
 
-    public static MemberEntity of(SignupRequestDto requestDto, String encodedPassword) {
+    public static MemberEntity of(SignupRequestDto requestDto, String encodedPassword, AreaEntity area) {
         return MemberEntity.builder()
                 .email(requestDto.getEmail())
                 .password(encodedPassword)
                 .memberName(requestDto.getMemberName())
                 .role(3)    //회원가입이 일반 사용자들을 위함이므로 3
+                .area(area)
                 .phone(requestDto.getPhone())
                 .build();
     }
