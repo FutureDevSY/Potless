@@ -2,7 +2,11 @@
   <div class="detail-container">
     <div class="img-box">
       <div class="carusel-container">
-        <Carusel :images="images" />
+        <Carusel
+          :images="images"
+          :damage-id="pothole_info.id"
+          @uploadComplete="handleUploadComplete"
+        />
       </div>
       <div class="map">
         <RoadTypeIncidentsGraph
@@ -170,17 +174,10 @@ const deleteData = (potholeId) => {
   );
 };
 
-// const caruselImage = computed(() => {
-//   if (
-//     pothole_info.value.imagesResponseDTOS &&
-//     pothole_info.value.imagesResponseDTOS.length > 0
-//   ) {
-//     console.log(pothole_info.value.imagesResponseDTOS[0]);
-//     return pothole_info.value.imagesResponseDTOS;
-//   } else {
-//     return ["../../assets/image/default.PNG"];
-//   }
-// });
+const handleUploadComplete = (data) => {
+  console.log("업로드 완료: ", data);
+  takeData(route.params.id);
+};
 
 onMounted(() => {
   takeData(route.params.id);
