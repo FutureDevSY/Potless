@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:potless/API/api_request.dart';
 import 'package:potless/API/login.dart';
 import 'package:potless/screens/Login/Login.dart';
+import 'package:potless/screens/Navi/NaviScreen.dart';
 import 'package:potless/screens/Record/PotLess.dart';
 import 'package:potless/screens/Works/ProjectList.dart';
 import 'package:potless/widgets/UI/ScreenSize.dart';
@@ -102,6 +103,17 @@ class _HomeScreenState extends State<HomeScreen> {
                           height: UIhelper.deviceHeight(context) * 0.2,
                         ),
                         const Text('포트리스를 설치해주신 여러분께 감사드립니다'),
+                        MainLarge(
+                          label: '포트홀 안내받기',
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const RouteFinderScreen(),
+                              ),
+                            );
+                          },
+                        ),
                       ],
                     )
                   },

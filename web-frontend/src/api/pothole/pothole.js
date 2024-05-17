@@ -56,4 +56,28 @@ const postPotholeAdd = async (accessToken, potholeInfo, success, fail) => {
     .catch(fail);
 };
 
-export { getPotholeList, getPotholeDetail, deletePothole, postPotholeAdd };
+// 포트홀 사진 변경
+const postPotholeImageChange = async (
+  accessToken,
+  potholeInfo,
+  success,
+  fail
+) => {
+  await local
+    .post(`/damage/change/image`, potholeInfo, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "multipart/form-data",
+      },
+    })
+    .then(success)
+    .catch(fail);
+};
+
+export {
+  getPotholeList,
+  getPotholeDetail,
+  deletePothole,
+  postPotholeAdd,
+  postPotholeImageChange,
+};

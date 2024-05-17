@@ -239,6 +239,7 @@ const getPotholeColor = (potholes) => {
   height: 100%;
   overflow: hidden;
   z-index: 1;
+  background-color: #ffffff;
 }
 
 .map {
@@ -280,7 +281,7 @@ const getPotholeColor = (potholes) => {
   padding: 2vh 1vw;
 }
 .dong-label {
-  color: #7c7c7c;
+  color: #636363;
   font-size: 1.8vh;
   margin-bottom: 1vh;
   font-weight: bold;

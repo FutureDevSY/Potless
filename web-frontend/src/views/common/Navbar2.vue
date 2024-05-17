@@ -100,17 +100,16 @@ const clickLogout = () => {
 };
 
 router.beforeEach((to, from) => {
-  const store = useAuthStore();
   if (to.name === "Main") {
     setActiveNavItem(0);
   }
-  if (to.name === "PortholeList") {
+  if (to.name === "PortholeList" || to.name === "PortholeDetail" || to.name === "SelfRegister") {
     setActiveNavItem(1);
   }
   if (to.name === "Statistics") {
     setActiveNavItem(3);
   }
-  if (to.name === "TaskInfo") {
+  if (to.name === "TaskInfo" || to.name === "TaskInfoDetail") {
     setActiveNavItem(2);
   }
 });
@@ -191,7 +190,7 @@ img {
   top: -1.4vh;
   height: 1.4vh;
   width: 100%;
-  background: #fff;
+  background: #f8f8f8;
 
   display: none;
 }
@@ -212,7 +211,7 @@ img {
   bottom: -1.4vh;
   height: 1.4vh;
   width: 100%;
-  background: #fff;
+  background: #f8f8f8;
   display: none;
 }
 
@@ -233,11 +232,11 @@ img {
 }
 
 .nav-item.active a {
-  background: linear-gradient(to right, #151c62 50%, white 50%);
+  background: linear-gradient(to right, #151c62 50%, #f8f8f8 50%);
   background-size: 200% 120%;
   background-position: right bottom;
   transition: all 0.3s ease-out;
-  background-color: #ffffff;
+  background-color: #f8f8f8;
   text-decoration: none;
   color: #555555;
 }
@@ -256,7 +255,7 @@ img {
 }
 
 .nav-item a:click {
-  background-color: #ffffff;
+  background-color: #f8f8f8;
   color: black;
 }
 

@@ -12,8 +12,8 @@ import 'package:potless/widgets/blocks/carousel_block.dart';
 import 'package:potless/widgets/buttons/714_100button.dart'; // Assuming your model is set up correctly
 
 class WorkDetailScreen extends StatefulWidget {
-  final double placeLatitude, placeLongitude, width;
-  final int potholeId, severity;
+  final double placeLatitude, placeLongitude;
+  final int potholeId, severity, width;
   final String address, roadName, status, field, dType;
   final List<DamageImage> images;
   final DateTime createdAt;
