@@ -182,14 +182,16 @@ watch(weather, updateWeatherComponent);
 }
 .weather-info {
   color: white;
+  margin-left: 20px;
+  transform: translateY(-0.5vh);
 }
 .temperature {
-  font-size: 4.8vh;
+  font-size: 5vh;
   font-weight: bold;
-  margin-bottom: 1vh;
+  margin-bottom: 0.8vh;
 }
 .cloud,
 .wind {
-  font-size: 1.8vh;
+  font-size: 1.9vh;
 }
 </style>
