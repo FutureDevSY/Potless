@@ -100,7 +100,6 @@ const clickLogout = () => {
 };
 
 router.beforeEach((to, from) => {
-  const store = useAuthStore();
   if (to.name === "Main") {
     setActiveNavItem(0);
   }
