@@ -100,17 +100,16 @@ const clickLogout = () => {
 };
 
 router.beforeEach((to, from) => {
-  const store = useAuthStore();
   if (to.name === "Main") {
     setActiveNavItem(0);
   }
-  if (to.name === "PortholeList") {
+  if (to.name === "PortholeList" || to.name === "PortholeDetail" || to.name === "SelfRegister") {
     setActiveNavItem(1);
   }
   if (to.name === "Statistics") {
     setActiveNavItem(3);
   }
-  if (to.name === "TaskInfo") {
+  if (to.name === "TaskInfo" || to.name === "TaskInfoDetail") {
     setActiveNavItem(2);
   }
 });

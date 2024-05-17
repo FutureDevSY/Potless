@@ -56,9 +56,10 @@
             class="pdf"
             id="pdf"
           />
-          <div v-for="pothole in taskData" :key="pothole.id">
+          <div v-for="(pothole, index) in taskData" :key="pothole.id">
             <PDFGeneratorDetail
               :pothole="pothole"
+              :index="index"
               ref="documentRef"
               class="pdf"
             />
@@ -222,10 +223,12 @@ function generatePdf() {
 }
 
 .report-num {
-  font-size: 2.2vh;
+  font-size: 2.8vh;
   border: 2px solid #373737;
   padding: 0.9vh 5px;
   margin-right: 20px;
+  width: 40px;
+  text-align: center;
 }
 
 .report-info {
@@ -267,6 +270,7 @@ function generatePdf() {
   color: rgb(255, 255, 255);
   transition: all 0.3s;
   padding: 1vh 1.5vh;
+  margin-right: 30px;
 }
 
 .pdf-button:hover {
@@ -297,8 +301,10 @@ function generatePdf() {
 }
 
 .button-group {
+  width: 98%;
   display: flex;
   justify-content: end;
+  margin: 0 0 30px 0;
 }
 
 .loading-container {
