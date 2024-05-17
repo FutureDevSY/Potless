@@ -29,6 +29,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
@@ -134,7 +135,6 @@ public class DamageServiceImpl implements IDamageService {
             imageRepository.save(image);
         }
         areaGu.addCount();
-
     }
 
     @Override
@@ -232,6 +232,40 @@ public class DamageServiceImpl implements IDamageService {
         return damageRepository.getAreaDamageCountForMonth(areaDamageCountForMonthServiceRequestDTO);
     }
 
+    @Override
+    @Transactional
+    public void setAsyncDamage(DamageSetRequestServiceDTO serviceDTO) {
+        AreaEntity areaGu = areaRepository.findByAreaGu(serviceDTO.getArea())
+                .orElseThrow(PotholeLocationNotFoundException::new);
+
+        LocationEntity locationName = locationRepository.findByLocationName(serviceDTO.getLocation())
+                .orElseThrow(PotholeLocationNotFoundException::new);
+
+        HexagonEntity hexagonEntity = hexagonRepository.findByHexagonIndex(serviceDTO.getHexagonIndex());
+
+        MemberEntity member = memberRepository.findById(serviceDTO.getMemberId())
+                .orElseThrow(MemberNotFoundException::new);
+
+        LocalDateTime now = LocalDateTime.now();
+
+        damageRepository.insertIfNotExistsWithLock(
+                serviceDTO.getSeverity(),
+                serviceDTO.getDirX(),
+                serviceDTO.getDirY(),
+                serviceDTO.getAddress(),
+                serviceDTO.getWidth(),
+                serviceDTO.getStatus().name(),
+                areaGu.getId(),
+                locationName.getId(),
+                hexagonEntity.getId(),
+                serviceDTO.getDtype(),
+                member.getId(),
+                now,
+                now
+        );
+
+        log.info("실행 됬어요");
+    }
 
     //    @Override
 //    public List<DamageResponseDTO> getWorkDamage(Long memberId) {
