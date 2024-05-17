@@ -23,6 +23,52 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.potless.backend.damage.repository.DamageRepository;
+import com.potless.backend.flutter.dto.service.response.DamageAppResponseDTO;
+import com.potless.backend.flutter.dto.service.response.KakaoResponseDTO;
+import com.potless.backend.flutter.dto.service.response.Point;
+import com.potless.backend.hexagon.service.HexagonService;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.potless.backend.damage.repository.DamageRepository;
+import com.potless.backend.flutter.dto.service.response.DamageAppResponseDTO;
+import com.potless.backend.flutter.dto.service.response.KakaoResponseDTO;
+import com.potless.backend.flutter.dto.service.response.Point;
+import com.potless.backend.hexagon.service.HexagonService;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -103,7 +149,17 @@ public class KaKaoNaviService {
             }
         }
 
-        return coordinates;
+        // 세분화된 좌표 리스트 생성
+        List<Point> detailedCoordinates = new ArrayList<>();
+        for (int i = 0; i < coordinates.size() - 1; i++) {
+            Point start = coordinates.get(i);
+            Point end = coordinates.get(i + 1);
+            detailedCoordinates.add(start);
+            detailedCoordinates.addAll(interpolate(start, end, 0.0001)); // 0.1미터 간격으로 세분화
+        }
+        detailedCoordinates.add(coordinates.get(coordinates.size() - 1));
+
+        return detailedCoordinates;
     }
 
     private void addLocationToCoordinates(KakaoResponseDTO.Location location, List<Point> coordinates) {
@@ -126,6 +182,32 @@ public class KaKaoNaviService {
             }
         }
     }
+
+    // 두 좌표 간 거리 계산
+    private double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
+        double p = 0.017453292519943295; // Pi/180
+        double a = 0.5 - Math.cos((lat2 - lat1) * p)/2 +
+                Math.cos(lat1 * p) * Math.cos(lat2 * p) *
+                        (1 - Math.cos((lon2 - lon1) * p))/2;
+        return 12742 * Math.asin(Math.sqrt(a)); // 2 * R; R = 6371 km
+    }
+
+    // 두 좌표 간 보간
+    private List<Point> interpolate(Point start, Point end, double interval) {
+        List<Point> interpolated = new ArrayList<>();
+
+        double distance = calculateDistance(start.getY(), start.getX(), end.getY(), end.getX());
+        int numPoints = (int) Math.floor(distance / interval);
+
+        for (int j = 1; j <= numPoints; j++) {
+            double lat = start.getY() + (end.getY() - start.getY()) * j / (numPoints + 1);
+            double lon = start.getX() + (end.getX() - start.getX()) * j / (numPoints + 1);
+            interpolated.add(new Point(lon, lat));
+        }
+
+        return interpolated;
+    }
+
 
     @Async
     public CompletableFuture<List<DamageAppResponseDTO>> checkCoordinates(List<Point> coordinates) {
