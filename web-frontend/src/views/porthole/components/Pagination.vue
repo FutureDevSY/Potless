@@ -86,6 +86,7 @@ watch(currentPage, (newValue) => {
   border: 1px solid #cecece;
   cursor: pointer;
   transition: background-color 0.3s, color 0.3s;
+  margin-top: 1vh;
 }
 
 .page-item:hover {
