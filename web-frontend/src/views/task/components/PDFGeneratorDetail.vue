@@ -28,7 +28,7 @@
         </div>
         <div class="info">
           <div style="letter-spacing: 20px">너비:</div>
-          <div>{{ props.pothole.width }} mm</div>
+          <div>{{ props.pothole.width }} cm</div>
         </div>
         <div class="info">
           <div>탐지 일시:</div>
