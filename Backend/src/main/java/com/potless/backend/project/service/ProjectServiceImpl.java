@@ -124,7 +124,20 @@ public class ProjectServiceImpl implements ProjectService {
     public void changeProjectStatus(Long projectId) {
         ProjectEntity projectEntity = projectRepository.findById(projectId)
                 .orElseThrow(ProjectNotFoundException::new);
+
+        List<TaskEntity> taskEntities = taskRepository.findTasksByProjectId(projectId);
+
+        for (TaskEntity taskEntity : taskEntities) {
+            DamageEntity damageEntity = taskEntity.getDamageEntity();
+            if (damageEntity.getStatus() == Status.작업중) {
+                damageEntity.changeStatus(Status.작업전);
+                damageRepository.save(damageEntity);
+                taskRepository.delete(taskEntity);
+            }
+        }
+
         projectEntity.changeStatus(Status.작업완료);
+        projectRepository.save(projectEntity);
     }
 
 }
