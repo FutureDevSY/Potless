@@ -11,7 +11,6 @@ import com.potless.backend.damage.dto.service.response.*;
 import com.potless.backend.damage.dto.service.response.kakao.Address;
 import com.potless.backend.damage.dto.service.response.kakao.RoadAddress;
 import com.potless.backend.damage.entity.enums.Status;
-import com.potless.backend.damage.repository.DamageRepository;
 import com.potless.backend.damage.service.*;
 import com.potless.backend.global.exception.kakao.KakaoNotFoundException;
 import com.potless.backend.global.exception.member.MemberNotFoundException;
@@ -19,7 +18,6 @@ import com.potless.backend.global.exception.pothole.InvalidCoordinateRangeExcept
 import com.potless.backend.global.exception.pothole.PotholeNotFoundException;
 import com.potless.backend.global.format.code.ApiResponse;
 import com.potless.backend.global.format.response.ResponseCode;
-import com.potless.backend.hexagon.service.H3Service;
 import com.potless.backend.member.service.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -60,8 +58,6 @@ public class DamageController {
     private final IAreaLocationService iAreaLocationService;
     private final AsyncService asyncService;
     private final FileService fileService;
-    private final H3Service h3Service;
-    private final DamageRepository damageRepository;
     private final DuplicateAreaService duplicateAreaService;
     private final MemberService memberService;
 

@@ -2,6 +2,7 @@ package com.potless.backend.damage.repository;
 
 import com.potless.backend.damage.dto.controller.response.DamageResponseDTO;
 import com.potless.backend.damage.entity.road.DamageEntity;
+import com.potless.backend.hexagon.entity.HexagonEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -26,7 +27,7 @@ public interface DamageRepository extends JpaRepository<DamageEntity, Long>, Dam
     @Modifying
     @Query(value = "INSERT INTO damage (damage_severity, damage_dir_x, damage_dir_y, damage_address, damage_width, damage_status, area_id, location_id, hexagon_id, dtype, member_id, damage_count, created_date_time, modified_date_time) " +
             "SELECT :severity, :dirX, :dirY, :address, :width, :status, :areaId, :locationId, :hexagonId, :dtype, :memberId, 0, :createdDateTime, :modifiedDateTime " +
-            "WHERE NOT EXISTS (SELECT 1 FROM damage WHERE hexagon_id = :hexagonId LOCK IN SHARE MODE)", nativeQuery = true)
+            "WHERE NOT EXISTS (SELECT 1 FROM damage WHERE hexagon_id = :hexagonId and dtype = :dtype LOCK IN SHARE MODE)", nativeQuery = true)
     void insertIfNotExistsWithLock(@Param("severity") Integer severity,
                                    @Param("dirX") Double dirX,
                                    @Param("dirY") Double dirY,
@@ -41,5 +42,6 @@ public interface DamageRepository extends JpaRepository<DamageEntity, Long>, Dam
                                    @Param("createdDateTime") LocalDateTime createdDateTime,
                                    @Param("modifiedDateTime") LocalDateTime modifiedDateTime);
 
+    DamageEntity findTopByHexagonEntityOrderByCreatedDateTimeDesc(HexagonEntity hexagonEntity);
 
 }
