@@ -5,16 +5,16 @@
 
       <div class="danger">
         <div>
-          <img class="bad-img" src="../../../assets/icon/number-three.png" alt="bad" />
-          <div class="info-text end">심각 - 4건</div>
+          <div class="circle severity">심각</div>
+          <div class="info-text end">4건</div>
         </div>
         <div>
-          <img class="soso-img" src="../../../assets/icon/number-two.png" alt="soso" />
-          <div class="info-text mid">보통 - 4건</div>
+          <div class="circle caution">주의</div>
+          <div class="info-text mid">4건</div>
         </div>
         <div>
-          <img class="good-img" src="../../../assets/icon/number-one.png" alt="good" />
-          <div class="info-text start">양호 - 4건</div>
+          <div class="circle good">양호</div>
+          <div class="info-text start">4건</div>
         </div>
       </div>
     </div>
@@ -50,37 +50,37 @@ const { accessToken, areaId } = storeToRefs(store);
 const currentData = ref([]);
 const potholeNum = ref(0);
 const now = new Date();
-const year = now.getFullYear()
-const month = ('0' + (now.getMonth() + 1)).slice(-2)
-const day = ('0' + now.getDate()).slice(-2)
-const today = year + '-' + month  + '-' + day
+const year = now.getFullYear();
+const month = ("0" + (now.getMonth() + 1)).slice(-2);
+const day = ("0" + now.getDate()).slice(-2);
+const today = year + "-" + month + "-" + day;
 const takeData = () => {
   getDongPerDate(
     accessToken.value,
     today,
     today,
     (res) => {
-        if (res.data.status === "SUCCESS") {
-            currentData.value = res.data.data.list[areaId.value - 1];
-            potholeNum.value = currentData.value.list[0].count
-        } else {
-            console.log(res.data.message);
-        }
+      if (res.data.status === "SUCCESS") {
+        currentData.value = res.data.data.list[areaId.value - 1];
+        potholeNum.value = currentData.value.list[0].count;
+      } else {
+        console.log(res.data.message);
+      }
     },
     (error) => {
-        console.log(error.response.data.message);
+      console.log(error.response.data.message);
     }
   );
-}
+};
 
 onMounted(() => {
-    takeData();
-})
+  takeData();
+});
 </script>
 
 <style scoped>
 .main-container {
-  background-color: rgb(241, 241, 241);
+  background-color: #ffffff;
   box-shadow: 0 3px 8px rgba(0, 0, 0, 0.255);
   border-radius: 15px;
   padding: 1.5vh 0vw 0vh 0vw;
@@ -105,19 +105,34 @@ onMounted(() => {
   padding-left: 20px;
   margin-top: 1.5vh;
 }
-.bad-img,
-.soso-img,
-.good-img {
-  height: 8vh;
-  padding-left: 5px;
+.circle {
+  height: 7.5vh;
+  width: 7.5vh;
+  border-radius: 100%;
+  margin-left: 8px;
+  color: white;
+  font-size: 2.2vh;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.severity {
+  background-color: #ff4e4e;
+}
+.caution {
+  background-color: #ffb931;
+}
+.good {
+  background-color: #8dc63f;
 }
 .info-text {
-  font-size: 1.9vh;
+  font-size: 2vh;
   text-align: center;
   width: 9vh;
   color: #373737;
   font-weight: bold;
-  margin-top: 1vh;
+  margin-top: 1.4vh;
 }
 .end,
 .mid,

@@ -5,12 +5,8 @@
       <div class="location">{{ selectedRegionName }}</div>
     </div>
     <div class="info-container">
-      <img
-        class="weather-img"
-        v-if="weatherImage"
-        :src="weatherImage"
-        alt="Weather condition image"
-      />
+      <component :is="weatherComponent" class="weather-animation" />
+      <div></div>
       <div class="weather-info">
         <div class="temperature">{{ formattedTemperature }}°C</div>
         <div class="cloud">{{ cloudDescription }}</div>
@@ -26,13 +22,19 @@ import { useAuthStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
 import { getWeatherInfo } from "../../../api/weather/weather";
 import LottieLoading from "./LottieLoading.vue";
+import LottieSunny from "./LottieSunny.vue";
+import LottieClouds from "./LottieClouds.vue";
+import LottieRain from "./LottieRain.vue";
+import LottieSnow from "./LottieSnow.vue";
+import LottieThunderstorm from "./LottieThunderstorm.vue";
+import LottieFog from "./LottieFog.vue";
 
 const store = useAuthStore();
 const { areaId } = storeToRefs(store);
 
 const weather = ref(null);
 const selectedRegionName = ref(""); // 지역 이름 저장
-const weatherImage = ref("");
+const weatherComponent = ref(null);
 
 const coordinates = {
   1: { lat: 36.3511, lon: 127.385, name: "대덕구" }, // 대덕구
@@ -47,9 +49,9 @@ const backgroundColor = computed(() => {
   if (!weather.value) return "#0095FF";
   switch (weather.value.weather[0].main) {
     case "Clear":
-      return "#00CFF5";
+      return "#009ff5";
     case "Clouds":
-      return "#079CDF";
+      return "#83c3e1";
     case "Rain":
       return "#0071B1";
     case "Thunderstorm":
@@ -57,54 +59,46 @@ const backgroundColor = computed(() => {
     case "Snow":
       return "#75CCDC";
     case "Mist":
-      return "#73DADD";
+      return "#8ebfc1";
     case "Fog":
-      return "#73DADD";
+      return "#8ebfc1";
     case "Haze":
-      return "#73DADD";
+      return "#78ebfc1";
     default:
       return "#0095FF";
   }
 });
 
-// 날씨에 따른 이미지 설정
-const updateWeatherImage = async () => {
+// 날씨에 따른 컴포넌트 설정
+const updateWeatherComponent = () => {
   if (!weather.value) {
-    weatherImage.value = "";
+    weatherComponent.value = null;
     return;
   }
   const main = weather.value.weather[0].main;
-  try {
-    switch (main) {
-      case "Clear":
-        weatherImage.value = (await import("../../../assets/weather/sunny.png")).default;
-        break;
-      case "Clouds":
-        weatherImage.value = (await import("../../../assets/weather/clouds.png")).default;
-        break;
-      case "Rain":
-        weatherImage.value = (await import("../../../assets/weather/rain.png")).default;
-        break;
-      case "Thunderstorm":
-        weatherImage.value = (await import("../../../assets/weather/thunderstorm.png")).default;
-        break;
-      case "Snow":
-        weatherImage.value = (await import("../../../assets/weather/snow.png")).default;
-        break;
-      case "Mist":
-        weatherImage.value = (await import("../../../assets/weather/mist-fog-haze.png")).default;
-        break;
-      case "Fog":
-        weatherImage.value = (await import("../../../assets/weather/mist-fog-haze.png")).default;
-        break;
-      case "Haze":
-        weatherImage.value = (await import("../../../assets/weather/mist-fog-haze.png")).default;
-        break;
-      default:
-        weatherImage.value = "";
-    }
-  } catch (e) {
-    console.error("이미지 로드 실패", e);
+  switch (main) {
+    case "Clear":
+      weatherComponent.value = LottieSunny;
+      break;
+    case "Clouds":
+      weatherComponent.value = LottieClouds;
+      break;
+    case "Rain":
+      weatherComponent.value = LottieRain;
+      break;
+    case "Thunderstorm":
+      weatherComponent.value = LottieThunderstorm;
+      break;
+    case "Snow":
+      weatherComponent.value = LottieSnow;
+      break;
+    case "Mist":
+    case "Fog":
+    case "Haze":
+      weatherComponent.value = LottieFog;
+      break;
+    default:
+      weatherComponent.value = null;
   }
 };
 
@@ -148,7 +142,7 @@ const cloudDescription = computed(() => {
 });
 
 // 날씨 데이터 변경 감지
-watch(weather, updateWeatherImage);
+watch(weather, updateWeatherComponent);
 </script>
 <style scoped>
 .main-container {
@@ -188,14 +182,16 @@ watch(weather, updateWeatherImage);
 }
 .weather-info {
   color: white;
+  margin-left: 20px;
+  transform: translateY(-0.5vh);
 }
 .temperature {
-  font-size: 4.8vh;
+  font-size: 5vh;
   font-weight: bold;
-  margin-bottom: 1vh;
+  margin-bottom: 0.8vh;
 }
 .cloud,
 .wind {
-  font-size: 1.8vh;
+  font-size: 1.9vh;
 }
 </style>
