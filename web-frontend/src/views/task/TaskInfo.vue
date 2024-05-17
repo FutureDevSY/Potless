@@ -61,6 +61,7 @@ import { useAuthStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
 import { getTaskList } from "../../api/task/taskList";
 import { deleteTaskDetail } from "../../api/task/taskDetail";
+import { useSwal } from "@/composables/useSwal";
 
 const router = useRouter();
 const route = useRoute();
@@ -69,6 +70,7 @@ const store2 = useAuthStore();
 const { accessToken, areaName } = storeToRefs(store2);
 const currentData = ref(null);
 const totalPage = ref(null);
+const swal = useSwal();
 
 // 상태 검색
 const selectedStatus = ref("작업전");
@@ -99,6 +101,24 @@ function setCurrentPage(page) {
   currentPage.value = page;
 }
 
+const showAlert = () => {
+  swal({
+    title: "해당 프로젝트가 삭제되었습니다.",
+    icon: "success",
+    confirmButtonText: "확인",
+    width: "700px",
+  });
+};
+
+const showAlert2 = () => {
+  swal({
+    title: "프로젝트에 이미 작업 중인 도로 파손 데이터가 있습니다.",
+    icon: "error",
+    confirmButtonText: "확인",
+    width: "700px",
+  });
+};
+
 const handleCurrentPageUpdate = (newPage) => {
   setCurrentPage(newPage);
   takeData(newPage);
@@ -111,10 +131,13 @@ const deleteTask = (projectId) => {
     accessToken.value,
     projectId,
     (res) => {
+      console.log(res);
       if (res.data.status == "SUCCESS") {
         console.log(res.data.message);
         takeData(0);
+        showAlert();
       } else {
+        showAlert2();
         console.log(res.data.message);
       }
     },
@@ -147,7 +170,6 @@ const takeData = (currentPage) => {
     accessToken.value,
     queryParams,
     (res) => {
-      console.log(res);
       if (res.data.status == "SUCCESS") {
         console.log(res.data.message);
         currentData.value = res.data.data.content;

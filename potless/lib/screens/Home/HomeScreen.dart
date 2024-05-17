@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:potless/API/api_request.dart';
+import 'package:potless/API/login.dart';
 import 'package:potless/screens/Login/Login.dart';
 import 'package:potless/screens/Record/PotLess.dart';
 import 'package:potless/screens/Works/ProjectList.dart';
@@ -15,6 +16,43 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final ApiService _apiService = ApiService();
+  final StorageService _storage = StorageService();
+  bool isUser = false;
+  String userName = '작업자';
+  @override
+  void initState() {
+    super.initState();
+    _checkRole();
+    _checkName();
+  }
+
+  void _checkRole() async {
+    try {
+      String? role = await _storage.getRole();
+
+      if (role == '3') {
+        setState(() {
+          isUser = true;
+        });
+      }
+    } catch (E) {
+      debugPrint('36: $E');
+    }
+  }
+
+  void _checkName() async {
+    try {
+      String? name = await _storage.getName();
+
+      if (name != null) {
+        setState(() {
+          userName = name;
+        });
+      }
+    } catch (E) {
+      debugPrint('52: $E');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,8 +83,33 @@ class _HomeScreenState extends State<HomeScreen> {
                   SizedBox(
                     height: UIhelper.deviceHeight(context) * 0.2,
                   ),
+                  if (!isUser) ...{
+                    MainLarge(
+                      label: '작업목록',
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const ProjectListScreen(),
+                          ),
+                        );
+                      },
+                    ),
+                  } else ...{
+                    Column(
+                      children: [
+                        SizedBox(
+                          height: UIhelper.deviceHeight(context) * 0.2,
+                        ),
+                        const Text('포트리스를 설치해주신 여러분께 감사드립니다'),
+                      ],
+                    )
+                  },
+                  SizedBox(
+                    height: UIhelper.deviceHeight(context) * 0.02,
+                  ),
                   MainLarge(
-                    label: 'ai test',
+                    label: '탐지모드',
                     onPressed: () {
                       Navigator.push(
                         context,
@@ -56,26 +119,20 @@ class _HomeScreenState extends State<HomeScreen> {
                       );
                     },
                   ),
-                  SizedBox(
-                    height: UIhelper.deviceHeight(context) * 0.02,
-                  ),
-                  MainLarge(
-                    label: '작업목록',
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const ProjectListScreen(),
-                        ),
-                      );
-                    },
-                  ),
                 ],
               ),
             ),
           ),
           Positioned(
-            right: 10,
+            left: 30,
+            top: 50,
+            child: Text(
+              '$userName님',
+              style: const TextStyle(fontSize: 16),
+            ),
+          ),
+          Positioned(
+            right: 20,
             top: 40,
             child: GestureDetector(
               onTap: () => _openLogoutModal(context),

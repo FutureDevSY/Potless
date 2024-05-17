@@ -26,6 +26,7 @@ import axios from "axios";
 import { ref, onMounted } from "vue";
 import { useAuthStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
+import markerImageSrc from "../../../assets/icon/marker.png";
 
 const store2 = useAuthStore();
 const { coordinates } = storeToRefs(store2);
@@ -58,6 +59,11 @@ function initMap() {
     marker.value = new kakao.maps.Marker({
       position: map.value.getCenter(),
       map: map.value,
+      image: new window.kakao.maps.MarkerImage(
+        markerImageSrc,
+        new window.kakao.maps.Size(40, 40),
+        { offset: new window.kakao.maps.Point(20, 40) }
+      ),
     });
 
     kakao.maps.event.addListener(map.value, "center_changed", () => {
