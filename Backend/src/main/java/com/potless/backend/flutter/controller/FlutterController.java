@@ -36,12 +36,9 @@ public class FlutterController {
                     request.getStartX(), request.getStartY(),
                     request.getEndX(), request.getEndY()
             ).get();
-
             if (kakaoResponse != null) {
                 List<Point> coordinates = kaKaoNaviService.extractCoordinates(kakaoResponse);
                 List<DamageAppResponseDTO> results = kaKaoNaviService.checkCoordinates(coordinates).get();
-                log.info("kakaoResponse = {}", kakaoResponse);
-                log.info("result = {}", results);
                 return response.success(
                         CombinedResponseDTO.builder()
                                 .kakaoResponse(kakaoResponse)
