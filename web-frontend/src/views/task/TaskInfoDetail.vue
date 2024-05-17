@@ -56,9 +56,10 @@
             class="pdf"
             id="pdf"
           />
-          <div v-for="pothole in taskData" :key="pothole.id">
+          <div v-for="(pothole, index) in taskData" :key="pothole.id">
             <PDFGeneratorDetail
               :pothole="pothole"
+              :index="index"
               ref="documentRef"
               class="pdf"
             />
@@ -269,6 +270,7 @@ function generatePdf() {
   color: rgb(255, 255, 255);
   transition: all 0.3s;
   padding: 1vh 1.5vh;
+  margin-right: 30px;
 }
 
 .pdf-button:hover {
@@ -299,8 +301,10 @@ function generatePdf() {
 }
 
 .button-group {
+  width: 98%;
   display: flex;
   justify-content: end;
+  margin: 0 0 30px 0;
 }
 
 .loading-container {
