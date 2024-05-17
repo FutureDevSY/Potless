@@ -2,7 +2,7 @@
   <div class="team-navigation">
     <span class="titled">보수 공사팀</span>
     <TeamCarusel :teams="currentTeams" />
-    <button class="list-button" @click="openModal('team')">수정/추가</button>
+    <button class="list-button" @click="openModal('team')">공사팀 추가</button>
   </div>
   <div v-if="isModalOpen && modalMode === 'team'" class="modal">
     <div class="modal-content">
@@ -90,7 +90,7 @@ onMounted(() => {
 .list-button {
   position: absolute;
   bottom: 4%;
-  padding: 1vh 0.5vw;
+  padding: 1vh 0.4vw;
   font-size: 1.4vh;
   cursor: pointer;
   border: none;
