@@ -421,20 +421,17 @@ public class DamageController {
                 .x(xValue)
                 .y(yValue)
                 .build();
-        long startTime = System.currentTimeMillis();
+
         String hexagonIndex = duplicateAreaService.checkIsDuplicated(damageSetRequestDTO);
-        long endTime = System.currentTimeMillis();
-        long durationTimeSec = endTime - startTime;
-        log.info("duplicate durationTimeSec:  = {}", durationTimeSec / 1000);   //초 단위
 
         File imageFile = fileService.convertAndSaveFile(files.get(0));
 
-//        asyncService.setDamageAsyncMethod(damageSetRequestDTO, imageFile);
-
         damageSetRequestDTO.setMemberId(memberService.findMember(authentication.getName()).getId());
+
         if (damageSetRequestDTO.getMemberId() == null) {
             throw new MemberNotFoundException();
         }
+
         asyncService.setDamageAsyncMethod(damageSetRequestDTO, imageFile, hexagonIndex);
 
         return response.success(ResponseCode.POTHOLE_DETECTED);
