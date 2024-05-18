@@ -62,6 +62,7 @@ const postPothole = async (accessToken, assignPothole, success, fail) => {
     .catch(fail);
 };
 
+// 포트홀 재 할당
 const patchPothole = async (accessToken, assignPothole, success, fail) => {
   await local
     .patch(`/task`, assignPothole, {

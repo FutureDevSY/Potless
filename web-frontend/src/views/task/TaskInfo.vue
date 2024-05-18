@@ -28,7 +28,6 @@
           <td>{{ task.projectSize }} 건</td>
           <td>{{ task.managerName }}</td>
           <td>{{ task.projectDate }}</td>
-          <!-- <td>{{ task.createdDate }}</td> -->
           <td class="detect-column">
             <div>{{ formatDated(task.createdDate) }}</div>
             <div>{{ formatTimed(task.createdDate) }}</div>
@@ -143,18 +142,15 @@ const deleteTask = (projectId) => {
     accessToken.value,
     projectId,
     (res) => {
-      console.log(res);
       if (res.data.status == "SUCCESS") {
-        console.log(res.data.message);
+        // console.log(res.data.message);
         takeData(0);
         showAlert();
       } else {
         showAlert2();
-        console.log(res.data.message);
       }
     },
     (error) => {
-      console.log(error);
       console.log(error.response.data.message);
     }
   );
@@ -181,7 +177,7 @@ const takeData = (currentPage) => {
     queryParams,
     (res) => {
       if (res.data.status == "SUCCESS") {
-        console.log(res.data.message);
+        // console.log(res.data.message);
         currentData.value = res.data.data.content;
         totalPage.value = res.data.data.totalPages;
       } else {
@@ -189,7 +185,6 @@ const takeData = (currentPage) => {
       }
     },
     (error) => {
-      console.log(error);
       console.log(error.response.data.message);
     }
   );

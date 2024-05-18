@@ -64,14 +64,12 @@ const uploadFile = () => {
     accessToken.value,
     formData,
     (res) => {
-      console.log(res);
       if (res.data.status == "SUCCESS") {
         emit("uploadComplete", res.data);
-        console.log(res.data.message);
+        // console.log(res.data.message);
       }
     },
     (error) => {
-      console.log(error);
       console.log(error.response.data.message);
     }
   );

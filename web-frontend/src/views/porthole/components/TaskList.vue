@@ -99,12 +99,11 @@ const takeTeamList = () => {
     areaName.value,
     (res) => {
       if (res.data.status == "SUCCESS") {
-        console.log(res.data.message);
+        // console.log(res.data.message);
         teamList.value = res.data.data;
       }
     },
     (error) => {
-      console.log(error);
       console.log(error.response.data.message);
     }
   );
@@ -162,16 +161,15 @@ function addNewTask() {
     newData.value,
     (res) => {
       if (res.data.status == "SUCCESS") {
-        console.log(res.data.message);
+        // console.log(res.data.message);
         taskData.value = res.data.data;
         takeData();
         showAlert("새 작업 지시서가 생성되었습니다.");
       } else {
-        console.log(res.data.message);
+        // console.log(res.data.message);
       }
     },
     (error) => {
-      console.log(error);
       console.log(error.data.message);
     }
   );
@@ -191,14 +189,13 @@ function showDetail(task) {
     (res) => {
       console.log(res);
       if (res.data.status == "SUCCESS") {
-        console.log(res.data.message);
+        // console.log(res.data.message);
         propData.value = res.data.data.damageDetailToProjectDtos;
       } else {
         console.log(res.data.message);
       }
     },
     (error) => {
-      console.log(error);
       console.log(error.data.message);
     }
   );
@@ -222,15 +219,14 @@ function saveDetail() {
     assignData.value,
     (res) => {
       if (res.data.status == "SUCCESS") {
-        console.log(res.data.message);
+        // console.log(res.data.message);
         takeData();
         showAlert("프로젝트에 팀이 할당되었습니다.");
       } else {
-        console.log(res.data.message);
+        // console.log(res.data.message);
       }
     },
     (error) => {
-      console.log(error);
       console.log(error.data.message);
     }
   );
@@ -251,7 +247,7 @@ const assignPothole = (taskId) => {
     (res) => {
       console.log(res);
       if (res.data.status == "SUCCESS") {
-        console.log(res.data.message);
+        // console.log(res.data.message);
         takeData();
         showAlert("프로젝트에 도로 파손이 할당되었습니다.");
         props.toggleModal();
@@ -284,14 +280,13 @@ const takeData = () => {
     queryParams,
     (res) => {
       if (res.data.status == "SUCCESS") {
-        console.log(res.data.message);
+        // console.log(res.data.message);
         taskData.value = res.data.data.content;
       } else {
-        console.log(res.data.message);
+        // console.log(res.data.message);
       }
     },
     (error) => {
-      console.log(error);
       console.log(error.response.data.message);
     }
   );
@@ -318,10 +313,10 @@ table {
 
 th,
 td {
-  border-left: none; /* 왼쪽 경계 없앰 */
-  border-right: none; /* 오른쪽 경계 없앰 */
-  border-top: 1px solid #ddd; /* 상단 경계 설정 */
-  border-bottom: 1px solid #ddd; /* 하단 경계 설정 */
+  border-left: none; 
+  border-right: none; 
+  border-top: 1px solid #ddd; 
+  border-bottom: 1px solid #ddd; 
   text-align: center;
   padding: 2.7vh;
   color: #373737;
@@ -330,7 +325,6 @@ td {
 tr:hover,
 tr:nth-child(odd):hover {
   background-color: #e7e9fb;
-  /* cursor: pointer; */
 }
 
 tr:nth-child(odd) {
@@ -356,7 +350,6 @@ tr:nth-child(odd) {
   max-height: 47vh;
 }
 
-/* --- */
 .task-info {
   display: flex;
   flex-direction: column;
@@ -393,7 +386,6 @@ tr:nth-child(odd) {
   font-size: 1.8vh;
   color: #373737;
 }
-/* --- */
 
 .name-col {
   width: 160px;

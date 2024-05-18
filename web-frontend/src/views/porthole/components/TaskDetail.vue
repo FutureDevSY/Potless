@@ -66,7 +66,7 @@ const deletePothole = (potholeId) => {
     (res) => {
       if (res.data.status == "SUCCESS") {
         showAlert();
-        console.log(res.data.message);
+        // console.log(res.data.message);
         emit("updateDetail");
       }
     },

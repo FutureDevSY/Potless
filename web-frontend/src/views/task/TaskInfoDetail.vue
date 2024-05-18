@@ -101,11 +101,11 @@ function showDetail() {
     route.params.id,
     (res) => {
       if (res.data.status === "SUCCESS") {
-        console.log(res.data.message);
+        // console.log(res.data.message);
         taskHeader.value = res.data.data;
         taskData.value = res.data.data.damageDetailToProjectDtos;
       } else {
-        console.log(res.data.message);
+        // console.log(res.data.message);
       }
     },
     (error) => {

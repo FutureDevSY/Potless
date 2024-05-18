@@ -41,7 +41,7 @@ const thirdData = async () => {
     }));
     // console.log("위험물 누적 탐지 건수:", cumulateData.value);
   } else {
-    console.error("Failed to fetch data");
+    console.error("data 불러오기 실패");
   }
 };
 

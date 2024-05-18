@@ -12,7 +12,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watchEffect, onMounted, nextTick } from "vue";
+import { ref, computed, onMounted, nextTick } from "vue";
 
 const props = defineProps({
   searchTerm: String,
