@@ -1,0 +1,22 @@
+spring:
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: "potlessofficial@gmail.com"
+    password: "xzwwyrhbvmfkbyyly"
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+          connection-timeout: 5000
+          timeout: 5000
+          write timeout: 5000
+      auth-code-expiration-millis: 300000
+
+
+email:
+  from: potlessofficial@gmail.com
+  subject: Pot-less 인증코드 입니다.
