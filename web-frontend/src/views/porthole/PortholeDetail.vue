@@ -1,68 +1,62 @@
 <template>
-  <div class="detail-container">
-    <div class="img-box">
-      <div class="carusel-container">
-        <Carusel
-          :images="images"
-          :damage-id="pothole_info.id"
-          @uploadComplete="handleUploadComplete"
-        />
-      </div>
-      <div class="map">
-        <RoadTypeIncidentsGraph
-          v-if="pothole_info.dirX && pothole_info.dirY"
-          :pothole-dirx="pothole_info.dirY"
-          :pothole-diry="pothole_info.dirX"
-        />
-      </div>
-    </div>
-    <div class="text-info-container">
-      <div class="text-left">
-        <p>
-          <span class="info-title">위험물 번호</span>
-          <span class="infos">{{ pothole_info.id }}</span>
-        </p>
-        <p>
-          <span class="info-title">위험물 종류</span>
-          <span class="infos">{{ dtypeDisplay(pothole_info.dtype) }}</span>
-        </p>
-        <p>
-          <span class="info-title">위험성 정도</span>
-          <span class="infos">{{ dangerClass2(pothole_info.severity) }}</span>
-        </p>
-        <p>
-          <span class="info-title">작업 상태</span>
-          <span class="infos">{{ pothole_info.status }}</span>
-        </p>
-        <p>
-          <span class="info-title">상세 규모</span>
-          <span class="infos">너비 {{ roundedWidth }}cm</span>
-        </p>
-      </div>
-      <div class="text-right">
-        <p>
-          <span class="info-title">상세 주소</span>
-          <span class="infos">{{ pothole_info.address }}</span>
-        </p>
-        <p>
-          <span class="info-title">위도 좌표</span>
-          <span class="infos">{{ pothole_info.dirX }}</span>
-        </p>
-        <p>
-          <span class="info-title">경도 좌표</span>
-          <span class="infos">{{ pothole_info.dirY }}</span>
-        </p>
-        <!-- 버튼 -->
-        <div class="button-container">
-          <button class="back-btn" @click="store.moveBack">뒤로가기</button>
-          <button
-            class="delete-btn"
-            @click="deleteData(pothole_info.id)"
-            v-if="canDelete"
-          >
-            삭제하기
-          </button>
+  <div class="wrapper">
+    <div class="detail-container">
+      <div class="main-title">No. {{ pothole_info.id }} 포트홀 상세 정보</div>
+      <div class="info-box">
+        <div class="left-div">
+          <Carusel
+            :images="images"
+            :damage-id="pothole_info.id"
+            @uploadComplete="handleUploadComplete"
+          />
         </div>
+        <div class="right-div">
+          <div class="map-div">
+            <RoadTypeIncidentsGraph
+              v-if="pothole_info.dirX && pothole_info.dirY"
+              :pothole-dirx="pothole_info.dirY"
+              :pothole-diry="pothole_info.dirX"
+            />
+          </div>
+          <div class="info-div">
+            <table class="info-table">
+              <tr>
+                <td class="info-title">위험물 종류</td>
+                <td class="infos">{{ dtypeDisplay(pothole_info.dtype) }}</td>
+              </tr>
+              <tr>
+                <td class="info-title">위험성 정도</td>
+                <td class="infos">{{ dangerClass2(pothole_info.severity) }}</td>
+              </tr>
+              <tr>
+                <td class="info-title">작업 상태</td>
+                <td class="infos">{{ pothole_info.status }}</td>
+              </tr>
+              <tr>
+                <td class="info-title">상세 규모</td>
+                <td class="infos">너비 {{ roundedWidth }}cm</td>
+              </tr>
+              <tr>
+                <td class="info-title">상세 주소</td>
+                <td class="infos">{{ pothole_info.address }}</td>
+              </tr>
+              <tr>
+                <td class="info-title">위도 좌표</td>
+                <td class="infos">{{ pothole_info.dirX }}</td>
+              </tr>
+              <tr>
+                <td class="info-title">경도 좌표</td>
+                <td class="infos">{{ pothole_info.dirY }}</td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="button-container">
+        <button class="back-btn" @click="store.moveBack">뒤로가기</button>
+        <button class="delete-btn" @click="deleteData(pothole_info.id)" v-if="canDelete">
+          삭제하기
+        </button>
       </div>
     </div>
   </div>
@@ -185,88 +179,95 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.detail-container {
-  margin: 1vh 10.5vw 0vh 10.5vw;
+.wrapper {
   display: flex;
-  flex-direction: column;
+  justify-content: center;
   align-items: center;
+  height: 100%;
+  width: 100%;
 }
 
-.img-box {
+.detail-container {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  width: 100%;
-  height: 52.03vh;
+  grid-template-rows: 12% 79% 11%;
+  height: 90%;
+  width: 80%;
+  background-color: #ffffff;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.255);
+  border-radius: 15px;
 }
-
-.map {
+.main-title {
+  text-align: center;
   display: flex;
   justify-content: center;
-  width: 100%;
-  align-self: stretch;
-  margin-top: 0px;
-  height: 55.03vh;
-}
-
-.carusel-container {
-  display: flex;
-  justify-content: center;
-  align-self: stretch;
-}
-
-.text-info-container {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  width: 57vw;
-  border-radius: 4px;
-  margin-top: 2.5vh;
-}
-
-.image {
-  height: 55.03vh;
-  object-fit: cover;
-}
-
-p {
-  margin: 1.9vh 0px;
-}
-
-.info-title {
-  color: #959595;
-  font-size: 1.95vh;
+  align-items: center;
+  font-size: 2.5vh;
   font-weight: bold;
 }
 
-.infos {
-  color: #373737;
-  font-size: 2vh;
+.info-box {
+  display: grid;
+  grid-template-columns: 52.5% 46.5%;
+  gap: 1%;
+  margin: 0vh 2vw 1.5vh 2vw;
 }
 
-.text-left {
-  flex: 1;
+.left-div {
+  display: flex;
+  justify-content: center;
 }
 
-.text-right {
-  flex: 1;
+.right-div {
+  display: grid;
+  grid-template-rows: 45.5% 52.5%;
+  gap: 2%;
+}
+
+.map-div {
+  height: 100%;
+  width: 99.5%;
+}
+
+.info-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.info-header td {
+  background-color: #f0f0f0;
+  font-weight: bold;
 }
 
 .info-title {
-  display: inline-block;
-  width: 10.5vw;
+  padding: 1.1vh 0 1.1vh 1.1vh;
+  border: 1px solid #ddd;
+  background-color: #ecf1fd;
+  font-size: 1.6vh;
+  font-weight: bold;
+  color: #7c7c7c;
+}
+
+.infos {
+  padding: 1.1vh;
+  border: 1px solid #ddd;
+  font-size: 1.8vh;
+  color: #606060;
+  font-weight: 500;
 }
 
 .button-container {
   display: flex;
-  justify-content: right;
-  width: 100%;
-  margin-top: 6vh;
-  margin-left: 170px;
+  justify-content: space-between;
+  width: 94.3%;
+  padding-left: 2vw;
+  margin-top: 1vh;
 }
 
 .back-btn {
   font-size: 1.55vh;
-  padding: 1.5vh 1.5vw;
+  padding: 1vh 1.5vw;
+  height: 5.5vh;
   cursor: pointer;
   border: none;
   background-color: #f8f8f8;
@@ -274,7 +275,6 @@ p {
   color: #373737;
   border: 1px solid #acacac;
   transition: background-color 0.3s;
-  margin-right: 8px;
 }
 
 .back-btn:hover {
@@ -285,6 +285,7 @@ p {
   font-size: 1.55vh;
   padding: 1.5vh 1.5vw;
   cursor: pointer;
+  height: 5.5vh;
   border: none;
   background-color: #fef1f1;
   border-radius: 8px;
