@@ -1,5 +1,44 @@
 import cv2
+import os
 import numpy as np
+from routers.aws_router import upload_image
+
+def box_drawer(origin_image_path, boxes):
+    #  원본 이미지 읽어오기 
+    image = cv2.imread(origin_image_path)
+
+    for box in boxes:
+        x, y, w, h = box.x, box.y, box.width, box.height
+        xmin = int(x - w / 2)
+        ymin = int(y - h / 2)
+        xmax = int(x + w / 2)
+        ymax = int(y + h / 2)
+
+        cv2.rectangle(image, (xmin, ymin), (xmax, ymax), (0, 0, 255), 2)
+
+    # cv2.imshow("Image with Boxes", image)
+    # cv2.waitKey(0)
+    # cv2.destroyAllWindows()
+
+    folder_name = 'origin_boxed'
+    if not os.path.exists(folder_name):
+        os.makedirs(folder_name)
+    base_filename = os.path.basename(origin_image_path)
+
+    boxed_file_path = os.path.join(folder_name, f"{base_filename}")
+    cv2.imwrite(boxed_file_path, image)
+
+    # url = upload_image(boxed_file_path)
+    return boxed_file_path
+
+
+
+
+
+
+
+
+
 
 def calculate_object_scale(image_path):
     image = cv2.imread(image_path)
