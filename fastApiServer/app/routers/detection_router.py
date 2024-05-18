@@ -11,7 +11,7 @@ from services.estimate_service import calcPotholeDan, calcPotholeWidth
 from services.calculate_service import calculate_object_scale, box_drawer
 from services.aws_service import upload_file_to_s3
 from fastapi import FastAPI, File, UploadFile
-from dto.data_class import DetectionResponse
+from dto.data_class import DetectionResponse, DetectionResult
 from routers.aws_router import upload_image
 import io
 import logging
@@ -101,7 +101,7 @@ async def detection_confirm(
          
     logging.info("2차 탐지결과 확인 및 위험도 분석 완료")
 
-    return return_result, return_url
+    return DetectionResult(severity=return_result.severity, width=return_result.width, url=return_url)
 
 
 
