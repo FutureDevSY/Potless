@@ -10,6 +10,7 @@ import com.potless.backend.damage.dto.service.response.kakao.RoadAddress;
 import com.potless.backend.damage.entity.enums.Status;
 import com.potless.backend.global.exception.pothole.PotholeNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+@Log4j2
 @Service
 @EnableAsync
 @RequiredArgsConstructor
@@ -46,10 +48,13 @@ public class AsyncService {
                 damageSetRequestDTO.setWidth((double) detectionResult.getWidth());
 
                 // 2차 탐지 성공하면 AfterVerification/BeforeWork/ 파일 삽입
-                String fileName = "AfterVerification/BeforeWork/" + System.currentTimeMillis() + "_" + imageFile.getName();
-                Map<String, String> fileUrlAndKey = awsService.uploadFileToS3(imageFile, fileName);
-                List<String> fileUrls = new ArrayList<>(fileUrlAndKey.values());
+//                String fileName = "AfterVerification/BeforeWork/" + System.currentTimeMillis() + "_" + imageFile.getName();
+//                Map<String, String> fileUrlAndKey = awsService.uploadFileToS3(imageFile, fileName);
+//                List<String> fileUrls = new ArrayList<>(fileUrlAndKey.values());
 
+//                fastApi에서 aws에 업로드, 받아온 url set
+                List<String> fileUrls = new ArrayList<>();
+                fileUrls.add(detectionResult.getUrl());
                 damageSetRequestDTO.setImages(fileUrls);
 
                 // 비동기로 처리하고 바로 응답 반환 검증

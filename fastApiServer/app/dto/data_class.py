@@ -12,3 +12,8 @@ class Box(BaseModel):
 class DetectionResponse(BaseModel):
     severity: int = Field(..., alias="severity")
     width: float = Field(..., alias="width")
+
+class DetectionResult(BaseModel):
+    severity: int = Field(..., alias="severity")
+    width: float = Field(..., alias="width")
+    url: str = Field(..., alias="url")
