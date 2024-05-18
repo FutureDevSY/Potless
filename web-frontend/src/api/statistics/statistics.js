@@ -57,9 +57,12 @@ const getTotalDongList = async (accessToken) => {
 // 동 이름 검색하면 해당 동의 통계 출력
 const getDongDetail = async (accessToken, locationName) => {
   try {
-    const response = await local.get(`/damage/statistic/location/${locationName}`, {
-      headers: { Authorization: `Bearer ${accessToken}` },
-    });
+    const response = await local.get(
+      `/damage/statistic/location/${locationName}`,
+      {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      }
+    );
     return response.data;
   } catch (error) {
     console.error("Error fetching dong detail:", error);
@@ -86,20 +89,32 @@ const getDongMonthly = async (accessToken, start, end) => {
 
 // 구 별로 지정한 날짜별 발생한 통계 출력
 // START 만 입력시 단일 조회 START, END 입력시 START ~ END 조회
-const getDongPerDate = async (accessToken, start, end, success, fail) => {
+const getDongPerDate = async (accessToken, queryParams, success, fail) => {
   await local
     .get("/damage/damage/date/area", {
+      params: {
+        ...queryParams,
+      },
       headers: {
         Authorization: `Bearer ${accessToken}`,
-      },
-      params: {
-        start: start,
-        end: end,
       },
     })
     .then(success)
     .catch(fail);
 };
+
+// 구 ID 를 활용하여 구의 심각도 통계 조회
+const getSeverityPerDate = async (accessToken, areaId, success, fail) => {
+  await local
+    .get(`/damage/severity/${areaId}`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    })
+    .then(success)
+    .catch(fail);
+};
+
 export {
   getAreaDetails,
   getGuList,
@@ -108,4 +123,5 @@ export {
   getDongDetail,
   getDongMonthly,
   getDongPerDate,
+  getSeverityPerDate,
 };

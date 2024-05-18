@@ -6,7 +6,11 @@
           <LottieRadar class="lottie lottie-radar" />
           <p class="incident-title">위험물 발생 현황</p>
         </div>
-        <transition-group name="incident-report" tag="div" class="incident-report">
+        <transition-group
+          name="incident-report"
+          tag="div"
+          class="incident-report"
+        >
           <IncidentReport
             v-for="(item, index) in IncidentData"
             :key="index"
@@ -27,10 +31,13 @@
             type="text"
             v-model="searchTerm"
             placeholder="동을 입력해주세요."
-            @input="updateChart"
+            @input="handleInput"
           />
         </div>
-        <RoadTypeIncidentsGraphVue :search-term="searchTerm" :road-data="roadIncidentData" />
+        <RoadTypeIncidentsGraphVue
+          :search-term="searchTerm"
+          :road-data="roadIncidentData"
+        />
       </div>
     </div>
     <div class="right-box">
@@ -82,7 +89,11 @@ import LottieConstruction from "./components/LottieConstruction.vue";
 import { format, subDays } from "date-fns";
 import { useAuthStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
-import { getAreaDetails, getDongList, getDongPerDate } from "../../api/statistics/statistics";
+import {
+  getAreaDetails,
+  getDongList,
+  getDongPerDate,
+} from "../../api/statistics/statistics";
 
 const store = useAuthStore();
 const { accessToken, areaId } = storeToRefs(store);
@@ -122,14 +133,20 @@ function calculatePercentChange(current, previous) {
 // API 호출을 위한 일반화된 함수
 async function secondDataForPeriod(start, end, title) {
   return new Promise((resolve, reject) => {
+    const DateParams = ref({
+      start: formatDate(start),
+      end: formatDate(end),
+    });
+
     getDongPerDate(
       accessToken.value,
-      formatDate(start),
-      formatDate(end),
+      DateParams.value,
       (res) => {
         if (res.data && res.data.status === "SUCCESS") {
           const data = res.data.data.list;
-          const areaData = data.find((d) => d.areaGu === areaDetails.value.areaGu); // areaGu 동적 사용
+          const areaData = data.find(
+            (d) => d.areaGu === areaDetails.value.areaGu
+          ); // areaGu 동적 사용
           const counts = areaData.list.map((item) => item.count);
           const total = counts.reduce((acc, current) => acc + current, 0);
           resolve({ title: title, number: total });
@@ -147,16 +164,45 @@ const firstData = async () => {
   try {
     // 데이터 가져오기
     const todayData = await secondDataForPeriod(today, today, "오늘");
-    const yesterdayData = await secondDataForPeriod(yesterday, yesterday, "어제");
-    const thisWeekData = await secondDataForPeriod(thisWeekStart, today, "최근 1주일");
-    const lastWeekData = await secondDataForPeriod(lastWeekStart, lastWeekEnd, "지난 1주일");
-    const thisMonthData = await secondDataForPeriod(thisMonthStart, today, "최근 1달");
-    const lastMonthData = await secondDataForPeriod(lastMonthStart, lastMonthEnd, "지난 1달");
+    const yesterdayData = await secondDataForPeriod(
+      yesterday,
+      yesterday,
+      "어제"
+    );
+    const thisWeekData = await secondDataForPeriod(
+      thisWeekStart,
+      today,
+      "최근 1주일"
+    );
+    const lastWeekData = await secondDataForPeriod(
+      lastWeekStart,
+      lastWeekEnd,
+      "지난 1주일"
+    );
+    const thisMonthData = await secondDataForPeriod(
+      thisMonthStart,
+      today,
+      "최근 1달"
+    );
+    const lastMonthData = await secondDataForPeriod(
+      lastMonthStart,
+      lastMonthEnd,
+      "지난 1달"
+    );
 
     // 증감률 계산
-    const dailyChangePercent = calculatePercentChange(todayData.number, yesterdayData.number);
-    const weeklyChangePercent = calculatePercentChange(thisWeekData.number, lastWeekData.number);
-    const monthlyChangePercent = calculatePercentChange(thisMonthData.number, lastMonthData.number);
+    const dailyChangePercent = calculatePercentChange(
+      todayData.number,
+      yesterdayData.number
+    );
+    const weeklyChangePercent = calculatePercentChange(
+      thisWeekData.number,
+      lastWeekData.number
+    );
+    const monthlyChangePercent = calculatePercentChange(
+      thisMonthData.number,
+      lastMonthData.number
+    );
 
     // 데이터셋 저장
     IncidentData.value = [
@@ -196,7 +242,12 @@ const roadIncidentData = ref([]);
 const secondfourthData = async () => {
   try {
     const response = await getDongList(accessToken.value, areaId.value);
-    if (response && response.data && response.data.data && response.data.data.list) {
+    if (
+      response &&
+      response.data &&
+      response.data.data &&
+      response.data.data.list
+    ) {
       const { list } = response.data.data;
       let countDone = 0,
         countDuring = 0,
@@ -227,6 +278,10 @@ const secondfourthData = async () => {
   } catch (error) {
     console.error("Error fetching Dong statistics:", error);
   }
+};
+
+const handleInput = (e) => {
+  searchTerm.value = e.target.value;
 };
 
 onMounted(() => {

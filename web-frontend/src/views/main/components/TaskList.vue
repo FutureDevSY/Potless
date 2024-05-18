@@ -9,11 +9,20 @@
     </div>
     <span class="titled">{{ weekLabel }}</span>
     <div class="chevron-navigation">
-      <button @click="changeWeek('next')" :disabled="isNextDisabled" class="chevron-right"></button>
+      <button
+        @click="changeWeek('next')"
+        :disabled="isNextDisabled"
+        class="chevron-right"
+      ></button>
     </div>
   </div>
   <div class="all-projects">
-    <div class="projects" v-for="project in currentData" :key="project.projectId">
+    <div
+      class="projects"
+      v-for="project in currentData"
+      :key="project.projectId"
+      @click="store2.moveTaskDetail(project.projectId)"
+    >
       <div class="pro-name">
         {{ project.projectName }}
       </div>
@@ -33,10 +42,12 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { useAuthStore } from "@/stores/user";
+import { useMoveStore } from "@/stores/move";
 import { storeToRefs } from "pinia";
 import { getTaskList } from "../../../api/task/taskList";
 import { startOfWeek, endOfWeek, addWeeks, subWeeks, format } from "date-fns";
 
+const store2 = useMoveStore();
 const store = useAuthStore();
 const { accessToken, areaId } = storeToRefs(store);
 const currentData = ref([]);
@@ -99,7 +110,9 @@ function takeData() {
   };
 
   const queryParams = Object.fromEntries(
-    Object.entries(rawParams).filter(([key, value]) => value !== "" && value != null)
+    Object.entries(rawParams).filter(
+      ([key, value]) => value !== "" && value != null
+    )
   );
 
   getTaskList(

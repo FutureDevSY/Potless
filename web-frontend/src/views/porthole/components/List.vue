@@ -10,9 +10,11 @@
           <th class="city-column">행정동</th>
           <th class="address-column">지번 주소</th>
           <th class="work-column">
-            <button class="add-button" @click="openModal('add')">추가</button>
+            <button class="add-button" :disabled="!hasSelected" @click="openModal('add')">
+              추가
+            </button>
             <button
-              class="add-button"
+              class="add-button delete-btn"
               :disabled="!hasSelected"
               @click="deletePotholeSelect()"
             >
@@ -43,9 +45,7 @@
             <div
               class="checkbox"
               :class="{
-                disabled:
-                  props.selectedStatus === '작업완료' ||
-                  props.selectedStatus === '작업중',
+                disabled: props.selectedStatus === '작업완료' || props.selectedStatus === '작업중',
               }"
             >
               <div v-if="pothole.isSelected" class="checkmark"></div>
@@ -61,10 +61,7 @@
     </table>
   </div>
 
-  <div
-    v-if="isModalOpen && (modalMode === 'list' || modalMode === 'add')"
-    class="modal"
-  >
+  <div v-if="isModalOpen && (modalMode === 'list' || modalMode === 'add')" class="modal">
     <div class="modal-content">
       <TaskList
         :is-adding-tasks="modalMode === 'add'"
@@ -73,14 +70,6 @@
       />
     </div>
   </div>
-  <button class="button team-button" @click="openModal('team')">작업팀</button>
-  <div v-if="isModalOpen && modalMode === 'team'" class="modal">
-    <div class="modal-content">
-      <TeamModal :toggle-modal="toggleModal" />
-    </div>
-  </div>
-
-  <!-- <Pagination @update:current-page="setCurrentPage" :totalpage="totalPage" /> -->
 </template>
 
 <script setup>
@@ -226,7 +215,6 @@ const updateMapLocation = (dirX, dirY) => {
   border: 2px solid #ccc;
   background: white;
   display: inline-block;
-  z-index: -2;
   position: relative;
 }
 
@@ -236,13 +224,13 @@ const updateMapLocation = (dirX, dirY) => {
 }
 
 .checkmark {
-  width: 2.2vh;
+  width: 1.8vh;
   height: 1vh;
-  z-index: -1;
+  z-index: 1;
   position: relative;
   border-bottom: 4px solid #151c62;
   border-left: 4px solid #151c62;
-  transform: translateX(9px) translateY(8px) rotate(-45deg);
+  transform: translateX(9px) translateY(6px) rotate(-50deg);
   transform-origin: left bottom;
 }
 
@@ -297,19 +285,22 @@ td {
   border-left: none;
   border-right: none;
   text-align: center;
-  padding: 1vh;
+  padding: 1.532vh;
   font-size: 1.9vh;
   color: #373737;
 }
 
 thead th {
-  position: sticky;
   top: 0;
   background-color: #d3d5ed;
-  z-index: 0;
   padding: 1vh 1vh;
   font-size: 1.7vh;
   color: #6c6c6c;
+  /* z-index: 0; */
+}
+
+tbody tr {
+  background-color: #ffffff;
 }
 
 tbody tr:hover {
@@ -388,15 +379,16 @@ tbody tr:hover {
 }
 
 .add-button {
-  padding: 5px 15px;
+  padding: 4px 17px;
   font-size: 1.55vh;
   background-color: #f8f8fc;
   border-radius: 5px;
   cursor: pointer;
-  height: 4.4vh;
+  height: 4vh;
   color: #4f58b5;
   border: 1px solid #4f58b5;
   transition: background-color 0.4s;
+  /* z-index: -3; */
 }
 
 .add-button:hover {
@@ -427,6 +419,10 @@ tbody tr:hover {
   background-color: #d8d8d8;
 }
 
+.delete-btn {
+  margin-left: 4px;
+}
+
 .list-button {
   margin-top: 1.3vh;
   margin-left: 30px;
@@ -451,7 +447,7 @@ tbody tr:hover {
 
 .list-overflow {
   overflow-y: auto;
-  height: 62vh;
+  height: 70vh;
   margin-right: 6px;
   margin-left: 30px;
   border: 2px solid rgb(223, 223, 223);

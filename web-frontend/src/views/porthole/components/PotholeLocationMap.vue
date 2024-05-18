@@ -1,8 +1,8 @@
 <template>
   <div>
     <div id="map" class="map"></div>
-    <button @click="toggleIsCount">
-      {{ isCount ? "심각도 조회" : "중복 신고 조회" }}
+    <button class="btn-style" @click="toggleIsCount">
+      {{ isCount ? "위험도 확인" : "신고중복 확인" }}
     </button>
   </div>
 </template>
@@ -91,11 +91,9 @@ function updateMarkerImage(data) {
         imageSrc = markerImageSrc;
     }
   }
-  return new window.kakao.maps.MarkerImage(
-    imageSrc,
-    new window.kakao.maps.Size(40, 40),
-    { offset: new window.kakao.maps.Point(20, 40) }
-  );
+  return new window.kakao.maps.MarkerImage(imageSrc, new window.kakao.maps.Size(40, 40), {
+    offset: new window.kakao.maps.Point(20, 40),
+  });
 }
 
 function updateMarkers() {
@@ -132,15 +130,8 @@ watch(currentData, updateMarkers, { deep: true, immediate: true });
 watch(
   [potholeDirx, potholeDiry],
   () => {
-    if (
-      map &&
-      potholeDirx.value !== undefined &&
-      potholeDiry.value !== undefined
-    ) {
-      const newCenterPoint = new window.kakao.maps.LatLng(
-        potholeDirx.value,
-        potholeDiry.value
-      );
+    if (map && potholeDirx.value !== undefined && potholeDiry.value !== undefined) {
+      const newCenterPoint = new window.kakao.maps.LatLng(potholeDirx.value, potholeDiry.value);
       map.setCenter(newCenterPoint);
     }
   },
@@ -151,8 +142,27 @@ watch(
 <style scoped>
 .map {
   width: 37.3vw;
-  height: 70.5vh;
+  height: 70vh;
   margin-top: 0px;
   border: 2px solid rgb(223, 223, 223);
+}
+
+.btn-style {
+  padding: 1vh 0px;
+  width: 7.6vw;
+  background-color: #1e90ff;
+  border: none;
+  color: #ffffff;
+  font-size: 1.6vh;
+  border-radius: 4px;
+  cursor: pointer;
+  position: absolute;
+  bottom: 15.7%;
+  right: 4%;
+  z-index: 10;
+}
+
+.btn-style:hover {
+  background-color: #0074e5;
 }
 </style>
