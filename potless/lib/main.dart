@@ -49,7 +49,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        theme: ThemeData(fontFamily: 'Hanbit'),
+        theme: ThemeData(fontFamily: 'Pretendard'),
         themeMode: ThemeMode.system,
         // home: const LoginScreen(),
         home: const LoadingScreen());
