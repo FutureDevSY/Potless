@@ -9,6 +9,9 @@ import os
 
 load_dotenv()
 
+# AWS_ACCESS_KEY_ID=your_access_key_id
+# AWS_SECRET_ACCESS_KEY=your_secret_access_key
+# AWS_DEFAULT_REGION=your_region
 
 class Settings(BaseSettings):
     PROJECT_NAME: str
@@ -20,6 +23,9 @@ class Settings(BaseSettings):
     ENCODING: str
     LOG_LEVEL: str
     SPRING_BASE_URL: str
+    AWS_ACCESS_KEY_ID: str
+    AWS_SECRET_ACCESS_KEY: str
+    AWS_DEFAULT_REGION: str
 
     @validator("BACKEND_CORS_ORIGINS", pre=True)
     def assemble_cors_origins(cls, v: Union[str, List[str]]) -> Union[List[str], str]:
