@@ -8,8 +8,6 @@ import 'package:potless/API/login.dart';
 import 'package:potless/models/pothole.dart';
 
 class ApiService {
-  // static const String _baseUrl = "http://192.168.117.165:7080/api";
-  // static const String _baseUrl = "http://192.168.117.36:7080/api";
   static const String _baseUrl = "https://api.potless.co.kr/api";
   final StorageService _storageService = StorageService();
 
@@ -102,7 +100,6 @@ class ApiService {
         }
         return true;
       }
-      // debugPrint(jsonDecode(response.body));
       return false;
     } catch (e) {
       debugPrint('APIservice 62: $e');
@@ -353,7 +350,6 @@ class ApiService {
         var resBody = utf8.decode(res.bodyBytes);
         var data = json.decode(resBody) as Map<String, dynamic>;
 
-        // Correct access to the list
         List<dynamic> projectsJson = data['data'];
         List<Project> projects = projectsJson
             .map((projectsJson) => Project.fromJson(projectsJson))

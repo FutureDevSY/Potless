@@ -85,7 +85,7 @@ class CustomCarouselCard extends StatelessWidget {
               child: Text(
                 statusText(),
                 style: TextStyle(
-                    fontSize: 16,
+                    fontSize: 18,
                     fontWeight: FontWeight.bold,
                     color: textColor),
                 textAlign: TextAlign.center,
