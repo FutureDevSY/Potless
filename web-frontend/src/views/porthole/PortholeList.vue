@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="main-cont">
     <div class="filter">
       <!-- 필터 -->
       <div class="search-tab">
@@ -177,6 +177,17 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.main-cont {
+  animation: fadein 1.5s;
+}
+@keyframes fadein {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
 .container {
   margin-top: 20px;
   display: flex;
@@ -190,6 +201,9 @@ onMounted(() => {
   width: 86vw;
   padding: 10px;
   text-align: center;
+  overflow: visible;
+  position: relative;
+  z-index: 100;
 }
 
 .left {

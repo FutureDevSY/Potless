@@ -202,6 +202,18 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.task-info-container {
+  animation: fadein 1.5s;
+}
+@keyframes fadein {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 .search-tab {
   display: flex;
   align-items: center;
