@@ -1,5 +1,0 @@
-aws:
-  region: ap-northeast-2
-  access-key-id: AKIA3FLDZP6WNF5CGZGX
-  secret-access-key: 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
-  s3-bucket-name: mine702-amazon-s3
