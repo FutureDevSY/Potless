@@ -1,18 +1,8 @@
 <template>
   <div class="carousel-container">
     <div v-if="props.images.length == 1">
-      <img
-        class="pot-img"
-        :src="props.images[0].url"
-        alt="image"
-        @click="triggerFileInput"
-      />
-      <input
-        type="file"
-        ref="fileInput"
-        @change="handleFileChange"
-        style="display: none"
-      />
+      <img class="pot-img" :src="props.images[0].url" alt="image" @click="triggerFileInput" />
+      <input type="file" ref="fileInput" @change="handleFileChange" style="display: none" />
     </div>
     <div v-else>
       <Carousel :items-to-show="1.5" :wrap-around="true">
@@ -40,8 +30,7 @@ const { accessToken } = storeToRefs(store2);
 const emit = defineEmits(["uploadComplete"]);
 
 const handleFileChange = (event) => {
-  const selectedFile =
-    event.target.files.length > 0 ? event.target.files[0] : null;
+  const selectedFile = event.target.files.length > 0 ? event.target.files[0] : null;
   if (selectedFile) {
     showAlert();
   }
@@ -103,21 +92,28 @@ const props = defineProps({
 
 <style scoped>
 .carousel-container {
-  width: 600px;
-  height: 515px;
-  overflow: hidden;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
 }
 .pot-img {
-  width: 400px;
-  height: 512px;
-  display: block;
+  width: 100%;
+  height: 66vh;
+  /* width: auto;
+  height: 515px; */
+  object-fit: cover;
+  object-position: center;
+  transition: transform 0.3s ease;
+  border: 2px solid #dfdfdf;
 }
 .pot-img:hover {
   cursor: pointer;
+  transform: scale(1.01);
 }
 .carousel__item {
-  width: 400px;
-  height: 500px;
+  width: 100%;
+  height: 66vh;
 }
 .carousel__slide {
   padding: 0 5px;
