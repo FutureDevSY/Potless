@@ -43,27 +43,26 @@ const props = defineProps({
 
 .teamName {
   font-size: 1.6vh;
-  margin-bottom: 1.5vh;
 }
 
 .slotWrapper {
   display: flex;
   flex-direction: column;
   align-items: center;
-  height: 97%;
+  height: 100%;
   width: 100%;
 }
 
 .memberSlot {
   width: 45%;
-  height: 15vh;
+  height: 15.3vh;
   border-radius: 15px;
   background-color: #f0f0f0;
   color: rgb(131, 131, 131);
   cursor: pointer;
   box-shadow: 0 3px 5px rgba(0, 0, 0, 0.162);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-  margin-bottom: 1vh;
+  margin-top: 1vh;
 }
 .memberSlot:hover {
   transform: translateY(-5px);
@@ -72,7 +71,7 @@ const props = defineProps({
 
 .memberName {
   position: relative;
-  top: 0.3vh;
+  top: 0.8vh;
   font-size: 1.6vh;
   font-weight: bold;
   color: rgb(43, 43, 43);
