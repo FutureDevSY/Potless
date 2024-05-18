@@ -93,8 +93,6 @@ const apiData = async () => {
         dong: dong.locationName,
         potholes: dong.countDamageBefore + dong.countDamageDuring,
       }));
-
-      console.log("도로별 포트홀 현황:", roadIncidentData.value);
     } else {
       console.error("Invalid or empty data received from the API");
     }
