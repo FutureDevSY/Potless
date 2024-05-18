@@ -18,7 +18,7 @@ onMounted(() => {
     renderer: "svg",
     loop: false,
     autoplay: false,
-    path: "../../../../public/lottie/mist-fog-haze.json",
+    path: "/lottie/mist-fog-haze.json",
   });
 
   anim.addEventListener("complete", () => {

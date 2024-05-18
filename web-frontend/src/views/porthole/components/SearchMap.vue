@@ -8,9 +8,12 @@
           placeholder="위험물 주소(위치)를 입력해 주세요."
           @input="handleInput"
         />
-        <!-- <button type="button" @click="searchAddress">위치 찾기</button> -->
         <ul v-if="results.length > 0">
-          <li v-for="item in results" :key="item.id" @click="selectLocation(item)">
+          <li
+            v-for="item in results"
+            :key="item.id"
+            @click="selectLocation(item)"
+          >
             {{ item.place_name }} - {{ item.address_name }}
           </li>
         </ul>
@@ -59,9 +62,13 @@ function initMap() {
     marker.value = new kakao.maps.Marker({
       position: map.value.getCenter(),
       map: map.value,
-      image: new window.kakao.maps.MarkerImage(markerImageSrc, new window.kakao.maps.Size(40, 40), {
-        offset: new window.kakao.maps.Point(20, 40),
-      }),
+      image: new window.kakao.maps.MarkerImage(
+        markerImageSrc,
+        new window.kakao.maps.Size(40, 40),
+        {
+          offset: new window.kakao.maps.Point(20, 40),
+        }
+      ),
     });
 
     kakao.maps.event.addListener(map.value, "center_changed", () => {
@@ -99,6 +106,7 @@ async function searchAddress() {
 }
 
 const handleInput = async (e) => {
+  e.stopPropagation(); // 이벤트 전파 중지
   query.value = e.target.value;
   if (query.value.trim() !== "") {
     await searchAddress();
