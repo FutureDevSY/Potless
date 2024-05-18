@@ -184,7 +184,7 @@ onMounted(async () => {
   map.whenReady(() => {
     leafletImage(map, function (err, canvas) {
       if (err) {
-        console.error("Failed to generate image from map:", err);
+        console.error("map 불러오기 실패", err);
         return;
       }
       imageUrl.value = canvas.toDataURL();

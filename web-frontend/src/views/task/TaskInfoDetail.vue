@@ -7,17 +7,13 @@
           <div class="report-name">
             {{ taskHeader ? taskHeader.projectName : "Loading..." }}
           </div>
-          <div class="report-total" v-if="taskHeader">
-            (총 {{ taskHeader.projectSize }}건)
-          </div>
+          <div class="report-total" v-if="taskHeader">(총 {{ taskHeader.projectSize }}건)</div>
         </div>
         <div class="report-work">
           <div class="report-worker">
             담당자 : {{ taskHeader ? taskHeader.managerName : "Loading..." }}
           </div>
-          <div>
-            팀이름 : {{ taskHeader?.teamName ? taskHeader.teamName : "미정" }}
-          </div>
+          <div>팀이름 : {{ taskHeader?.teamName ? taskHeader.teamName : "미정" }}</div>
         </div>
       </div>
       <div>
@@ -56,16 +52,12 @@
             id="pdf"
           />
           <div v-for="(pothole, index) in taskData" :key="pothole.id">
-            <PDFGeneratorDetail
-              :pothole="pothole"
-              :index="index"
-              ref="documentRef"
-              class="pdf"
-            />
+            <PDFGeneratorDetail :pothole="pothole" :index="index" ref="documentRef" class="pdf" />
           </div>
         </div>
       </div>
     </div>
+    <button class="back-btn" @click="store2.moveBack">뒤로가기</button>
   </div>
 </template>
 
@@ -77,6 +69,7 @@ import PDFGeneratorMain from "./components/PDFGeneratorMain.vue";
 import PDFGeneratorDetail from "./components/PDFGeneratorDetail.vue";
 import { getTaskDetail, postOptimal } from "../../api/task/taskDetail";
 import { useAuthStore } from "@/stores/user";
+import { useMoveStore } from "@/stores/move";
 import { storeToRefs } from "pinia";
 import PathModal from "./components/PathModal.vue";
 import LottieLoading from "./components/LottieLoading.vue";
@@ -84,6 +77,7 @@ import html2pdf from "html2pdf.js";
 
 const route = useRoute();
 const store = useAuthStore();
+const store2 = useMoveStore();
 const { accessToken, coordinates } = storeToRefs(store);
 const documentRef = ref(null);
 
@@ -110,11 +104,11 @@ function showDetail() {
     route.params.id,
     (res) => {
       if (res.data.status === "SUCCESS") {
-        console.log(res.data.message);
+        // console.log(res.data.message);
         taskHeader.value = res.data.data;
         taskData.value = res.data.data.damageDetailToProjectDtos;
       } else {
-        console.log(res.data.message);
+        // console.log(res.data.message);
       }
     },
     (error) => {
@@ -211,7 +205,6 @@ function generatePdf() {
   margin: 0%;
   display: block;
   padding: 0%;
-  /* visibility: hidden; */
 }
 
 .report-num,
@@ -259,8 +252,6 @@ function generatePdf() {
 
 .pdf-button {
   background-color: #151c62;
-  /* width: 370px;
-  height: 45px; */
   cursor: pointer;
   border-radius: 8px;
   font-size: 1.8vh;
@@ -312,5 +303,22 @@ function generatePdf() {
   left: 60%;
   transform: translate(-50%, -50%);
   z-index: 1050;
+}
+
+.back-btn {
+  font-size: 1.55vh;
+  padding: 0vh 1.5vw;
+  height: 5vh;
+  cursor: pointer;
+  border: none;
+  background-color: #f8f8f8;
+  border-radius: 8px;
+  color: #373737;
+  border: 1px solid #acacac;
+  transition: background-color 0.3s;
+}
+
+.back-btn:hover {
+  background-color: #d8d8d8;
 }
 </style>

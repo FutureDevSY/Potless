@@ -51,7 +51,7 @@ const store2 = useMoveStore();
 const store = useAuthStore();
 const { accessToken, areaId } = storeToRefs(store);
 const currentData = ref([]);
-const weekIndex = ref(0); // 0 for this week, -1 for last week, 1 for next week
+const weekIndex = ref(0); 
 const weekLabel = ref("이번주 작업 보고서");
 const isPreviousDisabled = ref(false);
 const isNextDisabled = ref(false);
@@ -122,11 +122,10 @@ function takeData() {
       if (res.data.status === "SUCCESS") {
         currentData.value = res.data.data.content;
       } else {
-        console.log(res.data.message);
+        // console.log(res.data.message);
       }
     },
     (error) => {
-      console.log(error);
       console.log(error.response.data.message);
     }
   );

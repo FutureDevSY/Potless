@@ -4,14 +4,6 @@
       <div class="input-container">
         <input v-model="newTeamName" type="text" placeholder="팀 이름을 입력해주세요" />
       </div>
-
-      <!-- <div v-for="index in 5" :key="index">
-        <input
-          v-model="newTeam.members[index - 1]"
-          type="text"
-          :placeholder="'팀원 ' + index"
-        />
-      </div> -->
       <div class="new-member" v-for="member in teamMembers">
         <span class="close-button" @click="removeMember(index)">&times;</span>
         {{ member.workerName }}
@@ -86,12 +78,11 @@ const takeWorkerList = () => {
     areaName.value,
     (res) => {
       if (res.data.status == "SUCCESS") {
-        console.log(res.data.message);
+        // console.log(res.data.message);
         datas.value = res.data.data;
       }
     },
     (error) => {
-      console.log(error);
       console.log(error.response.data.message);
     }
   );
@@ -137,15 +128,13 @@ function addTeam() {
     accessToken.value,
     reqBody.value,
     (res) => {
-      console.log(res);
       if (res.data.status == "SUCCESS") {
-        console.log(res.data.message);
+        // console.log(res.data.message);
         showAlert("새로운 팀이 생성되었습니다.");
         emit("teamAdded", true);
       }
     },
     (error) => {
-      console.log(error);
       console.log(error.response.data.message);
     }
   );

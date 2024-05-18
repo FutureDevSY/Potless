@@ -1,5 +1,6 @@
 <template>
   <div class="form-container">
+    <span @click="store.moveBack()" class="back">&larr;</span>
     <div class="main-title">도로 파손 수동 신고</div>
     <div class="inputs">
       <form @submit.prevent="submitForm" class="form-content">
@@ -105,7 +106,7 @@ const submitForm = () => {
     (res) => {
       console.log(res);
       if (res.data.status == "SUCCESS") {
-        console.log(res.data.message);
+        // console.log(res.data.message);
         showAlert();
         store.movePorthole();
       } else {
@@ -113,7 +114,6 @@ const submitForm = () => {
       }
     },
     (error) => {
-      console.log(error);
       console.log(error.message);
       alert(`신고 처리 중 오류가 발생하였습니다: ${error.message}`);
     }
@@ -279,5 +279,19 @@ input[type="file"] {
   border-color: #a2a2a2;
   background-color: #efefef6f;
   color: #666666;
+}
+.back {
+  position: absolute;
+  top: 7%;
+  left: 32%;
+  color: #aaa;
+  font-size: 5vh;
+  font-weight: bold;
+  cursor: pointer;
+}
+.back:hover {
+  color: #7d7d7d;
+  text-decoration: none;
+  cursor: pointer;
 }
 </style>

@@ -37,8 +37,6 @@
     <div class="right-div">
       <img class="logo" src="../../assets/icon/weblogo.png" alt="#" />
       <div class="slogan">
-        <!-- <img class="helmet-img" src="../../assets/icon/helmet.png" alt="#" /> -->
-        <!-- <img class="work-img" src="../../assets/icon/road-work.png" alt="#" /> -->
         <img class="road-img" src="../../assets/icon/road.png" alt="road" />
 
         <div class="slogan-left">포트홀 없는 길,</div>
@@ -71,6 +69,8 @@ const errorMsg = ref("아이디와 비밀번호를 다시 입력해주세요.");
 const loginSuccess = ref(false);
 const loginSuccessCar = ref(false);
 
+
+// 로그인 실행 함수
 const doLogin = () => {
   authIdError.value = !auth_id.value;
   authPasswordError.value = !auth_password.value;
@@ -88,7 +88,7 @@ const doLogin = () => {
     loginData,
     (res) => {
       if (res.data.status === "SUCCESS") {
-        console.log(res.data.message);
+        // console.log(res.data.message);
         store.login(res.data, res.data.data.token);
         loginSuccess.value = true;
         setTimeout(() => {

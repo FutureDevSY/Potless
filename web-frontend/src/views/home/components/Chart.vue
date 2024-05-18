@@ -1,6 +1,5 @@
 <template>
   <div class="chart">
-    <!-- <p class="section-title">{{ props.section }}</p> -->
     <apexchart type="pie" :options="props.options" :series="props.series" />
   </div>
 </template>
@@ -14,10 +13,4 @@ const props = defineProps({
 </script>
 
 <style scoped>
-/* p {
-  color: white;
-  text-align: center;
-  font-size: 20px;
-  font-weight: 700;
-} */
 </style>

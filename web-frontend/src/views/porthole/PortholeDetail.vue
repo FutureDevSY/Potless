@@ -133,15 +133,13 @@ const takeData = (potholeId) => {
     accessToken.value,
     potholeId,
     (res) => {
-      console.log(res);
       if (res.data.status == "SUCCESS") {
-        console.log(res.data.message);
+        // console.log(res.data.message);
         pothole_info.value = res.data.data;
         images.value = res.data.data.imagesResponseDTOS;
       }
     },
     (error) => {
-      console.log(error);
       console.log(error.response.data.message);
     }
   );
@@ -156,13 +154,12 @@ const deleteData = (potholeId) => {
     pothole_info2,
     (res) => {
       if (res.data.status == "SUCCESS") {
-        console.log(res.data.message);
+        // console.log(res.data.message);
         store.moveBack();
         showAlert();
       }
     },
     (error) => {
-      console.log(error);
       console.log(error.response.data.message);
     }
   );

@@ -68,6 +68,8 @@ const deleteWorker = async (accessToken, workerInfo, success, fail) => {
     .catch(fail);
 };
 
+
+// 팀 삭제
 const deleteTeam = async (accessToken, teamId, success, fail) => {
   await local
     .delete(`/team/${teamId}`, {
