@@ -1,9 +1,23 @@
 <template>
-  <div class="dropdown-container" @click="toggleDropdown">
-    <div class="dropdown-display">{{ selected || defaultText }}</div>
+  <div
+    :class="[
+      'dropdown-container',
+      { 'dropdown-open': showDropdown, 'dropdown-selected': selected },
+      customClass,
+    ]"
+    :style="customStyle"
+    @click="toggleDropdown"
+  >
+    <div :class="['dropdown-display', { 'dropdown-selected': selected }, customClass]">
+      {{ selected || defaultText }}
+    </div>
     <img src="../../../assets/icon/select.png" alt="#" />
     <transition name="fade">
-      <ul v-show="showDropdown" class="dropdown-list" @click.stop>
+      <ul
+        v-show="showDropdown"
+        :class="['dropdown-list', { 'dropdown-open': showDropdown }]"
+        @click.stop
+      >
         <li v-for="option in options" :key="option" @click="selectOption(option, $event)">
           {{ option }}
         </li>
@@ -18,6 +32,8 @@ import { ref, onMounted, onUnmounted } from "vue";
 const props = defineProps({
   options: Array,
   defaultText: String,
+  customClass: String,
+  customStyle: Object,
 });
 
 const emit = defineEmits(["update:selected"]);
@@ -60,21 +76,38 @@ onUnmounted(() => {
 <style scoped>
 .dropdown-container {
   position: relative;
-  border: 1px solid #ccc;
-  display: flex;
-  width: 120px;
-  align-items: center;
-  padding: 1.15vh;
+  border: 2px solid #d6d6d6;
+  width: 100%;
+  height: 100%;
+  border-radius: 6px;
   background-color: white;
   cursor: pointer;
-  justify-content: space-between;
-  margin-right: 8px;
-  z-index: 5;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+}
+
+.dropdown-container.dropdown-open {
+  border: 2px solid #0070e88b;
+}
+
+.dropdown-container.dropdown-selected {
+  border-color: #a2a2a2;
+  background-color: #efefef6f;
 }
 
 .dropdown-display {
   margin: 0 5px;
-  font-size: 16px;
+  font-size: 1.7vh;
+  font-weight: bold;
+  color: #b5b5b5;
+  margin-right: 20px;
+}
+
+.dropdown-display.dropdown-selected {
+  color: #666666;
+  font-size: 1.7vh;
+  font-weight: bold;
 }
 
 .dropdown-icon {
@@ -94,15 +127,20 @@ onUnmounted(() => {
 
 .dropdown-list {
   position: absolute;
-  top: 100%;
+  top: 110%;
   left: 0;
   right: 0;
-  border: 1px solid #ccc;
+  border: 2px solid #cacaca;
   list-style-type: none;
   padding: 0;
   margin: 0;
   background-color: white;
+  border-radius: 6px;
   z-index: 1000;
+}
+
+.dropdown-list.dropdown-open {
+  border-color: #0070e88b;
 }
 
 .dropdown-list.active {
@@ -112,9 +150,11 @@ onUnmounted(() => {
 }
 
 .dropdown-list li {
-  padding: 8px;
-  border-bottom: 1px solid #eee;
-  font-size: 16px;
+  padding: 1.8vh;
+  font-size: 1.7vh;
+  font-weight: bold;
+  color: #2f2f2f;
+  text-align: center;
 }
 
 .dropdown-list li:hover {
@@ -126,7 +166,8 @@ onUnmounted(() => {
 }
 
 img {
-  margin-left: 10px;
-  height: 20px;
+  position: absolute;
+  right: 5%;
+  height: 2.4vh;
 }
 </style>

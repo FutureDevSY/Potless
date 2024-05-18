@@ -2,11 +2,7 @@
   <div class="create-team-container">
     <div class="add-team-form">
       <div class="input-container">
-        <input
-          v-model="newTeamName"
-          type="text"
-          placeholder="팀 이름을 입력해주세요"
-        />
+        <input v-model="newTeamName" type="text" placeholder="팀 이름을 입력해주세요" />
       </div>
 
       <!-- <div v-for="index in 5" :key="index">
@@ -26,15 +22,23 @@
     </div>
     <div class="team-list">
       <div>
-        <input
-          type="text"
-          placeholder="새로운 작업자 이름"
-          v-model="newworker"
-        />
+        <input type="text" placeholder="새로운 작업자 이름" v-model="newworker" />
+        <div class="file-upload">
+          <input
+            class="form__input--file"
+            id="upload1"
+            type="file"
+            @change="handleFileChange"
+            accept="image/*"
+          />
+          <label class="form__label--file" for="upload1">파일 선택</label>
+          <span :class="['form__span--file', { 'file-selected': fileName }]">{{
+            fileName || "작업자 사진 (선택)"
+          }}</span>
+        </div>
+
         <div class="button-container">
-          <button class="add-button" @click="addNewWorker()">
-            작업자 추가
-          </button>
+          <button class="add-button" @click="addNewWorker()">작업자 추가</button>
         </div>
       </div>
       <div v-for="worker in datas">
@@ -64,6 +68,8 @@ const store2 = useAuthStore();
 const newTeamName = ref("");
 const { accessToken, areaName } = storeToRefs(store2);
 const swal = useSwal();
+const fileName = ref("");
+const file = ref(null);
 
 const showAlert = (text) => {
   swal({
@@ -112,6 +118,11 @@ const removeMember = (index) => {
 };
 
 const emit = defineEmits(["teamAdded"], ["backToModal"]);
+
+const handleFileChange = (event) => {
+  file.value = event.target.files.length > 0 ? event.target.files[0] : null;
+  fileName.value = file.value ? file.value.name : "";
+};
 
 // 새로운 팀 추가
 function addTeam() {
@@ -284,5 +295,53 @@ li::marker {
 
 .close-button:hover {
   color: #8f0000;
+}
+.file-upload {
+  display: flex;
+  width: 16.8vw;
+  margin-top: 0.8vh;
+  margin-bottom: 0.5vh;
+}
+input[type="file"] {
+  display: block;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+.form__label--file {
+  width: 25%;
+  padding: 1vh 0.5vw;
+  background: #9f9f9f;
+  border-radius: 4px;
+  color: #fff;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1.4vh;
+  transition: all 0.5s ease;
+}
+.form__label--file:hover {
+  background: rgb(136, 136, 136);
+}
+.form__span--file {
+  padding: 0 0px 0 10px;
+  margin-left: 5px;
+  display: block;
+  width: 80%;
+  min-height: 30px;
+  display: flex;
+  align-items: center;
+  color: #797979;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  box-sizing: border-box;
+}
+.form__span--file.file-selected {
+  border-color: #a2a2a2;
+  background-color: #efefef6f;
+  color: #666666;
 }
 </style>
