@@ -18,7 +18,7 @@ onMounted(() => {
     renderer: "svg",
     loop: false,
     autoplay: false,
-    path: "../../../../public/lottie/thunderstorm.json",
+    path: "/lottie/thunderstorm.json",
   });
 
   anim.addEventListener("complete", () => {

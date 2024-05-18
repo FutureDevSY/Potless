@@ -11,6 +11,7 @@ import { setupCalendar, DatePicker } from "v-calendar";
 import "v-calendar/style.css";
 import VueSweetalert2 from "vue-sweetalert2";
 import "sweetalert2/dist/sweetalert2.min.css";
+import Vue3lottie from "vue3-lottie";
 
 const app = createApp(App);
 const pinia = createPinia();
@@ -21,6 +22,7 @@ app.use(pinia);
 app.use(router);
 app.use(setupCalendar, { locale: "ko" });
 app.use(VueSweetalert2);
+app.use(Vue3lottie, { name: "LottieAnimation" });
 app.provide("swal", app.config.globalProperties.$swal);
 
 app.component("VDatePicker", DatePicker);
