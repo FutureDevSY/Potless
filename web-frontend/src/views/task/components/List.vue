@@ -100,9 +100,8 @@ const deletePothole = (taskId) => {
     accessToken.value,
     potholeInfo.value,
     (res) => {
-      console.log(res);
       if (res.data.status == "SUCCESS") {
-        console.log(res.data.message);
+        // console.log(res.data.message);
         emits("updateList");
         showAlert();
       } else {

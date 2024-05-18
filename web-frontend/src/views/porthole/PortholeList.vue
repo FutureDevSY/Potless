@@ -1,7 +1,6 @@
 <template>
   <div class="main-cont">
     <div class="filter">
-      <!-- 필터 -->
       <div class="search-tab">
         <button class="register" @click="store.moveSelfRegister">도로파손 추가</button>
         <Calendar @update:dateRange="handleDateRangeUpdate" />
@@ -98,14 +97,12 @@ const takeData = (currentPage) => {
     queryParams,
     (res) => {
       if (res.data.status == "SUCCESS") {
-        console.log(res);
-        console.log(res.data.message);
+        // console.log(res.data.message);
         currentData.value = res.data.data.content;
         totalPage.value = res.data.data.totalPages;
       }
     },
     (error) => {
-      console.log(error);
       console.log(error.response.data.message);
     }
   );

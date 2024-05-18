@@ -51,12 +51,11 @@ const takeTeamList = () => {
     areaName.value,
     (res) => {
       if (res.data.status == "SUCCESS") {
-        console.log(res.data.message);
+        // console.log(res.data.message);
         datas.value = res.data.data;
       }
     },
     (error) => {
-      console.log(error);
       console.log(error.response.data.message);
     }
   );
@@ -68,12 +67,11 @@ const deleteTeamEvent = (projectId) => {
     projectId,
     (res) => {
       if (res.data.status == "SUCCESS") {
-        console.log(res.data.message);
+        // console.log(res.data.message);
         takeTeamList();
       }
     },
     (error) => {
-      console.log(error);
       console.log(error.response.data.message);
     }
   );

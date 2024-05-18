@@ -70,6 +70,8 @@ const month = ("0" + (now.getMonth() + 1)).slice(-2);
 const day = ("0" + now.getDate()).slice(-2);
 const today_start = year + "-" + month + "-" + day;
 const today_end = year + "-" + month + "-" + day;
+
+// 데이터 통계 불러오기 함수
 const takeData = () => {
   const DateParams = ref({
     start: today_start,
@@ -84,7 +86,7 @@ const takeData = () => {
         currentData.value = res.data.data.list[areaId.value - 1];
         potholeNum.value = currentData.value.list[0].count;
       } else {
-        console.log(res.data.message);
+        // console.log(res.data.message);
       }
     },
     (error) => {
@@ -97,18 +99,19 @@ const dangerCount = ref(0);
 const cautiousCount = ref(0);
 const safeCount = ref(0);
 
+// 심각도 불러오기 함수
 const severityData = () => {
   getSeverityPerDate(
     accessToken.value,
     areaId.value,
     (res) => {
       if (res.data.status === "SUCCESS") {
-        console.log(res.data.message);
+        // console.log(res.data.message);
         dangerCount.value = res.data.data.severityThree;
         cautiousCount.value = res.data.data.severityTwo;
         safeCount.value = res.data.data.severityOne;
       } else {
-        console.log(res.data.message);
+        // console.log(res.data.message);
       }
     },
     (error) => {

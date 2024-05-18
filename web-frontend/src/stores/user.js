@@ -21,6 +21,7 @@ export const useAuthStore = defineStore(
       5: "서구",
     };
 
+    // 로그인 설정
     const login = (userData, userToken) => {
       isLoggedIn.value = true;
       accessToken.value = userToken;
@@ -36,6 +37,7 @@ export const useAuthStore = defineStore(
       }
     };
 
+    // 로그아웃 설정
     const logoutfc = () => {
       isLoggedIn.value = false;
       accessToken.value = null;
