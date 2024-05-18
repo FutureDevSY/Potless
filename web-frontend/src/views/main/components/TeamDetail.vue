@@ -35,11 +35,6 @@ const props = defineProps({
   height: 10vh;
   margin-top: 10%;
 }
-/* img {
-  width: 35%;
-  height: auto;
-  padding-top: 3%;
-} */
 
 .teamName {
   font-size: 1.6vh;

@@ -47,7 +47,7 @@ const takeData = () => {
       if (res.data.status === "SUCCESS") {
         currentData.value = res.data.data;
       } else {
-        console.log(res.data.message);
+        // console.log(res.data.message);
       }
     },
     (error) => {

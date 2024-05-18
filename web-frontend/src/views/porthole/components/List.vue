@@ -1,10 +1,8 @@
 <template>
-  <!-- 리스트 -->
   <div class="list-overflow">
     <table>
       <thead>
         <tr>
-          <!-- <th class="detect-column">탐지 일시</th> -->
           <th class="danger-column">위험성</th>
           <th class="type-column">종류</th>
           <th class="city-column">행정동</th>
@@ -30,9 +28,6 @@
           @mouseover="updateMapLocation(pothole.dirX, pothole.dirY)"
           @click="handleRowClick(pothole)"
         >
-          <!-- <td>
-          <div>{{ porthole.detect.split(" ")[0] }}</div>
-          </td> -->
           <td class="dangers-column">
             <div class="danger-type" :class="dangerClass(pothole.severity)">
               <p>{{ dangerClass2(pothole.severity) }}</p>
@@ -51,11 +46,6 @@
               <div v-if="pothole.isSelected" class="checkmark"></div>
             </div>
           </td>
-          <!-- <td class="select-column" @click.stop="toggleSelect(pothole)">
-            <div class="checkbox">
-              <div v-if="pothole.isSelected" class="checkmark"></div>
-            </div>
-          </td> -->
         </tr>
       </tbody>
     </table>
@@ -78,7 +68,6 @@ import { useMoveStore } from "../../../stores/move";
 import { useAuthStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
 import TaskList from "./TaskList.vue";
-import TeamModal from "./AddTeamModal.vue";
 import { deletePothole } from "../../../api/pothole/pothole";
 import { useSwal } from "../../../composables/useSwal";
 
@@ -170,7 +159,7 @@ const deletePotholeSelect = () => {
     selectPothole,
     (res) => {
       if (res.data.status === "SUCCESS") {
-        console.log(res.data.message);
+        // console.log(res.data.message);
         selectedIds.value.clear();
         emit("refreshData");
         showAlert();
@@ -206,9 +195,6 @@ const updateMapLocation = (dirX, dirY) => {
 </script>
 
 <style scoped>
-/* .select-column {
-} */
-
 .checkbox {
   width: 2vh;
   height: 2vh;
@@ -268,17 +254,6 @@ table {
   table-layout: fixed;
 }
 
-/* th,
-td {
-  border: 1px solid #ddd;
-  text-align: center;
-  padding: 15px;
-} */
-
-/* thead {
-  background-color: #f9f9f9;
-} */
-
 td {
   border-top: 1px solid #dddddda1;
   border-bottom: 1px solid #dddddda1;
@@ -296,7 +271,6 @@ thead th {
   padding: 1vh 1vh;
   font-size: 1.7vh;
   color: #6c6c6c;
-  /* z-index: 0; */
 }
 
 tbody tr {
@@ -313,13 +287,6 @@ tbody tr:hover {
   text-align: center;
   white-space: nowrap;
 }
-
-/* .detect-column {
-  width: 150px;
-  min-width: 150px;
-  text-align: center;
-  white-space: nowrap;
-} */
 
 .danger-column {
   width: 5vw;
@@ -338,12 +305,6 @@ tbody tr:hover {
   text-align: center;
   white-space: nowrap;
 }
-
-/* .address-column {
-  width: 10vw;
-  text-align: center;
-  white-space: nowrap;
-} */
 
 .modal {
   position: fixed;
@@ -388,7 +349,6 @@ tbody tr:hover {
   color: #4f58b5;
   border: 1px solid #4f58b5;
   transition: background-color 0.4s;
-  /* z-index: -3; */
 }
 
 .add-button:hover {

@@ -106,7 +106,7 @@ const submitForm = () => {
     (res) => {
       console.log(res);
       if (res.data.status == "SUCCESS") {
-        console.log(res.data.message);
+        // console.log(res.data.message);
         showAlert();
         store.movePorthole();
       } else {
@@ -114,7 +114,6 @@ const submitForm = () => {
       }
     },
     (error) => {
-      console.log(error);
       console.log(error.message);
       alert(`신고 처리 중 오류가 발생하였습니다: ${error.message}`);
     }

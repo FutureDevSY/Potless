@@ -226,10 +226,10 @@ const secondfourthData = async () => {
       // console.log("도로별 포트홀 현황:", roadIncidentData.value);
       // console.log("보수 공사 현황:", workChartData.value);
     } else {
-      console.error("Invalid or empty data received from the API");
+      console.error("API 호출 실패");
     }
   } catch (error) {
-    console.error("Error fetching Dong statistics:", error);
+    console.error("통계 에러", error);
   }
 };
 
@@ -317,8 +317,6 @@ onMounted(() => {
   transform: translateY(-0.8vh);
 }
 
-/* ***** */
-/* 위험물 발생 현황 */
 .incident-box {
   background-color: rgba(241, 241, 241, 0.641);
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.255);
@@ -336,7 +334,7 @@ onMounted(() => {
   margin: 0 0 0 10px;
   grid-template-columns: 1fr 1fr 1fr;
 }
-/* slide animation 효과 -> 왼쪽에서 오른쪽으로 이동 */
+
 @keyframes slideIn {
   from {
     transform: translateX(-40px);
@@ -354,8 +352,6 @@ onMounted(() => {
   opacity: 0;
 }
 
-/* ***** */
-/* 동별 포트홀 + 심각한 포트홀 현황 */
 .danger-box {
   background-color: rgba(241, 241, 241, 0.641);
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.255);
@@ -393,8 +389,6 @@ input:focus {
   border-color: #696969;
 }
 
-/* ***** */
-/* 위험물 누적 탐지 건수 */
 .total-box {
   background-color: rgba(241, 241, 241, 0.641);
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.255);
@@ -408,7 +402,6 @@ input:focus {
   margin: 0px 0px 0px 0px;
 }
 
-/* 보수 공사 현황 */
 .work-box {
   background-color: rgba(241, 241, 241, 0.641);
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.255);

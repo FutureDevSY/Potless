@@ -14,7 +14,6 @@
           <b></b>
           <b></b>
           <a href="#">
-            <!-- <p>-</p> 여기에 아이콘-->
             <span class="nav-text">{{ item.name }}</span>
           </a>
         </li>
@@ -76,19 +75,19 @@ function handleLogoClick() {
   store.moveMain();
 }
 
+// 로그아웃 함수
 const clickLogout = () => {
   logout(
     accessToken.value,
     (res) => {
       if (res.data.status == "SUCCESS") {
-        console.log(res.data.message);
+        // console.log(res.data.message);
         store2.logoutfc();
         store.moveLogin();
         showAlert();
       } else {
         store2.logoutfc();
         store.moveLogin();
-        console.log(res);
       }
     },
     (error) => {
