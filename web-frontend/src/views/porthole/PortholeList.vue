@@ -201,6 +201,9 @@ onMounted(() => {
   width: 86vw;
   padding: 10px;
   text-align: center;
+  overflow: visible;
+  position: relative;
+  z-index: 100;
 }
 
 .left {

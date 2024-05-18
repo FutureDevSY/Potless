@@ -145,6 +145,8 @@ watch(
   height: 70vh;
   margin-top: 0px;
   border: 2px solid rgb(223, 223, 223);
+  z-index: 0;
+  overflow: visible;
 }
 
 .btn-style {

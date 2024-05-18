@@ -201,7 +201,9 @@ onMounted(() => {
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 2.5vh;
+  font-size: 3.5vh;
+  color: #474747;
+  margin-top: 0.5vh;
   font-weight: bold;
 }
 
@@ -240,18 +242,18 @@ onMounted(() => {
 }
 
 .info-title {
-  padding: 1.1vh 0 1.1vh 1.1vh;
+  padding: 1.23vh 0 1.23vh 1.23vh;
   border: 1px solid #ddd;
   background-color: #ecf1fd;
-  font-size: 1.6vh;
+  font-size: 1.8vh;
   font-weight: bold;
   color: #7c7c7c;
 }
 
 .infos {
-  padding: 1.1vh;
+  padding: 1.23vh;
   border: 1px solid #ddd;
-  font-size: 1.8vh;
+  font-size: 1.9vh;
   color: #606060;
   font-weight: 500;
 }
@@ -261,13 +263,13 @@ onMounted(() => {
   justify-content: space-between;
   width: 94.3%;
   padding-left: 2vw;
-  margin-top: 1vh;
+  margin-top: 1.2vh;
 }
 
 .back-btn {
   font-size: 1.55vh;
-  padding: 1vh 1.5vw;
-  height: 5.5vh;
+  padding: 0vh 1.5vw;
+  height: 5vh;
   cursor: pointer;
   border: none;
   background-color: #f8f8f8;
@@ -283,9 +285,9 @@ onMounted(() => {
 
 .delete-btn {
   font-size: 1.55vh;
-  padding: 1.5vh 1.5vw;
+  padding: 0vh 1.5vw;
   cursor: pointer;
-  height: 5.5vh;
+  height: 5vh;
   border: none;
   background-color: #fef1f1;
   border-radius: 8px;
