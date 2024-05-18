@@ -89,12 +89,13 @@ onMounted(() => {
 
 .list-button {
   position: absolute;
-  bottom: 4%;
-  padding: 1vh 0.4vw;
-  font-size: 1.4vh;
+  bottom: 5%;
+  right: 2.5%;
+  padding: 1vh 0.3vw;
+  font-size: 1.3vh;
   cursor: pointer;
   border: none;
-  background-color: #ffffff;
+  background-color: #f6f6f6;
   border-radius: 8px;
   color: #6b6b6b;
   border: 2px solid #c5c5c5;
@@ -103,7 +104,7 @@ onMounted(() => {
 }
 
 .list-button:hover {
-  background-color: #c5c5c5;
+  background-color: #e0e0e0;
 }
 
 .team-navigation {
