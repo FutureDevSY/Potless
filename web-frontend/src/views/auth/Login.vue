@@ -12,7 +12,9 @@
             placeholder="아이디를 입력해 주세요."
             @keydown.enter="doLogin"
           />
-          <div v-if="authIdError" class="error-message">아이디는 필수값입니다.</div>
+          <div v-if="authIdError" class="error-message">
+            아이디는 필수값입니다.
+          </div>
         </div>
         <div class="input-group">
           <div class="input-title">비밀번호</div>
@@ -24,7 +26,9 @@
             @input="showError = false"
             @keydown.enter="doLogin"
           />
-          <div v-if="authPasswordError" class="error-message">비밀번호는 필수값입니다.</div>
+          <div v-if="authPasswordError" class="error-message">
+            비밀번호는 필수값입니다.
+          </div>
           <div v-if="showError" class="error-message">
             {{ errorMsg }}
           </div>
@@ -46,8 +50,14 @@
         <div class="slogan-center">우리가 만들어 갑니다.</div>
       </div>
     </div>
-    <div class="invisible-div" :class="{ 'login-success-visible': loginSuccess }"></div>
-    <div class="lottie-car-container" :class="{ 'login-success-car': loginSuccessCar }">
+    <div
+      class="invisible-div"
+      :class="{ 'login-success-visible': loginSuccess }"
+    ></div>
+    <div
+      class="lottie-car-container"
+      :class="{ 'login-success-car': loginSuccessCar }"
+    >
       <LottieCar class="lottie-car" />
     </div>
   </div>
@@ -72,7 +82,6 @@ const loginSuccess = ref(false);
 const loginSuccessCar = ref(false);
 
 const doLogin = () => {
-  console.log("doLogin 함수 호출됨");
   authIdError.value = !auth_id.value;
   authPasswordError.value = !auth_password.value;
 
@@ -88,7 +97,6 @@ const doLogin = () => {
   login(
     loginData,
     (res) => {
-      console.log(res);
       if (res.data.status === "SUCCESS") {
         console.log(res.data.message);
         store.login(res.data, res.data.data.token);

@@ -15,7 +15,7 @@ onMounted(() => {
     renderer: "svg",
     loop: true,
     autoplay: true,
-    path: "../../../../public/lottie/Danger.json",
+    path: "/lottie/Danger.json",
   });
 });
 
