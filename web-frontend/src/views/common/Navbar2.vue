@@ -43,7 +43,7 @@ const swal = useSwal();
 
 const navItems = [
   { name: "홈", icon: "fa fa-house", action: store.moveMain },
-  { name: "포트홀 조회", icon: "fa fa-user", action: store.movePorthole },
+  { name: "위험물 조회", icon: "fa fa-user", action: store.movePorthole },
   { name: "작업 정보", icon: "fa fa-calendar-check", action: store.moveTask },
   {
     name: "통계 자료",
