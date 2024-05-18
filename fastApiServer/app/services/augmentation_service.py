@@ -52,12 +52,13 @@ async def color_inverse(image_data: UploadFile):
 
 
 
-async def process_images(image_path):
+async def process_images(image_path, flag):
 
     color = cv2.imread(image_path, cv2.IMREAD_COLOR)
-    # if(test == 2):
-    #     color = 255 - color
-    color = 255 - color
+    if(flag == 2):
+        # 반전시키기 
+        color = 255 - color
+
     if color is None:
         logging.info("이미지 전처리 실패 - 이미지 입력값이 올바르지 않습니다.")
         return None
@@ -103,7 +104,7 @@ async def process_images(image_path):
      # 이미지 저장
     # file_name = image_path + "_" + test
     file_name = os.path.basename(image_path)
-    # file_name = f"{test}_{file_name}"
+    file_name = f"{flag}_{file_name}"
     folder_name = 'augmentation'
     if not os.path.exists(folder_name):
         os.makedirs(folder_name)
