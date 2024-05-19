@@ -74,8 +74,13 @@ class _LoginScreenState extends State<LoginScreen>
               child: Column(
                 children: [
                   SizedBox(height: UIhelper.deviceHeight(context) * 0.1),
-                  const Text('포트리스', style: TextStyle(fontSize: 26)),
-                  const Text('Pot-Less'),
+                  const Text('포트리스',
+                      style:
+                          TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
+                  const Text(
+                    'POTLESS',
+                    style: TextStyle(fontSize: 20),
+                  ),
                   Lottie.asset('assets/lottie/loading_truck.json'),
                   InkWell(
                     onTap: () {

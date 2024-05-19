@@ -9,7 +9,7 @@ import 'package:potless/models/pothole.dart';
 import 'package:potless/widgets/UI/AppBar.dart';
 import 'package:potless/widgets/UI/ScreenSize.dart';
 import 'package:potless/widgets/blocks/carousel_block.dart';
-import 'package:potless/widgets/buttons/714_100button.dart'; // Assuming your model is set up correctly
+import 'package:potless/widgets/buttons/714_100button.dart';
 
 class WorkDetailScreen extends StatefulWidget {
   final double placeLatitude, placeLongitude;
@@ -85,8 +85,6 @@ class _WorkDetailScreenState extends State<WorkDetailScreen> {
         .map((image) => CustomCarouselCard(
               image: image,
               onTap: () {
-                debugPrint("78Image URL: '${image.url}'");
-
                 if (image.url.isEmpty) {
                   debugPrint("81URL is empty, showing action sheet.");
                   _showImageSourceActionSheet(
@@ -104,8 +102,7 @@ class _WorkDetailScreenState extends State<WorkDetailScreen> {
     if (image != null) {
       setState(() {
         while (imageWidgets.length <= index) {
-          imageWidgets
-              .add(Container()); // Ensure the list has an index position
+          imageWidgets.add(Container());
         }
         imageWidgets[index] = Image.file(File(image.path), fit: BoxFit.cover);
       });
@@ -165,19 +162,14 @@ class _WorkDetailScreenState extends State<WorkDetailScreen> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('주소: ${widget.address}'),
-                      Text('종류: ${typeText()}'),
-                    ],
-                  ),
-                ),
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text('너비: ${widget.width}mm'),
-                      Text('심각도: ${severityText()}'),
+                      Text(
+                        '주소: ${widget.address}',
+                        style: const TextStyle(fontSize: 16),
+                      ),
+                      Text(
+                        '종류: ${typeText()}',
+                        style: const TextStyle(fontSize: 16),
+                      ),
                     ],
                   ),
                 ),
@@ -188,7 +180,13 @@ class _WorkDetailScreenState extends State<WorkDetailScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                          '촬영 일시:  ${DateFormat('yyyy-MM-dd').format(widget.createdAt)}'),
+                        '너비: ${widget.width}mm',
+                        style: const TextStyle(fontSize: 16),
+                      ),
+                      Text(
+                        '심각도: ${severityText()}',
+                        style: const TextStyle(fontSize: 16),
+                      ),
                     ],
                   ),
                 ),
@@ -198,7 +196,23 @@ class _WorkDetailScreenState extends State<WorkDetailScreen> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('작업 상태: ${widget.status}'),
+                      Text(
+                        '촬영 일시:  ${DateFormat('yyyy-MM-dd').format(widget.createdAt)}',
+                        style: const TextStyle(fontSize: 16),
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        '작업 상태: ${widget.status}',
+                        style: const TextStyle(fontSize: 16),
+                      ),
                     ],
                   ),
                 ),
@@ -208,7 +222,10 @@ class _WorkDetailScreenState extends State<WorkDetailScreen> {
                       const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                   child: const Row(
                     children: [
-                      Text('지도'),
+                      Text(
+                        '지도',
+                        style: TextStyle(color: Colors.black54),
+                      ),
                     ],
                   ),
                 ),
@@ -265,7 +282,6 @@ class _WorkDetailScreenState extends State<WorkDetailScreen> {
                           widget.potholeId.toString(),
                         );
                       } else {
-                        // Optionally, inform the user that not all images are set
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
                             content: Text("입력되지 않은 사진이 있습니다"),
@@ -350,113 +366,158 @@ class _WorkDetailScreenState extends State<WorkDetailScreen> {
     );
   }
 
-  // void _showConfirmationDialog(
-  //     BuildContext context, List<DamageImage> images, String potholeId) {
-  //   showDialog(
-  //     context: context,
-  //     barrierDismissible: false,
-  //     builder: (BuildContext dialogContext) {
-  //       return AlertDialog(
-  //         title: const Text('작업 완료'),
-  //         content: const Text('작업 완료 하시겠습니까?'),
-  //         actions: <Widget>[
-  //           TextButton(
-  //             child: const Text('취소'),
-  //             onPressed: () {
-  //               Navigator.of(dialogContext).pop();
-  //             },
-  //           ),
-  //           TextButton(
-  //             child: const Text('완료'),
-  //             onPressed: () async {
-  //               await handleUploadSequence(images, potholeId);
-  //               debugPrint('uploaded 367');
-  //               widget.onProjectUpdate();
-  //               debugPrint('detail project update 369');
-  //               Navigator.of(dialogContext).pop();
-  //             },
-  //           ),
-  //         ],
-  //       );
-  //     },
-  //   );
-  // }
   void _showConfirmationDialog(
       BuildContext context, List<DamageImage> images, String potholeId) {
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (BuildContext dialogContext) {
-        return StatefulBuilder(
-          builder: (BuildContext context, StateSetter setState) {
-            bool isLoading = false;
-
-            void startUpload() async {
-              setState(() {
-                isLoading = true;
-              });
-
-              try {
-                await handleUploadSequence(images, potholeId);
-                debugPrint('detail project update 268');
-
-                widget.onProjectUpdate();
-                debugPrint('detail project update 268');
-
-                widget.onTaskUpdate();
-                debugPrint('detail project update 268');
-
+        return AlertDialog(
+          surfaceTintColor: const Color(0xffFFFFFF),
+          backgroundColor: const Color(0xffFFFFFF),
+          title: const Text('작업 완료'),
+          content: const Text('작업 완료 하시겠습니까?'),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('취소'),
+              onPressed: () {
                 Navigator.of(dialogContext).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('완료'),
+              onPressed: () {
                 Navigator.of(dialogContext).pop();
-              } catch (error) {
-                // Handle error here, possibly showing an error message
-                setState(() {
-                  isLoading = false;
-                });
-              }
-            }
-
-            return Stack(
-              children: [
-                AlertDialog(
-                  backgroundColor: Colors.white,
-                  title: const Text('작업 완료'),
-                  content: const Text('작업 완료 하시겠습니까?'),
-                  actions: <Widget>[
-                    if (!isLoading)
-                      TextButton(
-                        child: const Text('취소'),
-                        onPressed: () {
-                          Navigator.of(dialogContext).pop();
-                        },
-                      ),
-                    if (!isLoading)
-                      TextButton(
-                        child: const Text('완료'),
-                        onPressed: () {
-                          startUpload();
-                        },
-                      ),
-                  ],
-                ),
-                if (isLoading)
-                  Positioned.fill(
-                    child: Container(
-                      color: Colors.black45,
-                      child: const Center(
-                        child: CircularProgressIndicator(
-                          value: 50,
-                        ),
-                      ),
-                    ),
-                  ),
-              ],
-            );
-          },
+                _showLoadingIndicator(context);
+                _startUpload(context, images, potholeId);
+              },
+            ),
+          ],
         );
       },
     );
   }
+
+  void _showLoadingIndicator(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return const Center(
+          child: CircularProgressIndicator(),
+        );
+      },
+    );
+  }
+
+  Future<void> _startUpload(
+      BuildContext context, List<DamageImage> images, String potholeId) async {
+    try {
+      await handleUploadSequence(images, potholeId);
+
+      widget.onProjectUpdate();
+      widget.onTaskUpdate();
+
+      Navigator.of(context).pop();
+    } catch (error) {
+      Navigator.of(context).pop();
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Error'),
+            content: const Text(
+                'An error occurred during upload. Please try again.'),
+            actions: <Widget>[
+              TextButton(
+                child: const Text('OK'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
+    }
+  }
+
+  // void _showConfirmationDialog(
+  //     BuildContext context, List<DamageImage> images, String potholeId) {
+  //   showDialog(
+  //     context: context,
+  //     barrierDismissible: false,
+  //     builder: (BuildContext dialogContext) {
+  //       return StatefulBuilder(
+  //         builder: (BuildContext context, StateSetter setState) {
+  //           bool isLoading = false;
+
+  //           void startUpload() async {
+  //             setState(() {
+  //               isLoading = true;
+  //             });
+
+  //             try {
+  //               await handleUploadSequence(images, potholeId);
+
+  //               widget.onProjectUpdate();
+
+  //               widget.onTaskUpdate();
+
+  //               Navigator.of(dialogContext).pop();
+  //               Navigator.of(dialogContext).pop();
+  //             } catch (error) {
+  //               // Handle error here, possibly showing an error message
+  //               setState(() {
+  //                 isLoading = false;
+  //               });
+  //             }
+  //           }
+
+  //           return Stack(
+  //             children: [
+
+  //               AlertDialog(
+  //                 surfaceTintColor: const Color(0xffFFFFFF),
+  //                 backgroundColor: const Color(0xffFFFFFF),
+  //                 title: const Text('작업 완료'),
+  //                 content: const Text('작업 완료 하시겠습니까?'),
+  //                 actions: <Widget>[
+  //                   if (!isLoading)
+  //                     TextButton(
+  //                       child: const Text('취소'),
+  //                       onPressed: () {
+  //                         Navigator.of(dialogContext).pop();
+  //                       },
+  //                     ),
+  //                   if (!isLoading)
+  //                     TextButton(
+  //                       child: const Text('완료'),
+  //                       onPressed: () {
+  //                         startUpload();
+  //                       },
+  //                     ),
+  //                 ],
+  //               ),
+
+  //               if (isLoading)
+  //                 Positioned.fill(
+  //                   child: Container(
+  //                     color: Colors.black45,
+  //                     child: const Center(
+  //                       child: CircularProgressIndicator(
+  //                         value: 50,
+  //                       ),
+  //                     ),
+  //                   ),
+  //                 ),
+  //             ],
+  //           );
+  //         },
+  //       );
+  //     },
+  //   );
+  // }
 
   Future<void> handleUploadSequence(
     List<DamageImage> images,

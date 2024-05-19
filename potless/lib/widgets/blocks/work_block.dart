@@ -36,6 +36,15 @@ class WorkBlock extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String typeText() {
+      switch (dType) {
+        case 'POTHOLE':
+          return '포트홀';
+        default:
+          return '도로파손';
+      }
+    }
+
     return Padding(
       padding: const EdgeInsets.all(0.2),
       child: GestureDetector(
@@ -77,16 +86,25 @@ class WorkBlock extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('파손번호: ${potholeId.toString()}'),
-                        Text(roadName),
+                        Text(
+                          address,
+                          style: const TextStyle(fontSize: 18),
+                        )
                       ],
                     ),
                     SizedBox(height: UIhelper.deviceHeight(context) * 0.02),
                     Row(
-                      children: [Text(address)],
-                    )
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          '파손번호: ${potholeId.toString()}',
+                        ),
+                        Text(
+                          typeText(),
+                        ),
+                      ],
+                    ),
                   ],
                 ),
               ),
