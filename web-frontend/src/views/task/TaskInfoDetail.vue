@@ -39,8 +39,9 @@
           <button
             class="pdf-button"
             @click="generatePdf"
-            v-if="taskData && taskData.length">
-          PDF로 변환하기
+            v-if="taskData && taskData.length"
+          >
+            PDF로 변환하기
           </button>
           <button @click="closePdfModal" class="pdf-button">닫기</button>
           <div class="loading-container" v-if="showLoading">
@@ -113,12 +114,10 @@ function showDetail() {
     route.params.id,
     (res) => {
       if (res.data.status === "SUCCESS") {
-        // console.log(res);
-        // console.log(res.data.message);
         taskHeader.value = res.data.data;
         taskData.value = res.data.data.damageDetailToProjectDtos;
       } else {
-        // console.log(res.data.message);
+        console.error(res.data.message);
       }
     },
     (error) => {
@@ -163,34 +162,55 @@ function closePdfModal() {
   isPdfModalVisible.value = false;
 }
 
-function generatePdf() {
+async function loadImages(images) {
+  return Promise.all(
+    images.map(
+      (image) =>
+        new Promise((resolve, reject) => {
+          const img = new Image();
+          img.src = image.url;
+          img.onload = () => resolve();
+          img.onerror = reject;
+        })
+    )
+  );
+}
+
+async function generatePdf() {
   showLoading.value = true;
-  setTimeout(() => {
+  try {
+    const images = taskData.value.flatMap((pothole) =>
+      pothole.imagesResponseDTOS.map((image) => ({
+        id: pothole.id,
+        url: image.url,
+      }))
+    );
+
+    await loadImages(images);
+
+    setTimeout(() => {
+      showLoading.value = false;
+      const container = document.querySelector(".task-detail-container");
+      const pdfArea = document.getElementById("pdf");
+      const options = {
+        margin: 0,
+        filename: "downloaded.pdf",
+        image: { type: "jpeg", quality: 0.98 },
+        html2canvas: { scale: 2 },
+      };
+
+      html2pdf()
+        .set(options)
+        .from(pdfArea)
+        .save()
+        .finally(() => {
+          closePdfModal();
+        });
+    }, 5000);
+  } catch (error) {
+    console.error("이미지를 로드하는 동안 오류가 발생했습니다:", error);
     showLoading.value = false;
-    const container = document.querySelector(".task-detail-container");
-    const pdfArea = document.getElementById("pdf");
-
-    container.style.overflow = "auto";
-    container.style.height = "auto";
-
-    pdfArea.style.visibility = "visible";
-    pdfArea.style.opacity = "1";
-
-    const options = {
-      margin: 0,
-      filename: "downloaded.pdf",
-      image: { type: "jpeg", quality: 0.98 },
-      html2canvas: { scale: 2 },
-    };
-
-    html2pdf()
-      .set(options)
-      .from(pdfArea)
-      .save()
-      .finally(() => {
-        closePdfModal();
-      });
-  }, 5000);
+  }
 }
 </script>
 
