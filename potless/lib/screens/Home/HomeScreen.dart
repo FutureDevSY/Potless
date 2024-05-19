@@ -79,14 +79,18 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   const Text(
                     '도로파손 통합 관리 시스템',
-                    style: TextStyle(fontSize: 16),
+                    style: TextStyle(fontSize: 20),
                   ),
                   SizedBox(
-                    height: UIhelper.deviceHeight(context) * 0.2,
+                    height: UIhelper.deviceHeight(context) * 0.3,
                   ),
                   if (!isUser) ...{
                     MainLarge(
                       label: '작업목록',
+                      buttonImage: Image.asset(
+                        'assets/icons/ballot.png',
+                        width: 40,
+                      ),
                       onPressed: () {
                         Navigator.push(
                           context,
@@ -99,10 +103,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   } else ...{
                     Column(
                       children: [
-                        SizedBox(
-                          height: UIhelper.deviceHeight(context) * 0.2,
-                        ),
-                        const Text('포트리스를 설치해주신 여러분께 감사드립니다'),
                         MainLarge(
                           label: '포트홀 안내받기',
                           onPressed: () {
@@ -122,6 +122,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   MainLarge(
                     label: '탐지모드',
+                    buttonImage: Image.asset(
+                      'assets/icons/video.png',
+                      width: 40,
+                    ),
                     onPressed: () {
                       Navigator.push(
                         context,
