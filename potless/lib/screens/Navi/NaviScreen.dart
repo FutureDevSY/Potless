@@ -6,6 +6,8 @@ import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
 import 'package:potless/API/api_request.dart';
+import 'package:flutter_background/flutter_background.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 
 class RouteFinderScreen extends StatefulWidget {
   const RouteFinderScreen({super.key});
@@ -25,11 +27,12 @@ class _RouteFinderScreenState extends State<RouteFinderScreen> {
   List _searchResults = [];
 
   final ApiService _apiService = ApiService();
+  final FlutterTts flutterTts = FlutterTts();
 
   @override
   void initState() {
     super.initState();
-    _getCurrentLocation();
+    _initializeBackground();
   }
 
   @override
@@ -37,6 +40,18 @@ class _RouteFinderScreenState extends State<RouteFinderScreen> {
     _focusNode.dispose();
     _positionStreamSubscription?.cancel();
     super.dispose();
+  }
+  Future<void> _initializeBackground() async {
+    final androidConfig = FlutterBackgroundAndroidConfig(
+      notificationTitle: "백그라운드 위치 추적",
+      notificationText: "앱이 백그라운드에서 위치를 추적하고 있습니다.",
+      notificationImportance: AndroidNotificationImportance.Default,
+      enableWifiLock: true,
+    );
+
+    await FlutterBackground.initialize(androidConfig: androidConfig);
+
+    _getCurrentLocation();
   }
 
   Future<void> _getCurrentLocation() async {
@@ -63,11 +78,15 @@ class _RouteFinderScreenState extends State<RouteFinderScreen> {
       return;
     }
 
-    Position position = await Geolocator.getCurrentPosition();
-    setState(() {
-      _currentPosition = position;
-    });
-    print("Current location: $_currentPosition");
+    permission = await Geolocator.requestPermission(); // 백그라운드 권한 요청 추가
+
+    if (permission == LocationPermission.whileInUse || permission == LocationPermission.always) {
+      Position position = await Geolocator.getCurrentPosition();
+      setState(() {
+        _currentPosition = position;
+      });
+      print("Current location: $_currentPosition");
+    }
   }
 
   Future<void> _searchAddress() async {
@@ -136,13 +155,16 @@ class _RouteFinderScreenState extends State<RouteFinderScreen> {
     );
   }
 
-  void _showModalDialog(
-      String name, double x, double y, int potholeCount, String message) {
+  void _showPotholeAlert(int potholeCount) {
+    flutterTts.speak('근처에 포트홀이 있습니다. 주의하세요!');
+  }
+
+  void _showModalDialog(String name, double x, double y, int potholeCount, String message) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('알림'),
+          title: Text('알림'),
           content: Text('감지된 포트홀 : $potholeCount 개\n$message\n\n길안내를 시작할까요?'),
           actions: [
             TextButton(
@@ -151,7 +173,7 @@ class _RouteFinderScreenState extends State<RouteFinderScreen> {
                 // Dismiss keyboard if it's open
                 _focusNode.unfocus();
               },
-              child: const Text('아니요'),
+              child: Text('아니요'),
             ),
             TextButton(
               onPressed: () async {
@@ -159,21 +181,16 @@ class _RouteFinderScreenState extends State<RouteFinderScreen> {
                 // Dismiss keyboard if it's open
                 _focusNode.unfocus();
                 if (await NaviApi.instance.isKakaoNaviInstalled()) {
-                  debugPrint('내비 설치됨');
                   await NaviApi.instance.navigate(
-                    destination:
-                        Location(name: name, x: x.toString(), y: y.toString()),
-                    option:
-                        NaviOption(coordType: CoordType.wgs84, routeInfo: true),
+                    destination: Location(name: name, x: x.toString(), y: y.toString()),
+                    option: NaviOption(coordType: CoordType.wgs84, routeInfo: true),
                   );
                 } else {
-                  debugPrint('내비 설치안됨');
-
                   launchBrowserTab(Uri.parse(NaviApi.webNaviInstall));
                 }
                 _startLocationUpdates();
               },
-              child: const Text('네'),
+              child: Text('네'),
             ),
           ],
         );
@@ -181,30 +198,12 @@ class _RouteFinderScreenState extends State<RouteFinderScreen> {
     );
   }
 
-  void _showPotholeAlert(int potholeCount) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('포트홀 경고'),
-          content: Text('근처에 포트홀이 있습니다. 주의하세요! (총 $potholeCount개)'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('확인'),
-            ),
-          ],
-        );
-      },
-    );
-  }
+  void _startLocationUpdates() async {
+    await FlutterBackground.enableBackgroundExecution();
 
-  void _startLocationUpdates() {
     const double alertDistance = 20.0; // meters
 
-    LocationSettings locationSettings = const LocationSettings(
+    LocationSettings locationSettings = LocationSettings(
       accuracy: LocationAccuracy.best,
       distanceFilter: 10, // meters
     );
@@ -226,6 +225,7 @@ class _RouteFinderScreenState extends State<RouteFinderScreen> {
         }
       }
     });
+
   }
 
   Future<void> _confirmSearch(String name, double x, double y) async {
@@ -266,7 +266,7 @@ class _RouteFinderScreenState extends State<RouteFinderScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('검색 확인'),
+          title: Text('검색 확인'),
           content: Text('목적지: $name\n검색하시겠습니까?'),
           actions: [
             TextButton(
@@ -275,7 +275,7 @@ class _RouteFinderScreenState extends State<RouteFinderScreen> {
                 // Dismiss keyboard if it's open
                 _focusNode.unfocus();
               },
-              child: const Text('아니요'),
+              child: Text('아니요'),
             ),
             TextButton(
               onPressed: () {
@@ -284,7 +284,7 @@ class _RouteFinderScreenState extends State<RouteFinderScreen> {
                 // Dismiss keyboard if it's open
                 _focusNode.unfocus();
               },
-              child: const Text('네'),
+              child: Text('네'),
             ),
           ],
         );
