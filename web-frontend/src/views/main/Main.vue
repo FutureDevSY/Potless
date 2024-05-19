@@ -47,7 +47,7 @@ const { areaId } = storeToRefs(store);
   grid-template-columns: 77.8% 21%;
   gap: 1.2%;
   margin: 1%;
-  animation: fadein 2s;
+  animation: fadein 1s;
 }
 @keyframes fadein {
   from {

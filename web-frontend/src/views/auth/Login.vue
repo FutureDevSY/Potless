@@ -12,7 +12,9 @@
             placeholder="아이디를 입력해 주세요."
             @keydown.enter="doLogin"
           />
-          <div v-if="authIdError" class="error-message">아이디는 필수값입니다.</div>
+          <div v-if="authIdError" class="error-message">
+            아이디는 필수값입니다.
+          </div>
         </div>
         <div class="input-group">
           <div class="input-title">비밀번호</div>
@@ -24,7 +26,9 @@
             @input="showError = false"
             @keydown.enter="doLogin"
           />
-          <div v-if="authPasswordError" class="error-message">비밀번호는 필수값입니다.</div>
+          <div v-if="authPasswordError" class="error-message">
+            비밀번호는 필수값입니다.
+          </div>
           <div v-if="showError" class="error-message">
             {{ errorMsg }}
           </div>
@@ -44,8 +48,14 @@
         <div class="slogan-center">우리가 만들어 갑니다.</div>
       </div>
     </div>
-    <div class="invisible-div" :class="{ 'login-success-visible': loginSuccess }"></div>
-    <div class="lottie-car-container" :class="{ 'login-success-car': loginSuccessCar }">
+    <div
+      class="invisible-div"
+      :class="{ 'login-success-visible': loginSuccess }"
+    ></div>
+    <div
+      class="lottie-car-container"
+      :class="{ 'login-success-car': loginSuccessCar }"
+    >
       <LottieCar class="lottie-car" />
     </div>
   </div>
@@ -68,7 +78,6 @@ const showError = ref(false);
 const errorMsg = ref("아이디와 비밀번호를 다시 입력해주세요.");
 const loginSuccess = ref(false);
 const loginSuccessCar = ref(false);
-
 
 // 로그인 실행 함수
 const doLogin = () => {
@@ -93,10 +102,10 @@ const doLogin = () => {
         loginSuccess.value = true;
         setTimeout(() => {
           loginSuccessCar.value = true;
-        }, 900);
+        }, 300);
         setTimeout(() => {
           store2.moveMain();
-        }, 2250);
+        }, 1500);
       } else {
         errorMsg.value = res.data.message;
         showError.value = true;
@@ -282,7 +291,7 @@ input {
   height: 100%;
   background: #f8f8f8;
   box-shadow: 0 4px 7px rgba(0, 0, 0, 0.255);
-  transition: width 2.1s ease-in-out, background-color 1s ease-in-out;
+  transition: width 1.3s ease-in-out, background-color 1s ease-in-out;
   z-index: 2;
 }
 
@@ -294,7 +303,7 @@ input {
   width: 200px;
   height: 200px;
   pointer-events: none;
-  transition: transform 1s ease-in-out;
+  transition: transform 0.9s ease-in-out;
   z-index: 10;
 }
 
@@ -309,7 +318,7 @@ input {
 }
 
 .login-success-car {
-  transform: translateX(-320%);
+  transform: translateX(-340%);
   /* transform: translateX(-225%); */
 }
 </style>
