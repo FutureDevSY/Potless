@@ -68,7 +68,7 @@ const now = new Date();
 const year = now.getFullYear();
 const month = ("0" + (now.getMonth() + 1)).slice(-2);
 const day = ("0" + now.getDate()).slice(-2);
-const today_start = year + "-" + month + "-" + day;
+const today_start = year + "-" + month + "-" + (day - 1);
 const today_end = year + "-" + month + "-" + day;
 
 // 데이터 통계 불러오기 함수
@@ -82,9 +82,11 @@ const takeData = () => {
     accessToken.value,
     DateParams.value,
     (res) => {
+      console.log(res);
       if (res.data.status === "SUCCESS") {
         currentData.value = res.data.data.list[areaId.value - 1];
-        potholeNum.value = currentData.value.list[0].count;
+        potholeNum.value =
+          currentData.value.list[0].count + currentData.value.list[1].count;
       } else {
         // console.log(res.data.message);
       }

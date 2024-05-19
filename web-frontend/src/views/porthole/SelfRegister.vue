@@ -85,12 +85,6 @@ const showAlert2 = () => {
 };
 
 const submitForm = () => {
-  console.log("submitForm 호출됨"); // 추가된 로그
-  console.log("potholeType:", potholeType.value); // 추가된 로그
-  console.log("severity:", severity.value); // 추가된 로그
-  console.log("location_x:", location_x.value); // 추가된 로그
-  console.log("location_y:", location_y.value); // 추가된 로그
-
   const formData = new FormData();
   formData.append("dtype", potholeType.value);
   formData.append("severity", severity.value);
@@ -104,7 +98,6 @@ const submitForm = () => {
     accessToken.value,
     formData,
     (res) => {
-      console.log(res);
       if (res.data.status == "SUCCESS") {
         // console.log(res.data.message);
         showAlert();
@@ -126,7 +119,6 @@ const handleCenterUpdate = (coords) => {
 };
 
 const updatePotholeType = (selected) => {
-  console.log("updatePotholeType 호출됨:", selected); // 추가된 로그
   switch (selected) {
     case "포트홀":
       potholeType.value = "POTHOLE";
@@ -143,7 +135,6 @@ const updatePotholeType = (selected) => {
 };
 
 const updateSeverity = (selected) => {
-  console.log("updateSeverity 호출됨:", selected); // 추가된 로그
   switch (selected) {
     case "심각":
       severity.value = "3";
