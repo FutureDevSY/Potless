@@ -150,7 +150,7 @@ function addNewTask() {
   const newData = ref({
     teamId: null,
     title: "도로 부속 작업 지시서",
-    projectDate: "2024-05-13",
+    projectDate: "2024-05-20",
     areaId: store2.areaId,
     damageNums: damageIdsArray,
     origin: coordinates.value,
@@ -313,10 +313,10 @@ table {
 
 th,
 td {
-  border-left: none; 
-  border-right: none; 
-  border-top: 1px solid #ddd; 
-  border-bottom: 1px solid #ddd; 
+  border-left: none;
+  border-right: none;
+  border-top: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
   text-align: center;
   padding: 2.7vh;
   color: #373737;
