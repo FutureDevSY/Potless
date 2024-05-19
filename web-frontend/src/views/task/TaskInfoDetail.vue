@@ -7,13 +7,17 @@
           <div class="report-name">
             {{ taskHeader ? taskHeader.projectName : "Loading..." }}
           </div>
-          <div class="report-total" v-if="taskHeader">(총 {{ taskHeader.projectSize }}건)</div>
+          <div class="report-total" v-if="taskHeader">
+            (총 {{ taskHeader.projectSize }}건)
+          </div>
         </div>
         <div class="report-work">
           <div class="report-worker">
             담당자 : {{ taskHeader ? taskHeader.managerName : "Loading..." }}
           </div>
-          <div>팀이름 : {{ taskHeader?.teamName ? taskHeader.teamName : "미정" }}</div>
+          <div>
+            팀이름 : {{ taskHeader?.teamName ? taskHeader.teamName : "미정" }}
+          </div>
         </div>
       </div>
       <div>
@@ -52,7 +56,12 @@
             id="pdf"
           />
           <div v-for="(pothole, index) in taskData" :key="pothole.id">
-            <PDFGeneratorDetail :pothole="pothole" :index="index" ref="documentRef" class="pdf" />
+            <PDFGeneratorDetail
+              :pothole="pothole"
+              :index="index"
+              ref="documentRef"
+              class="pdf"
+            />
           </div>
         </div>
       </div>
@@ -104,6 +113,7 @@ function showDetail() {
     route.params.id,
     (res) => {
       if (res.data.status === "SUCCESS") {
+        // console.log(res);
         // console.log(res.data.message);
         taskHeader.value = res.data.data;
         taskData.value = res.data.data.damageDetailToProjectDtos;

@@ -2,7 +2,9 @@
   <div class="main-cont">
     <div class="filter">
       <div class="search-tab">
-        <button class="register" @click="store.moveSelfRegister">도로파손 추가</button>
+        <button class="register" @click="store.moveSelfRegister">
+          도로파손 추가
+        </button>
         <Calendar @update:dateRange="handleDateRangeUpdate" />
         <Select
           :options="['심각', '주의', '양호']"
@@ -32,7 +34,10 @@
           @updateMapLocation="handleMapUpdate"
           @refreshData="takeData"
         />
-        <Pagination :total-page="totalPage" @update:current-page="handleCurrentPageUpdate" />
+        <Pagination
+          :total-page="totalPage"
+          @update:current-page="handleCurrentPageUpdate"
+        />
       </div>
 
       <div class="right">
@@ -89,7 +94,9 @@ const takeData = (currentPage) => {
   };
 
   const queryParams = Object.fromEntries(
-    Object.entries(rawParams).filter(([key, value]) => value !== "" && value != null)
+    Object.entries(rawParams).filter(
+      ([key, value]) => value !== "" && value != null
+    )
   );
 
   getPotholeList(
@@ -129,7 +136,9 @@ const handleSeverity = (option) => {
 // 파손 종류
 const selectedType = ref("");
 const handleType = (selectedText) => {
-  const selectedOption = typeOptions.find((option) => option.text === selectedText);
+  const selectedOption = typeOptions.find(
+    (option) => option.text === selectedText
+  );
   if (selectedOption) {
     selectedType.value = selectedOption.value;
   }
@@ -175,7 +184,7 @@ onMounted(() => {
 
 <style scoped>
 .main-cont {
-  animation: fadein 1.5s;
+  animation: fadein 0.5s;
 }
 @keyframes fadein {
   from {
