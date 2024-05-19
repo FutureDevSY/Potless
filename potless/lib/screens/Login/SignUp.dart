@@ -1,7 +1,5 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:lottie/lottie.dart';
 import 'package:potless/API/api_request.dart';
 import 'package:potless/screens/Home/HomeScreen.dart';
 import 'package:potless/widgets/UI/ScreenSize.dart';
