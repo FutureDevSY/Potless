@@ -20,7 +20,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -79,44 +79,48 @@ public class KaKaoNaviService {
     private final RestTemplate restTemplate;
     private final DamageRepository damageRepository;
     private final HexagonService hexagonService;
+    private final ExecutorService executorService = Executors.newFixedThreadPool(10); // 동시 실행 스레드 수 제한
 
     @Value("${kakao.api-service-key}")
     private String KAKAO_API_KEY;
 
     @Async
     public CompletableFuture<String> fetchKakaoData(Double startX, Double startY, Double endX, Double endY) {
-        // Set up the headers
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "KakaoAK " + KAKAO_API_KEY);
+        // 생략된 코드...
+        return CompletableFuture.supplyAsync(() -> {
 
-        // Build the URL
-        String urlTemplate = UriComponentsBuilder.fromHttpUrl("https://apis-navi.kakaomobility.com/v1/directions")
-                .queryParam("origin", startX + "," + startY)
-                .queryParam("destination", endX + "," + endY)
-                .encode()
-                .toUriString();
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("Authorization", "KakaoAK " + KAKAO_API_KEY);
 
-        HttpEntity<String> entity = new HttpEntity<>(headers);
+            // Build the URL
+            String urlTemplate = UriComponentsBuilder.fromHttpUrl("https://apis-navi.kakaomobility.com/v1/directions")
+                    .queryParam("origin", startX + "," + startY)
+                    .queryParam("destination", endX + "," + endY)
+                    .encode()
+                    .toUriString();
 
-        try {
-            ResponseEntity<String> response = restTemplate.exchange(
-                    urlTemplate,
-                    HttpMethod.GET,
-                    entity,
-                    String.class
-            );
-            return CompletableFuture.completedFuture(response.getBody());
-        } catch (Exception e) {
-            log.error("Error fetching Kakao navigation data", e);
-            return CompletableFuture.completedFuture(null);
-        }
+            HttpEntity<String> entity = new HttpEntity<>(headers);
+
+            try {
+                ResponseEntity<String> response = restTemplate.exchange(
+                        urlTemplate,
+                        HttpMethod.GET,
+                        entity,
+                        String.class
+                );
+                return response.getBody();
+            } catch (Exception e) {
+                log.error("Error fetching Kakao navigation data", e);
+                return null;
+            }
+        }, executorService);
     }
+
 
     public List<Point> extractCoordinates(String kakaoResponse) throws Exception {
         KakaoResponseDTO kakaoResponseDTO = objectMapper.readValue(kakaoResponse, KakaoResponseDTO.class);
         List<Point> coordinates = new ArrayList<>();
 
-        // Summary 부분에서 좌표 추출
         if (kakaoResponseDTO.getRoutes() != null) {
             for (KakaoResponseDTO.Route route : kakaoResponseDTO.getRoutes()) {
                 if (route.getSummary() != null) {
@@ -130,7 +134,6 @@ public class KaKaoNaviService {
                     addBoundToCoordinates(route.getSummary().getBound(), coordinates);
                 }
 
-                // Sections 부분에서 좌표 추출
                 if (route.getSections() != null) {
                     for (KakaoResponseDTO.Section section : route.getSections()) {
                         addBoundToCoordinates(section.getBound(), coordinates);
@@ -155,7 +158,7 @@ public class KaKaoNaviService {
             Point start = coordinates.get(i);
             Point end = coordinates.get(i + 1);
             detailedCoordinates.add(start);
-            detailedCoordinates.addAll(interpolate(start, end, 0.001)); // 0.1미터 간격으로 세분화
+            detailedCoordinates.addAll(interpolate(start, end, 0.005));
         }
         detailedCoordinates.add(coordinates.get(coordinates.size() - 1));
 
@@ -208,13 +211,13 @@ public class KaKaoNaviService {
         return interpolated;
     }
 
-
     @Async
     public CompletableFuture<List<DamageAppResponseDTO>> checkCoordinates(List<Point> coordinates) {
         List<String> hexagonIndexes = coordinates.stream()
                 .map(point -> hexagonService.getH3Index(point.getY(), point.getX(), 13))
                 .distinct()
                 .collect(Collectors.toList());
-        return CompletableFuture.supplyAsync(() -> damageRepository.findByHexagonIndexIn(hexagonIndexes));
+
+        return CompletableFuture.supplyAsync(() -> damageRepository.findByHexagonIndexIn(hexagonIndexes), executorService);
     }
 }
