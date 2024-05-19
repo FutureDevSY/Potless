@@ -34,7 +34,11 @@
           </td>
           <td class="delete-div">
             <button class="delete-btn" @click.stop="deleteTask(task.projectId)">
-              <img class="delete-img" src="../../assets/icon/delete.png" alt="delete" />
+              <img
+                class="delete-img"
+                src="../../assets/icon/delete.png"
+                alt="delete"
+              />
             </button>
           </td>
         </tr>
@@ -169,7 +173,9 @@ const takeData = (currentPage) => {
   };
 
   const queryParams = Object.fromEntries(
-    Object.entries(rawParams).filter(([key, value]) => value !== "" && value != null)
+    Object.entries(rawParams).filter(
+      ([key, value]) => value !== "" && value != null
+    )
   );
 
   getTaskList(
@@ -198,7 +204,7 @@ onMounted(() => {
 
 <style scoped>
 .task-info-container {
-  animation: fadein 1.5s;
+  animation: fadein 0.5s;
 }
 @keyframes fadein {
   from {
