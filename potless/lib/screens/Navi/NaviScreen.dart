@@ -2,10 +2,13 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_background/flutter_background.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
 import 'package:potless/API/api_request.dart';
+import 'package:potless/widgets/UI/AppBar.dart';
 
 class RouteFinderScreen extends StatefulWidget {
   const RouteFinderScreen({super.key});
@@ -24,19 +27,32 @@ class _RouteFinderScreenState extends State<RouteFinderScreen> {
   List<Map<String, dynamic>> _potholes = [];
   List _searchResults = [];
 
+  final FlutterTts flutterTts = FlutterTts();
+
   final ApiService _apiService = ApiService();
 
   @override
   void initState() {
     super.initState();
     _getCurrentLocation();
+    _initializeBackground();
   }
 
   @override
   void dispose() {
     _focusNode.dispose();
     _positionStreamSubscription?.cancel();
+    FlutterBackground.disableBackgroundExecution();
     super.dispose();
+  }
+
+  Future<void> _initializeBackground() async {
+    await FlutterBackground.initialize(
+        androidConfig: const FlutterBackgroundAndroidConfig(
+      notificationTitle: "백그라운드 위치 추적",
+      notificationText: "앱이 백그라운드에서 위치를 추적하고 있습니다.",
+      notificationImportance: AndroidNotificationImportance.Default,
+    ));
   }
 
   Future<void> _getCurrentLocation() async {
@@ -96,9 +112,10 @@ class _RouteFinderScreenState extends State<RouteFinderScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Route Finder')),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
+      appBar: const CustomAppBar(title: '길찾기'),
+      body: Container(
+        padding: const EdgeInsets.all(16),
+        color: const Color(0xffFFFFFF),
         child: Column(
           children: [
             TextField(
@@ -143,7 +160,7 @@ class _RouteFinderScreenState extends State<RouteFinderScreen> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('알림'),
-          content: Text('감지된 포트홀 : $potholeCount 개\n$message\n\n길안내를 시작할까요?'),
+          content: Text('경로상 포트홀 : $potholeCount 개\n$message\n\n길안내를 시작할까요?'),
           actions: [
             TextButton(
               onPressed: () {
@@ -182,31 +199,17 @@ class _RouteFinderScreenState extends State<RouteFinderScreen> {
   }
 
   void _showPotholeAlert(int potholeCount) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('포트홀 경고'),
-          content: Text('근처에 포트홀이 있습니다. 주의하세요! (총 $potholeCount개)'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('확인'),
-            ),
-          ],
-        );
-      },
-    );
+    flutterTts.speak('근처에 포트홀이 있습니다. 주의하세요!');
   }
 
-  void _startLocationUpdates() {
-    const double alertDistance = 20.0; // meters
+  void _startLocationUpdates() async {
+    await FlutterBackground.enableBackgroundExecution();
+
+    const double alertDistance = 20.0;
 
     LocationSettings locationSettings = const LocationSettings(
       accuracy: LocationAccuracy.best,
-      distanceFilter: 10, // meters
+      distanceFilter: 10,
     );
 
     _positionStreamSubscription = Geolocator.getPositionStream(
