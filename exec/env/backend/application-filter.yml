@@ -1,0 +1,23 @@
+filter-path:
+  paths:
+
+#    all: "/**"
+
+    member: "/api/member/signup"
+    memberSocial: "/api/member/social-login"
+    webLogin: "/api/member/login-web/**"
+    appLogin: "/api/member/login-app/**"
+    memberNickname: "/api/member/nickname/**"
+    memberEmail: "/api/member/email/**"
+
+    apiDocs: "/api-docs/**"
+    v2ApiDocs: "/v2/api-docs/**"
+    v3ApiDocs: "/v3/api-docs/**"
+    webjars: "/webjars/**"
+    swagger: "/swagger/**"
+    swaggerUi: "/swagger-ui/**"
+    swaggerConfig: "/swagger-config/**"
+    swaggerResources: "/swagger-resources/**"
+    favicon: "/favicon.ico"
+
+    health: "/actuator/**"
