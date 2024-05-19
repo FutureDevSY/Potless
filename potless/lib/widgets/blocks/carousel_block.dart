@@ -79,7 +79,6 @@ class CustomCarouselCard extends StatelessWidget {
                 child: imageContent(),
               ),
             ),
-<<<<<<< HEAD
             if ((image.url.startsWith('http') || image.url.startsWith('https')))
               ...{}
             else ...{
@@ -94,18 +93,6 @@ class CustomCarouselCard extends StatelessWidget {
                       color: textColor),
                   textAlign: TextAlign.center,
                 ),
-=======
-            Container(
-              color: backgroundColor,
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                statusText(),
-                style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: textColor),
-                textAlign: TextAlign.center,
->>>>>>> f99f591a5a913f99c06a04eb6b26450d65d6f66b
               ),
             }
           ],
