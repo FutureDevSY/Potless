@@ -101,21 +101,21 @@ class _HomeScreenState extends State<HomeScreen> {
                       },
                     ),
                   } else ...{
-                    // Column(
-                    //   children: [
-                    //     MainLarge(
-                    //       label: '포트홀 안내받기',
-                    //       onPressed: () {
-                    //         Navigator.push(
-                    //           context,
-                    //           MaterialPageRoute(
-                    //             builder: (context) => const RouteFinderScreen(),
-                    //           ),
-                    //         );
-                    //       },
-                    //     ),
-                    //   ],
-                    // )
+                    Column(
+                      children: [
+                        MainLarge(
+                          label: '포트홀 안내받기',
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const RouteFinderScreen(),
+                              ),
+                            );
+                          },
+                        ),
+                      ],
+                    )
                   },
                   SizedBox(
                     height: UIhelper.deviceHeight(context) * 0.02,

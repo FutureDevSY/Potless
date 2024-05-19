@@ -16,10 +16,6 @@ dependencies:
   url_launcher: ^6.0.0  
   kakao_flutter_sdk: ^1.9.1+2
   kakao_flutter_sdk_navi: ^1.9.1+2
-  # mine start
-  flutter_tts: ^3.8.5
-  flutter_background : ^1.2.0
-  # mine end
   cupertino_icons: ^1.0.6
   lottie: ^3.1.0
   carousel_slider: ^4.2.1
