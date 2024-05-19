@@ -13,23 +13,54 @@ class ProjectListScreen extends StatefulWidget {
 }
 
 class _ProjectListScreenState extends State<ProjectListScreen> {
-  late Future<List<Project>> _projects;
+  List<Project> _projects = [];
   final ApiService _apiService = ApiService();
+  bool _isLoading = true;
+  bool _hasError = false;
+
   @override
   void initState() {
     super.initState();
-    _projects = _fetchProjects();
+    _fetchProjects();
+  }
+
+  Future<void> _fetchProjects() async {
+    try {
+      List<Project> projects = await _apiService.fetchProject();
+      setState(() {
+        _projects = projects;
+        _isLoading = false;
+        _hasError = false;
+      });
+    } catch (error) {
+      setState(() {
+        _isLoading = false;
+        _hasError = true;
+      });
+      debugPrint('Error fetching projects: $error');
+    }
   }
 
   void _refreshProjects() async {
     setState(() {
-      _projects = _apiService.fetchProject();
+      _isLoading = true;
     });
-    debugPrint('list project update 31');
-  }
 
-  Future<List<Project>> _fetchProjects() async {
-    return await _apiService.fetchProject();
+    try {
+      List<Project> updatedProjects = await _apiService.fetchProject();
+      setState(() {
+        _projects = updatedProjects;
+        _isLoading = false;
+        _hasError = false;
+      });
+      debugPrint('Project list updated');
+    } catch (error) {
+      setState(() {
+        _isLoading = false;
+        _hasError = true;
+      });
+      debugPrint('Error refreshing projects: $error');
+    }
   }
 
   @override
@@ -38,42 +69,35 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
       appBar: const CustomAppBar(title: '작업 지시서'),
       body: Container(
         color: const Color(0xffffffff),
-        child: FutureBuilder<List<Project>>(
-          future: _projects,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
-            } else if (snapshot.hasError) {
-              return Center(child: Text('Error: ${snapshot.error}'));
-            } else if (snapshot.hasData) {
-              if (snapshot.data!.isEmpty) {
-                return Center(
-                    child: Column(
-                  children: [
-                    Lottie.asset('./assets/lottie/check.json', repeat: false),
-                    const Text('할당된 작업 지시서가 없습니다!'),
-                  ],
-                ));
-              } else {
-                return ListView.builder(
-                  itemCount: snapshot.data!.length,
-                  itemBuilder: (context, index) {
-                    Project project = snapshot.data![index];
-                    return ProjectBlock(
-                      projectName: project.projectName,
-                      projectId: project.projectId,
-                      createdDate: project.createdDate,
-                      damages: project.damages,
-                      onProjectUpdate: _refreshProjects,
-                    );
-                  },
-                );
-              }
-            } else {
-              return const Center(child: Text('할당된 프로젝트가 없습니다'));
-            }
-          },
-        ),
+        child: _isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : _hasError
+                ? const Center(child: Text('Error fetching projects'))
+                : _projects.isEmpty
+                    ? Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Lottie.asset('./assets/lottie/check.json',
+                                repeat: false),
+                            const SizedBox(height: 16),
+                            const Text('할당된 작업 지시서가 없습니다!'),
+                          ],
+                        ),
+                      )
+                    : ListView.builder(
+                        itemCount: _projects.length,
+                        itemBuilder: (context, index) {
+                          Project project = _projects[index];
+                          return ProjectBlock(
+                            projectName: project.projectName,
+                            projectId: project.projectId,
+                            createdDate: project.createdDate,
+                            damages: project.damages,
+                            onProjectUpdate: _refreshProjects,
+                          );
+                        },
+                      ),
       ),
     );
   }

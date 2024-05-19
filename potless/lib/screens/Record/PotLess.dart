@@ -250,6 +250,7 @@ class _VideoPageState extends State<VideoPage> with WidgetsBindingObserver {
             )
           ] else ...[
             Container(
+              padding: const EdgeInsets.all(10),
               color: const Color(0xffffffff),
               height: UIhelper.deviceHeight(context),
               width: UIhelper.deviceWidth(context),

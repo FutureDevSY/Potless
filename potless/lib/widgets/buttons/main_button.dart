@@ -36,35 +36,30 @@ class MainLargeState extends State<MainLarge> {
     return ElevatedButton(
       style: style,
       onPressed: widget.onPressed,
-      child: Column(
+      child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          Column(
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Text(
-                    widget.label,
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  )
-                ],
+              Text(
+                widget.label,
               ),
-              if (widget.buttonImage != null)
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    widget.buttonImage!,
-                  ],
-                )
+              const SizedBox(
+                height: 20,
+              )
             ],
           ),
+          if (widget.buttonImage != null)
+            Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                const SizedBox(
+                  height: 20,
+                ),
+                widget.buttonImage!,
+              ],
+            )
         ],
       ),
     );
