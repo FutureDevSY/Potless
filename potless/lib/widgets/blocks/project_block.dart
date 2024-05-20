@@ -110,7 +110,6 @@ class _ProjectBlockState extends State<ProjectBlock> {
                     context: context,
                     builder: (BuildContext context) {
                       return AlertDialog(
-<<<<<<< HEAD
                         surfaceTintColor: const Color(0xffFFFFFF),
                         backgroundColor: const Color(0xffFFFFFF),
                         title: Text(
@@ -121,19 +120,6 @@ class _ProjectBlockState extends State<ProjectBlock> {
                         ),
                         content: const Text(
                           '작업 완료 되지 않은 도로파손은 \n다시 웹사이트에 표시됩니다.',
-=======
-                        backgroundColor: const Color(
-                            0xffFFFFFF), // Set dialog background color to white
-                        title: Text(
-                          '${widget.projectId}번 작업 지시서',
-                          style: const TextStyle(
-                            color: Color(
-                                0xff151c62), // Set title text color to blue
-                          ),
-                        ),
-                        content: const Text(
-                          '완료하시겠습니까?',
->>>>>>> b01a82fdb5427793f9b9850be297f0471d54c21d
                           style: TextStyle(
                             color: Color(0xff151c62),
                           ),
@@ -154,7 +140,6 @@ class _ProjectBlockState extends State<ProjectBlock> {
                             child: const Text(
                               '확인',
                               style: TextStyle(
-<<<<<<< HEAD
                                 color: Color(0xff151c62),
                               ),
                             ),
@@ -162,16 +147,6 @@ class _ProjectBlockState extends State<ProjectBlock> {
                               Navigator.of(context).pop();
                               await _apiService.projectDone(widget.projectId);
                               widget.onProjectUpdate();
-=======
-                                color: Color(
-                                    0xff151c62), // Set button text color to blue
-                              ),
-                            ),
-                            onPressed: () {
-                              Navigator.of(context).pop(); // Close the dialog
-                              _apiService.projectDone(
-                                  widget.projectId); // Perform the action
->>>>>>> b01a82fdb5427793f9b9850be297f0471d54c21d
                             },
                           ),
                         ],
