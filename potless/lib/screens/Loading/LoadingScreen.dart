@@ -50,9 +50,9 @@ class _LoadingScreenState extends State<LoadingScreen> {
               child: Text(
             '포트홀 24',
             style: TextStyle(
-              fontFamily: 'Pretendard',
-              color: Color(0xff000000),
-            ),
+                fontFamily: 'Pretendard',
+                color: Color(0xff000000),
+                decoration: TextDecoration.none),
           )),
           Lottie.asset('assets/lottie/loading_truck.json')
         ],

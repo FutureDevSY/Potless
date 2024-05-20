@@ -64,7 +64,6 @@ flutter:
     - assets/pothole/
     - assets/icons/
     - assets/lottie/
-    - assets/dummy_data/
     - assets/ai_model/
   
   fonts:
