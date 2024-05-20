@@ -17,6 +17,9 @@ import com.potless.backend.damage.entity.enums.Status;
 import com.potless.backend.damage.entity.road.DamageEntity;
 import com.potless.backend.damage.entity.road.QDamageEntity;
 import com.potless.backend.damage.entity.road.QImageEntity;
+import com.potless.backend.flutter.dto.service.response.DamageAppResponseDTO;
+import com.potless.backend.hexagon.entity.HexagonEntity;
+import com.potless.backend.hexagon.entity.QHexagonEntity;
 import com.potless.backend.project.entity.QTaskEntity;
 import com.potless.backend.project.entity.TaskEntity;
 import com.querydsl.core.BooleanBuilder;
@@ -27,13 +30,14 @@ import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.LockModeType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.YearMonth;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -179,12 +183,26 @@ public class DamageRepositoryCustomImpl implements DamageRepositoryCustom {
     @Override
     public Optional<DamageEntity> findDamageByHexagonIndexAndDtype(String hexagonIndex, String dtype) {
         QDamageEntity damage = QDamageEntity.damageEntity;
+        QHexagonEntity hexagon = QHexagonEntity.hexagonEntity;
+
+        HexagonEntity hexagonEntity = queryFactory
+                .selectFrom(hexagon)
+                .where(hexagon.hexagonIndex.eq(hexagonIndex))
+                .fetchOne();
+
+        if (hexagonEntity == null) {
+            hexagonEntity = HexagonEntity.builder()
+                    .hexagonIndex(hexagonIndex)
+                    .build();
+            em.persist(hexagonEntity);
+        }
+
+
         return Optional.ofNullable(queryFactory
                 .selectFrom(damage)
                 .where(damage.hexagonEntity.hexagonIndex.eq(hexagonIndex)
                         .and(damage.dtype.eq(dtype))
                         .and(damage.status.in(Status.작업전, Status.작업중)))
-                .setLockMode(LockModeType.PESSIMISTIC_WRITE)
                 .fetchOne());
     }
 
@@ -230,7 +248,8 @@ public class DamageRepositoryCustomImpl implements DamageRepositoryCustom {
                         damage.locationEntity.locationName,
                         damage.dtype,
                         damage.createdDateTime,
-                        damage.memberEntity.Id
+                        damage.memberEntity.Id,
+                        damage.count
                 ))
                 .from(damage)
                 .where(builder)
@@ -281,8 +300,14 @@ public class DamageRepositoryCustomImpl implements DamageRepositoryCustom {
                                 .when(damage.status.eq(Status.작업완료))
                                 .then(1).otherwise(0).sum().as("countDamageDone"),
                         new CaseBuilder()
+                                .when(damage.severity.eq(1))
+                                .then(1).otherwise(0).sum().as("severityOne"),
+                        new CaseBuilder()
+                                .when(damage.severity.eq(2))
+                                .then(1).otherwise(0).sum().as("severityTwo"),
+                        new CaseBuilder()
                                 .when(damage.severity.eq(3))
-                                .then(1).otherwise(0).sum().as("severityCount") // 심각도 3 조건 추가
+                                .then(1).otherwise(0).sum().as("severityThree")
                 )
                 .from(location)
                 .leftJoin(location.damageEntities, damage)
@@ -297,7 +322,9 @@ public class DamageRepositoryCustomImpl implements DamageRepositoryCustom {
                         Optional.ofNullable(tuple.get(Expressions.numberPath(Integer.class, "countDamageBefore"))).orElse(0).longValue(),
                         Optional.ofNullable(tuple.get(Expressions.numberPath(Integer.class, "countDamageDuring"))).orElse(0).longValue(),
                         Optional.ofNullable(tuple.get(Expressions.numberPath(Integer.class, "countDamageDone"))).orElse(0).longValue(),
-                        Optional.ofNullable(tuple.get(Expressions.numberPath(Integer.class, "severityCount"))).orElse(0).longValue()
+                        Optional.ofNullable(tuple.get(Expressions.numberPath(Integer.class, "severityOne"))).orElse(0).longValue(),
+                        Optional.ofNullable(tuple.get(Expressions.numberPath(Integer.class, "severityTwo"))).orElse(0).longValue(),
+                        Optional.ofNullable(tuple.get(Expressions.numberPath(Integer.class, "severityThree"))).orElse(0).longValue()
                 ))
                 .collect(Collectors.toList());
 
@@ -407,6 +434,62 @@ public class DamageRepositoryCustomImpl implements DamageRepositoryCustom {
                         entry.getValue().getOrDefault(Status.작업완료, 0L)
                 ))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<DamageAppResponseDTO> findByHexagonIndexIn(List<String> hexagonIndexes) {
+        QDamageEntity damage = QDamageEntity.damageEntity;
+
+        return queryFactory.select(Projections.constructor(DamageAppResponseDTO.class,
+                        damage.severity,
+                        damage.dirX,
+                        damage.dirY,
+                        damage.address,
+                        damage.dtype
+                ))
+                .from(damage)
+                .where(damage.hexagonEntity.hexagonIndex.in(hexagonIndexes)
+                        .and(damage.status.in(Status.작업전, Status.작업중)))
+                .fetch();
+    }
+
+    @Override
+    public SeverityAreaResponseDTO countTodaysDamagesBySeverity(Long areaId) {
+        QDamageEntity damageEntity = QDamageEntity.damageEntity;
+        QAreaEntity areaEntity = QAreaEntity.areaEntity;
+
+        LocalDateTime startOfDay = LocalDateTime.now().with(LocalTime.MIN);
+        LocalDateTime endOfDay = LocalDateTime.now().with(LocalTime.MAX);
+
+        Long severityOne = queryFactory
+                .select(damageEntity.id.count())
+                .from(damageEntity)
+                .where(damageEntity.areaEntity.id.eq(areaId)
+                        .and(damageEntity.severity.eq(1))
+                        .and(damageEntity.createdDateTime.between(startOfDay, endOfDay)))
+                .fetchOne();
+
+        Long severityTwo = queryFactory
+                .select(damageEntity.id.count())
+                .from(damageEntity)
+                .where(damageEntity.areaEntity.id.eq(areaId)
+                        .and(damageEntity.severity.eq(2))
+                        .and(damageEntity.createdDateTime.between(startOfDay, endOfDay)))
+                .fetchOne();
+
+        Long severityThree = queryFactory
+                .select(damageEntity.id.count())
+                .from(damageEntity)
+                .where(damageEntity.areaEntity.id.eq(areaId)
+                        .and(damageEntity.severity.eq(3))
+                        .and(damageEntity.createdDateTime.between(startOfDay, endOfDay)))
+                .fetchOne();
+
+        return SeverityAreaResponseDTO.builder()
+                .severityOne(severityOne != null ? severityOne : 0L)
+                .severityTwo(severityTwo != null ? severityTwo : 0L)
+                .severityThree(severityThree != null ? severityThree : 0L)
+                .build();
     }
 
     private BooleanExpression betweenDates(QDamageEntity damage, LocalDate start, LocalDate end) {

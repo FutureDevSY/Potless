@@ -14,12 +14,10 @@ import { ref } from "vue";
 import { useMoveStore } from "@/stores/move";
 import { useAuthStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
-import { getWeatherInfo } from "../../api/weather/weather";
 
 const store = useMoveStore();
 const store2 = useAuthStore();
 const { accessToken } = storeToRefs(store2);
-// 여기에 통계 정보 들어감
 const currentWeather = ref(null);
 const hourlyWeather = ref([]);
 

@@ -30,7 +30,7 @@ onMounted(async () => {
   align-items: center;
   width: 100vw;
   height: 100vh;
-  overflow: hidden; /* 화면 페이지에 맞추기 */
+  overflow: hidden; 
 }
 
 .map {
@@ -40,7 +40,6 @@ onMounted(async () => {
 }
 
 .map svg g g g {
-  /* transition: transform 0.5s ease; */
   transform-origin: center;
   fill: #f1f1f9;
 }

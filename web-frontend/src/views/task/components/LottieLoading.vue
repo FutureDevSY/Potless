@@ -15,7 +15,7 @@ onMounted(() => {
     renderer: "svg",
     loop: false,
     autoplay: false,
-    path: "../../../../public/lottie/Loading.json",
+    path: "/lottie/Loading.json",
   });
 
   // 애니메이션을 3초마다 시작하고 멈추기

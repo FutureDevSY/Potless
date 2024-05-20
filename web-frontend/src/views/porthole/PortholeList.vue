@@ -1,7 +1,6 @@
 <template>
-  <div>
+  <div class="main-cont">
     <div class="filter">
-      <!-- 필터 -->
       <div class="search-tab">
         <button class="register" @click="store.moveSelfRegister">
           도로파손 추가
@@ -105,13 +104,12 @@ const takeData = (currentPage) => {
     queryParams,
     (res) => {
       if (res.data.status == "SUCCESS") {
-        console.log(res.data.message);
+        // console.log(res.data.message);
         currentData.value = res.data.data.content;
         totalPage.value = res.data.data.totalPages;
       }
     },
     (error) => {
-      console.log(error);
       console.log(error.response.data.message);
     }
   );
@@ -185,6 +183,17 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.main-cont {
+  animation: fadein 0.5s;
+}
+@keyframes fadein {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
 .container {
   margin-top: 20px;
   display: flex;
@@ -193,10 +202,14 @@ onMounted(() => {
 
 .filter {
   margin-top: 30px;
+  transform: translateY(10px);
   margin-left: 17px;
   width: 86vw;
   padding: 10px;
   text-align: center;
+  overflow: visible;
+  position: relative;
+  z-index: 100;
 }
 
 .left {
@@ -209,7 +222,7 @@ onMounted(() => {
 
 .search-tab {
   display: grid;
-  grid-template-columns: 27% 22% 9% 9% 9% 15% 8.5%;
+  grid-template-columns: 26% 22% 9.3% 9.3% 9.3% 15% 8.5%;
   align-items: center;
   justify-content: end;
 }
@@ -298,7 +311,7 @@ onMounted(() => {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: -0.82vh;
+  margin-top: 1vh;
   /* position: fixed;
   bottom: 2vh;
   width: calc(100% * 0.563);
@@ -306,8 +319,8 @@ onMounted(() => {
 }
 
 .search-button {
-  padding: 1.2vh 15px;
-  background-color: #151c62;
+  padding: 1vh 15px;
+  background-color: #6d6d6d;
   border: none;
   color: white;
   width: 100px;
@@ -317,7 +330,7 @@ onMounted(() => {
 }
 
 .search-button:hover {
-  background-color: #0e1241;
+  background-color: #8c8c8c;
 }
 
 .register {
@@ -329,5 +342,9 @@ onMounted(() => {
   font-size: 1.8vh;
   border-radius: 4px;
   cursor: pointer;
+}
+
+.register:hover {
+  background-color: #0e1241;
 }
 </style>

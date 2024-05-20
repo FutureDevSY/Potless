@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
-@ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Schema(description = "Damage 조회 응답 DTO")
 public class DamageResponseDTO {
@@ -26,7 +25,7 @@ public class DamageResponseDTO {
     @Schema(description = "주소")
     private String address;
     @Schema(description = "너비")
-    private Double width;
+    private Integer width;
     @Schema(description = "작업 상태")
     private Status status;
     @Schema(description = "지역 구")
@@ -39,42 +38,47 @@ public class DamageResponseDTO {
     private LocalDateTime createdDateTime;
     @Schema(description = "신고접수한 회원 ID")
     private Long memberId;
+    @Schema(description = "Damage count")
+    private Long count;
+
     @Setter
     @Schema(description = "Damage 이미지 리스트")
     private List<ImagesResponseDTO> imagesResponseDTOS;
 
     @Builder
     @QueryProjection
-    public DamageResponseDTO(Long id, Integer severity, Double dirX, Double dirY, String address, Double width, Status status, String area, String location, String dtype, LocalDateTime createdDateTime, List<ImagesResponseDTO> imagesResponseDTOS, Long memberId) {
+    public DamageResponseDTO(Long id, Integer severity, Double dirX, Double dirY, String address, Double width, Status status, String area, String location, String dtype, LocalDateTime createdDateTime, List<ImagesResponseDTO> imagesResponseDTOS, Long count, Long memberId) {
         this.id = id;
         this.severity = severity;
         this.dirX = dirX;
         this.dirY = dirY;
         this.address = address;
-        this.width = width;
+        this.width = width.intValue();
         this.status = status;
         this.area = area;
         this.location = location;
         this.dtype = dtype;
         this.createdDateTime = createdDateTime;
         this.memberId = memberId;
+        this.count = count;
         this.imagesResponseDTOS = imagesResponseDTOS;
     }
 
     @Builder
-    public DamageResponseDTO(Long id, Integer severity, Double dirX, Double dirY, String address, Double width, Status status, String area, String location, String dtype, LocalDateTime createdDateTime, Long memberId) {
+    public DamageResponseDTO(Long id, Integer severity, Double dirX, Double dirY, String address, Double width, Status status, String area, String location, String dtype, LocalDateTime createdDateTime, Long memberId, Long count) {
         this.id = id;
         this.severity = severity;
         this.dirX = dirX;
         this.dirY = dirY;
         this.address = address;
-        this.width = width;
+        this.width = width.intValue();
         this.status = status;
         this.area = area;
         this.location = location;
         this.dtype = dtype;
         this.createdDateTime = createdDateTime;
         this.memberId = memberId;
+        this.count = count;
     }
 
     public DamageResponseDTO(DamageEntity damageEntity) {
@@ -83,13 +87,14 @@ public class DamageResponseDTO {
         this.dirX = damageEntity.getDirX();
         this.dirY = damageEntity.getDirY();
         this.address = damageEntity.getAddress();
-        this.width = damageEntity.getWidth();
+        this.width = damageEntity.getWidth().intValue();
         this.status = damageEntity.getStatus();
         this.area = damageEntity.getAreaEntity().getAreaGu();
         this.location = damageEntity.getLocationEntity().getLocationName();
         this.dtype = damageEntity.getDtype();
         this.createdDateTime = damageEntity.getCreatedDateTime();
         this.memberId = damageEntity.getMemberEntity().getId();
+        this.count = damageEntity.getCount();
     }
 
 }

@@ -4,7 +4,6 @@ package com.potless.backend.member.service;
 import com.potless.backend.damage.entity.area.AreaEntity;
 import com.potless.backend.damage.repository.AreaRepository;
 import com.potless.backend.global.exception.member.*;
-import com.potless.backend.global.exception.project.AreaNotFoundException;
 import com.potless.backend.global.jwt.TokenInfo;
 import com.potless.backend.global.jwt.provider.TokenProvider;
 import com.potless.backend.global.jwt.repository.RefreshTokenRepository;
@@ -49,9 +48,8 @@ public class MemberServiceImpl implements MemberService {
                         }
                 );
 
-//        AreaEntity area = areaRepository.findById(requestDto.getRegion())
-//                .orElseThrow(AreaNotFoundException::new);
-        MemberEntity newMember = MemberEntity.of(requestDto, passwordEncoder.encode(requestDto.getPassword()));
+        AreaEntity area = areaRepository.findById(6L).orElseThrow(NullPointerException::new);
+        MemberEntity newMember = MemberEntity.of(requestDto, passwordEncoder.encode(requestDto.getPassword()), area);
         memberRepository.save(newMember);
 
         return newMember.getId();
@@ -113,8 +111,6 @@ public class MemberServiceImpl implements MemberService {
 
         return tokenInfo.getAccessToken();
     }
-
-    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     public MemberEntity findMember(String email) {
         return memberRepository.searchByEmail(email).orElseThrow(MemberNotFoundException::new);

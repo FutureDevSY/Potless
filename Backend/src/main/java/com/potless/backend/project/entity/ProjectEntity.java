@@ -10,12 +10,9 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Getter
-@ToString
 @Table(name = "project")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Tag(name = "Project 컨트롤러", description = "Project Controller API")
@@ -66,6 +63,7 @@ public class ProjectEntity extends BaseEntity {
     public void setTeam(TeamEntity team) {
         this.teamEntity = team;
     }
+
     public void changeStatus(Status status) {
         this.status = status;
     }

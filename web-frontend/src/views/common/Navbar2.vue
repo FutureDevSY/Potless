@@ -14,7 +14,6 @@
           <b></b>
           <b></b>
           <a href="#">
-            <!-- <p>-</p> 여기에 아이콘-->
             <span class="nav-text">{{ item.name }}</span>
           </a>
         </li>
@@ -43,7 +42,7 @@ const swal = useSwal();
 
 const navItems = [
   { name: "홈", icon: "fa fa-house", action: store.moveMain },
-  { name: "포트홀 조회", icon: "fa fa-user", action: store.movePorthole },
+  { name: "위험물 조회", icon: "fa fa-user", action: store.movePorthole },
   { name: "작업 정보", icon: "fa fa-calendar-check", action: store.moveTask },
   {
     name: "통계 자료",
@@ -76,19 +75,19 @@ function handleLogoClick() {
   store.moveMain();
 }
 
+// 로그아웃 함수
 const clickLogout = () => {
   logout(
     accessToken.value,
     (res) => {
       if (res.data.status == "SUCCESS") {
-        console.log(res.data.message);
+        // console.log(res.data.message);
         store2.logoutfc();
         store.moveLogin();
         showAlert();
       } else {
         store2.logoutfc();
         store.moveLogin();
-        console.log(res);
       }
     },
     (error) => {
@@ -100,17 +99,16 @@ const clickLogout = () => {
 };
 
 router.beforeEach((to, from) => {
-  const store = useAuthStore();
   if (to.name === "Main") {
     setActiveNavItem(0);
   }
-  if (to.name === "PortholeList") {
+  if (to.name === "PortholeList" || to.name === "PortholeDetail" || to.name === "SelfRegister") {
     setActiveNavItem(1);
   }
   if (to.name === "Statistics") {
     setActiveNavItem(3);
   }
-  if (to.name === "TaskInfo") {
+  if (to.name === "TaskInfo" || to.name === "TaskInfoDetail") {
     setActiveNavItem(2);
   }
 });
@@ -191,7 +189,7 @@ img {
   top: -1.4vh;
   height: 1.4vh;
   width: 100%;
-  background: #fff;
+  background: #f8f8f8;
 
   display: none;
 }
@@ -212,7 +210,7 @@ img {
   bottom: -1.4vh;
   height: 1.4vh;
   width: 100%;
-  background: #fff;
+  background: #f8f8f8;
   display: none;
 }
 
@@ -233,11 +231,11 @@ img {
 }
 
 .nav-item.active a {
-  background: linear-gradient(to right, #151c62 50%, white 50%);
+  background: linear-gradient(to right, #151c62 50%, #f8f8f8 50%);
   background-size: 200% 120%;
   background-position: right bottom;
   transition: all 0.3s ease-out;
-  background-color: #ffffff;
+  background-color: #f8f8f8;
   text-decoration: none;
   color: #555555;
 }
@@ -256,7 +254,7 @@ img {
 }
 
 .nav-item a:click {
-  background-color: #ffffff;
+  background-color: #f8f8f8;
   color: black;
 }
 

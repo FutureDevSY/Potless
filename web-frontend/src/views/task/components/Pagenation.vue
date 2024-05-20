@@ -51,8 +51,7 @@ const emit = defineEmits(["update:current-page"]);
 
 const pageNumbers = computed(() => {
   if (totalPages.value) {
-    let start =
-      Math.floor((currentPage.value - 1) / visiblePages) * visiblePages;
+    let start = Math.floor((currentPage.value - 1) / visiblePages) * visiblePages;
     return Array.from({ length: visiblePages }, (_, i) => start + i + 1).filter(
       (page) => page <= totalPages.value
     );
@@ -72,15 +71,11 @@ function setCurrentPage(page) {
 }
 
 const isPrevGroupDisabled = computed(() => currentPage.value <= visiblePages);
-const isNextGroupDisabled = computed(
-  () => currentPage.value > totalPages.value - visiblePages
-);
+const isNextGroupDisabled = computed(() => currentPage.value > totalPages.value - visiblePages);
 
 watch(currentPage, (newValue) => {
   if (!pageNumbers.value.includes(newValue) && totalPages.value) {
-    setCurrentPage(
-      Math.floor((newValue - 1) / visiblePages) * visiblePages + 1
-    );
+    setCurrentPage(Math.floor((newValue - 1) / visiblePages) * visiblePages + 1);
   }
 });
 
@@ -96,7 +91,7 @@ onMounted(() => {
   justify-content: center;
   align-items: center;
   padding: 10px;
-  margin-top: 3vh;
+  margin-top: 1vh;
 }
 
 .page-item {

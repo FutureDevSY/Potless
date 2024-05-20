@@ -19,7 +19,7 @@
         </td>
         <td class="dangers-column">
           <div class="danger-type" :class="dangerClass(taskDetail.severity)">
-            <p>{{ taskDetail.severity }}</p>
+            <p>{{ dangerClass2(taskDetail.severity) }}</p>
           </div>
         </td>
         <td>{{ taskDetail.location }}</td>
@@ -47,7 +47,7 @@ const emit = defineEmits(["updateDetail"]);
 
 const showAlert = () => {
   swal({
-    title: "해당 포트홀이 삭제 되었습니다",
+    title: "프로젝트에서 해당 도로 파손데이터가 제외되었습니다",
     icon: "success",
     confirmButtonText: "확인",
     width: "700px",
@@ -66,7 +66,7 @@ const deletePothole = (potholeId) => {
     (res) => {
       if (res.data.status == "SUCCESS") {
         showAlert();
-        console.log(res.data.message);
+        // console.log(res.data.message);
         emit("updateDetail");
       }
     },
@@ -85,6 +85,19 @@ const dangerClass = (danger) => {
       return "cautious";
     case 1:
       return "safe";
+    default:
+      return "";
+  }
+};
+
+const dangerClass2 = (danger) => {
+  switch (danger) {
+    case 3:
+      return "심각";
+    case 2:
+      return "주의";
+    case 1:
+      return "양호";
     default:
       return "";
   }
@@ -159,7 +172,7 @@ tbody tr:hover {
   height: 35px;
   border-radius: 100%;
   color: #ffffff;
-  font-size: 16px;
+  font-size: 13px;
   font-weight: bold;
   line-height: 42px;
 }

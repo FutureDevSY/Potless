@@ -19,10 +19,10 @@ class CustomCarouselCard extends StatelessWidget {
     Color backgroundColor =
         image.url.startsWith('http') || image.url.startsWith('https')
             ? const Color(0xff151C62)
-            : Colors.white;
+            : const Color(0xffFFFFFF);
     Color textColor =
         image.url.startsWith('http') || image.url.startsWith('https')
-            ? Colors.white
+            ? const Color(0xffFFFFFF)
             : const Color(0xff151C62);
 
     String statusText() {
@@ -79,18 +79,22 @@ class CustomCarouselCard extends StatelessWidget {
                 child: imageContent(),
               ),
             ),
-            Container(
-              color: backgroundColor,
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                statusText(),
-                style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: textColor),
-                textAlign: TextAlign.center,
+            if ((image.url.startsWith('http') || image.url.startsWith('https')))
+              ...{}
+            else ...{
+              Container(
+                color: backgroundColor,
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  statusText(),
+                  style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: textColor),
+                  textAlign: TextAlign.center,
+                ),
               ),
-            ),
+            }
           ],
         ),
       ),

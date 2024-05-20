@@ -30,10 +30,7 @@
           <td>{{ porthole.address }}</td>
           <td>{{ porthole.width }}</td>
           <td>
-            <button
-              class="list-button"
-              @click="store.movePortholeDetail(porthole.damageId)"
-            >
+            <button class="list-button" @click="store.movePortholeDetail(porthole.damageId)">
               확인하기
             </button>
           </td>
@@ -103,9 +100,8 @@ const deletePothole = (taskId) => {
     accessToken.value,
     potholeInfo.value,
     (res) => {
-      console.log(res);
       if (res.data.status == "SUCCESS") {
-        console.log(res.data.message);
+        // console.log(res.data.message);
         emits("updateList");
         showAlert();
       } else {
@@ -254,7 +250,6 @@ thead th {
 
 tbody tr:hover {
   background-color: #dddddd44;
-  cursor: pointer;
 }
 
 .detect-column {
@@ -274,13 +269,13 @@ tbody tr:hover {
 .list-button {
   font-size: 15px;
   padding: 10px 14px;
-  cursor: pointer;
   border: none;
   background-color: #ffffff;
   border-radius: 8px;
   color: #4f58b5;
   border: 1px solid #4f58b5;
   transition: all 0.3s;
+  cursor: pointer;
 }
 
 .list-button:hover {

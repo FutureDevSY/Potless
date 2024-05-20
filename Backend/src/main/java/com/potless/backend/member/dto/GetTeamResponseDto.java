@@ -1,7 +1,10 @@
 package com.potless.backend.member.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.List;
 
@@ -16,7 +19,6 @@ public class GetTeamResponseDto {
     private String teamName;
     @Schema(description = "지역구 ID")
     private Long areaId;
-    /* 구 (ex- 대덕구, 유성구, 중구 ..)*/
     @Schema(description = "지역구 (ex - 대덕구, 유성구, 중구 ..")
     private String areaGu;
 
@@ -24,7 +26,7 @@ public class GetTeamResponseDto {
     @Schema(description = "작업자 목록 DTO 리스트")
     private List<WorkerInfoDto> workerList;
 
-    public GetTeamResponseDto(Long teamId, String teamName, Long areaId, String areaGu){
+    public GetTeamResponseDto(Long teamId, String teamName, Long areaId, String areaGu) {
         this.teamId = teamId;
         this.teamName = teamName;
         this.areaId = areaId;

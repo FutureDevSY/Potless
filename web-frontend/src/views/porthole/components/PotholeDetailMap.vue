@@ -40,11 +40,7 @@ function initializeMap() {
 
   const imageSize = new window.kakao.maps.Size(40, 40);
   const imageOption = { offset: new window.kakao.maps.Point(20, 40) };
-  const markerImage = new window.kakao.maps.MarkerImage(
-    markerImageSrc,
-    imageSize,
-    imageOption
-  ); // 변경된 변수명 사용
+  const markerImage = new window.kakao.maps.MarkerImage(markerImageSrc, imageSize, imageOption); // 변경된 변수명 사용
 
   marker = new window.kakao.maps.Marker({
     position: mapOption.center,
@@ -58,18 +54,11 @@ function initializeMap() {
 }
 
 function updateMapLocation() {
-  if (
-    !map ||
-    potholeDirx.value === undefined ||
-    potholeDiry.value === undefined
-  ) {
-    console.log("Map or coordinates not ready");
+  if (!map || potholeDirx.value === undefined || potholeDiry.value === undefined) {
+    // console.log("Map or coordinates not ready");
     return;
   }
-  const newCenterPoint = new window.kakao.maps.LatLng(
-    potholeDirx.value,
-    potholeDiry.value
-  );
+  const newCenterPoint = new window.kakao.maps.LatLng(potholeDirx.value, potholeDiry.value);
   map.setCenter(newCenterPoint);
   marker.setPosition(newCenterPoint);
 }
@@ -77,8 +66,8 @@ function updateMapLocation() {
 
 <style scoped>
 .map {
-  width: 40.3vw;
-  height: 70.5vh;
+  width: 100%;
+  height: 100%;
   margin-top: 0px;
   border: 2px solid rgb(223, 223, 223);
 }

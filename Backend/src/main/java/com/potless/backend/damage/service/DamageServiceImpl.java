@@ -15,10 +15,14 @@ import com.potless.backend.damage.repository.AreaRepository;
 import com.potless.backend.damage.repository.DamageRepository;
 import com.potless.backend.damage.repository.ImageRepository;
 import com.potless.backend.damage.repository.LocationRepository;
+import com.potless.backend.global.exception.member.MemberNotFoundException;
 import com.potless.backend.global.exception.pothole.PotholeLocationNotFoundException;
 import com.potless.backend.global.exception.pothole.PotholeNotFoundException;
 import com.potless.backend.hexagon.entity.HexagonEntity;
 import com.potless.backend.hexagon.repository.HexagonRepository;
+import com.potless.backend.member.entity.MemberEntity;
+import com.potless.backend.member.repository.member.MemberRepository;
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -26,6 +30,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
@@ -39,6 +44,8 @@ public class DamageServiceImpl implements IDamageService {
     private final LocationRepository locationRepository;
     private final ImageRepository imageRepository;
     private final HexagonRepository hexagonRepository;
+    private final MemberRepository memberRepository;
+    private final EntityManager entityManager;  // EntityManager 주입
 
     @Override
     public Page<DamageResponseDTO> getDamages(DamageSearchRequestDTO damageSearchRequestDTO, Pageable pageable) {
@@ -61,6 +68,7 @@ public class DamageServiceImpl implements IDamageService {
     @Override
     @Transactional
     public void setDamage(DamageSetRequestServiceDTO data) {
+
         AreaEntity areaGu = areaRepository.findByAreaGu(data.getArea())
                 .orElseThrow(PotholeLocationNotFoundException::new);
 
@@ -68,6 +76,9 @@ public class DamageServiceImpl implements IDamageService {
                 .orElseThrow(PotholeLocationNotFoundException::new);
 
         HexagonEntity hexagonEntity = hexagonRepository.findByHexagonIndex(data.getHexagonIndex());
+
+        MemberEntity member = memberRepository.findById(data.getMemberId())
+                .orElseThrow(MemberNotFoundException::new);
 
         DamageEntity damageEntity;
         if (data.getDtype().equals("CRACK")) {
@@ -82,6 +93,7 @@ public class DamageServiceImpl implements IDamageService {
                     .width(data.getWidth())
                     .severity(data.getSeverity())
                     .hexagonEntity(hexagonEntity)
+                    .memberEntity(member)
                     .build();
         } else if (data.getDtype().equals("POTHOLE")) {
             damageEntity = PotholeEntity.builder()
@@ -95,6 +107,7 @@ public class DamageServiceImpl implements IDamageService {
                     .width(data.getWidth())
                     .severity(data.getSeverity())
                     .hexagonEntity(hexagonEntity)
+                    .memberEntity(member)
                     .build();
         } else {
             damageEntity = WornOutEntity.builder()
@@ -108,6 +121,7 @@ public class DamageServiceImpl implements IDamageService {
                     .width(data.getWidth())
                     .severity(data.getSeverity())
                     .hexagonEntity(hexagonEntity)
+                    .memberEntity(member)
                     .build();
         }
 
@@ -181,6 +195,39 @@ public class DamageServiceImpl implements IDamageService {
 
     @Override
     @Transactional
+    public List<String> setChangeImage(Long damageId, List<String> fileUrls) {
+        DamageEntity damageEntity = damageRepository.findById(damageId).orElseThrow(PotholeNotFoundException::new);
+
+        if (damageEntity.getStatus().equals(Status.작업전)) {
+            List<String> urlsToDelete = damageEntity.getImageEntities().stream()
+                    .map(ImageEntity::getUrl)
+                    .filter(url -> !url.equals("https://mine702-amazon-s3.s3.ap-northeast-2.amazonaws.com/Default/default.jpg"))
+                    .toList();
+
+            List<Long> imageIds = damageEntity.getImageEntities().stream()
+                    .map(ImageEntity::getId)
+                    .toList();
+
+            imageRepository.deleteByIds(imageIds);
+
+            int order = 1;
+            for (String imageUrl : fileUrls) {
+                ImageEntity image = ImageEntity.builder()
+                        .damageEntity(damageEntity)
+                        .url(imageUrl)
+                        .order(order++)
+                        .build();
+                imageRepository.save(image);
+            }
+            return urlsToDelete;
+        } else {
+            return null;
+        }
+    }
+
+
+    @Override
+    @Transactional
     public void setWorkDone(Long damageId) {
         DamageEntity damageEntity = damageRepository.findById(damageId).orElseThrow(PotholeNotFoundException::new);
         damageEntity.changeStatus(Status.작업완료);
@@ -196,9 +243,55 @@ public class DamageServiceImpl implements IDamageService {
         return damageRepository.getAreaDamageCountForMonth(areaDamageCountForMonthServiceRequestDTO);
     }
 
+    @Override
+    @Transactional
+    public void setAsyncDamage(DamageSetRequestServiceDTO serviceDTO) {
+        AreaEntity areaGu = areaRepository.findByAreaGu(serviceDTO.getArea())
+                .orElseThrow(PotholeLocationNotFoundException::new);
 
-    //    @Override
-//    public List<DamageResponseDTO> getWorkDamage(Long memberId) {
-//        return damageRepository.findDamagesByWorker(memberId);
-//    }
+        LocationEntity locationName = locationRepository.findByLocationName(serviceDTO.getLocation())
+                .orElseThrow(PotholeLocationNotFoundException::new);
+
+        HexagonEntity hexagonEntity = hexagonRepository.findByHexagonIndex(serviceDTO.getHexagonIndex());
+
+        MemberEntity member = memberRepository.findById(serviceDTO.getMemberId())
+                .orElseThrow(MemberNotFoundException::new);
+
+        LocalDateTime now = LocalDateTime.now();
+
+        damageRepository.insertIfNotExistsWithLock(
+                serviceDTO.getSeverity(),
+                serviceDTO.getDirX(),
+                serviceDTO.getDirY(),
+                serviceDTO.getAddress(),
+                serviceDTO.getWidth(),
+                serviceDTO.getStatus().name(),
+                areaGu.getId(),
+                locationName.getId(),
+                hexagonEntity.getId(),
+                serviceDTO.getDtype(),
+                member.getId(),
+                now,
+                now
+        );
+
+        DamageEntity damageEntity = damageRepository.findTopByHexagonEntityAndDtypeOrderByCreatedDateTimeDesc(hexagonEntity, serviceDTO.getDtype());
+
+        if (damageEntity.getImageEntities().isEmpty()) {
+            int order = 1;
+            for (String imageUrl : serviceDTO.getImages()) {
+                ImageEntity image = ImageEntity.builder()
+                        .damageEntity(damageEntity)
+                        .url(imageUrl)
+                        .order(order++)
+                        .build();
+                imageRepository.save(image);
+            }
+        }
+    }
+
+    @Override
+    public SeverityAreaResponseDTO getSeverity(Long areaId) {
+        return damageRepository.countTodaysDamagesBySeverity(areaId);
+    }
 }

@@ -2,22 +2,18 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:camera/camera.dart'; // 카메라 플러그인
-import 'package:flutter/cupertino.dart';
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:potless/API/api_request.dart';
 import 'package:potless/main.dart';
 import 'package:potless/models/detected.dart';
 import 'package:potless/widgets/functions/frame_rate.dart';
-import 'package:potless/widgets/functions/geolocator.dart';
 import 'package:potless/widgets/tflite/bbox.dart';
 import 'package:potless/widgets/tflite/screen.dart';
 import 'package:potless/widgets/UI/AppBar.dart';
 import 'package:potless/widgets/UI/ScreenSize.dart';
-
 import 'package:potless/widgets/tflite/detector.dart';
 
 class VideoPage extends StatefulWidget {
@@ -37,7 +33,10 @@ class _VideoPageState extends State<VideoPage> with WidgetsBindingObserver {
 
   bool _previewOn = false;
   int imageTaken = 0;
-  final int _currentFps = 0;
+  double _currentZoomLevel = 1.5;
+  double _minZoomLevel = 1.0;
+  double _maxZoomLevel = 1.5;
+
   int? resultIndex;
   List<String> classes = [];
   List<List<double>> bboxes = [];
@@ -112,11 +111,27 @@ class _VideoPageState extends State<VideoPage> with WidgetsBindingObserver {
       await _cameraController!.initialize();
       await _cameraController!.setFlashMode(FlashMode.off);
       await _controller.startImageStream(onLatestImageAvailable);
+      _maxZoomLevel = await _cameraController!.getMaxZoomLevel();
+      _minZoomLevel = await _cameraController!.getMinZoomLevel();
+      await _setZoomLevel(_currentZoomLevel);
       setState(() {
         ScreenParams.previewSize = _controller.value.previewSize!;
       });
     } catch (e) {
       debugPrint('Error initializing camera: $e');
+    }
+  }
+
+  Future<void> _setZoomLevel(double zoomLevel) async {
+    if (_cameraController != null && _cameraController!.value.isInitialized) {
+      final double maxZoom = await _cameraController!.getMaxZoomLevel();
+      final double minZoom = await _cameraController!.getMinZoomLevel();
+
+      if (zoomLevel >= minZoom && zoomLevel <= maxZoom) {
+        await _cameraController!.setZoomLevel(zoomLevel);
+      } else {
+        debugPrint('Zoom level out of bounds: $zoomLevel');
+      }
     }
   }
 
@@ -127,8 +142,6 @@ class _VideoPageState extends State<VideoPage> with WidgetsBindingObserver {
     // debugPrint('125: FPS 측정좀');
     _frameRateTester.countFrame();
     if (frameCounter % (skipFactor + 1) == 0) {
-      debugPrint('125: 실제 들어가는 값');
-
       _detector?.processFrame(cameraImage);
     }
     frameCounter++;
@@ -147,7 +160,7 @@ class _VideoPageState extends State<VideoPage> with WidgetsBindingObserver {
     await imageFile.writeAsBytes(imageData);
 
     Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high);
+        desiredAccuracy: LocationAccuracy.best);
     try {
       _uploadStreamController.add(QueuedImage(imageFile, position));
       imageTaken = imageTaken + 1;
@@ -217,8 +230,27 @@ class _VideoPageState extends State<VideoPage> with WidgetsBindingObserver {
               aspectRatio: aspect,
               child: _boundingBoxes(),
             ),
+            Positioned(
+              right: 10,
+              top: UIhelper.deviceHeight(context) * 0.4,
+              child: RotatedBox(
+                quarterTurns: 3,
+                child: Slider(
+                  value: _currentZoomLevel,
+                  min: _minZoomLevel,
+                  max: _maxZoomLevel,
+                  onChanged: (value) {
+                    setState(() {
+                      _currentZoomLevel = value;
+                    });
+                    _setZoomLevel(value);
+                  },
+                ),
+              ),
+            )
           ] else ...[
             Container(
+              padding: const EdgeInsets.all(10),
               color: const Color(0xffffffff),
               height: UIhelper.deviceHeight(context),
               width: UIhelper.deviceWidth(context),

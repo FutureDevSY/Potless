@@ -11,7 +11,7 @@ const isVisibleNavbar = () => {
 
 <template>
   <body v-if="!isVisibleNavbar()">
-    <div class="main-layout">
+    <div class="mained-layout">
       <Navbar />
       <RouterView />
     </div>
@@ -24,8 +24,9 @@ const isVisibleNavbar = () => {
 </template>
 
 <style scoped>
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css");
 body {
-  font-family: "Nunito", sans-serif;
+  font-family: "Pretendard", sans-serif;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -37,12 +38,12 @@ body {
   box-sizing: border-box;
 }
 
-.main-layout {
+.mained-layout {
   display: grid;
   grid-template-columns: 10% 90%;
   width: calc(100% - 5vh);
   height: 95vh;
-  background: rgb(254, 254, 254);
+  background: #f8f8f8;
   box-shadow: 0 0.5px 0 1px rgba(255, 255, 255, 0.23) inset,
     0 1px 0 0 rgba(255, 255, 255, 0.66) inset, 0 4px 16px rgba(0, 0, 0, 0.12);
   border-radius: 15px;
