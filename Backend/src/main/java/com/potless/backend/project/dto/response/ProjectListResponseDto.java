@@ -4,7 +4,6 @@ import com.querydsl.core.annotations.QueryProjection;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -12,7 +11,6 @@ import java.time.format.DateTimeFormatter;
 
 @Getter
 @NoArgsConstructor
-@ToString
 @Schema(description = "프로젝트 리스트 조회 DTO")
 public class ProjectListResponseDto {
     @Schema(description = "프로젝트 ID")

@@ -1,7 +1,10 @@
 package com.potless.backend.project.dto.request;
 
 import com.potless.backend.damage.entity.enums.Status;
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDate;
 
@@ -9,7 +12,6 @@ import java.time.LocalDate;
 @Setter
 @NoArgsConstructor
 @Builder
-@ToString
 public class ProjectListRequestDto {
     private Long areaId;
     private LocalDate start;

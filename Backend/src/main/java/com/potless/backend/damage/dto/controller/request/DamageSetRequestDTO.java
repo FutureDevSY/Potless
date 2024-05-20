@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-@ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class DamageSetRequestDTO {
 
@@ -22,6 +21,8 @@ public class DamageSetRequestDTO {
     private int severity;
     @Setter
     private Double width;
+    @Setter
+    private Long memberId;
     @Setter
     private List<String> images = new ArrayList<>();
 

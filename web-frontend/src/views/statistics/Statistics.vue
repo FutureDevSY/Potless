@@ -31,7 +31,7 @@
             type="text"
             v-model="searchTerm"
             placeholder="동을 입력해주세요."
-            @input="updateChart"
+            @input="handleInput"
           />
         </div>
         <RoadTypeIncidentsGraphVue
@@ -133,10 +133,14 @@ function calculatePercentChange(current, previous) {
 // API 호출을 위한 일반화된 함수
 async function secondDataForPeriod(start, end, title) {
   return new Promise((resolve, reject) => {
+    const DateParams = ref({
+      start: formatDate(start),
+      end: formatDate(end),
+    });
+
     getDongPerDate(
       accessToken.value,
-      formatDate(start),
-      formatDate(end),
+      DateParams.value,
       (res) => {
         if (res.data && res.data.status === "SUCCESS") {
           const data = res.data.data.list;
@@ -251,7 +255,7 @@ const secondfourthData = async () => {
 
       roadIncidentData.value = list.map((dong) => ({
         dong: dong.locationName,
-        potholes: dong.countDamageBefore,
+        potholes: dong.countDamageBefore + dong.countDamageDuring,
         severity: dong.severityCount,
       }));
 
@@ -269,11 +273,15 @@ const secondfourthData = async () => {
       // console.log("도로별 포트홀 현황:", roadIncidentData.value);
       // console.log("보수 공사 현황:", workChartData.value);
     } else {
-      console.error("Invalid or empty data received from the API");
+      console.error("API 호출 실패");
     }
   } catch (error) {
-    console.error("Error fetching Dong statistics:", error);
+    console.error("통계 에러", error);
   }
+};
+
+const handleInput = (e) => {
+  searchTerm.value = e.target.value;
 };
 
 onMounted(() => {
@@ -290,6 +298,16 @@ onMounted(() => {
   padding: 1%;
   grid-template-columns: 49.2% 49.2%;
   gap: 25px;
+  animation: fadein 0.5s;
+}
+
+@keyframes fadein {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .left-box {
@@ -346,8 +364,6 @@ onMounted(() => {
   transform: translateY(-0.8vh);
 }
 
-/* ***** */
-/* 위험물 발생 현황 */
 .incident-box {
   background-color: rgba(241, 241, 241, 0.641);
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.255);
@@ -365,7 +381,7 @@ onMounted(() => {
   margin: 0 0 0 10px;
   grid-template-columns: 1fr 1fr 1fr;
 }
-/* slide animation 효과 -> 왼쪽에서 오른쪽으로 이동 */
+
 @keyframes slideIn {
   from {
     transform: translateX(-40px);
@@ -383,8 +399,6 @@ onMounted(() => {
   opacity: 0;
 }
 
-/* ***** */
-/* 동별 포트홀 + 심각한 포트홀 현황 */
 .danger-box {
   background-color: rgba(241, 241, 241, 0.641);
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.255);
@@ -422,8 +436,6 @@ input:focus {
   border-color: #696969;
 }
 
-/* ***** */
-/* 위험물 누적 탐지 건수 */
 .total-box {
   background-color: rgba(241, 241, 241, 0.641);
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.255);
@@ -437,7 +449,6 @@ input:focus {
   margin: 0px 0px 0px 0px;
 }
 
-/* 보수 공사 현황 */
 .work-box {
   background-color: rgba(241, 241, 241, 0.641);
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.255);

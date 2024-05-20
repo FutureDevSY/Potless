@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
-@ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Schema(description = "Project Detail 응답")
 public class DamageDetailToProjectDto {
@@ -27,7 +26,7 @@ public class DamageDetailToProjectDto {
     @Schema(description = "주소")
     private String address;
     @Schema(description = "너비")
-    private Double width;
+    private Integer width;
     @Schema(description = "작업 상태")
     private Status status;
     @Schema(description = "지역 구")
@@ -51,7 +50,7 @@ public class DamageDetailToProjectDto {
         this.dirX = dirX;
         this.dirY = dirY;
         this.address = address;
-        this.width = width;
+        this.width = width.intValue();
         this.status = status;
         this.area = area;
         this.location = location;
@@ -68,7 +67,7 @@ public class DamageDetailToProjectDto {
         this.dirX = dirX;
         this.dirY = dirY;
         this.address = address;
-        this.width = width;
+        this.width = width.intValue();
         this.status = status;
         this.area = area;
         this.location = location;

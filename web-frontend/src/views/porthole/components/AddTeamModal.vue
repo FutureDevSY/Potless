@@ -4,11 +4,7 @@
     <span v-else class="placeholder"></span>
     <span class="close" @click="toggleModal">&times;</span>
   </div>
-  <button
-    class="new-team-btn"
-    @click="isAddingTeam = true"
-    v-if="!isAddingTeam"
-  >
+  <button class="new-team-btn" @click="isAddingTeam = true" v-if="!isAddingTeam">
     새로운 팀 추가
   </button>
   <div class="add-team-modal">
@@ -26,9 +22,7 @@
             </li>
           </div>
           <div class="button-wrapper">
-            <button class="delete-btn" @click="deleteTeamEvent(team.teamId)">
-              팀 삭제
-            </button>
+            <button class="delete-btn" @click="deleteTeamEvent(team.teamId)">팀 삭제</button>
           </div>
         </div>
       </div>
@@ -57,12 +51,11 @@ const takeTeamList = () => {
     areaName.value,
     (res) => {
       if (res.data.status == "SUCCESS") {
-        console.log(res.data.message);
+        // console.log(res.data.message);
         datas.value = res.data.data;
       }
     },
     (error) => {
-      console.log(error);
       console.log(error.response.data.message);
     }
   );
@@ -74,12 +67,11 @@ const deleteTeamEvent = (projectId) => {
     projectId,
     (res) => {
       if (res.data.status == "SUCCESS") {
-        console.log(res.data.message);
+        // console.log(res.data.message);
         takeTeamList();
       }
     },
     (error) => {
-      console.log(error);
       console.log(error.response.data.message);
     }
   );
@@ -138,6 +130,7 @@ onMounted(() => {
 
 .team-list {
   background-color: #f0f0f0b0;
+  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.162);
   padding: 2vh 1.2vw 2vh 1.2vw;
   margin-bottom: 1.4vh;
   border-radius: 8px;

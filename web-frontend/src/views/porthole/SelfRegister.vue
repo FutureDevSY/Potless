@@ -1,33 +1,40 @@
 <template>
   <div class="form-container">
-    <div class="main-title">포트홀 수동 신고</div>
+    <span @click="store.moveBack()" class="back">&larr;</span>
+    <div class="main-title">도로 파손 수동 신고</div>
     <div class="inputs">
       <form @submit.prevent="submitForm" class="form-content">
-        <div class="input-group">
-          <div class="input-title">위험물의 종류를 입력해 주세요 :</div>
-          <select id="potholeType" v-model="potholeType" required>
-            <option disabled value="">타입</option>
-            <option value="POTHOLE">포트홀</option>
-            <option value="CRACK">도로균열</option>
-            <option value="WORNOUT">도로마모</option>
-          </select>
-        </div>
-        <div class="input-group">
-          <div class="input-title">위험물의 심각도를 선택해 주세요 :</div>
-          <select id="severity" v-model="severity" required>
-            <option disabled value="">심각도</option>
-            <option value="3">심각</option>
-            <option value="2">주의</option>
-            <option value="1">양호</option>
-          </select>
+        <div class="input-div">
+          <div class="input-group">
+            <SelfSelect
+              :options="['포트홀', '도로균열', '도로마모']"
+              defaultText="위험물 종류"
+              @update:selected="updatePotholeType"
+            />
+          </div>
+          <div class="input-group">
+            <SelfSelect
+              :options="['심각', '주의', '양호']"
+              defaultText="위험물 심각도"
+              @update:selected="updateSeverity"
+            />
+          </div>
         </div>
         <div class="file-upload">
-          <input type="file" @change="handleFileChange" accept="image/*" />
+          <input
+            class="form__input--file"
+            id="upload1"
+            type="file"
+            @change="handleFileChange"
+            accept="image/*"
+          />
+          <label class="form__label--file" for="upload1">파일 선택</label>
+          <span :class="['form__span--file', { 'file-selected': fileName }]">{{
+            fileName || "포트홀 사진을 선택해 주세요. (선택)"
+          }}</span>
         </div>
         <SearchMap @updateCenter="handleCenterUpdate" />
-        <div class="button-div">
-          <button class="report-btn" type="submit">신고하기</button>
-        </div>
+        <button class="report-btn" type="submit">신고하기</button>
       </form>
     </div>
   </div>
@@ -39,6 +46,7 @@ import { postPotholeAdd } from "../../api/pothole/pothole";
 import { useAuthStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
 import { useMoveStore } from "@/stores/move";
+import SelfSelect from "./components/SelfSelect.vue";
 import SearchMap from "./components/SearchMap.vue";
 import { useSwal } from "../../composables/useSwal";
 
@@ -51,14 +59,16 @@ const location_x = ref("");
 const location_y = ref("");
 const file = ref(null);
 const swal = useSwal();
+const fileName = ref("");
 
 const handleFileChange = (event) => {
   file.value = event.target.files.length > 0 ? event.target.files[0] : null;
+  fileName.value = file.value ? file.value.name : "";
 };
 
 const showAlert = () => {
   swal({
-    title: "포트홀 신고가 성공적으로 완료되었습니다.",
+    title: "도로 파손 신고가 성공적으로 완료되었습니다.",
     icon: "success",
     confirmButtonText: "확인",
     width: "700px",
@@ -67,7 +77,7 @@ const showAlert = () => {
 
 const showAlert2 = () => {
   swal({
-    title: "포트홀 신고에 실패하였습니다. 다시 시도해주세요.",
+    title: "도로 파손 신고에 실패하였습니다. 다시 시도해주세요.",
     icon: "error",
     confirmButtonText: "확인",
     width: "700px",
@@ -75,6 +85,12 @@ const showAlert2 = () => {
 };
 
 const submitForm = () => {
+  console.log("submitForm 호출됨"); // 추가된 로그
+  console.log("potholeType:", potholeType.value); // 추가된 로그
+  console.log("severity:", severity.value); // 추가된 로그
+  console.log("location_x:", location_x.value); // 추가된 로그
+  console.log("location_y:", location_y.value); // 추가된 로그
+
   const formData = new FormData();
   formData.append("dtype", potholeType.value);
   formData.append("severity", severity.value);
@@ -88,9 +104,8 @@ const submitForm = () => {
     accessToken.value,
     formData,
     (res) => {
-      console.log(res);
       if (res.data.status == "SUCCESS") {
-        console.log(res.data.message);
+        // console.log(res.data.message);
         showAlert();
         store.movePorthole();
       } else {
@@ -98,7 +113,6 @@ const submitForm = () => {
       }
     },
     (error) => {
-      console.log(error);
       console.log(error.message);
       alert(`신고 처리 중 오류가 발생하였습니다: ${error.message}`);
     }
@@ -109,45 +123,84 @@ const handleCenterUpdate = (coords) => {
   location_x.value = coords.x;
   location_y.value = coords.y;
 };
+
+const updatePotholeType = (selected) => {
+<<<<<<< HEAD
+  console.log("updatePotholeType 호출됨:", selected); // 추가된 로그
+=======
+>>>>>>> b01a82fdb5427793f9b9850be297f0471d54c21d
+  switch (selected) {
+    case "포트홀":
+      potholeType.value = "POTHOLE";
+      break;
+    case "도로균열":
+      potholeType.value = "CRACK";
+      break;
+    case "도로마모":
+      potholeType.value = "WORNOUT";
+      break;
+    default:
+      potholeType.value = "";
+  }
+};
+
+const updateSeverity = (selected) => {
+<<<<<<< HEAD
+  console.log("updateSeverity 호출됨:", selected); // 추가된 로그
+=======
+>>>>>>> b01a82fdb5427793f9b9850be297f0471d54c21d
+  switch (selected) {
+    case "심각":
+      severity.value = "3";
+      break;
+    case "주의":
+      severity.value = "2";
+      break;
+    case "양호":
+      severity.value = "1";
+      break;
+    default:
+      severity.value = "";
+  }
+};
 </script>
 
 <style scoped>
 .form-container {
   margin: auto;
-  background-color: rgba(241, 241, 241, 0.641);
+  background-color: #ffffff;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.255);
   border-radius: 15px;
   height: 85vh;
-  width: 38vw;
+  width: 35vw;
   display: grid;
-  grid-template-rows: 15% 70% 15%;
+  grid-template-rows: 13% 76% 11%;
 }
 .main-title {
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 3.5vh;
+  font-size: 3.4vh;
   font-weight: bold;
   color: #373737;
 }
 .inputs {
-  padding: 0vh 2vw;
+  padding: 0vh 3vw;
+}
+.form-content {
+  height: 100%;
+  display: grid;
+  grid-template-rows: 8% 7.5% 76.5%;
+  gap: 4%;
+}
+.input-div {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
 }
 .input-group {
-  display: flex;
-  align-items: center;
-}
-select,
-input {
-  margin: 10px;
-  width: 150px;
-  height: 4.5vh;
-  border-radius: 5px;
-  font-size: 1.8vh;
-}
-select {
-  margin-left: auto;
-  padding-left: 20px;
+  height: 100%;
+  width: 100%;
 }
 .input-title {
   font-size: 2vh;
@@ -157,24 +210,93 @@ select {
 .button-div {
   display: flex;
   justify-content: center;
+  align-items: center;
+  height: 100%;
+  padding: 0vh 3vw;
 }
 
 .report-btn {
+  height: 40px;
+  width: 100%;
+  margin-bottom: 1vh;
   background-color: #151c62;
-  width: 80%;
-  height: 50%;
   cursor: pointer;
-  border-radius: 8px;
+  border-radius: 6px;
   font-size: 2vh;
   position: relative;
   overflow: hidden;
   color: rgb(255, 255, 255);
   font-weight: bold;
   transition: all 0.3s;
-  margin-top: 30px;
 }
 
 .report-btn:hover {
   background-color: #0e1241;
+}
+
+select:focus option[value=""] {
+  display: none;
+}
+.file-upload {
+  display: flex;
+  width: 101%;
+}
+input[type="file"] {
+  display: block;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+.form__label--file {
+  width: 20%;
+  height: 100%;
+  background: #9f9f9f;
+  border-radius: 6px;
+  color: #fff;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1.6vh;
+  transition: all 0.5s ease;
+}
+.form__label--file:hover {
+  background: rgb(136, 136, 136);
+}
+.form__span--file {
+  padding: 0 0px 0 15px;
+  margin-left: 15px;
+  display: block;
+  width: 80%;
+  min-height: 30px;
+  border: 2px solid #d6d6d6;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  color: #ababab;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  box-sizing: border-box;
+}
+.form__span--file.file-selected {
+  border-color: #a2a2a2;
+  background-color: #efefef6f;
+  color: #666666;
+}
+.back {
+  position: absolute;
+  top: 7%;
+  left: 32%;
+  color: #aaa;
+  font-size: 5vh;
+  font-weight: bold;
+  cursor: pointer;
+}
+.back:hover {
+  color: #7d7d7d;
+  text-decoration: none;
+  cursor: pointer;
 }
 </style>

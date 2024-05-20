@@ -3,11 +3,6 @@
     <div class="modal-content">
       <span class="close" @click="toggleModal">&times;</span>
       <img src="" alt="" />
-      <!-- <div class="carousel-container">
-        <button class="prev" @click="prevImage">Prev</button>
-        <img :src="currentImage" alt="Carousel Image" />
-        <button class="next" @click="nextImage">Next</button>
-      </div> -->
     </div>
   </div>
 </template>

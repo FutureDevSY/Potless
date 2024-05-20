@@ -28,7 +28,10 @@
           <td>{{ task.projectSize }} 건</td>
           <td>{{ task.managerName }}</td>
           <td>{{ task.projectDate }}</td>
-          <td>{{ task.createdDate }}</td>
+          <td class="detect-column">
+            <div>{{ formatDated(task.createdDate) }}</div>
+            <div>{{ formatTimed(task.createdDate) }}</div>
+          </td>
           <td class="delete-div">
             <button class="delete-btn" @click.stop="deleteTask(task.projectId)">
               <img
@@ -89,6 +92,18 @@ const handleDateRangeUpdate = (newRange) => {
   dateRange.value = newRange;
 };
 
+// 날짜 형식을 YYYY-MM-DD 로 변경
+function formatDated(dateTime) {
+  const date = new Date(dateTime);
+  return date.toISOString().split("T")[0];
+}
+
+// 시간 형식을 HH:MM:SS 로 변경
+function formatTimed(dateTime) {
+  const time = new Date(dateTime);
+  return time.toTimeString().split(" ")[0];
+}
+
 // 쿼리 검색
 const inputValue = ref("");
 const handleInputValue = (value) => {
@@ -112,7 +127,7 @@ const showAlert = () => {
 
 const showAlert2 = () => {
   swal({
-    title: "프로젝트에 이미 작업 중인 포트홀이 있습니다.",
+    title: "프로젝트에 이미 작업 중인 도로 파손 데이터가 있습니다.",
     icon: "error",
     confirmButtonText: "확인",
     width: "700px",
@@ -131,18 +146,15 @@ const deleteTask = (projectId) => {
     accessToken.value,
     projectId,
     (res) => {
-      console.log(res);
       if (res.data.status == "SUCCESS") {
-        console.log(res.data.message);
+        // console.log(res.data.message);
         takeData(0);
         showAlert();
       } else {
         showAlert2();
-        console.log(res.data.message);
       }
     },
     (error) => {
-      console.log(error);
       console.log(error.response.data.message);
     }
   );
@@ -171,7 +183,7 @@ const takeData = (currentPage) => {
     queryParams,
     (res) => {
       if (res.data.status == "SUCCESS") {
-        console.log(res.data.message);
+        // console.log(res.data.message);
         currentData.value = res.data.data.content;
         totalPage.value = res.data.data.totalPages;
       } else {
@@ -179,7 +191,6 @@ const takeData = (currentPage) => {
       }
     },
     (error) => {
-      console.log(error);
       console.log(error.response.data.message);
     }
   );
@@ -192,6 +203,18 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.task-info-container {
+  animation: fadein 0.5s;
+}
+@keyframes fadein {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 .search-tab {
   display: flex;
   align-items: center;
@@ -201,17 +224,17 @@ onMounted(() => {
 }
 
 .search-button {
-  padding: 10px 15px;
-  background-color: #151c62;
+  padding: 0.9vh 20px;
+  background-color: #6d6d6d;
   border: none;
   color: white;
-  font-size: 16px;
+  font-size: 1.7vh;
   border-radius: 4px;
   cursor: pointer;
 }
 
 .search-button:hover {
-  background-color: #0e1241;
+  background-color: #8c8c8c;
 }
 
 table {
@@ -220,6 +243,7 @@ table {
   border-collapse: collapse;
   table-layout: fixed;
   color: #373737;
+  border: 2px solid #dfdfdf;
 }
 
 th,
@@ -238,7 +262,7 @@ th {
 }
 
 td {
-  padding: 1.5vh;
+  padding: 1vh;
   font-size: 1.8vh;
   color: #373737;
 }
@@ -247,8 +271,12 @@ thead {
   background-color: #f9f9f9;
 }
 
+tbody tr {
+  background-color: #ffffff;
+}
+
 tbody tr:hover {
-  background-color: #dddddd44;
+  background-color: #ececec98;
   cursor: pointer;
 }
 

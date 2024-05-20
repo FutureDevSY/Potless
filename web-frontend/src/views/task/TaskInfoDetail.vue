@@ -39,8 +39,9 @@
           <button
             class="pdf-button"
             @click="generatePdf"
-            v-if="taskData && taskData.length">
-          PDF로 변환하기
+            v-if="taskData && taskData.length"
+          >
+            PDF로 변환하기
           </button>
           <button @click="closePdfModal" class="pdf-button">닫기</button>
           <div class="loading-container" v-if="showLoading">
@@ -55,9 +56,10 @@
             class="pdf"
             id="pdf"
           />
-          <div v-for="pothole in taskData" :key="pothole.id">
+          <div v-for="(pothole, index) in taskData" :key="pothole.id">
             <PDFGeneratorDetail
               :pothole="pothole"
+              :index="index"
               ref="documentRef"
               class="pdf"
             />
@@ -65,6 +67,7 @@
         </div>
       </div>
     </div>
+    <button class="back-btn" @click="store2.moveBack">뒤로가기</button>
   </div>
 </template>
 
@@ -76,6 +79,7 @@ import PDFGeneratorMain from "./components/PDFGeneratorMain.vue";
 import PDFGeneratorDetail from "./components/PDFGeneratorDetail.vue";
 import { getTaskDetail, postOptimal } from "../../api/task/taskDetail";
 import { useAuthStore } from "@/stores/user";
+import { useMoveStore } from "@/stores/move";
 import { storeToRefs } from "pinia";
 import PathModal from "./components/PathModal.vue";
 import LottieLoading from "./components/LottieLoading.vue";
@@ -83,6 +87,7 @@ import html2pdf from "html2pdf.js";
 
 const route = useRoute();
 const store = useAuthStore();
+const store2 = useMoveStore();
 const { accessToken, coordinates } = storeToRefs(store);
 const documentRef = ref(null);
 
@@ -109,11 +114,19 @@ function showDetail() {
     route.params.id,
     (res) => {
       if (res.data.status === "SUCCESS") {
-        console.log(res.data.message);
+<<<<<<< HEAD
+        // console.log(res);
+        // console.log(res.data.message);
         taskHeader.value = res.data.data;
         taskData.value = res.data.data.damageDetailToProjectDtos;
       } else {
-        console.log(res.data.message);
+        // console.log(res.data.message);
+=======
+        taskHeader.value = res.data.data;
+        taskData.value = res.data.data.damageDetailToProjectDtos;
+      } else {
+        console.error(res.data.message);
+>>>>>>> b01a82fdb5427793f9b9850be297f0471d54c21d
       }
     },
     (error) => {
@@ -158,34 +171,55 @@ function closePdfModal() {
   isPdfModalVisible.value = false;
 }
 
-function generatePdf() {
+async function loadImages(images) {
+  return Promise.all(
+    images.map(
+      (image) =>
+        new Promise((resolve, reject) => {
+          const img = new Image();
+          img.src = image.url;
+          img.onload = () => resolve();
+          img.onerror = reject;
+        })
+    )
+  );
+}
+
+async function generatePdf() {
   showLoading.value = true;
-  setTimeout(() => {
+  try {
+    const images = taskData.value.flatMap((pothole) =>
+      pothole.imagesResponseDTOS.map((image) => ({
+        id: pothole.id,
+        url: image.url,
+      }))
+    );
+
+    await loadImages(images);
+
+    setTimeout(() => {
+      showLoading.value = false;
+      const container = document.querySelector(".task-detail-container");
+      const pdfArea = document.getElementById("pdf");
+      const options = {
+        margin: 0,
+        filename: "downloaded.pdf",
+        image: { type: "jpeg", quality: 0.98 },
+        html2canvas: { scale: 2 },
+      };
+
+      html2pdf()
+        .set(options)
+        .from(pdfArea)
+        .save()
+        .finally(() => {
+          closePdfModal();
+        });
+    }, 5000);
+  } catch (error) {
+    console.error("이미지를 로드하는 동안 오류가 발생했습니다:", error);
     showLoading.value = false;
-    const container = document.querySelector(".task-detail-container");
-    const pdfArea = document.getElementById("pdf");
-
-    container.style.overflow = "auto";
-    container.style.height = "auto";
-
-    pdfArea.style.visibility = "visible";
-    pdfArea.style.opacity = "1";
-
-    const options = {
-      margin: 0,
-      filename: "downloaded.pdf",
-      image: { type: "jpeg", quality: 0.98 },
-      html2canvas: { scale: 2 },
-    };
-
-    html2pdf()
-      .set(options)
-      .from(pdfArea)
-      .save()
-      .finally(() => {
-        closePdfModal();
-      });
-  }, 5000);
+  }
 }
 </script>
 
@@ -210,7 +244,6 @@ function generatePdf() {
   margin: 0%;
   display: block;
   padding: 0%;
-  /* visibility: hidden; */
 }
 
 .report-num,
@@ -221,10 +254,12 @@ function generatePdf() {
 }
 
 .report-num {
-  font-size: 2.2vh;
+  font-size: 2.8vh;
   border: 2px solid #373737;
   padding: 0.9vh 5px;
   margin-right: 20px;
+  width: 40px;
+  text-align: center;
 }
 
 .report-info {
@@ -256,8 +291,6 @@ function generatePdf() {
 
 .pdf-button {
   background-color: #151c62;
-  /* width: 370px;
-  height: 45px; */
   cursor: pointer;
   border-radius: 8px;
   font-size: 1.8vh;
@@ -266,6 +299,7 @@ function generatePdf() {
   color: rgb(255, 255, 255);
   transition: all 0.3s;
   padding: 1vh 1.5vh;
+  margin-right: 30px;
 }
 
 .pdf-button:hover {
@@ -296,8 +330,10 @@ function generatePdf() {
 }
 
 .button-group {
+  width: 98%;
   display: flex;
   justify-content: end;
+  margin: 0 0 30px 0;
 }
 
 .loading-container {
@@ -306,5 +342,22 @@ function generatePdf() {
   left: 60%;
   transform: translate(-50%, -50%);
   z-index: 1050;
+}
+
+.back-btn {
+  font-size: 1.55vh;
+  padding: 0vh 1.5vw;
+  height: 5vh;
+  cursor: pointer;
+  border: none;
+  background-color: #f8f8f8;
+  border-radius: 8px;
+  color: #373737;
+  border: 1px solid #acacac;
+  transition: background-color 0.3s;
+}
+
+.back-btn:hover {
+  background-color: #d8d8d8;
 }
 </style>

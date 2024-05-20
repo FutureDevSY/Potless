@@ -11,14 +11,14 @@ import com.potless.backend.damage.dto.service.response.*;
 import com.potless.backend.damage.dto.service.response.kakao.Address;
 import com.potless.backend.damage.dto.service.response.kakao.RoadAddress;
 import com.potless.backend.damage.entity.enums.Status;
-import com.potless.backend.damage.repository.DamageRepository;
 import com.potless.backend.damage.service.*;
 import com.potless.backend.global.exception.kakao.KakaoNotFoundException;
+import com.potless.backend.global.exception.member.MemberNotFoundException;
 import com.potless.backend.global.exception.pothole.InvalidCoordinateRangeException;
 import com.potless.backend.global.exception.pothole.PotholeNotFoundException;
 import com.potless.backend.global.format.code.ApiResponse;
 import com.potless.backend.global.format.response.ResponseCode;
-import com.potless.backend.hexagon.service.H3Service;
+import com.potless.backend.member.service.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -58,9 +58,8 @@ public class DamageController {
     private final IAreaLocationService iAreaLocationService;
     private final AsyncService asyncService;
     private final FileService fileService;
-    private final H3Service h3Service;
-    private final DamageRepository damageRepository;
     private final DuplicateAreaService duplicateAreaService;
+    private final MemberService memberService;
 
     @Operation(summary = "Area 리스트 가져오기", description = "Area 리스트 가져오기", responses = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = AreaResponseDTO.class)))
@@ -187,6 +186,15 @@ public class DamageController {
         return response.success(ResponseCode.POTHOLE_STATISTIC_COUNT, statistic);
     }
 
+    @Operation(summary = "구 ID 를 활용 하여 구의 심각도 통계 조회", description = "구 ID 를 활용 하여 심각도 통계 조회.", responses = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "구 ID 를 활용 하여 심각도 통계 조회", content = @Content(schema = @Schema(implementation = StatisticListResponseDTO.class)))
+    })
+    @GetMapping("severity/{areaId}")
+    public ResponseEntity<?> getSeverity(Authentication authentication, @PathVariable Long areaId) {
+        SeverityAreaResponseDTO severity = iDamageService.getSeverity(areaId);
+        return response.success(ResponseCode.POTHOLE_STATISTIC_COUNT, severity);
+    }
+
     @Operation(summary = "단일 동의 Damage 통계 조회", description = "단일 동의 Damage 통계를 조회합니다.", responses = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "단일 동의 Damage 통계 조회 성공", content = @Content(schema = @Schema(implementation = StatisticLocationCountResponseDTO.class)))
     })
@@ -230,6 +238,40 @@ public class DamageController {
         List<String> fileUrls = new ArrayList<>(fileUrlsAndKeys.values()); // URL 리스트 추출
         try {
             iDamageService.setImageForStatus(Long.valueOf(damageId), fileUrls);
+        } catch (Exception e) {
+            for (String s : fileUrls)
+                awsService.deleteFile(s);
+            throw new PotholeNotFoundException();
+        }
+        return response.success(ResponseCode.POTHOLE_DURING_WORK);
+    }
+
+    @Operation(summary = "Damage 사진 변경 추가", description = "Damage의 사진을 변경합니다.", responses = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Damage의 사진 변경 성공", content = @Content(schema = @Schema(implementation = String.class)))
+    })
+    @PostMapping(value = "change/image", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<?> setChangeImage(
+            Authentication authentication,
+            @RequestPart("damageId") String damageId,
+            @RequestPart("files") List<MultipartFile> files
+    ) {
+        Map<String, String> fileUrlsAndKeys = files.stream()
+                .map(file -> {
+                    try {
+                        String fileName = "AfterVerification/BeforeWork/" + System.currentTimeMillis() + "_" + file.getOriginalFilename();
+                        return awsService.uploadFileToS3(file, fileName);
+                    } catch (IOException e) {
+                        log.error("Error uploading file to S3", e);
+                        return null;
+                    }
+                })
+                .filter(Objects::nonNull)
+                .flatMap(map -> map.entrySet().stream())
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        List<String> fileUrls = new ArrayList<>(fileUrlsAndKeys.values()); // URL 리스트 추출
+        try {
+            List<String> strings = iDamageService.setChangeImage(Long.valueOf(damageId), fileUrls);
+            strings.forEach(awsService::deleteFile);
         } catch (Exception e) {
             for (String s : fileUrls)
                 awsService.deleteFile(s);
@@ -341,6 +383,9 @@ public class DamageController {
             List<String> fileUrls = new ArrayList<>(fileUrlsAndKeys.values());
             damageSetRequestDTO.setImages(fileUrls);
         }
+        if (memberService.findMember(authentication.getName()) == null) {
+            throw new MemberNotFoundException();
+        }
         DamageSetRequestServiceDTO serviceDTO = DamageSetRequestServiceDTO.builder()
                 .dirX(damageSetRequestDTO.getX())
                 .dirY(damageSetRequestDTO.getY())
@@ -352,7 +397,9 @@ public class DamageController {
                 .area(area)
                 .location(location)
                 .images(damageSetRequestDTO.getImages())
+                .memberId(memberService.findMember(authentication.getName()).getId())
                 .build();
+
         iDamageService.setDamage(serviceDTO);
         return response.success(ResponseCode.POTHOLE_DETECTED);
     }
@@ -373,16 +420,26 @@ public class DamageController {
         if ((xValue <= 100 || xValue >= 140) || (yValue <= 20 || yValue >= 50)) {
             throw new InvalidCoordinateRangeException();
         }
+
         DamageSetRequestDTO damageSetRequestDTO = DamageSetRequestDTO.builder()
                 .dtype(dtype)
                 .x(xValue)
                 .y(yValue)
                 .build();
 
+        String hexagonIndex = duplicateAreaService.checkIsDuplicated(damageSetRequestDTO);
+
         File imageFile = fileService.convertAndSaveFile(files.get(0));
 
-        String hexagonIndex = duplicateAreaService.checkIsDuplicated(damageSetRequestDTO);
+        damageSetRequestDTO.setMemberId(memberService.findMember(authentication.getName()).getId());
+
+        if (damageSetRequestDTO.getMemberId() == null) {
+            throw new MemberNotFoundException();
+        }
+
         asyncService.setDamageAsyncMethod(damageSetRequestDTO, imageFile, hexagonIndex);
+
         return response.success(ResponseCode.POTHOLE_DETECTED);
     }
+
 }

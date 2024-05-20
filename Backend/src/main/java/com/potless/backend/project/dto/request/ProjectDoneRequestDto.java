@@ -1,10 +1,12 @@
 package com.potless.backend.project.dto.request;
 
 import jakarta.validation.constraints.NotNull;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
-@ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ProjectDoneRequestDto {
     @NotNull(message = "프로젝트 ID는 비어있을 수 없습니다.")

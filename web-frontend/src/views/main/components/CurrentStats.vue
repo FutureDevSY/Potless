@@ -5,43 +5,143 @@
 
       <div class="danger">
         <div>
-          <img class="bad-img" src="../../../assets/icon/bad.png" alt="bad" />
-          <div class="info-text end">심각 - 4건</div>
+          <div class="circle severity">심각</div>
+          <div class="info-text end">{{ dangerCount }} 건</div>
         </div>
         <div>
-          <img class="soso-img" src="../../../assets/icon/medium.png" alt="soso" />
-          <div class="info-text mid">보통 - 4건</div>
+          <div class="circle caution">주의</div>
+          <div class="info-text mid">{{ cautiousCount }} 건</div>
         </div>
         <div>
-          <img class="good-img" src="../../../assets/icon/soso.png" alt="good" />
-          <div class="info-text start">양호 - 4건</div>
+          <div class="circle good">양호</div>
+          <div class="info-text start">{{ safeCount }}건</div>
         </div>
       </div>
     </div>
     <div class="type">
       <div class="infos">
-        <img class="icons" src="../../../assets/icon/pothole-icon.png" alt="pothole" />
+        <img
+          class="icons"
+          src="../../../assets/icon/pothole-icon.png"
+          alt="pothole"
+        />
         <div class="name">포트홀</div>
-        <div class="number">4건</div>
+        <div class="number">{{ potholeNum }}건</div>
       </div>
       <div class="infos">
-        <img class="icons" src="../../../assets/icon/road-icon.png" alt="road" />
+        <img
+          class="icons"
+          src="../../../assets/icon/road-icon.png"
+          alt="road"
+        />
         <div class="name">도로 파손</div>
-        <div class="number">4건</div>
+        <div class="number">0건</div>
       </div>
       <div class="infos">
-        <img class="icons" src="../../../assets/icon/line-icon.png" alt="line" />
+        <img
+          class="icons"
+          src="../../../assets/icon/line-icon.png"
+          alt="line"
+        />
         <div class="name">도로 마모</div>
-        <div class="number">4건</div>
+        <div class="number">0건</div>
       </div>
     </div>
   </div>
 </template>
-<script setup></script>
+
+<script setup>
+import { ref, onMounted } from "vue";
+import { useAuthStore } from "@/stores/user";
+import { storeToRefs } from "pinia";
+import {
+  getDongPerDate,
+  getSeverityPerDate,
+} from "../../../api/statistics/statistics";
+
+const store = useAuthStore();
+const { accessToken, areaId } = storeToRefs(store);
+
+const currentData = ref([]);
+const potholeNum = ref(0);
+const now = new Date();
+const year = now.getFullYear();
+const month = ("0" + (now.getMonth() + 1)).slice(-2);
+const day = ("0" + now.getDate()).slice(-2);
+<<<<<<< HEAD
+const today_start = year + "-" + month + "-" + day;
+=======
+const today_start = year + "-" + month + "-" + (day - 1);
+>>>>>>> b01a82fdb5427793f9b9850be297f0471d54c21d
+const today_end = year + "-" + month + "-" + day;
+
+// 데이터 통계 불러오기 함수
+const takeData = () => {
+  const DateParams = ref({
+    start: today_start,
+    end: today_end,
+  });
+
+  getDongPerDate(
+    accessToken.value,
+    DateParams.value,
+    (res) => {
+<<<<<<< HEAD
+      if (res.data.status === "SUCCESS") {
+        currentData.value = res.data.data.list[areaId.value - 1];
+        potholeNum.value = currentData.value.list[0].count;
+=======
+      console.log(res);
+      if (res.data.status === "SUCCESS") {
+        currentData.value = res.data.data.list[areaId.value - 1];
+        potholeNum.value =
+          currentData.value.list[0].count + currentData.value.list[1].count;
+>>>>>>> b01a82fdb5427793f9b9850be297f0471d54c21d
+      } else {
+        // console.log(res.data.message);
+      }
+    },
+    (error) => {
+      console.log(error.response.data.message);
+    }
+  );
+};
+
+const dangerCount = ref(0);
+const cautiousCount = ref(0);
+const safeCount = ref(0);
+
+// 심각도 불러오기 함수
+const severityData = () => {
+  getSeverityPerDate(
+    accessToken.value,
+    areaId.value,
+    (res) => {
+      if (res.data.status === "SUCCESS") {
+        // console.log(res.data.message);
+        dangerCount.value = res.data.data.severityThree;
+        cautiousCount.value = res.data.data.severityTwo;
+        safeCount.value = res.data.data.severityOne;
+      } else {
+        // console.log(res.data.message);
+      }
+    },
+    (error) => {
+      console.log(error.response.data.message);
+    }
+  );
+};
+
+onMounted(() => {
+  severityData();
+  takeData();
+});
+</script>
+
 <style scoped>
 .main-container {
-  background-color: rgba(241, 241, 241, 0.641);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.255);
+  background-color: #ffffff;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.255);
   border-radius: 15px;
   padding: 1.5vh 0vw 0vh 0vw;
   display: grid;
@@ -62,29 +162,44 @@
 .danger {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  padding-left: 5px;
+  padding-left: 20px;
+  margin-top: 1.5vh;
 }
-.bad-img,
-.soso-img,
-.good-img {
-  height: 11vh;
+.circle {
+  height: 7.5vh;
+  width: 7.5vh;
+  border-radius: 100%;
+  margin-left: 8px;
+  color: white;
+  font-size: 2.2vh;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.severity {
+  background-color: #ff4e4e;
+}
+.caution {
+  background-color: #ffb931;
+}
+.good {
+  background-color: #8dc63f;
 }
 .info-text {
-  font-size: 1.8vh;
+  font-size: 2vh;
   text-align: center;
-  width: 11vh;
+  width: 9vh;
   color: #373737;
   font-weight: bold;
+  margin-top: 1.4vh;
 }
-.end {
-  color: rgb(246, 44, 44);
-}
-.mid {
-  color: rgb(255, 174, 0);
-}
+.end,
+.mid,
 .start {
-  color: rgb(17, 201, 0);
+  color: #595959;
 }
+
 .type {
   padding-top: 1vh;
   display: grid;

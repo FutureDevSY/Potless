@@ -7,7 +7,6 @@ import java.util.List;
 
 
 @Getter
-@ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class DamageSetRequestServiceDTO {
 
@@ -22,12 +21,13 @@ public class DamageSetRequestServiceDTO {
     private String location;
     private List<String> images;
     private String dtype;
+    private Long memberId;
 
     @Setter
     private String hexagonIndex;
 
     @Builder
-    public DamageSetRequestServiceDTO(Long id, Integer severity, Double dirX, Double dirY, String address, Double width, Status status, String area, String location, List<String> images, String dtype) {
+    public DamageSetRequestServiceDTO(Long id, Integer severity, Double dirX, Double dirY, String address, Double width, Status status, String area, String location, List<String> images, String dtype, Long memberId) {
         this.id = id;
         this.severity = severity;
         this.dirX = dirX;
@@ -39,6 +39,7 @@ public class DamageSetRequestServiceDTO {
         this.location = location;
         this.images = images;
         this.dtype = dtype;
+        this.memberId = memberId;
     }
 
 }
