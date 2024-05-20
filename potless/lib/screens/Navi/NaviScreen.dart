@@ -2,19 +2,13 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-<<<<<<< HEAD
 import 'package:flutter_background/flutter_background.dart';
 import 'package:flutter_tts/flutter_tts.dart';
-=======
->>>>>>> b01a82fdb5427793f9b9850be297f0471d54c21d
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
 import 'package:potless/API/api_request.dart';
-<<<<<<< HEAD
 import 'package:potless/widgets/UI/AppBar.dart';
-=======
->>>>>>> b01a82fdb5427793f9b9850be297f0471d54c21d
 
 class RouteFinderScreen extends StatefulWidget {
   const RouteFinderScreen({super.key});
@@ -33,28 +27,21 @@ class _RouteFinderScreenState extends State<RouteFinderScreen> {
   List<Map<String, dynamic>> _potholes = [];
   List _searchResults = [];
 
-<<<<<<< HEAD
   final FlutterTts flutterTts = FlutterTts();
 
-=======
->>>>>>> b01a82fdb5427793f9b9850be297f0471d54c21d
   final ApiService _apiService = ApiService();
 
   @override
   void initState() {
     super.initState();
     _getCurrentLocation();
-<<<<<<< HEAD
     _initializeBackground();
-=======
->>>>>>> b01a82fdb5427793f9b9850be297f0471d54c21d
   }
 
   @override
   void dispose() {
     _focusNode.dispose();
     _positionStreamSubscription?.cancel();
-<<<<<<< HEAD
     FlutterBackground.disableBackgroundExecution();
     super.dispose();
   }
@@ -72,11 +59,6 @@ class _RouteFinderScreenState extends State<RouteFinderScreen> {
     _getCurrentLocation();
   }
 
-=======
-    super.dispose();
-  }
-
->>>>>>> b01a82fdb5427793f9b9850be297f0471d54c21d
   Future<void> _getCurrentLocation() async {
     bool serviceEnabled;
     LocationPermission permission;
@@ -101,7 +83,6 @@ class _RouteFinderScreenState extends State<RouteFinderScreen> {
       return;
     }
 
-<<<<<<< HEAD
     permission = await Geolocator.requestPermission(); // 백그라운드 권한 요청 추가
 
     if (permission == LocationPermission.whileInUse ||
@@ -112,13 +93,6 @@ class _RouteFinderScreenState extends State<RouteFinderScreen> {
       });
       print("Current location: $_currentPosition");
     }
-=======
-    Position position = await Geolocator.getCurrentPosition();
-    setState(() {
-      _currentPosition = position;
-    });
-    print("Current location: $_currentPosition");
->>>>>>> b01a82fdb5427793f9b9850be297f0471d54c21d
   }
 
   Future<void> _searchAddress() async {
@@ -147,16 +121,10 @@ class _RouteFinderScreenState extends State<RouteFinderScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-<<<<<<< HEAD
       appBar: const CustomAppBar(title: '길찾기'),
       body: Container(
         padding: const EdgeInsets.all(16),
         color: const Color(0xffFFFFFF),
-=======
-      appBar: AppBar(title: const Text('Route Finder')),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
->>>>>>> b01a82fdb5427793f9b9850be297f0471d54c21d
         child: Column(
           children: [
             TextField(
@@ -194,13 +162,10 @@ class _RouteFinderScreenState extends State<RouteFinderScreen> {
     );
   }
 
-<<<<<<< HEAD
   void _showPotholeAlert(int potholeCount) {
     flutterTts.speak('근처에 포트홀이 있습니다. 주의하세요!');
   }
 
-=======
->>>>>>> b01a82fdb5427793f9b9850be297f0471d54c21d
   void _showModalDialog(
       String name, double x, double y, int potholeCount, String message) {
     showDialog(
@@ -224,10 +189,6 @@ class _RouteFinderScreenState extends State<RouteFinderScreen> {
                 // Dismiss keyboard if it's open
                 _focusNode.unfocus();
                 if (await NaviApi.instance.isKakaoNaviInstalled()) {
-<<<<<<< HEAD
-=======
-                  debugPrint('내비 설치됨');
->>>>>>> b01a82fdb5427793f9b9850be297f0471d54c21d
                   await NaviApi.instance.navigate(
                     destination:
                         Location(name: name, x: x.toString(), y: y.toString()),
@@ -235,11 +196,8 @@ class _RouteFinderScreenState extends State<RouteFinderScreen> {
                         NaviOption(coordType: CoordType.wgs84, routeInfo: true),
                   );
                 } else {
-<<<<<<< HEAD
-=======
                   debugPrint('내비 설치안됨');
 
->>>>>>> b01a82fdb5427793f9b9850be297f0471d54c21d
                   launchBrowserTab(Uri.parse(NaviApi.webNaviInstall));
                 }
                 _startLocationUpdates();
@@ -252,42 +210,14 @@ class _RouteFinderScreenState extends State<RouteFinderScreen> {
     );
   }
 
-<<<<<<< HEAD
   void _startLocationUpdates() async {
     await FlutterBackground.enableBackgroundExecution();
 
-=======
-  void _showPotholeAlert(int potholeCount) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('포트홀 경고'),
-          content: Text('근처에 포트홀이 있습니다. 주의하세요! (총 $potholeCount개)'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('확인'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  void _startLocationUpdates() {
->>>>>>> b01a82fdb5427793f9b9850be297f0471d54c21d
     const double alertDistance = 20.0; // meters
 
     LocationSettings locationSettings = const LocationSettings(
       accuracy: LocationAccuracy.best,
-<<<<<<< HEAD
       distanceFilter: 10,
-=======
-      distanceFilter: 10, // meters
->>>>>>> b01a82fdb5427793f9b9850be297f0471d54c21d
     );
 
     _positionStreamSubscription = Geolocator.getPositionStream(
