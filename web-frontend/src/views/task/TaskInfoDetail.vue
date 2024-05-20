@@ -114,26 +114,14 @@ function showDetail() {
     route.params.id,
     (res) => {
       if (res.data.status === "SUCCESS") {
-<<<<<<< HEAD
-<<<<<<< HEAD
         // console.log(res);
         // console.log(res.data.message);
         taskHeader.value = res.data.data;
         taskData.value = res.data.data.damageDetailToProjectDtos;
       } else {
-        // console.log(res.data.message);
-=======
+        console.error(res.data.message);
         taskHeader.value = res.data.data;
         taskData.value = res.data.data.damageDetailToProjectDtos;
-      } else {
-        console.error(res.data.message);
->>>>>>> b01a82fdb5427793f9b9850be297f0471d54c21d
-=======
-        taskHeader.value = res.data.data;
-        taskData.value = res.data.data.damageDetailToProjectDtos;
-      } else {
-        console.error(res.data.message);
->>>>>>> b01a82fdb5427793f9b9850be297f0471d54c21d
       }
     },
     (error) => {
