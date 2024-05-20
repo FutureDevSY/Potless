@@ -32,7 +32,6 @@ public class KaKaoNaviService {
     @Value("${kakao.api-service-key}")
     private String KAKAO_API_KEY;
 
-    @Value("${python.server.url}")
     private String pythonServerUrl = "https://math.potless.co.kr";
 
     @Async
