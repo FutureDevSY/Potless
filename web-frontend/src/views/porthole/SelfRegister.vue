@@ -126,7 +126,10 @@ const handleCenterUpdate = (coords) => {
 
 const updatePotholeType = (selected) => {
 <<<<<<< HEAD
+<<<<<<< HEAD
   console.log("updatePotholeType 호출됨:", selected); // 추가된 로그
+=======
+>>>>>>> b01a82fdb5427793f9b9850be297f0471d54c21d
 =======
 >>>>>>> b01a82fdb5427793f9b9850be297f0471d54c21d
   switch (selected) {
@@ -146,7 +149,10 @@ const updatePotholeType = (selected) => {
 
 const updateSeverity = (selected) => {
 <<<<<<< HEAD
+<<<<<<< HEAD
   console.log("updateSeverity 호출됨:", selected); // 추가된 로그
+=======
+>>>>>>> b01a82fdb5427793f9b9850be297f0471d54c21d
 =======
 >>>>>>> b01a82fdb5427793f9b9850be297f0471d54c21d
   switch (selected) {

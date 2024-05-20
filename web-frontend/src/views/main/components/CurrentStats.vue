@@ -69,7 +69,11 @@ const year = now.getFullYear();
 const month = ("0" + (now.getMonth() + 1)).slice(-2);
 const day = ("0" + now.getDate()).slice(-2);
 <<<<<<< HEAD
+<<<<<<< HEAD
 const today_start = year + "-" + month + "-" + day;
+=======
+const today_start = year + "-" + month + "-" + (day - 1);
+>>>>>>> b01a82fdb5427793f9b9850be297f0471d54c21d
 =======
 const today_start = year + "-" + month + "-" + (day - 1);
 >>>>>>> b01a82fdb5427793f9b9850be297f0471d54c21d
@@ -87,15 +91,21 @@ const takeData = () => {
     DateParams.value,
     (res) => {
 <<<<<<< HEAD
+<<<<<<< HEAD
       if (res.data.status === "SUCCESS") {
         currentData.value = res.data.data.list[areaId.value - 1];
         potholeNum.value = currentData.value.list[0].count;
 =======
+=======
+>>>>>>> b01a82fdb5427793f9b9850be297f0471d54c21d
       console.log(res);
       if (res.data.status === "SUCCESS") {
         currentData.value = res.data.data.list[areaId.value - 1];
         potholeNum.value =
           currentData.value.list[0].count + currentData.value.list[1].count;
+<<<<<<< HEAD
+>>>>>>> b01a82fdb5427793f9b9850be297f0471d54c21d
+=======
 >>>>>>> b01a82fdb5427793f9b9850be297f0471d54c21d
       } else {
         // console.log(res.data.message);
