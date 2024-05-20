@@ -3,7 +3,6 @@ package com.potless.backend.flutter.controller;
 import com.potless.backend.flutter.dto.controller.request.FlutterSendRequestDTO;
 import com.potless.backend.flutter.dto.controller.response.CombinedResponseDTO;
 import com.potless.backend.flutter.dto.service.response.DamageAppResponseDTO;
-import com.potless.backend.flutter.dto.service.response.Point;
 import com.potless.backend.flutter.service.KaKaoNaviService;
 import com.potless.backend.global.format.code.ApiResponse;
 import lombok.RequiredArgsConstructor;
@@ -36,9 +35,10 @@ public class FlutterController {
                     request.getStartX(), request.getStartY(),
                     request.getEndX(), request.getEndY()
             ).get();
+
             if (kakaoResponse != null) {
-                List<Point> coordinates = kaKaoNaviService.extractCoordinates(kakaoResponse);
-                List<DamageAppResponseDTO> results = kaKaoNaviService.checkCoordinates(coordinates).get();
+                List<String> hexagonIndexes = kaKaoNaviService.processKakaoData(kakaoResponse).get();
+                List<DamageAppResponseDTO> results = kaKaoNaviService.checkCoordinates(hexagonIndexes).get();
                 return response.success(
                         CombinedResponseDTO.builder()
                                 .kakaoResponse(kakaoResponse)
