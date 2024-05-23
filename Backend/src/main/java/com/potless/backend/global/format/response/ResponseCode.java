@@ -70,7 +70,10 @@ public enum ResponseCode {
     OPTIMAL_PATH_FOUND(HttpStatus.OK, "최적 경로 조회가 성공적으로 이루어졌습니다."),
 
     /* AWS(Path) */
-    SUCCESS_TO_UPLOAD(HttpStatus.OK, "S3에 이미지 저장이 성공 했습니다");
+    SUCCESS_TO_UPLOAD(HttpStatus.OK, "S3에 이미지 저장이 성공 했습니다"),
+
+    /* WEARABLE(Path) */
+    WEARABLE_FETCHED(HttpStatus.OK, "WEARABLE 조회가 성공적으로 이루어졌습니다.");
 
     private final HttpStatus status;
     private final String message;
