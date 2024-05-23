@@ -37,5 +37,7 @@ public interface DamageRepositoryCustom {
 
     List<DamageAppResponseDTO> findByHexagonIndexIn(List<String> hexagonIndexes);
 
+    List<DamageAppResponseDTO> findByHexagonIndex(String hexagonIndex);
+
     SeverityAreaResponseDTO countTodaysDamagesBySeverity(Long areaId);
 }
