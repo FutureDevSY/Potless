@@ -24,7 +24,7 @@
       class="label"
       v-show="item.dong === hoveredDong"
     >
-      <LottieLocation :style="positionStyle(item.dong)" />
+      <LottieLocation class="marked" :style="positionStyle(item.dong)" />
       <div class="infos">
         <div class="dong-label">{{ item.dong }}</div>
         <div class="num-label">
@@ -59,7 +59,7 @@ const handleInput = (e) => {
 
 onMounted(async () => {
   try {
-    const response = await fetch("/location4.svg");
+    const response = await fetch("/location7.svg");
     if (!response.ok) {
       throw new Error(`네트워크 에러: ${response.status}`);
     }
@@ -106,56 +106,19 @@ onMounted(() => {
 });
 
 const positions = {
-  가정동: { x: "58.5%", y: "47%" },
-  계산동: { x: "31.2%", y: "65.5%" },
-  구성동: { x: "59%", y: "51%" },
-  관평동: { x: "65%", y: "31.5%" },
-  교촌동: { x: "38.5%", y: "75%" },
-  구룡동: { x: "51%", y: "26%" },
-  구암동: { x: "40.5%", y: "57.8%" },
-  금고동: { x: "64%", y: "17%" },
-  금탄동: { x: "59.5%", y: "7.5%" },
-  노은동: { x: "39%", y: "53.5%" },
-  대정동: { x: "42%", y: "72%" },
-  덕명동: { x: "27%", y: "54%" },
-  덕진동: { x: "57%", y: "32%" },
-  도룡동: { x: "63.8%", y: "46%" },
-  둔곡동: { x: "53.5%", y: "19%" },
-  반석동: { x: "28%", y: "44%" },
-  문지동: { x: "71.5%", y: "42.5%" },
-  방현동: { x: "56%", y: "37%" },
-  복룡동: { x: "39.5%", y: "61.5%" },
-  봉명동: { x: "50%", y: "57.5%" },
-  봉산동: { x: "62.5%", y: "23.5%" },
-  상대동: { x: "46%", y: "62%" },
-  성북동: { x: "30%", y: "75.5%" },
-  송강동: { x: "61.5%", y: "29%" },
-  송정동: { x: "18%", y: "83%" },
-  수남동: { x: "36%", y: "36.5%" },
-  신봉동: { x: "43%", y: "38.5%" },
-  신성동: { x: "51%", y: "47%" },
-  안산동: { x: "26%", y: "39%" },
-  어은동: { x: "54%", y: "52%" },
-  외삼동: { x: "35.5%", y: "41%" },
-  용산동: { x: "69%", y: "32.5%" },
-  원내동: { x: "41.5%", y: "79%" },
-  원촌동: { x: "72%", y: "45.5%" },
-  자운동: { x: "48.5%", y: "41%" },
-  장대동: { x: "44.5%", y: "55%" },
-  전민동: { x: "72%", y: "38.5%" },
-  지족동: { x: "30%", y: "48%" },
-  추목동: { x: "47.5%", y: "33%" },
-  탑립동: { x: "75%", y: "33%" },
-  하기동: { x: "43%", y: "44.8%" },
-  학하동: { x: "38%", y: "64.5%" },
-  화암동: { x: "62.2%", y: "38.5%" },
-  원신흥동: { x: "52%", y: "62.5%" },
-  갑동: { x: "27%", y: "54%" },
-  궁동: { x: "49.5%", y: "53%" },
-  방동: { x: "33%", y: "86%" },
-  세동: { x: "22.5%", y: "78%" },
-  신동: { x: "54.3%", y: "13%" },
-  죽동: { x: "44.5%", y: "49%" },
+  압구정동: { x: "12.5%", y: "12%" },
+  신사동: { x: "13.5%", y: "19.5%" },
+  청담동: { x: "33%", y: "19%" },
+  논현동: { x: "15.5%", y: "27.5%" },
+  역삼동: { x: "20.5%", y: "38.5%" },
+  대치동: { x: "42%", y: "39%" },
+  도곡동: { x: "26%", y: "47.5%" },
+  개포동: { x: "41%", y: "53.5%" },
+  일원동: { x: "58%", y: "47.5%" },
+  수서동: { x: "69%", y: "50%" },
+  자곡동: { x: "73%", y: "57%" },
+  율현동: { x: "82.5%", y: "61%" },
+  세곡동: { x: "78%", y: "66.5%" },
 };
 
 const positionStyle = (dong) => {
@@ -240,8 +203,8 @@ const getPotholeColor = (potholes) => {
 }
 
 .map {
-  width: 43vh;
-  height: 82%;
+  width: 52vh;
+  height: 75%;
 }
 
 .status-overlay {
@@ -273,22 +236,22 @@ const getPotholeColor = (potholes) => {
   border-radius: 10px;
   z-index: 0;
   position: absolute;
-  top: 15%;
-  left: 10%;
-  padding: 2vh 1vw;
+  top: 16%;
+  left: 56%;
+  padding: 2.8vh 1.7vw;
 }
 .dong-label {
   color: #636363;
-  font-size: 1.8vh;
-  margin-bottom: 1vh;
+  font-size: 2.1vh;
+  margin-bottom: 1.2vh;
   font-weight: bold;
 }
 .num-label {
   color: #606060;
-  font-size: 1.6vh;
+  font-size: 1.9vh;
 }
 .num-detail {
-  font-size: 2.2vh;
+  font-size: 2.5vh;
   font-weight: bold;
 }
 .gun {
@@ -299,7 +262,7 @@ const getPotholeColor = (potholes) => {
 .dong-list {
   position: absolute;
   top: 80%;
-  left: 65%;
+  left: 3.4%;
   width: 9.5vw;
   height: 12vh;
   overflow: auto;
@@ -321,7 +284,7 @@ const getPotholeColor = (potholes) => {
 .input-container {
   position: absolute;
   top: 74%;
-  left: 65%;
+  left: 3.5%;
   display: flex;
   align-items: center;
 }
@@ -344,5 +307,9 @@ input[type="text"]:focus {
   right: 5px;
   cursor: pointer;
   height: 2.5vh;
+}
+
+.marked {
+  position: absolute;
 }
 </style>

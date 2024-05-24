@@ -4,10 +4,10 @@
       <div>보수 공사팀이 없습니다.</div>
     </div>
     <div v-else class="team-container">
-      <Carousel class="carousel-box">
+      <Carousel class="carousel-box" :touch="false" :mouse-drag="false">
         <Slide v-for="(team, index) in props.teams" :key="index">
           <div class="carousel__item">
-            <TeamDetail :team="team"></TeamDetail>
+            <TeamDetail :team="team" @open-modal="handleOpenModal"></TeamDetail>
           </div>
         </Slide>
         <template #addons>
@@ -29,6 +29,12 @@ const props = defineProps({
     required: true,
   },
 });
+
+const emit = defineEmits(["open-modal"]);
+
+const handleOpenModal = (mode) => {
+  emit("open-modal", mode);
+};
 </script>
 
 <style scoped>

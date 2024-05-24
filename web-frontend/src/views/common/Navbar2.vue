@@ -135,7 +135,7 @@ nav {
 
 .main-menu {
   height: 100%;
-  background: #151c62;
+  background: #1e476d;
   padding-top: 10px;
   border-radius: 15px 0 0 15px;
   font-family: "Roboto", sans-serif;
@@ -202,7 +202,7 @@ img {
   width: 100%;
   height: 100%;
   border-bottom-right-radius: 20px;
-  background: #151c62;
+  background: #1e476d;
 }
 
 .nav-item b:nth-child(2) {
@@ -222,7 +222,7 @@ img {
   width: 100%;
   height: 100%;
   border-top-right-radius: 20px;
-  background: #151c62;
+  background: #1e476d;
 }
 
 .nav-item.active b:nth-child(1),
@@ -231,7 +231,7 @@ img {
 }
 
 .nav-item.active a {
-  background: linear-gradient(to right, #151c62 50%, #f8f8f8 50%);
+  background: linear-gradient(to right, #1e476d 50%, #f8f8f8 50%);
   background-size: 200% 120%;
   background-position: right bottom;
   transition: all 0.3s ease-out;

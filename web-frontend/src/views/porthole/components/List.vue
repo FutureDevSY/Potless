@@ -127,12 +127,10 @@ const dangerClass2 = (danger) => {
   }
 };
 
-// 타입 필터링
 function displayType(dtype) {
   return dtype === "POTHOLE" ? "포트홀" : dtype === "CRACK" ? "도로균열" : "";
 }
 
-// 선택
 const selectedIds = ref(new Set());
 function toggleSelect(porthole) {
   if (selectedIds.value.has(porthole.id)) {
@@ -147,7 +145,6 @@ const hasSelected = computed(() => {
   return selectedIds.value.size > 0;
 });
 
-// 포트홀 삭제
 const emit = defineEmits(["refreshData", "updateMapLocation"]);
 const deletePotholeSelect = () => {
   const selectedPotholeIds = Array.from(selectedIds.value);
@@ -174,7 +171,6 @@ const deletePotholeSelect = () => {
   );
 };
 
-// 작업 리스트 모달창
 const isModalOpen = ref(false);
 const modalMode = ref("");
 function toggleModal() {
@@ -214,8 +210,8 @@ const updateMapLocation = (dirX, dirY) => {
   height: 1vh;
   z-index: 1;
   position: relative;
-  border-bottom: 4px solid #151c62;
-  border-left: 4px solid #151c62;
+  border-bottom: 4px solid #1e476d;
+  border-left: 4px solid #1e476d;
   transform: translateX(9px) translateY(6px) rotate(-50deg);
   transform-origin: left bottom;
 }
@@ -411,6 +407,7 @@ tbody tr:hover {
   margin-right: 6px;
   margin-left: 30px;
   border: 2px solid rgb(223, 223, 223);
+  border-radius: 8px;
 }
 
 .list-overflow::-webkit-scrollbar {

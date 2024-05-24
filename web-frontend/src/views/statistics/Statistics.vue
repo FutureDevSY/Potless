@@ -6,11 +6,7 @@
           <LottieRadar class="lottie lottie-radar" />
           <p class="incident-title">위험물 발생 현황</p>
         </div>
-        <transition-group
-          name="incident-report"
-          tag="div"
-          class="incident-report"
-        >
+        <transition-group name="incident-report" tag="div" class="incident-report">
           <IncidentReport
             v-for="(item, index) in IncidentData"
             :key="index"
@@ -34,10 +30,7 @@
             @input="handleInput"
           />
         </div>
-        <RoadTypeIncidentsGraphVue
-          :search-term="searchTerm"
-          :road-data="roadIncidentData"
-        />
+        <RoadTypeIncidentsGraphVue :search-term="searchTerm" :road-data="roadIncidentData" />
       </div>
     </div>
     <div class="right-box">
@@ -89,11 +82,7 @@ import LottieConstruction from "./components/LottieConstruction.vue";
 import { format, subDays } from "date-fns";
 import { useAuthStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
-import {
-  getAreaDetails,
-  getDongList,
-  getDongPerDate,
-} from "../../api/statistics/statistics";
+import { getAreaDetails, getDongList, getDongPerDate } from "../../api/statistics/statistics";
 
 const store = useAuthStore();
 const { accessToken, areaId } = storeToRefs(store);
@@ -111,26 +100,23 @@ const fetchAreaDetails = async () => {
   }
 };
 
-// ** 위험물 발생 현황: 구 별로 지정한 월별 발생한 통계 출력
-const IncidentData = ref([]); // 데이터set을 담을 변수
-const today = new Date(); // 오늘 날짜
-const yesterday = subDays(today, 1); // 어제 날짜
-const thisWeekStart = subDays(today, 6); // 이번주 시작 날짜
-const lastWeekEnd = subDays(thisWeekStart, 1); // 저번주 마지막 날짜
-const lastWeekStart = subDays(lastWeekEnd, 6); // 저번주 시작 날짜
-const thisMonthStart = subDays(today, 29); // 이번달 시작 날짜
-const lastMonthEnd = subDays(thisMonthStart, 1); // 저번달 마지막 날짜
-const lastMonthStart = subDays(lastMonthEnd, 29); // 저번달 시작 날짜
+const IncidentData = ref([]);
+const today = new Date();
+const yesterday = subDays(today, 1);
+const thisWeekStart = subDays(today, 6);
+const lastWeekEnd = subDays(thisWeekStart, 1);
+const lastWeekStart = subDays(lastWeekEnd, 6);
+const thisMonthStart = subDays(today, 29);
+const lastMonthEnd = subDays(thisMonthStart, 1);
+const lastMonthStart = subDays(lastMonthEnd, 29);
 
-const formatDate = (date) => format(date, "yyyy-MM-dd"); // 날짜 형식 변경
+const formatDate = (date) => format(date, "yyyy-MM-dd");
 
 function calculatePercentChange(current, previous) {
-  // 증감률 계산 함수
-  if (previous === 0) return "N/A"; // 0으로 나누면 "N/A"을 반환하고 IncidentReport에서 메세지 처리
+  if (previous === 0) return "N/A";
   return (((current - previous) / previous) * 100).toFixed(1) + "%";
 }
 
-// API 호출을 위한 일반화된 함수
 async function secondDataForPeriod(start, end, title) {
   return new Promise((resolve, reject) => {
     const DateParams = ref({
@@ -144,9 +130,7 @@ async function secondDataForPeriod(start, end, title) {
       (res) => {
         if (res.data && res.data.status === "SUCCESS") {
           const data = res.data.data.list;
-          const areaData = data.find(
-            (d) => d.areaGu === areaDetails.value.areaGu
-          ); // areaGu 동적 사용
+          const areaData = data.find((d) => d.areaGu === areaDetails.value.areaGu); // areaGu 동적 사용
           const counts = areaData.list.map((item) => item.count);
           const total = counts.reduce((acc, current) => acc + current, 0);
           resolve({ title: title, number: total });
@@ -162,49 +146,17 @@ async function secondDataForPeriod(start, end, title) {
 
 const firstData = async () => {
   try {
-    // 데이터 가져오기
     const todayData = await secondDataForPeriod(today, today, "오늘");
-    const yesterdayData = await secondDataForPeriod(
-      yesterday,
-      yesterday,
-      "어제"
-    );
-    const thisWeekData = await secondDataForPeriod(
-      thisWeekStart,
-      today,
-      "최근 1주일"
-    );
-    const lastWeekData = await secondDataForPeriod(
-      lastWeekStart,
-      lastWeekEnd,
-      "지난 1주일"
-    );
-    const thisMonthData = await secondDataForPeriod(
-      thisMonthStart,
-      today,
-      "최근 1달"
-    );
-    const lastMonthData = await secondDataForPeriod(
-      lastMonthStart,
-      lastMonthEnd,
-      "지난 1달"
-    );
+    const yesterdayData = await secondDataForPeriod(yesterday, yesterday, "어제");
+    const thisWeekData = await secondDataForPeriod(thisWeekStart, today, "최근 1주일");
+    const lastWeekData = await secondDataForPeriod(lastWeekStart, lastWeekEnd, "지난 1주일");
+    const thisMonthData = await secondDataForPeriod(thisMonthStart, today, "최근 1달");
+    const lastMonthData = await secondDataForPeriod(lastMonthStart, lastMonthEnd, "지난 1달");
 
-    // 증감률 계산
-    const dailyChangePercent = calculatePercentChange(
-      todayData.number,
-      yesterdayData.number
-    );
-    const weeklyChangePercent = calculatePercentChange(
-      thisWeekData.number,
-      lastWeekData.number
-    );
-    const monthlyChangePercent = calculatePercentChange(
-      thisMonthData.number,
-      lastMonthData.number
-    );
+    const dailyChangePercent = calculatePercentChange(todayData.number, yesterdayData.number);
+    const weeklyChangePercent = calculatePercentChange(thisWeekData.number, lastWeekData.number);
+    const monthlyChangePercent = calculatePercentChange(thisMonthData.number, lastMonthData.number);
 
-    // 데이터셋 저장
     IncidentData.value = [
       {
         title: "오늘",
@@ -234,20 +186,13 @@ const firstData = async () => {
   }
 };
 
-// ** 지역별 발생 건수: 포트홀 구에 속한 동에 대한 통계 조회
-// ** 보수 공사 현황: 포트홀 구에 속한 동에 대한 통계 조회
 const workChartData = ref([]);
 const roadIncidentData = ref([]);
 
 const secondfourthData = async () => {
   try {
     const response = await getDongList(accessToken.value, areaId.value);
-    if (
-      response &&
-      response.data &&
-      response.data.data &&
-      response.data.data.list
-    ) {
+    if (response && response.data && response.data.data && response.data.data.list) {
       const { list } = response.data.data;
       let countDone = 0,
         countDuring = 0,
@@ -327,7 +272,7 @@ onMounted(() => {
 .town-title,
 .work-title,
 .road-title {
-  font-size: 2vh;
+  font-size: 2.5vh;
   font-weight: 600;
   color: #373737;
 }
@@ -365,7 +310,7 @@ onMounted(() => {
 }
 
 .incident-box {
-  background-color: rgba(241, 241, 241, 0.641);
+  background-color: #ffffff;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.255);
   border-radius: 10px;
   padding: 1.5vh 5px 0vh 0px;
@@ -400,7 +345,7 @@ onMounted(() => {
 }
 
 .danger-box {
-  background-color: rgba(241, 241, 241, 0.641);
+  background-color: rgb(255, 255, 255);
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.255);
   border-radius: 10px;
   padding: 2vh 0px 0px 5px;
@@ -437,7 +382,7 @@ input:focus {
 }
 
 .total-box {
-  background-color: rgba(241, 241, 241, 0.641);
+  background-color: rgb(255, 255, 255);
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.255);
   border-radius: 10px;
   padding: 0.5vh 0px 0vh 5px;
@@ -450,7 +395,7 @@ input:focus {
 }
 
 .work-box {
-  background-color: rgba(241, 241, 241, 0.641);
+  background-color: #ffffff;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.255);
   border-radius: 10px;
   padding: 2vh 0px 0vh 5px;

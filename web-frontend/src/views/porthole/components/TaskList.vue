@@ -5,15 +5,11 @@
     <span class="close" @click="toggleModal">&times;</span>
   </div>
   <div v-if="!isDetailOpen">
-    <button class="primary-btn new-work-btn" @click="addNewTask">
-      새 작업
-    </button>
+    <button class="primary-btn new-work-btn" @click="addNewTask">새 작업</button>
     <div class="work-list-container">
       <table>
         <tr v-for="task in currentTasks" :key="task.id">
-          <td class="cursor" @click="showDetail(task)">
-            No. {{ task.projectId }}
-          </td>
+          <td class="cursor" @click="showDetail(task)">No. {{ task.projectId }}</td>
           <td class="cursor name-col" @click="showDetail(task)">
             {{ task.projectName }}
           </td>
@@ -23,16 +19,9 @@
           <td class="cursor" @click="showDetail(task)">
             {{ task.teamName }}
           </td>
-          <td class="cursor" @click="showDetail(task)">
-            {{ task.projectSize }} 건
-          </td>
+          <td class="cursor" @click="showDetail(task)">{{ task.projectSize }} 건</td>
           <td class="add-column" v-if="isAddingTasks">
-            <button
-              class="add-button"
-              @click.stop="assignPothole(task.projectId)"
-            >
-              작업추가
-            </button>
+            <button class="add-button" @click.stop="assignPothole(task.projectId)">작업추가</button>
           </td>
         </tr>
       </table>
@@ -40,31 +29,20 @@
   </div>
   <div v-if="isDetailOpen">
     <div class="info-details">
-      <div class="info-font">
-        No.{{ selectedTask.projectId }} {{ selectedTask.projectName }}
-      </div>
+      <div class="info-font">No.{{ selectedTask.projectId }} {{ selectedTask.projectName }}</div>
       <div class="manager-section">
         <div class="manager">관리자: {{ selectedTask.managerName }}</div>
         <div class="manager">{{ selectedTask.projectDate }}</div>
       </div>
     </div>
     <div class="detail-list">
-      <TaskDetail
-        :task="propData"
-        @close="isDetailOpen = false"
-        @updateDetail="showDetailAgain"
-      />
+      <TaskDetail :task="propData" @close="isDetailOpen = false" @updateDetail="showDetailAgain" />
     </div>
     <div class="detail-controls">
       <div class="control-right">
         <select v-model="selectedTeamId" class="team-select">
           <option value="null" disabled>작업팀 배정</option>
-          <option
-            class="teams"
-            v-for="(team, id) in teamList"
-            :key="id"
-            :value="team.teamId"
-          >
+          <option class="teams" v-for="(team, id) in teamList" :key="id" :value="team.teamId">
             {{ team.teamName }}
           </option>
         </select>
@@ -77,12 +55,7 @@
 <script setup>
 import { ref, computed, onMounted } from "vue";
 import TaskDetail from "./TaskDetail.vue";
-import {
-  postTaskCreate,
-  postPothole,
-  getTaskDetail,
-  postTeam,
-} from "../../../api/task/taskDetail";
+import { postTaskCreate, postPothole, getTaskDetail, postTeam } from "../../../api/task/taskDetail";
 import { getTaskList } from "../../../api/task/taskList";
 import { useAuthStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
@@ -270,9 +243,7 @@ const takeData = () => {
   };
 
   const queryParams = Object.fromEntries(
-    Object.entries(rawParams).filter(
-      ([key, value]) => value !== "" && value != null
-    )
+    Object.entries(rawParams).filter(([key, value]) => value !== "" && value != null)
   );
 
   getTaskList(
@@ -472,7 +443,7 @@ tr:nth-child(odd) {
 }
 
 .primary-btn {
-  background-color: #151c62;
+  background-color: #1e476d;
   cursor: pointer;
   border-radius: 4px;
   position: relative;
@@ -483,7 +454,7 @@ tr:nth-child(odd) {
 }
 
 .primary-btn:hover {
-  background-color: #0e1241;
+  background-color: #17344f;
 }
 
 .add-button {
