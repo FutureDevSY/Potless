@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -36,9 +38,8 @@ public class WearableController {
             @RequestParam("x") Double x,
             @RequestParam("y") Double y
     ) {
-        String h3Index = hexagonService.getH3Index(y, x, 13);
-        log.info("h3Index = {}", h3Index);
-        boolean isCheck = wearableService.getDamage(h3Index);
+        List<String> h3IndexRing = hexagonService.getH3IndexRing(y, x, 13);
+        boolean isCheck = wearableService.getDamage(h3IndexRing);
         return response.success(ResponseCode.WEARABLE_FETCHED, isCheck);
     }
 }
