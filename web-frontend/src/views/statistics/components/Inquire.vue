@@ -20,20 +20,18 @@ const props = defineProps({
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
-  border: 1px solid #e0e0e0;
   border-radius: 10px;
-  margin: 0px 0px 10px 40px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
-  background-color: #fff;
+  margin: 0px 0px 15px 40px;
+  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.175);
+  background-color: #f5f8fe;
   width: 250px;
-  padding: 2.3vh 3vh;
+  padding: 2.6vh 3.5vh;
   transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
 }
 
 .data-container:hover {
   transform: translateY(-5px);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
-  border-color: #b0bec5;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.296);
 }
 
 .data-header {
@@ -44,13 +42,13 @@ const props = defineProps({
 
 .data-title {
   font-size: 2vh;
-  color: #717171;
+  color: #3f415b;
   font-weight: 600;
 }
 
 .data-number {
   font-size: 2.2vh;
   font-weight: bold;
-  color: #373737;
+  color: #1e476d;
 }
 </style>

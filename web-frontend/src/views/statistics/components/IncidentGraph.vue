@@ -117,7 +117,7 @@ const chartOptions = computed(() => ({
   legend: {
     horizontalAlign: "center",
   },
-  colors: ["#BCF95D", "#151c62"],
+  colors: ["#BCF95D", "#1e476d"],
   states: {
     hover: {
       filter: {

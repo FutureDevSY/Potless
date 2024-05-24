@@ -1,8 +1,8 @@
 <template>
   <div class="team-navigation">
     <span class="titled">보수 공사팀</span>
-    <TeamCarusel :teams="currentTeams" />
-    <button class="list-button" @click="openModal('team')">공사팀 추가</button>
+    <TeamCarusel :teams="currentTeams" @open-modal="openModal" />
+    <!-- <button class="list-button" @click="openModal('team')">공사팀 추가</button> -->
   </div>
   <div v-if="isModalOpen && modalMode === 'team'" class="modal">
     <div class="modal-content">
@@ -114,79 +114,14 @@ onMounted(() => {
 }
 
 .titled {
-  color: #373737;
-  font-size: 2.2vh;
-  margin-top: 1vh;
+  color: #1e476d;
+  font-size: 2.4vh;
+  margin-top: 1.5vh;
   font-weight: bold;
-  /* margin: 0.5vh 0 0vh 0; */
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
-}
-
-.chevron-left {
-  position: relative;
-  width: 2.5vh;
-  height: 2.5vh;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-}
-
-.chevron-left:after {
-  content: "";
-  position: absolute;
-  top: 40%;
-  left: 50%;
-  border-style: solid;
-  border-color: #575757;
-  border-width: 0 5px 5px 0;
-  display: block;
-  padding: 8px;
-  transform: translate(-50%, -50%) rotate(135deg);
-  transition: transform 0.3s ease;
-  border-radius: 3px;
-}
-
-.chevron-left:hover:after {
-  transform: translate(-70%, -50%) rotate(135deg);
-}
-.chevron-right {
-  position: relative;
-  width: 2.5vh;
-  height: 2.5vh;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-}
-
-.chevron-right:after {
-  content: "";
-  position: absolute;
-  top: 40%;
-  left: 50%;
-  border-style: solid;
-  border-color: #575757;
-  border-width: 0 5px 5px 0;
-  display: block;
-  padding: 8px;
-  transform: translate(-50%, -50%) rotate(-45deg);
-  transition: transform 0.3s ease;
-  border-radius: 3px;
-}
-
-.chevron-right:hover:after {
-  transform: translate(-30%, -50%) rotate(-45deg);
-}
-.chevron-left:disabled:after,
-.chevron-right:disabled:after {
-  border-color: #ccc;
-  cursor: default;
-}
-
-.chevron-left:disabled,
-.chevron-right:disabled {
-  cursor: default;
+  border-bottom: 1px solid #bcbcbc;
 }
 </style>
