@@ -45,7 +45,7 @@ const weatherData = () => {};
 }
 
 .login-btn {
-  background-color: #151c62;
+  background-color: #1e476d;
   width: 9vw;
   height: 5.5vh;
   cursor: pointer;
@@ -61,6 +61,6 @@ const weatherData = () => {};
 }
 
 .login-btn:hover {
-  background-color: #0e1241;
+  background-color: #0d3b66;
 }
 </style>
