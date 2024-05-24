@@ -205,7 +205,7 @@ const updateSeverity = (selected) => {
   height: 40px;
   width: 100%;
   margin-bottom: 1vh;
-  background-color: #151c62;
+  background-color: #1e476d;
   cursor: pointer;
   border-radius: 6px;
   font-size: 2vh;
@@ -217,7 +217,7 @@ const updateSeverity = (selected) => {
 }
 
 .report-btn:hover {
-  background-color: #0e1241;
+  background-color: #17344f;
 }
 
 select:focus option[value=""] {

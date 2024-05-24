@@ -154,7 +154,7 @@ li {
 }
 
 li::marker {
-  color: #151c62;
+  color: #1e476d;
 }
 
 .add-team-modal {
@@ -165,7 +165,7 @@ li::marker {
 }
 
 .new-team-btn {
-  background-color: #151c62;
+  background-color: #1e476d;
   padding: 0.9vh 0.7vw;
   cursor: pointer;
   border-radius: 4px;
@@ -179,7 +179,7 @@ li::marker {
 }
 
 .new-team-btn:hover {
-  background-color: #0e1241;
+  background-color: #17344f;
 }
 
 .button-wrapper {

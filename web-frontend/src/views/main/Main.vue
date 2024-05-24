@@ -15,6 +15,7 @@
           <SVG3 class="border" v-if="areaId === 3"></SVG3>
           <SVG4 class="border" v-if="areaId === 4"></SVG4>
           <SVG5 class="border" v-if="areaId === 5"></SVG5>
+          <SVG7 class="border" v-if="areaId === 7"></SVG7>
         </div>
       </div>
     </div>
@@ -33,6 +34,7 @@ import SVG2 from "./components/SVG2.vue";
 import SVG3 from "./components/SVG3.vue";
 import SVG4 from "./components/SVG4.vue";
 import SVG5 from "./components/SVG5.vue";
+import SVG7 from "./components/SVG7.vue";
 import { useAuthStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
 import Team from "./components/Team.vue";
@@ -83,6 +85,7 @@ const { areaId } = storeToRefs(store);
   border-radius: 15px;
 }
 .map-containers {
+  background-color: #ffffff;
   box-shadow: 0 3px 8px rgba(0, 0, 0, 0.255);
   border-radius: 15px;
 }

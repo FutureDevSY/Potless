@@ -1,5 +1,5 @@
 <template>
-  <div class="main-container" :style="{ backgroundColor: backgroundColor }" v-if="weather">
+  <div class="main-container" v-if="weather">
     <div class="location-box">
       <img class="marker-img" src="../../../assets/icon/location.png" alt="marker" />
       <div class="location">{{ selectedRegionName }}</div>
@@ -33,16 +33,16 @@ const store = useAuthStore();
 const { areaId } = storeToRefs(store);
 
 const weather = ref(null);
-const selectedRegionName = ref(""); // 지역 이름 저장
+const selectedRegionName = ref("");
 const weatherComponent = ref(null);
 
 const coordinates = {
-  1: { lat: 36.3511, lon: 127.385, name: "대덕구" }, // 대덕구
-  2: { lat: 36.3275, lon: 127.4348, name: "동구" }, // 동구
-  3: { lat: 36.3514, lon: 127.4197, name: "중구" }, // 중구
-  4: { lat: 36.3623, lon: 127.355, name: "유성구" }, // 유성구
-  5: { lat: 36.3515, lon: 127.3868, name: "서구" }, // 서구
-  6: { lat: 37.5665, lon: 126.978, name: "서울" }, // 서울 (기타)
+  1: { lat: 36.3511, lon: 127.385, name: "대덕구" },
+  2: { lat: 36.3275, lon: 127.4348, name: "동구" },
+  3: { lat: 36.3514, lon: 127.4197, name: "중구" },
+  4: { lat: 36.3623, lon: 127.355, name: "유성구" },
+  5: { lat: 36.3515, lon: 127.3868, name: "서구" },
+  7: { lat: 37.501286, lon: 127.0396029, name: "강남구" },
 };
 
 const backgroundColor = computed(() => {
@@ -69,7 +69,6 @@ const backgroundColor = computed(() => {
   }
 });
 
-// 날씨에 따른 컴포넌트 설정
 const updateWeatherComponent = () => {
   if (!weather.value) {
     weatherComponent.value = null;
@@ -122,16 +121,13 @@ onMounted(() => {
   }
 });
 
-// 온도 포맷팅
 const formattedTemperature = computed(() => {
   if (!weather.value) return "";
   const temp = parseFloat(weather.value.main.temp);
   const roundedTemp = temp.toFixed(1);
-  // 소수 첫째 자리가 0일 경우 정수 부분만 반환
   return roundedTemp.endsWith(".0") ? Math.round(temp).toString() : roundedTemp;
 });
 
-// 구름 양
 const cloudDescription = computed(() => {
   const cloudiness = weather.value ? weather.value.clouds.all : 0;
   if (cloudiness <= 10) return "맑음";
@@ -141,7 +137,6 @@ const cloudDescription = computed(() => {
   else return "흐림";
 });
 
-// 날씨 데이터 변경 감지
 watch(weather, updateWeatherComponent);
 </script>
 <style scoped>
@@ -153,23 +148,27 @@ watch(weather, updateWeatherComponent);
   display: grid;
   grid-template-rows: 15% 82%;
   gap: 3%;
+  background-color: #ffffff;
 }
 .load-container {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.255);
   border-radius: 15px;
-  background-color: rgba(241, 241, 241, 0.641);
+  background-color: #ffffff;
 }
 .location-box {
   display: flex;
 }
 .marker-img {
-  height: 2.5vh;
+  height: 3vh;
+  margin-left: 10px;
+  margin-top: 5px;
 }
 .location {
-  color: white;
-  font-size: 1.8vh;
+  color: #1e476d;
+  font-size: 2.1vh;
   font-weight: bold;
   margin-left: 5px;
+  margin-top: 5px;
 }
 .info-container {
   display: grid;
@@ -178,11 +177,11 @@ watch(weather, updateWeatherComponent);
 .weather-img {
   display: flex;
   height: 15vh;
-  padding: 0vh 0vh 0vh 1vw;
+  padding: 0vh 0vh 0vh 2vw;
 }
 .weather-info {
-  color: white;
-  margin-left: 20px;
+  color: #1e476d;
+  margin-top: 10px;
   transform: translateY(-0.5vh);
 }
 .temperature {

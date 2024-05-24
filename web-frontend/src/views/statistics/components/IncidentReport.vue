@@ -40,7 +40,6 @@ const props = defineProps({
   diff: Number,
 });
 
-// 증감률 양수, 음수 일 때 Icon 표시
 const showUpIcon = computed(() => {
   return props.percent.charAt(0) !== "-" && props.percent !== "N/A";
 });
@@ -49,19 +48,14 @@ const showDownIcon = computed(() => {
   return props.percent.charAt(0) === "-" && props.percent !== "N/A";
 });
 
-// 증감률을 표시
 const formattedPercent = computed(() => {
-  return typeof props.percent === "number"
-    ? `${props.percent.toFixed(1)}%` // 숫자인 경우 소수점 한 자리까지 표시
-    : props.percent; // 문자열인 경우 그대로 표시
+  return typeof props.percent === "number" ? `${props.percent.toFixed(1)}%` : props.percent;
 });
 
-// 증감률이 양수 판단
 const isPositive = computed(() => {
-  return props.percent.charAt(0) === "+"; // "+"로 시작하면 양수
+  return props.percent.charAt(0) === "+";
 });
 
-// 툴팁
 const tooltipText = computed(() => {
   let comparisonText;
   let tooltipLines = [];
@@ -91,23 +85,23 @@ const tooltipText = computed(() => {
 
 <style scoped>
 .text-light-title {
-  color: #1d1d1d;
+  color: #1e476d;
 }
 .data-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
-  border: 1px solid #ccc;
   border-radius: 10px;
   padding: 13% 13%;
   margin: 0px 10px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  background-color: #fff;
-  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.175);
+  background-color: #f5f8fe;
+  transition: transform 0.4s ease, box-shadow 0.3s ease, border-color 0.4s ease;
 }
 
 .data-container:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.296);
   transform: translateY(-5px);
 }
 
@@ -175,6 +169,7 @@ const tooltipText = computed(() => {
   position: absolute;
   z-index: 4;
   font-size: 2vh;
+  padding: 1vh 1vh;
   top: 120%;
   left: 50%;
   transform: translateX(-50%);

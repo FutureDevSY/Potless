@@ -38,7 +38,7 @@ const chartOptions = reactive({
       },
     },
   },
-  colors: ["#A7ABDA", "#4F58B5", "#151C62"],
+  colors: ["#A7ABDA", "#4F58B5", "#1e476d"],
   states: { active: { filter: { type: "none" } } },
   tooltip: {
     y: { formatter: (value) => `${value}%` },
