@@ -6,6 +6,8 @@ import com.uber.h3core.H3Core;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class HexagonService {
@@ -17,9 +19,13 @@ public class HexagonService {
     }
 
     public String getH3Index(double latitude, double longitude, int resolution) {
-        Long h3Index = h3Core.geoToH3(latitude, longitude, resolution);
+        long h3Index = h3Core.geoToH3(latitude, longitude, resolution);
         return Long.toHexString(h3Index);
     }
 
+    public List<String> getH3IndexRing(double latitude, double longitude, int resolution) {
+        long h3Index = h3Core.geoToH3(latitude, longitude, resolution);
+        return h3Core.kRing(Long.toHexString(h3Index), 10);
+    }
 
 }

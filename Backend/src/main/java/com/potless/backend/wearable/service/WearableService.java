@@ -2,7 +2,6 @@ package com.potless.backend.wearable.service;
 
 import com.potless.backend.damage.repository.DamageRepository;
 import com.potless.backend.flutter.dto.service.response.DamageAppResponseDTO;
-import com.potless.backend.wearable.dto.request.WearableRequestDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,8 +15,8 @@ public class WearableService {
 
     private final DamageRepository damageRepository;
 
-    public boolean getDamage(String h3Index) {
-        List<DamageAppResponseDTO> byHexagonIndex = damageRepository.findByHexagonIndex(h3Index);
+    public boolean getDamage(List<String> h3Index) {
+        List<DamageAppResponseDTO> byHexagonIndex = damageRepository.findByHexagonIndexIn(h3Index);
         return !byHexagonIndex.isEmpty();
     }
 }
