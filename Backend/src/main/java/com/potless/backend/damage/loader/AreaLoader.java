@@ -21,7 +21,7 @@ public class AreaLoader implements CommandLineRunner {
     @Override
     @Transactional
     public void run(String... args) throws Exception {
-        List<String> areas = Arrays.asList("대덕구", "동구", "중구", "유성구", "서구", "기타");
+        List<String> areas = Arrays.asList("대덕구", "동구", "중구", "유성구", "서구", "기타", "강남구");
         areas.forEach(areaName -> {
             areaRepository.findByAreaGu(areaName).ifPresentOrElse(
                     area -> {
