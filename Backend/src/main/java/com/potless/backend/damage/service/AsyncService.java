@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -57,6 +58,8 @@ public class AsyncService {
                 fileUrls.add(detectionResult.getUrl());
                 damageSetRequestDTO.setImages(fileUrls);
 
+                Files.delete(imageFile.toPath());
+
                 // 비동기로 처리하고 바로 응답 반환 검증
                 kakaoService.fetchKakaoData(damageSetRequestDTO.getX(), damageSetRequestDTO.getY())
                         .thenAcceptAsync(data -> {
@@ -69,7 +72,7 @@ public class AsyncService {
                                 String location;
                                 String area;
 
-                                if (city.equals("대전")) {
+                                if (city.equals("대전") || city.equals("서울")) {
                                     location = (address != null) ? address.getRegion_3depth_name() : "정보가 존재하지 않습니다";
                                     area = (address != null) ? address.getRegion_2depth_name() : roadAddress.getRegion_2depth_name();
                                 } else {
