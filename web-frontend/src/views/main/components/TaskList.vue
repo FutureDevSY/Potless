@@ -9,14 +9,13 @@
     </div>
     <span class="titled">{{ weekLabel }}</span>
     <div class="chevron-navigation">
-      <button
-        @click="changeWeek('next')"
-        :disabled="isNextDisabled"
-        class="chevron-right"
-      ></button>
+      <button @click="changeWeek('next')" :disabled="isNextDisabled" class="chevron-right"></button>
     </div>
   </div>
-  <div class="all-projects">
+  <div class="all-projects" v-if="currentData.length === 0">
+    <div class="no-projects-message">해당 일정에 보고서가 없습니다.</div>
+  </div>
+  <div class="all-projects" v-else>
     <div
       class="projects"
       v-for="project in currentData"
@@ -51,7 +50,7 @@ const store2 = useMoveStore();
 const store = useAuthStore();
 const { accessToken, areaId } = storeToRefs(store);
 const currentData = ref([]);
-const weekIndex = ref(0); 
+const weekIndex = ref(0);
 const weekLabel = ref("이번주 작업 보고서");
 const isPreviousDisabled = ref(false);
 const isNextDisabled = ref(false);
@@ -65,17 +64,17 @@ function getWeekRange(type) {
   let start, end;
 
   switch (type) {
-    case -1: // last week
+    case -1:
       start = startOfWeek(subWeeks(now, 1));
       end = endOfWeek(subWeeks(now, 1));
       weekLabel.value = "저번주 작업 보고서";
       break;
-    case 0: // this week
+    case 0:
       start = startOfWeek(now);
       end = endOfWeek(now);
       weekLabel.value = "이번주 작업 보고서";
       break;
-    case 1: // next week
+    case 1:
       start = startOfWeek(addWeeks(now, 1));
       end = endOfWeek(addWeeks(now, 1));
       weekLabel.value = "다음주 작업 보고서";
@@ -110,9 +109,7 @@ function takeData() {
   };
 
   const queryParams = Object.fromEntries(
-    Object.entries(rawParams).filter(
-      ([key, value]) => value !== "" && value != null
-    )
+    Object.entries(rawParams).filter(([key, value]) => value !== "" && value != null)
   );
 
   getTaskList(
@@ -140,7 +137,7 @@ onMounted(() => {
 <style scoped>
 .pro-manager,
 .pro-date {
-  font-size: 1.6vh;
+  font-size: 1.7vh;
 }
 .pro-manager {
   margin-bottom: 0.5vh;
@@ -153,7 +150,7 @@ onMounted(() => {
   font-weight: 500;
 }
 .pro-name {
-  font-size: 1.7vh;
+  font-size: 2vh;
   font-weight: bold;
 }
 .all-projects {
@@ -162,14 +159,14 @@ onMounted(() => {
   margin: 0vh 1vw;
 }
 .projects {
-  color: rgb(102, 102, 102);
+  color: #1e476d;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 3vh 0px;
   margin: 0.5vh 0.5vw 1.5vh 0.5vw;
   border-radius: 15px;
-  background-color: #f1f1f9;
+  background-color: #f5f8fe;
   cursor: pointer;
   box-shadow: 0 3px 5px rgba(0, 0, 0, 0.175);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -190,8 +187,8 @@ button {
   gap: 100px;
 }
 .titled {
-  color: #575757;
-  font-size: 2.2vh;
+  color: #1e476d;
+  font-size: 2.4vh;
   font-weight: bold;
   margin: 1.5vh 0 1vh 0;
 }
@@ -207,20 +204,20 @@ button {
 .chevron-left:after {
   content: "";
   position: absolute;
-  top: 40%;
-  left: 50%;
+  top: 58%;
+  left: 150%;
   border-style: solid;
-  border-color: #575757;
-  border-width: 0 5px 5px 0;
+  border-color: #1e476d;
+  border-width: 0 4px 4px 0;
   display: block;
-  padding: 8px;
+  padding: 6px;
   transform: translate(-50%, -50%) rotate(135deg);
   transition: transform 0.3s ease;
   border-radius: 3px;
 }
 
 .chevron-left:hover:after {
-  transform: translate(-70%, -50%) rotate(135deg);
+  transform: translate(-80%, -50%) rotate(135deg);
 }
 .chevron-right {
   position: relative;
@@ -234,20 +231,20 @@ button {
 .chevron-right:after {
   content: "";
   position: absolute;
-  top: 40%;
-  left: 50%;
+  top: 58%;
+  left: 0%;
   border-style: solid;
-  border-color: #575757;
-  border-width: 0 5px 5px 0;
+  border-color: #1e476d;
+  border-width: 0 4px 4px 0;
   display: block;
-  padding: 8px;
+  padding: 6px;
   transform: translate(-50%, -50%) rotate(-45deg);
   transition: transform 0.3s ease;
   border-radius: 3px;
 }
 
 .chevron-right:hover:after {
-  transform: translate(-30%, -50%) rotate(-45deg);
+  transform: translate(-20%, -50%) rotate(-45deg);
 }
 .chevron-left:disabled:after,
 .chevron-right:disabled:after {
@@ -276,5 +273,12 @@ button {
 
 .all-projects::-webkit-scrollbar-thumb:hover {
   background-color: rgb(187, 187, 187);
+}
+
+.no-projects-message {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 90%;
 }
 </style>

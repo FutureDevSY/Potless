@@ -215,7 +215,7 @@ li {
 }
 
 li::marker {
-  color: #151c62;
+  color: #1e476d;
 }
 
 .right-align {
@@ -241,7 +241,7 @@ li::marker {
 }
 
 .new-team-btn {
-  background-color: #151c62;
+  background-color: #1e476d;
   padding: 1.2vh 3vw;
   cursor: pointer;
   border-radius: 4px;
@@ -255,7 +255,7 @@ li::marker {
 }
 
 .new-team-btn:hover {
-  background-color: #0e1241;
+  background-color: #17344f;
 }
 
 .button {

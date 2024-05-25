@@ -1,50 +1,38 @@
 <template>
   <div class="main-container">
-    <div class="info-container">
-      <div class="title">오늘 현황</div>
+    <div class="title">오늘 현황</div>
 
+    <div class="main-box">
       <div class="danger">
-        <div>
-          <div class="circle severity">심각</div>
+        <div class="danger-box">
+          <div class="circle severity">
+            <div class="inner-circle">심각</div>
+          </div>
           <div class="info-text end">{{ dangerCount }} 건</div>
         </div>
-        <div>
-          <div class="circle caution">주의</div>
+        <div class="danger-box">
+          <div class="circle caution"><div class="inner-circle">주의</div></div>
           <div class="info-text mid">{{ cautiousCount }} 건</div>
         </div>
-        <div>
-          <div class="circle good">양호</div>
+        <div class="danger-box">
+          <div class="circle good"><div class="inner-circle">양호</div></div>
           <div class="info-text start">{{ safeCount }}건</div>
         </div>
       </div>
-    </div>
-    <div class="type">
-      <div class="infos">
-        <img
-          class="icons"
-          src="../../../assets/icon/pothole-icon.png"
-          alt="pothole"
-        />
-        <div class="name">포트홀</div>
-        <div class="number">{{ potholeNum }}건</div>
-      </div>
-      <div class="infos">
-        <img
-          class="icons"
-          src="../../../assets/icon/road-icon.png"
-          alt="road"
-        />
-        <div class="name">도로 파손</div>
-        <div class="number">0건</div>
-      </div>
-      <div class="infos">
-        <img
-          class="icons"
-          src="../../../assets/icon/line-icon.png"
-          alt="line"
-        />
-        <div class="name">도로 마모</div>
-        <div class="number">0건</div>
+
+      <div class="type">
+        <div class="infos borderb">
+          <div class="name">포트홀</div>
+          <div class="number">{{ potholeNum }}건</div>
+        </div>
+        <div class="infos borderb">
+          <div class="name">도로 파손</div>
+          <div class="number">0건</div>
+        </div>
+        <div class="infos">
+          <div class="name">도로 마모</div>
+          <div class="number">0건</div>
+        </div>
       </div>
     </div>
   </div>
@@ -54,10 +42,7 @@
 import { ref, onMounted } from "vue";
 import { useAuthStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
-import {
-  getDongPerDate,
-  getSeverityPerDate,
-} from "../../../api/statistics/statistics";
+import { getDongPerDate, getSeverityPerDate } from "../../../api/statistics/statistics";
 
 const store = useAuthStore();
 const { accessToken, areaId } = storeToRefs(store);
@@ -68,18 +53,9 @@ const now = new Date();
 const year = now.getFullYear();
 const month = ("0" + (now.getMonth() + 1)).slice(-2);
 const day = ("0" + now.getDate()).slice(-2);
-<<<<<<< HEAD
-<<<<<<< HEAD
-const today_start = year + "-" + month + "-" + day;
-=======
 const today_start = year + "-" + month + "-" + (day - 1);
->>>>>>> b01a82fdb5427793f9b9850be297f0471d54c21d
-=======
-const today_start = year + "-" + month + "-" + (day - 1);
->>>>>>> b01a82fdb5427793f9b9850be297f0471d54c21d
 const today_end = year + "-" + month + "-" + day;
 
-// 데이터 통계 불러오기 함수
 const takeData = () => {
   const DateParams = ref({
     start: today_start,
@@ -90,23 +66,9 @@ const takeData = () => {
     accessToken.value,
     DateParams.value,
     (res) => {
-<<<<<<< HEAD
-<<<<<<< HEAD
       if (res.data.status === "SUCCESS") {
         currentData.value = res.data.data.list[areaId.value - 1];
         potholeNum.value = currentData.value.list[0].count;
-=======
-=======
->>>>>>> b01a82fdb5427793f9b9850be297f0471d54c21d
-      console.log(res);
-      if (res.data.status === "SUCCESS") {
-        currentData.value = res.data.data.list[areaId.value - 1];
-        potholeNum.value =
-          currentData.value.list[0].count + currentData.value.list[1].count;
-<<<<<<< HEAD
->>>>>>> b01a82fdb5427793f9b9850be297f0471d54c21d
-=======
->>>>>>> b01a82fdb5427793f9b9850be297f0471d54c21d
       } else {
         // console.log(res.data.message);
       }
@@ -121,7 +83,6 @@ const dangerCount = ref(0);
 const cautiousCount = ref(0);
 const safeCount = ref(0);
 
-// 심각도 불러오기 함수
 const severityData = () => {
   getSeverityPerDate(
     accessToken.value,
@@ -153,40 +114,64 @@ onMounted(() => {
   background-color: #ffffff;
   box-shadow: 0 3px 8px rgba(0, 0, 0, 0.255);
   border-radius: 15px;
-  padding: 1.5vh 0vw 0vh 0vw;
-  display: grid;
-  grid-template-columns: 55% 30%;
-  gap: 8%;
+  padding: 2vh 0vw 0vh 0vw;
 }
+
 .title {
-  color: #373737;
-  font-size: 2vh;
+  color: #1e476d;
+  font-size: 2.4vh;
   font-weight: bold;
-  padding-left: 1vw;
+  text-align: center;
 }
-.info-container {
+
+.main-box {
   display: grid;
-  grid-template-rows: 12% 82%;
-  gap: 6%;
+  margin-top: 0.7vh;
+  grid-template-columns: 65% 35%;
+  border: 1px solid #bcbcbc;
+  border-left: none;
+  border-right: none;
+  border-bottom: none;
+  height: 81%;
 }
+
 .danger {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  padding-left: 20px;
-  margin-top: 1.5vh;
+  border-right: 1px solid #bcbcbc;
 }
+
+.danger-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
 .circle {
-  height: 7.5vh;
-  width: 7.5vh;
+  height: 8vh;
+  width: 8vh;
   border-radius: 100%;
-  margin-left: 8px;
-  color: white;
-  font-size: 2.2vh;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.inner-circle {
+  height: 5vh;
+  width: 5vh;
+  border-radius: 100%;
+  background-color: white;
+  color: #1e476d;
+  font-size: 2vh;
   font-weight: bold;
   display: flex;
   justify-content: center;
   align-items: center;
 }
+
 .severity {
   background-color: #ff4e4e;
 }
@@ -197,40 +182,40 @@ onMounted(() => {
   background-color: #8dc63f;
 }
 .info-text {
-  font-size: 2vh;
+  font-size: 2.4vh;
   text-align: center;
   width: 9vh;
-  color: #373737;
+  color: #1e476d;
   font-weight: bold;
-  margin-top: 1.4vh;
+  margin-top: 1vh;
 }
 .end,
 .mid,
 .start {
-  color: #595959;
+  color: #1e476d;
 }
 
 .type {
-  padding-top: 1vh;
   display: grid;
-  grid-template-rows: 33% 33% 33%;
+  grid-template-rows: 33.5% 33.5% 32.9%;
 }
-.icons {
-  height: 4vh;
-}
+
 .infos {
   display: flex;
-  padding-bottom: 1px;
+  padding: 0vh 1.5vw 0vh 1vw;
+}
+.borderb {
+  border-bottom: 1px solid #bcbcbc;
 }
 .name {
-  color: #373737;
-  padding: 1vh;
-  font-size: 1.8vh;
-}
-.number {
-  color: #373737;
+  color: #1e476d;
   padding: 1vh;
   font-size: 2vh;
+}
+.number {
+  color: #1e476d;
+  padding: 1vh;
+  font-size: 2.1vh;
   margin-left: auto;
   font-weight: bold;
 }

@@ -22,15 +22,13 @@ const props = defineProps({
 const searchTerm = ref("");
 const apexChartRef = ref(null);
 
-// 필터링된 동 데이터와 포트홀 수 계산
 const filteredDongData = computed(() => {
   return props.roadData
     .filter((road) => road.dong.toLowerCase().includes(props.searchTerm.toLowerCase()))
-    .sort((a, b) => b.potholes - a.potholes) // 포트홀 수에 따라 정렬
-    .slice(0, 10); // 상위 10개만 선택
+    .sort((a, b) => b.potholes - a.potholes)
+    .slice(0, 10);
 });
 
-// 포트홀 개수, 위험한 포트홀 개수
 const series = computed(() => [
   {
     name: "전체 위험물 수",
@@ -71,13 +69,16 @@ const chartOptions = computed(() => ({
   dataLabels: {
     enabled: true,
     formatter: function (val) {
+      if (isNaN(val) || val === 0) {
+        return "";
+      }
       return val;
     },
   },
   tooltip: {
     y: {
       formatter: function (val) {
-        return val + " 개"; // 툴팁에 '개' 단위 추가
+        return val + " 개";
       },
     },
   },

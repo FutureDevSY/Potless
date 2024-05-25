@@ -70,8 +70,7 @@ onMounted(async () => {
   }
 });
 
-// ** 로그인 한 지역의 areaGu를 호출
-const areaDetails = ref(null); // 지역 이름 저장할
+const areaDetails = ref(null);
 
 const fetchAreaDetails = async () => {
   const response = await getAreaDetails(accessToken.value, areaId.value);
@@ -248,9 +247,9 @@ const getPotholeColor = (potholes) => {
 .status-overlay {
   position: absolute;
   top: 4%;
-  left: 30%;
-  color: #373737;
-  font-size: 2.2vh;
+  left: 32%;
+  color: #1e476d;
+  font-size: 2.4vh;
   font-weight: bold;
   z-index: 1;
 }
@@ -258,7 +257,7 @@ const getPotholeColor = (potholes) => {
   position: absolute;
   top: 5.5%;
   left: 73%;
-  color: #242557;
+  color: #1e476d;
   font-size: 1.6vh;
 
   z-index: 1;

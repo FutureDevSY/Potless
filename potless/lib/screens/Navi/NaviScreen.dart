@@ -196,8 +196,6 @@ class _RouteFinderScreenState extends State<RouteFinderScreen> {
                         NaviOption(coordType: CoordType.wgs84, routeInfo: true),
                   );
                 } else {
-                  debugPrint('내비 설치안됨');
-
                   launchBrowserTab(Uri.parse(NaviApi.webNaviInstall));
                 }
                 _startLocationUpdates();

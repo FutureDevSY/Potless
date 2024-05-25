@@ -147,6 +147,7 @@ watch(
   border: 2px solid rgb(223, 223, 223);
   z-index: 0;
   overflow: visible;
+  border-radius: 8px;
 }
 
 .btn-style {

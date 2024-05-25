@@ -454,6 +454,23 @@ public class DamageRepositoryCustomImpl implements DamageRepositoryCustom {
     }
 
     @Override
+    public List<DamageAppResponseDTO> findByHexagonIndex(String hexagonIndex) {
+        QDamageEntity damage = QDamageEntity.damageEntity;
+
+        return queryFactory.select(Projections.constructor(DamageAppResponseDTO.class,
+                        damage.severity,
+                        damage.dirX,
+                        damage.dirY,
+                        damage.address,
+                        damage.dtype
+                ))
+                .from(damage)
+                .where(damage.hexagonEntity.hexagonIndex.eq(hexagonIndex)
+                        .and(damage.status.in(Status.작업전, Status.작업중)))
+                .fetch();
+    }
+
+    @Override
     public SeverityAreaResponseDTO countTodaysDamagesBySeverity(Long areaId) {
         QDamageEntity damageEntity = QDamageEntity.damageEntity;
         QAreaEntity areaEntity = QAreaEntity.areaEntity;
