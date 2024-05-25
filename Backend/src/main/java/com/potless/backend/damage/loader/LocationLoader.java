@@ -59,6 +59,9 @@ public class LocationLoader implements CommandLineRunner {
                 "용호동", "읍내동", "이현동", "중리동", "평촌동", "황호동", "법동", "장동",
                 "와동", "신탄진동"
         ));
+        areaDongMap.put("강남구", Arrays.asList(
+                "압구정동", "신사동", "청담동", "논현동", "역삼동", "삼성동", "대치동", "도곡동", "개포동", "일원동", "수서동", "자곡동", "율현동", "세곡동"
+        ));
         areaDongMap.put("기타", List.of(
                 "기타"
         ));
