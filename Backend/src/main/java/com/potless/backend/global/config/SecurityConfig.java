@@ -60,7 +60,8 @@ public class SecurityConfig {
                             "/swagger-ui/**",
                             "/swagger-config/**",
                             "/swagger-resources/**",
-                            "/api/damage/statistic/**"
+                            "/api/damage/statistic/**",
+                            "/api/wearable/**"
                     ).permitAll();
                     authorize.requestMatchers(HttpMethod.OPTIONS, "/api/**").permitAll();
                     authorize.anyRequest().authenticated();
