@@ -83,6 +83,9 @@ dependencies {
 
     // H3
     implementation 'com.uber:h3:3.7.2'
+
+    // WEB SOCKET
+    implementation 'org.springframework.boot:spring-boot-starter-websocket'
 }
 
 tasks.named('test') {
