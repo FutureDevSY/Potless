@@ -323,7 +323,7 @@ public class DamageController {
             return response.fail(bindingResult);
         }
         iDamageService.setWorkDone(requestDTO.getDamageId());
-        webSocketService.sendWebSocket(authentication, requestDTO.getDamageId());
+//        webSocketService.sendWebSocket(authentication, requestDTO.getDamageId());
         return response.success(ResponseCode.POTHOLE_DONE_WORK);
     }
 
