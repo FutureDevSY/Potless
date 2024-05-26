@@ -19,6 +19,7 @@ export const useAuthStore = defineStore(
       3: "중구",
       4: "유성구",
       5: "서구",
+      7: "강남구",
     };
 
     // 로그인 설정
@@ -29,7 +30,6 @@ export const useAuthStore = defineStore(
       areaId.value = userData.data.memberInfo.areaId;
       userId.value = userData.data.memberInfo.id;
       areaName.value = areaIdToName[areaId.value];
-
       // 좌표 설정
       const location = locations.find((loc) => loc.areaId === areaId.value);
       if (location) {
