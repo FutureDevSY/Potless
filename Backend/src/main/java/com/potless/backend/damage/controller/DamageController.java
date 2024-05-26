@@ -12,6 +12,7 @@ import com.potless.backend.damage.dto.service.response.kakao.Address;
 import com.potless.backend.damage.dto.service.response.kakao.RoadAddress;
 import com.potless.backend.damage.entity.enums.Status;
 import com.potless.backend.damage.service.*;
+import com.potless.backend.damage.websocket.WebSocketService;
 import com.potless.backend.global.exception.kakao.KakaoNotFoundException;
 import com.potless.backend.global.exception.member.MemberNotFoundException;
 import com.potless.backend.global.exception.pothole.InvalidCoordinateRangeException;
@@ -60,6 +61,7 @@ public class DamageController {
     private final FileService fileService;
     private final DuplicateAreaService duplicateAreaService;
     private final MemberService memberService;
+    private final WebSocketService webSocketService;
 
     @Operation(summary = "Area 리스트 가져오기", description = "Area 리스트 가져오기", responses = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = AreaResponseDTO.class)))
@@ -317,10 +319,11 @@ public class DamageController {
     })
     @PostMapping("/workDone")
     public ResponseEntity<?> setWorkDone(Authentication authentication, @RequestBody @Valid DamageDoneRequestDTO requestDTO, BindingResult bindingResult) {
-        iDamageService.setWorkDone(requestDTO.getDamageId());
         if (bindingResult.hasErrors()) {
             return response.fail(bindingResult);
         }
+        iDamageService.setWorkDone(requestDTO.getDamageId());
+        webSocketService.sendWebSocket(authentication, requestDTO.getDamageId());
         return response.success(ResponseCode.POTHOLE_DONE_WORK);
     }
 
