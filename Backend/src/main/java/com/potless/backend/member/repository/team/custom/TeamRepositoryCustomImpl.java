@@ -15,6 +15,7 @@ import java.util.Optional;
 
 import static com.potless.backend.damage.entity.area.QAreaEntity.areaEntity;
 import static com.potless.backend.member.entity.QManagerEntity.managerEntity;
+import static com.potless.backend.member.entity.QMemberEntity.memberEntity;
 import static com.potless.backend.member.entity.QTeamEntity.teamEntity;
 import static com.potless.backend.member.entity.QWorkerEntity.workerEntity;
 
@@ -52,8 +53,10 @@ public class TeamRepositoryCustomImpl implements TeamRepositoryCustom {
     public List<WorkerInfoDto> getWorkerListByTeamId(Long teamId){
             return query.select(Projections.constructor(WorkerInfoDto.class,
                                 workerEntity.memberEntity.Id,
-                                workerEntity.workerName))
+                                workerEntity.workerName,
+                                workerEntity.memberEntity.profileUrl))
                         .from(workerEntity)
+                        .leftJoin(workerEntity.memberEntity, memberEntity)
                         .where(workerEntity.teamEntity.id.eq(teamId))
                         .fetch();
 

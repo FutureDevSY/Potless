@@ -15,4 +15,6 @@ public class WorkerInfoDto {
     private Long memberId;
     @Schema(description = "작업자 이름")
     private String workerName;
+    @Schema(description = "작업자 프로필 이미지 URL, 없으면 NULL")
+    private String profileUrl;
 }
