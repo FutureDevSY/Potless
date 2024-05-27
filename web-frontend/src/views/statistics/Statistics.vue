@@ -201,7 +201,7 @@ const secondfourthData = async () => {
       roadIncidentData.value = list.map((dong) => ({
         dong: dong.locationName,
         potholes: dong.countDamageBefore + dong.countDamageDuring,
-        severity: dong.severityCount,
+        severity: dong.severityThree,
       }));
 
       list.forEach((item) => {
