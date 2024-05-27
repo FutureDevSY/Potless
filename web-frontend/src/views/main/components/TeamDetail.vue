@@ -16,7 +16,7 @@
         src="../../../assets/icon/profile2.png"
         alt="이미지"
       />
-      <img v-else :src="member.profileUrl" alt="이미지" />
+      <img class="worker-img" v-else :src="member.profileUrl" alt="이미지" />
       <img v-if="isHovered" class="edit-img" src="../../../assets/icon/edit.png" alt="편집" />
       <div class="memberName" :class="{ hovered: isHovered }">{{ member.workerName }}</div>
     </div>
@@ -64,6 +64,12 @@ const handleButtonClick = () => {
   margin-top: 10%;
 }
 
+.worker-img {
+  width: 88%;
+  height: 12vh;
+  margin-top: 4.5%;
+}
+
 .edit-img {
   position: absolute;
   height: 2.5vh;
@@ -106,7 +112,7 @@ const handleButtonClick = () => {
 
 .memberName {
   position: relative;
-  top: 0.2vh;
+  top: 0vh;
   font-size: 1.6vh;
   font-weight: bold;
   color: #565656;
