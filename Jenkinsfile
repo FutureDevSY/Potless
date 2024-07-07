@@ -43,40 +43,40 @@ pipeline {
                 }
             }
         }
-        stage('SonarQube analysis') {
-            environment {
-                scannerHome = tool name: 'SonarQube Scanner'
-            }
-            steps {
-                withSonarQubeEnv('SonarQube') {
-                    script {
-                        dir('Backend') {
-                            sh 'chmod +x ./gradlew' 
-                            sh """
-                            ./gradlew sonarqube \\
-                            -Dsonar.projectKey=S10P31B106_Backend \\
-                            -Dsonar.sources=src \\
-                            -Dsonar.exclusions=**/build/**,**/test/** \\
-                            -Dsonar.host.url=http://15.165.76.184:9000 \\
-                            -Dsonar.login=${env.SONAR_TOKEN}
-                            """
-                        }
-                        dir('web-frontend') {
-                            sh """
-                            ${scannerHome}/bin/sonar-scanner \\
-                            -Dsonar.projectKey=S10P31B106_Frontend \\
-                            -Dsonar.sources=src \\
-                            -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/*.spec.js \\
-                            -Dsonar.test.inclusions=**/*.spec.js \\
-                            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info \\
-                            -Dsonar.host.url=http://15.165.76.184:9000 \\
-                            -Dsonar.login=${env.SONAR_TOKEN}
-                            """
-                        }
-                    }
-                }
-            }
-        }
+//         stage('SonarQube analysis') {
+//             environment {
+//                 scannerHome = tool name: 'SonarQube Scanner'
+//             }
+//             steps {
+//                 withSonarQubeEnv('SonarQube') {
+//                     script {
+//                         dir('Backend') {
+//                             sh 'chmod +x ./gradlew'
+//                             sh """
+//                             ./gradlew sonarqube \\
+//                             -Dsonar.projectKey=S10P31B106_Backend \\
+//                             -Dsonar.sources=src \\
+//                             -Dsonar.exclusions=**/build/**,**/test/** \\
+//                             -Dsonar.host.url=http://15.165.76.184:9000 \\
+//                             -Dsonar.login=${env.SONAR_TOKEN}
+//                             """
+//                         }
+//                         dir('web-frontend') {
+//                             sh """
+//                             ${scannerHome}/bin/sonar-scanner \\
+//                             -Dsonar.projectKey=S10P31B106_Frontend \\
+//                             -Dsonar.sources=src \\
+//                             -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/*.spec.js \\
+//                             -Dsonar.test.inclusions=**/*.spec.js \\
+//                             -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info \\
+//                             -Dsonar.host.url=http://15.165.76.184:9000 \\
+//                             -Dsonar.login=${env.SONAR_TOKEN}
+//                             """
+//                         }
+//                     }
+//                 }
+//             }
+//         }
         stage('Build Docker Images') {
             steps {
                 script {
