@@ -19,7 +19,7 @@ public class AwsConfig {
     private String region;
     @Value("${aws.access-key-id}")
     private String awsId;
-    @Value("$aws.endpoint")
+    @Value("${aws.endpoint}")
     private String endpoint;
 
     @Bean
@@ -34,4 +34,4 @@ public class AwsConfig {
                 .withCredentials(new AWSStaticCredentialsProvider(basicAWSCredentials))
                 .build();
     }
-}
+}g
