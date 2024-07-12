@@ -7,7 +7,7 @@
         <div class="input-div">
           <div class="input-group">
             <SelfSelect
-              :options="['포트홀', '도로균열', '도로마모']"
+              :options="['포트홀', '도로균열']"
               defaultText="위험물 종류"
               @update:selected="updatePotholeType"
             />
@@ -125,9 +125,6 @@ const updatePotholeType = (selected) => {
       break;
     case "도로균열":
       potholeType.value = "CRACK";
-      break;
-    case "도로마모":
-      potholeType.value = "WORNOUT";
       break;
     default:
       potholeType.value = "";

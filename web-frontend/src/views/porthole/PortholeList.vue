@@ -73,13 +73,12 @@ const severityMap = {
 const typeOptions = [
   { text: "포트홀", value: "POTHOLE" },
   { text: "도로균열", value: "CRACK" },
-  { text: "도로마모", value: "WORNOUT" },
 ];
 
 const takeData = (currentPage) => {
   const rawParams = {
-    start: formatDate(dateRange.value.start),
-    end: formatDate(dateRange.value.end),
+    start: "2024-07-06",
+    end: "2024-07-12",
     dtype: selectedType.value,
     status: selectedStatus.value,
     severity: selectedSeverity.value,

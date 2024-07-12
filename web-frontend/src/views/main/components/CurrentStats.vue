@@ -66,9 +66,12 @@ const takeData = () => {
     accessToken.value,
     DateParams.value,
     (res) => {
+
+
       if (res.data.status === "SUCCESS") {
         currentData.value = res.data.data.list[areaId.value - 1];
-        potholeNum.value = currentData.value.list[0].count + currentData.value.list[1].count;
+        potholeNum.value =
+          currentData.value.list[0].count + currentData.value.list[1].count;
       } else {
         // console.log(res.data.message);
       }
