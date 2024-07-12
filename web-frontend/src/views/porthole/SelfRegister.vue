@@ -7,7 +7,7 @@
         <div class="input-div">
           <div class="input-group">
             <SelfSelect
-              :options="['포트홀', '도로균열', '도로마모']"
+              :options="['포트홀', '도로균열']"
               defaultText="위험물 종류"
               @update:selected="updatePotholeType"
             />
@@ -125,13 +125,6 @@ const handleCenterUpdate = (coords) => {
 };
 
 const updatePotholeType = (selected) => {
-<<<<<<< HEAD
-<<<<<<< HEAD
-  console.log("updatePotholeType 호출됨:", selected); // 추가된 로그
-=======
->>>>>>> b01a82fdb5427793f9b9850be297f0471d54c21d
-=======
->>>>>>> b01a82fdb5427793f9b9850be297f0471d54c21d
   switch (selected) {
     case "포트홀":
       potholeType.value = "POTHOLE";
@@ -139,22 +132,12 @@ const updatePotholeType = (selected) => {
     case "도로균열":
       potholeType.value = "CRACK";
       break;
-    case "도로마모":
-      potholeType.value = "WORNOUT";
-      break;
     default:
       potholeType.value = "";
   }
 };
 
 const updateSeverity = (selected) => {
-<<<<<<< HEAD
-<<<<<<< HEAD
-  console.log("updateSeverity 호출됨:", selected); // 추가된 로그
-=======
->>>>>>> b01a82fdb5427793f9b9850be297f0471d54c21d
-=======
->>>>>>> b01a82fdb5427793f9b9850be297f0471d54c21d
   switch (selected) {
     case "심각":
       severity.value = "3";
