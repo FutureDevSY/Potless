@@ -55,7 +55,7 @@ const now = new Date();
 // const day = ("0" + now.getDate()).slice(-2);
 const year = 2024;
 const month = 7;
-const day = 12;
+const day = 11;
 const today_start = year + "-" + month + "-" + (day - 1);
 const today_end = year + "-" + month + "-" + day;
 

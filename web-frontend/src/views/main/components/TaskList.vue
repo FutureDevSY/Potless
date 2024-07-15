@@ -61,7 +61,7 @@ function formatDate(date) {
 
 function getWeekRange(type) {
   // const now = new Date();
-  const now = new Date('2024-07-12');
+  const now = new Date('2024-07-11');
   let start, end;
 
   switch (type) {
