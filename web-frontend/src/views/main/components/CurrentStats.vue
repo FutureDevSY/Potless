@@ -61,8 +61,8 @@ const today_end = year + "-" + month + "-" + day;
 
 const takeData = () => {
   const DateParams = ref({
-    start: today_start,
-    end: today_end,
+    start: today_end,
+    // end: today_end,
   });
 
   getDongPerDate(
