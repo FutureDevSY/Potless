@@ -23,11 +23,11 @@
       <div class="type">
         <div class="infos borderb">
           <div class="name">포트홀</div>
-          <div class="number">{{ potholeNum }}건</div>
+          <div class="number">20건</div>
         </div>
         <div class="infos borderb">
           <div class="name">도로 파손</div>
-          <div class="number">0건</div>
+          <div class="number">5건</div>
         </div>
         <div class="infos">
           <div class="name">도로 마모</div>
