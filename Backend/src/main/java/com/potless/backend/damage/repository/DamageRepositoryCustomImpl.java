@@ -477,7 +477,7 @@ public class DamageRepositoryCustomImpl implements DamageRepositoryCustom {
 
         LocalDate specificDate = LocalDate.of(2024, 7, 11);
 
-        LocalDateTime startOfDay = specificDate.atStartOfDay;
+        LocalDateTime startOfDay = specificDate.atStartOfDay();
 
         LocalDateTime endOfDay = specificDate.atTime(LocalTime.MAX);
 
