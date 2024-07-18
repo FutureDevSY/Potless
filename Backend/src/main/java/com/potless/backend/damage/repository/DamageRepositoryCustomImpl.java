@@ -475,8 +475,15 @@ public class DamageRepositoryCustomImpl implements DamageRepositoryCustom {
         QDamageEntity damageEntity = QDamageEntity.damageEntity;
         QAreaEntity areaEntity = QAreaEntity.areaEntity;
 
-        LocalDateTime startOfDay = LocalDateTime.now().with(LocalTime.MIN);
-        LocalDateTime endOfDay = LocalDateTime.now().with(LocalTime.MAX);
+        LocalDate specificDate = LocalDate.of(2024, 7, 11);
+
+        LocalDateTime startOfDay = specificDate.atStartOfDay;
+
+        LocalDateTime endOfDay = specificDate.atTime(LocalTime.MAX);
+
+//        전시관 이관 이전 코드
+//        LocalDateTime startOfDay = LocalDateTime.now().with(LocalTime.MIN);
+//        LocalDateTime endOfDay = LocalDateTime.now().with(LocalTime.MAX);
 
         Long severityOne = queryFactory
                 .select(damageEntity.id.count())
