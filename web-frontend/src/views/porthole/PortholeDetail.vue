@@ -327,6 +327,7 @@ onMounted(() => {
   background-color: inherit;
   text-align: center;
   vertical-align: middle;
+  margin: 0%;
 }
 
 .serious {
