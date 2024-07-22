@@ -28,7 +28,7 @@
                 <td class="info-title">위험성 정도</td>
                 <td class="infos" >
                   <div class="danger-type" :class="dangerClass(pothole_info.severity)">
-                    <p> {{ dangerClass2(pothole_info.severity) }} </p>
+                    {{ dangerClass2(pothole_info.severity) }}
                   </div>
                 </td>
               </tr>
@@ -318,12 +318,10 @@ onMounted(() => {
 .danger-type {
   display: inline-block;
   width: 38px;
-  height: 30px;
   border-radius: 10%;
   color: #ffffff;
   font-size: 1.9vh;
   font-weight: 500;
-  /* line-height: 30px; */
   background-color: inherit;
   text-align: center;
   vertical-align: middle;
