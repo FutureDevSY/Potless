@@ -317,14 +317,16 @@ onMounted(() => {
 
 .danger-type {
   display: inline-block;
-  width: 50px;
-  height: 40px;
+  width: 38px;
+  height: 3vh;
   border-radius: 10%;
   color: #ffffff;
   font-size: 1.9vh;
   font-weight: 500;
   line-height: 3vh;
   background-color: inherit;
+  text-align: center;
+  vertical-align: middle;
 }
 
 .serious {
