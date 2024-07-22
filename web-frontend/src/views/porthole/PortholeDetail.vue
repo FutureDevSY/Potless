@@ -26,7 +26,11 @@
               </tr>
               <tr>
                 <td class="info-title">위험성 정도</td>
-                <td class="infos">{{ dangerClass2(pothole_info.severity) }}</td>
+                <td class="infos" >
+                  <div class="danger-type" :class="dangerClass(pothole_info.severity)">
+                    <p> {{ dangerClass2(pothole_info.severity) }} </p>
+                  </div>
+                </td>
               </tr>
               <tr>
                 <td class="info-title">작업 상태</td>
@@ -102,6 +106,19 @@ const dtypeDisplay = (dtype) => {
       return "도로마모";
     default:
       return "알 수 없는 유형";
+  }
+};
+
+const dangerClass = (danger) => {
+  switch (danger) {
+    case 3:
+      return "serious";
+    case 2:
+      return "cautious";
+    case 1:
+      return "safe";
+    default:
+      return "";
   }
 };
 
@@ -193,6 +210,7 @@ onMounted(() => {
   box-shadow: 0 3px 8px rgba(0, 0, 0, 0.255);
   border-radius: 15px;
 }
+
 .main-title {
   text-align: center;
   display: flex;
@@ -296,4 +314,29 @@ onMounted(() => {
 .delete-btn:hover {
   background-color: #fccccc;
 }
+
+.danger-type {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border-radius: 100%;
+  color: #ffffff;
+  font-size: 1.9vh;
+  font-weight: 500;
+  line-height: 3vh;
+  background-color: inherit;
+}
+
+.serious {
+  background-color: #f5172d;
+}
+
+.cautious {
+  background-color: #ffb700bf;
+}
+
+.safe {
+  background-color: #008a1e75;
+}
+
 </style>
