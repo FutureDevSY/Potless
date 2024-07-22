@@ -317,9 +317,9 @@ onMounted(() => {
 
 .danger-type {
   display: inline-block;
-  width: 20px;
-  height: 20px;
-  border-radius: 100%;
+  width: 50px;
+  height: 40px;
+  border-radius: 10%;
   color: #ffffff;
   font-size: 1.9vh;
   font-weight: 500;
