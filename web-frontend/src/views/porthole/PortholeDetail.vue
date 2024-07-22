@@ -318,12 +318,12 @@ onMounted(() => {
 .danger-type {
   display: inline-block;
   width: 38px;
-  height: 3vh;
+  height: 30px;
   border-radius: 10%;
   color: #ffffff;
   font-size: 1.9vh;
   font-weight: 500;
-  line-height: 3vh;
+  /* line-height: 30px; */
   background-color: inherit;
   text-align: center;
   vertical-align: middle;
