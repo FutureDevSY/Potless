@@ -34,9 +34,14 @@ const formatDate = (date) => {
   });
 };
 
+// const dateRange = ref({
+//   start: oneWeekAgo,
+//   end: today,
+// });
+
 const dateRange = ref({
-  start: oneWeekAgo,
-  end: today,
+  start: new Date(Date.UTC(2024, 6, 8)), 
+  end: new Date(Date.UTC(2024, 6, 12)),  
 });
 
 const dragValue = ref(null);
