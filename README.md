@@ -24,7 +24,7 @@
 # 🖥️아키텍처
 
 
-![image__3___1_](/uploads/aaf857c772713e973c1b3ac21dac9f0b/image__3___1_.png)
+![image__3___1_](images/image__3___1_.png)
 
 # ⚙️기술스택
 
@@ -70,7 +70,7 @@
 # 📋ERD
 
 
-![Untitled__4_](/uploads/f8aaf4b4dbea2a4ac3e8aa0386cea068/Untitled__4_.png)
+![Untitled__4_](images/Untitled__4_.png)
 
 # 📕주요기능 및 데모영상
 
