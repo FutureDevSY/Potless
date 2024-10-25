@@ -1,8 +1,7 @@
 # ⚠️POTLESS(포트리스)⚠️
 
 
-![weblogo__1_](/uploads/c7ab1fe4cb7bb34c5dd16bfd773c5808/weblogo__1_.png)
-
+![weblogo__1_](images/weblogo__1_.png)
 # 💡서비스 소개
 
 
